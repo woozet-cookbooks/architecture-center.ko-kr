@@ -76,49 +76,49 @@ $vnet = Set-AzureRmVirtualNetwork -VirtualNetwork $vnet
 
 ### VPN 및 ExpressRoute 게이트웨이
 
-Verify that your organization meets the [ExpressRoute prerequisite requirements][expressroute-prereq] for connecting to Azure.
+귀하의 조직이 Azure 연결을 위한 [ExpressRoute 사전 요구사항][expressroute-prereq]을 충족하는지 확인하세요.
 
-If you already have a VPN virtual network gateway in your Azure VNet, use the following  Powershell command to remove it:
+Azure VNet에 VPN 가상 네트워크 게이트웨이가 이미 있다면, 다음 PowerShell 명령어를 사용하여 삭제하세요.
 
 ```powershell
 Remove-AzureRmVirtualNetworkGateway -Name <yourgatewayname> -ResourceGroupName <yourresourcegroup>
 ```
 
-Follow the instructions in [Implementing a hybrid network architecture with Azure ExpressRoute][implementing-expressroute] to establish your ExpressRoute connection.
+[Azure ExpressRoute로 하이브리드 네트워크 아키텍처 구현][implementing-expressroute]에 있는 지침에 따라 ExpressRoute 연결을 구축합니다.
 
-Follow the instructions in [Implementing a hybrid network architecture with Azure and On-premises VPN][implementing-vpn] to establish your VPN virtual network gateway connection.
+[Azure 및 온-프레미스 VPN으로 하이브리드 네트워크 아키텍처 구현][implementing-vpn] 에 있는 지침에 따라 VPN 가상 네트워크 게이트웨이 연결을 구축합니다.
 
-After you have established the virtual network gateway connections, test the environment as follows:
+가상 네트워크 게이트웨이 연결을 구축했으면, 다음과 같이 환경을 테스트합니다.
 
-1. Make sure you can connect from your on-premises network to your Azure VNet.
-2. Contact your provider to stop ExpressRoute connectivity for testing.
-3. Verify that you can still connect from your on-premises network to your Azure VNet using the VPN virtual network gateway connection.
-4. Contact your provider to reestablish ExpressRoute connectivity.
+1. 온-프레미스 네트워크에서 Azure VNet으로 연결이 되는지 확인합니다.
+2. 공급자에게 연락하여 테스트를 위해 ExpressRoute 연결을 중단합니다.
+3. 여전히 VPN 가상 네트워크 게이트웨이 연결을 사용하여 온-프레미스 네트워크로부터 Azure VNet으로 연결이 가능한지 확인합니다.
+4. 공급자에게 연락하여 ExpressRoute 연결을 재구축합니다.
 
-## Considerations
+## 고려사항
 
-For ExpressRoute considerations, see the [Implementing a Hybrid Network Architecture with Azure ExpressRoute][guidance-expressroute] guidance.
+ExpressRoute연결에 대한 내용은 [Azure ExpressRoute로 하이브리드 네트워크 아키텍처 구현][guidance-expressroute] 가이드를 참조하세요.
 
-For site-to-site VPN considerations, see the [Implementing a Hybrid Network Architecture with Azure and On-premises VPN][guidance-vpn] guidance.
+사이트 간 VPN에 관한 고려사항은 [Azure 및 온-프레미스 VPN으로 하이브리드 네트워크 아키텍처 구현][guidance-vpn] 가이드를 참조하세요.
 
-For general Azure security considerations, see [Microsoft cloud services and network security][best-practices-security].
+Azure 보안 고려사항은 [Microsoft 클라우드 서비스 및 네트워크 보안][best-practices-security]을 참조하세요.
 
-## Deploy the solution
+## 솔루션 배포
 
-**Prequisites.** You must have an existing on-premises infrastructure already configured with a suitable network appliance.
+**사전 준비 사항.** 적합한 네트워크 어플라이언스를 통해 이미 구성된 기존의 온-프레미스 인프라가 존재해야 합니다.
 
-To deploy the solution, perform the following steps.
+다음 절차를 통해 이 솔루션을 배포할 수 있습니다.
 
-1. Click the button below:<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute-vpn-failover%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-2. Wait for the link to open in the Azure portal, then follow these steps:   
-   * The **Resource group** name is already defined in the parameter file, so select **Create New** and enter `ra-hybrid-vpn-er-rg` in the text box.
-   * Select the region from the **Location** drop down box.
-   * Do not edit the **Template Root Uri** or the **Parameter Root Uri** text boxes.
-   * Review the terms and conditions, then click the **I agree to the terms and conditions stated above** checkbox.
-   * Click the **Purchase** button.
-3. Wait for the deployment to complete.
-4. Click the button below:<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute-vpn-failover%2Fazuredeploy-expressRouteCircuit.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-5. Wait for the link to open in the Azure portal, then enter then follow these steps:
+1. 아래 단추를 우클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute-vpn-failover%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+2. Azure 포털에서 링크가 열리면 다음 절차를 따릅니다.   
+   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-hybrid-vpn-er-rg`를 입력하세요.
+   * **위치** 드롭다운 상자에서 지역을 선택하세요.
+   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
+   * 사용약관을 검토한 후 **위에 명시된 사용약관에 동의함** 확인란을 클릭합니다.
+   * **구입** 단추를 클릭합니다.
+3. 명령이 완료될 때까지 기다립니다.
+4. 아래 단추를 우클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute-vpn-failover%2Fazuredeploy-expressRouteCircuit.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+5. Azure 포털에서 링크가 열리면 엔터를 누른 후 아래의 절차를 따릅니다.
    * Select **Use existing** in the **Resource group** section and enter `ra-hybrid-vpn-er-rg` in the text box.
    * Select the region from the **Location** drop down box.
    * Do not edit the **Template Root Uri** or the **Parameter Root Uri** text boxes.
