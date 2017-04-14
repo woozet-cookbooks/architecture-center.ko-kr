@@ -15,59 +15,59 @@ pnp.series.next: expressroute-vpn-failover
 pnp.series.prev: vpn
 cardTitle: ExpressRoute
 ---
-# Connect an on-premises network to Azure using ExpressRoute
+# ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결
 
-This referernce architure shows how to connect an on-premises network to virtual networks on Azure, using [Azure ExpressRoute][expressroute-introduction]. ExpressRoute connections use a private, dedicated connection through a third-party connectivity provider. The private connection extends your on-premises network into Azure. [**Deploy this solution**.](#deploy-the-solution)
+이 참조 아키텍처는 [Azure ExpressRoute][expressroute-introduction]를 사용하여 온-프레미스 네트워크를 Azure 가상 네트워크에 연결하는 방법을 보여줍니다. ExpressRoute 연결은 외부 연결성 공급자를 통해 사설 전용 연결을 사용합니다. 사설 연결을 통해 온-프레미스 네트워크를 Azure로 확장할 수 있습니다. [**이 솔루션 배포하기**.](#deploy-the-solution)
 
 ![[0]][0]
 
-## Architecture
+## 아키텍처
 
-The architecture consists of the following components.
+이 아키텍처는 다음과 같은 요소들로 구성되어 있습니다.
 
-* **On-premises corporate network**. A private local-area network running within an organization.
+* **온-프레미스 기업 네트워크**. 조직 내에서 실행되는 사설 로컬 영역 네트워크.
 
-* **ExpressRoute circuit**. A layer 2 or layer 3 circuit supplied by the connectivity provider that joins the on-premises network with Azure through the edge routers. The circuit uses the hardware infrastructure managed by the connectivity provider.
+* **ExpressRoute 회로**. 에지 라우트(edge router)를 통해 온-프레미스 네트워크를 Azure에 연결하는 연결성 공급자가 제공하는 레이어2 또는 레이어3 회로입니다. 이 회로는 연결성 공급자가 관리하는 하드웨어 인프라를 사용합니다.
 
-* **Local edge routers**. Routers that connect the on-premises network to the circuit managed by the provider. Depending on how your connection is provisioned, you may need to provide the public IP addresses used by the routers.
-* **Microsoft edge routers**. Two routers in an active-active highly available configuration. These routers enable a connectivity provider to connect their circuits directly to their datacenter. Depending on how your connection is provisioned, you may need to provide the public IP addresses used by the routers.
+* **로컬 에지 라우터**. 온-프레미스 네트워크를 제공자가 관리하는 회로에 연결시켜주는 라우터. 연결 프로비전 방식에 따라서는 라우터가 사용하는 공인 IP 주소를 제공해야 할 수도 있습니다.
+* **Microsoft 에지 라우터**. 액티브-액티브의 고가용성 구성을 가진 두 개의 라우터. 이 라우터를 통해 연결성 공급자는 회로를 데이터센터에 직접 연결할 수 있습니다. 연결 프로비전 방식에 따라서는 라우터가 사용하는 공인 IP 주소를 제공해야 할 수도 있습니다.
 
-* **Azure virtual networks (VNets)**. Each VNet resides in a single Azure region, and can host multiple application tiers. Application tiers can be segmented using subnets in each VNet.
+* **Azure 가상 네트워크(VNet)**. 각 VNet은 단일 Azure 지역에 위치하며 여러 애플리케이션 계층을 호스팅할 수 있습니다. 애플리케이션 계층은 각 VNet의 서브넷을 사용하여 나눌 수 있습니다.
 
-* **Azure public services**. Azure services that can be used within a hybrid application. These services are also available over the Internet, but accessing them using an ExpressRoute circuit provides low latency and more predictable performance, because traffic does not go through the Internet. Connections are performed using [public peering][expressroute-peering], with addresses that are either owned by your organization or supplied by your connectivity provider.
+* **Azure 공개 서비스**. 하이브리드 애플리케이션 내에서 사용할 수 있는 Azure 서비스입니다. 이 서비스들은 인터넷에서도 사용할 수 있지만 ExpressRoute 회로를 사용하여 접속하면 트래픽이 인터넷을 거치지 않으므로 대기 시간을 줄이고 보다 예측 가능한 성능을 얻을 수 있습니다. 연결은 [공개 피어링][expressroute-peering] 및 조직이 소유하고 있거나 연결성 공급자가 제공하는 주소를 사용하여 수행됩니다.
 
-* **Office 365 services**. The publicly available Office 365 applications and services provided by Microsoft. Connections are performed using [Microsoft peering][expressroute-peering], with addresses that are either owned by your organization or supplied by your connectivity provider. You can also connect directly to Microsoft CRM Online through Microsoft peering.
+* **Office 365 서비스**. Microsoft의 공개적으로 이용 가능한 Office 365 애플리케이션 및 서비스입니다. 연결은 [Microsoft 피어링][expressroute-peering] 및 조직이 소유하고 있거나 연결성 공급자가 제공하는 주소를 사용하여 수행됩니다.
 
-* **Connectivity providers** (not shown). Companies that provide a connection either using layer 2 or layer 3 connectivity between your datacenter and an Azure datacenter.
+* **•	연결성 공급자** (미표시). 레이어2 또는 레이어3 연결을 사용하여 귀하의 데이터 센터와 Azure 데이터센터 간 연결을 제공하는 회사입니다.
 
 You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
 
-> [!NOTE]
-> Azure has two different deployment models: [Resource Manager](/azure/azure-resource-manager/resource-group-overview) and classic. This article uses Resource Manager, which Microsoft recommends for new deployments.
+> [!참고]
+> Azure는 [Resource Manager](/azure/azure-resource-manager/resource-group-overview)와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
 > 
 > 
 
-## Recommendations
+## 추천
 
-The following recommendations apply for most scenarios. Follow these recommendations unless you have a specific requirement that overrides them.
+다음 권장사항은 대부분의 시나리오에 적용됩니다. 다른 구체적인 요구사항이 없다면 가급적 권장사항을 따르시기 바랍니다.
 
-### Connectivity providers
+### 연결성 공급자
 
-Select a suitable ExpressRoute connectivity provider for your location. To get a list of connectivity providers available at your location, use the following Azure PowerShell command:
+귀하의 지역의 적합한 ExpressRoute 연결성 공급자를 선택하세요. 다음 Azure PowerShell 명령어를 사용하여 귀하의 지역에 있는 연결성 공급자 목록을 확인할 수 있습니다.
 
 ```powershell
 Get-AzureRmExpressRouteServiceProvider
 ```
 
-ExpressRoute connectivity providers connect your datacenter to Microsoft in the following ways:
+ExpressRoute 연결성 공급자는 다음과 같은 방법을 통해 귀하의 데이터센터를 Microsoft에 연결합니다.
 
-* **Co-located at a cloud exchange**. If you're co-located in a facility with a cloud exchange, you can order virtual cross-connections to Azure through the co-location provider’s Ethernet exchange. Co-location providers can offer either layer 2 cross-connections, or managed layer 3 cross-connections between your infrastructure in the co-location facility and Azure.
-* **Point-to-point Ethernet connections**. You can connect your on-premises datacenters/offices to Azure through point-to-point Ethernet links. Point-to-point Ethernet providers can offer layer 2 connections, or managed layer 3 connections between your site and Azure.
-* **Any-to-any (IPVPN) networks**. You can integrate your wide area network (WAN) with Azure. Internet protocol virtual private network (IPVPN) providers (typically a multiprotocol label switching VPN) offer any-to-any connectivity between your branch offices and datacenters. Azure can be interconnected to your WAN to make it look just like any other branch office. WAN providers typically offer managed layer 3 connectivity.
+* **클라우드 익스체인지 코로케이션(co-location)**. 클라우드 익스체인지를 사용하는 시설에 코로케이션 중이라면 코로케이션 공급자의 이더넷 익스체인지를 통해 Azure에 대한 가상 교차 연결을 주문할 수 있습니다. 코로케이션 공급자는 코로케이션 시설 내 귀하의 인프라와 Azure 간 레이어2 교차 연결 또는 매니지드 레이어3 교차 연결을 제공할 수 있습니다.
+* **P2P 이더넷 연결**. P2P 이더넷 링크를 통해 온-프레미스 데이터센터/오피스를 Azure에 연결할 수 있습니다. P2P 이더넷 공급자는 귀하의 사이트와 Azure 간 레이어2 연결 또는 매니지드 레이어3 연결을 제공할 수 있습니다.
+* **애니-투-애니(IPVPN) 네트워크**. 광역 네트워크(WAN)를 Azure와 통합할 수 있습니다. 인터넷 프로토콜 가상 사설 네트워크(IPVPN) 공급자(주로 멀티프로토콜 레이블 스위칭 VPN)는 지사와 데이터센터 간 애니-투-애니 연결을 제공합니다. Azure는 WAN에 상호 연결되어 여타의 지사처럼 보이게 할 수 있습니다. WAN 공급자는 일반적으로 매니지드 레이어3 연결을 제공합니다.
 
-For more information about connectivity providers, see the [ExpressRoute introduction][expressroute-introduction].
+연결성 공급자에 대한 자세한 내용은 [ExpressRoute 소개][expressroute-introduction]를 참조하세요.
 
-### ExpressRoute circuit
+### ExpressRoute 회로
 
 Ensure that your organization has met the [ExpressRoute prerequisite requirements][expressroute-prereqs] for connecting to Azure.
 
