@@ -5,9 +5,9 @@ layout: LandingPage
 ms.service: guidance
 ms.author: pnp
 ---
-# Network DMZ
+# 네트워크 DMZ
 
-These reference architectures show proven practices for creating a network DMZ that protects the boundary between an Azure virtual network and an on-premises network or the Internet.
+이 참조 아키텍처는 Azure 가상 네트워크와 온프레미스 네트워크 또는 인터넷 간 경계를 보호하기 위한 네트워크 DMZ를 생성하기 위한 검증된 사례들을 보여줍니다.
 
 <ul class="panelContent cardsH">
     <li>
@@ -21,8 +21,8 @@ These reference architectures show proven practices for creating a network DMZ t
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>DMZ between Azure and on-premises</h3>
-                            <p>Implements a secure hybrid network that extends an on-premises network to Azure.</p>
+                            <h3>Azure와 온-프레미스 간 DMZ</h3>
+                            <p>온-프레미스 네트워크를 Azure로 확장하는 보안된 하이브리드 네트워크를 구현합니다.</p>
                         </div>
                     </div>
                 </div>
@@ -40,8 +40,8 @@ These reference architectures show proven practices for creating a network DMZ t
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>DMZ between Azure and the Internet</h3>
-                            <p>Implements a secure network that accepts Internet traffic to Azure.</p>
+                            <h3>Azure와 인터넷 간 DMZ</h3>
+                            <p>Azure로의 인터넷 트래픽을 수용하는 보안된 네트워크를 구현합니다.</p>
                         </div>
                     </div>
                 </div>
