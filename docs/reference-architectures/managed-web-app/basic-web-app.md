@@ -19,30 +19,30 @@ ms.date: 11/23/2016
 ms.author: pnp
 cardTitle: Basic web application
 ---
-# Basic web application
+# 기본 웹 응용 프로그램
 [!INCLUDE [header](../../_includes/header.md)]
 
-This reference architecture shows a set of proven practices for a web application that uses [Azure App Service][app-service] and [Azure SQL Database][sql-db]. [**Deploy this solution.**](#deploy-the-solution)
+이 참조 아키텍처는 [Azure App Service][app-service] 와 [Azure SQL Database][sql-db]를 사용하는 웹 응용 프로그램에 대한 일련의 검증된 사례를 보여줍니다. [**이 솔루션 배포하기.**](#deploy-the-solution)
 
 
 ![[0]][0]
 
-## Architecture 
+## 아키텍처
 
-> [!NOTE]
-> This architecture doe not focus on application development, and does not assume any particular application framework. The goal is to understand how various Azure services fit together.
+> [!참고]
+> T이 아키텍처는 응용 프로그램 개발에 중점을 두지 않으며 특정 응용 프로그램 프레임워크를 가정하지 않습니다. 이 아키텍처의 목표는 얼마나 다양한 Azure 서비스가 서로 조화를 이룰 수 있는지를 이해하는 것입니다. 
 >
 >
 
-The architecture has the following components:
+이 아키텍처는 다음과 같은 요소들로 구성되어 있습니다.
 
-* **Resource group**. A [resource group](/azure/azure-resource-manager/resource-group-overview) is a logical container for Azure resources.
-* **App Service app**. [Azure App Service][app-service] is a fully managed platform for creating and deploying cloud applications.     
-* **App Service plan**. An [App Service plan][app-service-plans] provides the managed virtual machines (VMs) that host your app. All apps associated with a plan run on the same VM instances.
+* **리소스 그룹**. [리소스 그룹](/azure/azure-resource-manager/resource-group-overview)은 Azure 리소스를 위한 논리적 컨테이너입니다.
+* **App Service 앱 **. [Azure App Service][app-service]는 클라우드 응용 프로그램을 생성하고 배포하기 위한 완전 관리 플랫폼입니다.     
+* **App Service 요금제**. [App Service 요금제][app-service-plans]는 앱을 호스팅하는 관리 가상 컴퓨터(VM)를 제공합니다. 하나의 요금제에 연결된 모든 앱은 동일한 VM 인스턴스에서 실행됩니다.
 
-* **Deployment slots**.  A [deployment slot][deployment-slots] lets you stage a deployment and then swap it with the production deployment. That way, you avoid deploying directly into production. See the [Manageability](#manageability-considerations) section for specific recommendations.
+* **배포 슬롯**. [배포 슬롯][deployment-slots]을 통해 배포를 스테이징한 후 프로덕션 배포로 변경할 수 있습니다.  이런 방법을 통해 프로덕션 용도로 직접 배포하는 것을 피할 수 있습니다. 구체적인 권장사항은 [관리 효율성](#manageability-considerations) 섹션을 참조하시기 바랍니다.
 
-* **IP address**. The App Service app has a public IP address and a domain name. The domain name is a subdomain of `azurewebsites.net`, such as `contoso.azurewebsites.net`. To use a custom domain name, such as `contoso.com`, create domain name service (DNS) records that map the custom domain name to the IP address. For more information, see [Configure a custom domain name in Azure App Service][custom-domain-name].
+* **•	IP 주소**. The App Service app has a public IP address and a domain name. The domain name is a subdomain of `azurewebsites.net`, such as `contoso.azurewebsites.net`. To use a custom domain name, such as `contoso.com`, create domain name service (DNS) records that map the custom domain name to the IP address. For more information, see [Configure a custom domain name in Azure App Service][custom-domain-name].
 * **Azure SQL Database**. [SQL Database][sql-db] is a relational database-as-a-service in the cloud.
 * **Logical server**. In Azure SQL Database, a logical server hosts your databases. You can create multiple databases per logical server.
 * **Azure Storage**. Create an Azure storage account with a blob container to store diagnostic logs.
