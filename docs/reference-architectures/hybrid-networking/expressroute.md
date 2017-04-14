@@ -91,7 +91,7 @@ ExpressRoute 연결성 공급자는 다음과 같은 방법을 통해 귀하의 
     회로가 준비되면 출력의 서비스 공급자 섹션의 프로비전 상태 필드가 NotProvisioned에서 Provisioned로 변경됩니다.
 
     > [!참고]
-    > 레이어3 연결 사용자의 경우, 공급자는 사용자를 위한 라우팅을 구성하고 관리해야합니다. 공급자가 적합한 루트를 구현하기 위해 필요한 정보를 공급         자에게 제공합니다.
+    > 레이어3 연결 사용자의 경우, 공급자는 사용자를 위한 라우팅을 구성하고 관리해야합니다. 공급자가 적합한 루트를 구현하기 위해 필요한 정보를 공급자에게 제공합니다.
     > 
     > 
 
@@ -248,26 +248,25 @@ VM에 대한 관리 끝점을 외부 네트워크에 노출해야만 하는 경�
 
 ## 솔루션 배포
 
-**Prequisites.** You must have an existing on-premises infrastructure already configured with a suitable network appliance.
+**사전 준비 사항** 적합한 네트워크 어플라이언스를 통해 이미 구성된 기존의 온-프레미스 인프라가 존재해야 합니다.
 
-To deploy the solution, perform the following steps.
+다음 절차를 통해 이 솔루션을 배포할 수 있습니다.
 
-1. Click the button below:<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-2. Wait for the link to open in the Azure portal, then follow these steps:
-   * The **Resource group** name is already defined in the parameter file, so select **Create New** and enter `ra-hybrid-er-rg` in the text box.
-   * Select the region from the **Location** drop down box.
-   * Do not edit the **Template Root Uri** or the **Parameter Root Uri** text boxes.
-   * Review the terms and conditions, then click the **I agree to the terms and conditions stated above** checkbox.
-   * Click the **Purchase** button.
-3. Wait for the deployment to complete.
-4. Click the button below:<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute%2Fazuredeploy-expressRouteCircuit.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-5. Wait for the link to open in the Azure portal, then follow these steps:
-   * Select **Use existing** in the **Resource group** section and enter `ra-hybrid-er-rg` in the text box.
-   * Select the region from the **Location** drop down box.
-   * Do not edit the **Template Root Uri** or the **Parameter Root Uri** text boxes.
-   * Review the terms and conditions, then click the **I agree to the terms and conditions stated above** checkbox.
-   * Click the **Purchase** button.
-6. Wait for the deployment to complete.
+1. 아래 단추를 우클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+2. Azure 포털에서 링크가 열리면 다음 절차를 따릅니다.
+   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-hybrid-er-rg`를 입력하세요.   * **위치** 드롭다운 상자에서 지역을 선택하세요.
+   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
+   * 사용약관을 검토한 후 **위에 명시된 사용약관에 동의함** 확인란을 클릭합니다.
+   * **구입** 단추를 클릭합니다.
+3. 명령이 완료될 때까지 기다립니다.
+4. 아래 단추를 우클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute%2Fazuredeploy-expressRouteCircuit.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+5. Azure 포털에서 링크가 열리면 다음 절차를 따릅니다.
+   * **리소스 그룹** 섹션에서 **기존 사용**을 선택한 다음 텍스트 상자에 `ra-hybrid-er-rg`를 입력하세요.
+   * **위치** 드롭다운 상자에서 지역을 선택하세요.
+   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
+   * 사용약관을 검토한 후 **위에 명시된 사용약관에 동의함** 확인란을 클릭합니다.
+   * **구입** 단추를 클릭합니다.
+6. 명령이 완료될 때까지 기다립니다.
 
 
 <!-- links -->
