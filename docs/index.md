@@ -39,8 +39,8 @@ ms.author: pnp
                     </div>
                 </div>
                 <div class="cardText">
-                    <h3>Cloud Design Patterns</h3>
-                    <p>Design patterns for developers and solution architects. Each pattern describes a problem, a pattern that addresses the problem, and an example based on Azure.</p>
+                    <h3>클라우드 설계 패턴</h3>
+                    <p>개발자와 솔루션 설계자를 위한 설계 패턴으로, 각각의 패턴에는 문제, 문제 해결 패턴, Azure에서의 사례가 포함되어 있습니다.</p>
                 </div>
             </div>
         </div>
@@ -58,8 +58,8 @@ ms.author: pnp
                     </div>
                 </div>
                 <div class="cardText">
-                    <h3>Best Practices for Cloud Applications</h3>
-                    <p>Best practices for cloud applications, covering aspects such as auto-scaling, caching, data partitioning, API design, and others.</p>
+                    <h3>클라우드 응용 프로그램을 위한 모범 사례</h3>
+                    <p>클라우드 응용 프로그램을 위한 모범 사례로, 자동 크기 조정, 캐싱, 데이터 파티셔닝, API 설계 등을 포괄합니다.</p>
                 </div>
             </div>
         </div>
@@ -82,8 +82,8 @@ ms.author: pnp
             </div>
         </div>
         <div class="cardText">
-            <h3>Design Review Checklists</h3>
-            <p>Checklists to assist developers and solution architects during the design process.</p>
+            <h3>설계 점검 목록</h3>
+            <p>설계 과정에서 개발자와 솔루션 설계자를 지원하기 위한 설계 점검 목록.</p>
         </div>
     </div>
 </div>
@@ -101,8 +101,8 @@ ms.author: pnp
             </div>
         </div>
         <div class="cardText">
-            <h3>Designing for Resiliency</h3>
-            <p>Learn how to design resiliency applications for Azure.</p>
+            <h3>복원력 설계</h3>
+            <p>Azure를 위한 응용 프로그램 복원력 설계 방법 소개</p>
         </div>
     </div>
 </div>
@@ -120,8 +120,8 @@ ms.author: pnp
             </div>
         </div>
         <div class="cardText">
-            <h3>Run Elasticsearch on Azure</h3>
-            <p>Learn how to deploy, manage, and tune an Elasticsearch cluster on Azure.</p>
+            <h3>Azure에서 Elasticsearch 실행</h3>
+            <p>Azure에서 Elasticsearch 클러스터를 배포, 관리 및 튜닝하는 방법 소개</p>
         </div>
     </div>
 </div>
@@ -139,8 +139,8 @@ ms.author: pnp
             </div>
         </div>
         <div class="cardText">
-            <h3>Azure for AWS Professionals</h3>
-            <p>Leverage your AWS experiences in Microsoft Azure.</p>
+            <h3>AWS 전문가를 위한 Azure</h3>
+            <p>Microsoft Azure에서 귀하의 AWS 경험 활용</p>
         </div>
     </div>
 </div>
@@ -158,8 +158,8 @@ ms.author: pnp
             </div>
         </div>
         <div class="cardText">
-            <h3>Identity Management for Multitenant Applications</h3>
-            <p>Understand the best practices for multitenancy, when using Azure AD for identity management.</p>
+            <h3>멀티 테넌트 응용 프로그램용 ID 관리</h3>
+            <p>ID 관리를 위한 Azure AD 사용 시 멀티 테넌시에 대한 모범 사례 확인</p>
         </div>
     </div>
 </div>
@@ -177,8 +177,8 @@ ms.author: pnp
             </div>
         </div>
         <div class="cardText">
-            <h3>Azure Customer Advisory Team</h3>
-            <p>The AzureCAT team's blog</p>
+            <h3>Azure 고객 상담팀</h3>
+            <p>AzureCAT 팀 블로그</p>
         </div>
     </div>
 </div>
@@ -196,8 +196,8 @@ ms.author: pnp
             </div>
         </div>
         <div class="cardText">
-            <h3>SQL Server Customer Advisory Team</h3>
-            <p>The SQLCAT team's blog</p>
+            <h3>SQL 서버 고객 상담팀</h3>
+            <p>SQLCAT 팀 블로그</p>
         </div>
     </div>
 </div>
