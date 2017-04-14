@@ -373,13 +373,13 @@ VNet의 응용 프로그램이 인터넷으로 데이터를 전송한다면 [강
 
 - **Azure VPN 게이트웨이가 연결되었는지 확인합니다.**
 
-    You can use the following Azure PowerShell command to check the current status of the Azure VPN connection. The `<<connection-name>>` parameter is the name of the Azure VPN connection that links the virtual network gateway and the local gateway.
+    다음 Azure PowerShell 명령어를 사용하여 Azure VPN 연결 상태를 확인할 수 있습니다. `<<connection-name>>` 매개변수는 가상 네트워크 게이트웨이와 로컬 게이트웨이를 연결하는 Azure VPN 연결의 이름입니다.
 
     ```
     Get-AzureRmVirtualNetworkGatewayConnection -Name <<connection-name>> - ResourceGroupName <<resource-group>>
     ```
 
-    The following snippets highlight the output generated if the gateway is connected (the first example), and disconnected (the second example):
+    다음 코드 조각은 게이트웨이 연결 시(첫 번째 예)와 연결 종료 시(두 번째 예) 생성된 출력을 보여줍니다.
 
     ```
     PS C:\> Get-AzureRmVirtualNetworkGatewayConnection -Name profx-gateway-connection -ResourceGroupName profx-prod-rg
@@ -416,44 +416,43 @@ VNet의 응용 프로그램이 인터넷으로 데이터를 전송한다면 [강
     ProvisioningState          : Succeeded
     ...
     ```
+다음 권장사항은 Host VM 구성, 네트워크 대역폭 이용률 또는 응용 프로그램 성능 관련 문제가 있는지 확인하는 데 유용합니다.
 
-The following recommendations are useful for determining if there is an issue with Host VM configuration, network bandwidth utilization, or application performance:
+- **서브넷 내 Azure VM에서 실행되는 게스트 운영 체제의 방화벽이 온-프레미스 IP 범위로부터의 허용된 트래픽을 허용하도록 정확히 구성되었는지 확인합니다.**
 
-- **Verify that the firewall in the guest operating system running on the Azure VMs in the subnet is configured correctly to allow permitted traffic from the on-premises IP ranges.**
+- **트래픽량이 Azure VPN 게이트웨이가 이용할 수 있는 대역폭의 한도에 가깝지 않은지 확인합니다.**
 
-- **Verify that the volume of traffic is not close to the limit of the bandwidth available to the Azure VPN gateway.**
-
-    How to verify this depends on the VPN appliance running on-premises. For example, if you are using RRAS on Windows Server 2012, you can use Performance Monitor to track the volume of data being received and transmitted over the VPN connection. Using the *RAS Total* object, select the *Bytes Received/Sec* and *Bytes Transmitted/Sec* counters:
+    이를 확인하는 방법은 온-프레미스에서 실행되는 VPN 어플라이언스에 따라 달라집니다. 예를 들어, Windows Server 2012에서 라우팅 및 원격 액세스 서비스(RRAS)를 사용하는 경우 Performance Monitor를 통해 VPN 연결을 통해 송수신되는 데이터량을 추적할 수 있습니다. *RAS Total* 개체를 사용하여*Bytes Received/Sec* 및 *Bytes Transmitted/Sec* 카운터를 선택합니다.
 
     ![[3]][3]
 
-    You should compare the results with the bandwidth available to the VPN gateway (100 Mbps for the Basic and Standard SKUs, and 200 Mbps for the High Performance SKU):
+    산출된 결과를 VPN 게이트웨이가 사용할 수 있는 대역폭(기본(Basic)/표준(Standard) SKU는 100 Mbps, 고성능(High Performance) SKU는 200 Mpbs)과 비교합니다.
 
     ![[4]][4]
 
-- **Verify that you have deployed the right number and size of VMs for your application load.**
+- **응용 프로그램 부하에 적합한 수량과 크기의 VM을 배포했는지 확인합니다.**
 
-    Determine if any of the virtual machines in the Azure VNet are running slowly. If so, they may be overloaded, there may be too few to handle the load, or the load-balancers may not be configured correctly. To determine this, [capture and analyze diagnostic information][azure-vm-diagnostics]. You can examine the results using the Azure portal, but many third-party tools are also available that can provide detailed insights into the performance data.
+    Azure VNet에 느리게 실행되는 가상 컴퓨터가 있는지 확인합니다. 만약 있다면 과부하 상태이거나 가상 컴퓨터 수가 부하를 처리하기에 너무 적거나 부하 분산 장치가 제대로 구성되지 않았을 수 있습니다. 이를 확인하려면 [진단 정보를 수집하고 분석합니다][azure-vm-diagnostics]. 결과는 Azure 포털을 통해 확인할 수 있고, 성능 데이터에 대한 세부 정보를 제공하는 다양한 타사 도구를 이용할 수도 있습니다.
 
-- **Verify that the application is making efficient use of cloud resources.**
+- **응용 프로그램이 클라우드 리소스를 효율적으로 이용하는지 확인합니다.**
 
-    Instrument application code running on each VM to determine whether applications are making the best use of resources. You can use tools such as [Application Insights][application-insights].
+    각각의 VM에서 실행되는 응용 프로그램 코드에 대한 계측을 수행하여 응용 프로그램이 리소스를 효율적으로 활용하고 있는지 확인합니다. [Application Insights][application-insights]와 같은 도구를 사용할 수 있습니다.
 
-## Deploy the solution
+## 솔루션 배포
 
 
-**Prequisites.** You must have an existing on-premises infrastructure already configured with a suitable network appliance.
+**사전 준비 사항** 적합한 네트워크 어플라이언스를 통해 이미 구성된 기존의 온-프레미스 인프라가 존재해야 합니다.
 
-To deploy the solution, perform the following steps.
+다음 절차를 통해 이 솔루션을 배포할 수 있습니다.
 
-1. Click the button below:<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fvpn%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-2. Wait for the link to open in the Azure portal, then follow these steps: 
-   * The **Resource group** name is already defined in the parameter file, so select **Create New** and enter `ra-hybrid-vpn-rg` in the text box.
-   * Select the region from the **Location** drop down box.
-   * Do not edit the **Template Root Uri** or the **Parameter Root Uri** text boxes.
-   * Review the terms and conditions, then click the **I agree to the terms and conditions stated above** checkbox.
-   * Click the **Purchase** button.
-3. Wait for the deployment to complete.
+1. 아래 버튼을 마우스 오른쪽 단추로 클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fvpn%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+2. Azure 포털에서 링크가 열리면 다음 절차를 따릅니다.  
+   * **리소스 그룹 ** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-hybrid-vpn-rg`를 입력합니다.
+   * **위치** 드롭다운 상자에서 지역을 선택합니다.
+   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자는 편집하지 않습니다.
+   * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
+   * **구입** 단추를 클릭합니다.
+3. 배포가 완료될 때까지 기다립니다.
 
 
 
