@@ -38,7 +38,7 @@ cardTitle: ExpressRoute
 
 * **Office 365 서비스**. Microsoft의 공개적으로 이용 가능한 Office 365 애플리케이션 및 서비스입니다. 연결은 [Microsoft 피어링][expressroute-peering] 및 조직이 소유하고 있거나 연결성 공급자가 제공하는 주소를 사용하여 수행됩니다.
 
-* **•	연결성 공급자** (미표시). 레이어2 또는 레이어3 연결을 사용하여 귀하의 데이터 센터와 Azure 데이터센터 간 연결을 제공하는 회사입니다.
+* **연결성 공급자** (미표시). 레이어2 또는 레이어3 연결을 사용하여 귀하의 데이터 센터와 Azure 데이터센터 간 연결을 제공하는 회사입니다.
 
 You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
 
