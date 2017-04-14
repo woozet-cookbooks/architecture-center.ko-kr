@@ -150,10 +150,10 @@ Active Directory별 보안 고려사항을 확인하려면 [Active Directory를 
 
 9. Wait a few minutes for the previous steps to complete, then connect to an on-premises VM and perform the steps outlined in the article [Verify a Trust][verify-a-trust] to determine whether the trust relationship between the *contoso.com* and *treyresearch.com* domains is correctly configured.
 
-## Next steps
+## 다음 단계
 
-* Learn the best practices for [extending your on-premises AD DS domain to Azure][adds-extend-domain]
-* Learn the best practices for [creating an AD FS infrastructure][adfs] in Azure.
+* [온-프레미스 AD DS 도메인을 Azure로 확장][adds-extend-domain]하기 위한 모범 사례를 살펴보세요.
+* Azure에서 [AD FS 인프라 생성][adfs]하기 위한 모범 사례를 살펴보세요.
 
 <!-- links -->
 [adds-extend-domain]: adds-extend-domain.md
