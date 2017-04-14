@@ -16,7 +16,7 @@ cardTitle: Improving availability
 ---
 # VPN 장애조치를 지원하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결
 
-이 참조 아키텍처는 사이트 간 가상 사설 네트워크(VPN)를 장애조치 연결로 사용하는 ExpressRoute를 통해 온-프레미스 네트워크를 Azure에 연결하는 방법을 보여줍니다. 트래픽은 ExpressRoute 연결을 통해 온-프레미스 네트워크와 Azure 가상 네트워크(VNet) 사이를 흐릅니다. ExpressRoute 회로에서 연결이 중단되면, 트래픽은 IPSec VPN 터널을 통해 라우팅됩니다. [**이 솔루션 배포하기.**.](#deploy-the-solution)
+이 참조 아키텍처는 사이트 간 가상 사설 네트워크(VPN)를 장애조치 연결로 사용하는 ExpressRoute를 통해 온-프레미스 네트워크를 Azure에 연결하는 방법을 보여줍니다. 트래픽은 ExpressRoute 연결을 통해 온-프레미스 네트워크와 Azure 가상 네트워크(VNet) 사이를 흐릅니다. ExpressRoute 회로에서 연결이 중단되면, 트래픽은 IPSec VPN 터널을 통해 라우팅됩니다. [**이 솔루션 배포하기**.](#deploy-the-solution)
 
 ExpressRoute 회로를 사용할 수 없는 경우 VPN 루트는 사설 피어링 연결만 처리하게 됩니다. 공개 피어링 및 Microsoft 피어링 연결은 인터넷을 통해 이루어집니다. 
 
