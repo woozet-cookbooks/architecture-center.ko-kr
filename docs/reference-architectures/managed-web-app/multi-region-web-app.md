@@ -64,7 +64,7 @@ cardTitle: Run in multiple regions
 
 ### Traffic Manager 구성
 
-**라우팅**. Traffic Manager는 몇 가지 [라우팅 알고리즘][tm-routing]. 을 지원합니다. 이 문서에서 설명하는 시나리오의 경우에는 (과거 *장애조치* 라우팅으로 불린) *우선순위* 라우팅을 사용합니다. 우선순위 라우팅 설정 시 Traffic Manager는 주 지역의 끝점이 통신 불가능한 경우가 아니라며 모든 요청을 주 지역으로 전송합니다. 만약 주 지역이 통신 불가능한 상태라면 Traffic Manager가 부 지역으로 자동 장애조치를 수행합니다. [장애조치 라우팅 메서드 구성][tm-configure-failover]을 참조하시기 바랍니다.
+**라우팅**. Traffic Manager는 몇 가지 [라우팅 알고리즘][tm-routing]을 지원합니다. 이 문서에서 설명하는 시나리오의 경우에는 (과거 *장애조치* 라우팅으로 불린) *우선순위* 라우팅을 사용합니다. 우선순위 라우팅 설정 시 Traffic Manager는 주 지역의 끝점이 통신 불가능한 경우가 아니라며 모든 요청을 주 지역으로 전송합니다. 만약 주 지역이 통신 불가능한 상태라면 Traffic Manager가 부 지역으로 자동 장애조치를 수행합니다. [장애조치 라우팅 메서드 구성][tm-configure-failover]을 참조하시기 바랍니다.
 
 **상태 프로브**. Traffic Manager는 HTTP(또는 HTTPS) 프로브를 사용하여 각 끝점의 가용성을 모니터링합니다. 이 프로브를 통해 Traffic Manager는 부 지역으로의 장애 조치에 대한 통과/실패 테스트를 수행할 수 있습니다. 테스트는 특정 URL 경로에 요청을 전송하는 방식으로 이루어집니다. 타임아웃 전에 비 200 응답을 수신하는 경우 해당 프로브는 실패합니다. 네 번의 요청 실패 후 Traffic Manager는 해당 끝점을 Degraded로 표시하고 다른 끝점으로 장애 조치합니다. 자세한 내용은 [Traffic Manager 끝점 모니터링 및 장애조치][tm-monitoring]를 참조하시기 바랍니다.
 
