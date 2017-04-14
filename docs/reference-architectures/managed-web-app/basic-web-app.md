@@ -42,7 +42,7 @@ cardTitle: Basic web application
 
 * **배포 슬롯**. [배포 슬롯][deployment-slots]을 통해 배포를 스테이징한 후 프로덕션 배포로 변경할 수 있습니다.  이런 방법을 통해 프로덕션 용도로 직접 배포하는 것을 피할 수 있습니다. 구체적인 권장사항은 [관리 효율성](#manageability-considerations) 섹션을 참조하시기 바랍니다.
 
-* **•	IP 주소**. The App Service app has a public IP address and a domain name. The domain name is a subdomain of `azurewebsites.net`, such as `contoso.azurewebsites.net`. To use a custom domain name, such as `contoso.com`, create domain name service (DNS) records that map the custom domain name to the IP address. For more information, see [Configure a custom domain name in Azure App Service][custom-domain-name].
+* **•	IP 주소**. App Service 앱은 공용 IP 주소와 도메인 이름을 갖습니다. 도메인 이름은 `contoso.azurewebsites.net`과 같이 `azurewebsites.net`의 하위 도메인입니다. To use a custom domain name, such as `contoso.com`, create domain name service (DNS) records that map the custom domain name to the IP address. For more information, see [Configure a custom domain name in Azure App Service][custom-domain-name].
 * **Azure SQL Database**. [SQL Database][sql-db] is a relational database-as-a-service in the cloud.
 * **Logical server**. In Azure SQL Database, a logical server hosts your databases. You can create multiple databases per logical server.
 * **Azure Storage**. Create an Azure storage account with a blob container to store diagnostic logs.
