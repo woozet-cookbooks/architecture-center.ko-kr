@@ -6,9 +6,9 @@ ms.service: guidance
 ms.author: pnp
 ---
 
-# Managed web application
+# 관리 웹 응용 프로그램
 
-These reference architectures show proven practices for web applications that use Azure App Service and other managed services in Azure.
+이 참조 아키텍처는 Azure App Service 및 기타 Azure의 관리 서비스를 사용하는 웹 응용 프로그램에 대한 검증된 사례를 보여줍니다.
 
 <ul class="panelContent cardsH">
     <li>
@@ -22,8 +22,8 @@ These reference architectures show proven practices for web applications that us
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Basic web application</h3>
-                            <p>A basic web application that uses Azure App Service and Azure SQL Database.</p>
+                            <h3>기본 웹 응용 프로그램</h3>
+                            <p>Azure App Service와 Azure SQL Database를 사용하는 기본 웹 응용 프로그램.</p>
                         </div>
                     </div>
                 </div>
@@ -41,8 +41,8 @@ These reference architectures show proven practices for web applications that us
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Improved scalability</h3>
-                            <p>Improve the scalability and performance of a web application by adding cache, CDN, and WebJobs for background tasks.</p>
+                            <h3>향상된 확장성</h3>
+                            <p>캐시, CDN, 배경 작업을 위한 WebJobs를 추가하여 웹 응용 프로그램의 확장성과 성능 개선.</p>
                         </div>
                     </div>
                 </div>
@@ -60,8 +60,8 @@ These reference architectures show proven practices for web applications that us
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Run in multiple regions</h3>
-                            <p>Run a web application in multiple regions to achieve high availability.</p>
+                            <h3>여러 지역에서 실행</h3>
+                            <p>여러 지역에서 웹 응용 프로그램을 실행하여 고가용성 달성.</p>
                         </div>
                     </div>
                 </div>
