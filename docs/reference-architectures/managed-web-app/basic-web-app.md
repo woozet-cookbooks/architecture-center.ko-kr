@@ -157,7 +157,7 @@ App Service 앱은 항상 프로덕션 사이트를 말하는 `production`으로
 
 * Azure 포털의 [문제해결 블레이드][troubleshoot-blade]를 통해 일반적인 문제들에 대한 해결책을 찾을 수 있습니다.
 * [로그 스트리밍][web-app-log-stream]을 사용하도록 설정하면 실시간에 가까운 로깅 정보를 확인할 수 있습니다.
-* [Kudu 대시보드][kudu]는 응용 프로그램의 모니터링 및 디버깅을 위한 몇 가지 도구를 제공합니다. 자세한 내용은 [알면 유용한 Azure Websites 온라인 도구][kudu] (블로그)를 참조하시기 바랍니다. Kudu 대시보드는 Azure 포털에서 이용할 수 있습니다. 앱에 대한 블레이드를 열고 **도구**를 클릭한 다음**Kudu**를 클릭합니다.
+* [Kudu 대시보드][kudu]는 응용 프로그램의 모니터링 및 디버깅을 위한 몇 가지 도구를 제공합니다. 자세한 내용은 [알면 유용한 Azure Websites 온라인 도구][kudu] (블로그)를 참조하시기 바랍니다. Kudu 대시보드는 Azure 포털에서 이용할 수 있습니다. 앱에 대한 블레이드를 열고 **도구**를 클릭한 다음 **Kudu**를 클릭합니다.
 * Visual Studio 사용자라면 [Visual Studio를 사용하는 Azure App Service 웹 앱의 문제 해결][troubleshoot-web-app]에서 디버깅 및 문제 해결 팁을 얻으시기 바랍니다.
 
 ## 보안 고려사항
