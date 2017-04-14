@@ -215,7 +215,7 @@ BGP 세션은 60초의 유휴 타임아웃을 사용하도록 기본 설정되�
 
 * VNet을 서로 다른 서비스 공급자가 공급하는 여러 ExpressRoute 회로에 연결합니다. 이 전략을 통해 추가적인 고가용성과 재해 복구력을 얻을 수 있습니다.
 
-* •	사이트 간 VPN을 ExpressRoute를 위한 장애조치 경로로 설정합니다. 이 옵션에 대한 자세한 내용은 [VPN 장애조치를 지원하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결][highly-available-network-architecture]을 참조하세요.
+* 사이트 간 VPN을 ExpressRoute를 위한 장애조치 경로로 설정합니다. 이 옵션에 대한 자세한 내용은 [VPN 장애조치를 지원하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결][highly-available-network-architecture]을 참조하세요.
  T이 옵션은 사설 피어링에만 적용할 수 있습니다. Azure와 Office 365 서비스의 경우 유일한 장애조치 경로는 인터넷입니다.
 
 ## 관리 효율성 고려사항
