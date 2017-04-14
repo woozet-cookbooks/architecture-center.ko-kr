@@ -6,7 +6,7 @@ ms.service: guidance
 ms.author: pnp
 ---
 
-# Azure Architecture Center
+# Azure 아키텍처 센터
 
 <ul class="panelContent cardsC">
     <li>
