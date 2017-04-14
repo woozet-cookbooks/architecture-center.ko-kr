@@ -57,7 +57,7 @@ You can download a [Visio file](https://aka.ms/arch-diagrams) of this architectu
 
 ### VNet 및 GatewaySubnet
 
-ExpressRoute 가상 네트워크 게이트웨이와 VPN 가상 네트워크 게이트웨이를 동일한 VNet에 생성합니다. 즉, 두 게이트웨이는 GatewaySubnet이라는 이름의 동일한 서브넷을 공유해야 합니다.
+ExpressRoute 가상 네트워크 게이트웨이와 VPN 가상 네트워크 게이트웨이를 동일한 VNet에 생성합니다. 즉, 두 게이트웨이는 **GatewaySubnet**이라는 이름의 동일한 서브넷을 공유해야 합니다.
 
 VNet이 이미 GatewaySubnet이라는 이름의 서브넷을 포함하고 있는 경우에는 해당 서브넷이 /27 이상의 주소 공간을 가져야 합니다. 기존 서브넷이 너무 작은 경우에는 다음 PowerShell 명령어를 사용하여 해당 서브넷을 삭제합니다. 
 
@@ -66,7 +66,7 @@ $vnet = Get-AzureRmVirtualNetworkGateway -Name <yourvnetname> -ResourceGroupName
 Remove-AzureRmVirtualNetworkSubnetConfig -Name GatewaySubnet -VirtualNetwork $vnet
 ```
 
-If the VNet does not contain a subnet named **GatewaySubnet**, create a new one using the following Powershell command:
+VNet이 **GatewaySubnet**이라는 이름의 서브넷을 포함하지 않으면, 다음 PowerShell 명령어를 사용하여 새 서브넷을 생성합니다.
 
 ```powershell
 $vnet = Get-AzureRmVirtualNetworkGateway -Name <yourvnetname> -ResourceGroupName <yourresourcegroup>
@@ -74,7 +74,7 @@ Add-AzureRmVirtualNetworkSubnetConfig -Name "GatewaySubnet" -VirtualNetwork $vne
 $vnet = Set-AzureRmVirtualNetwork -VirtualNetwork $vnet
 ```
 
-### VPN and ExpressRoute gateways
+### VPN 및 ExpressRoute 게이트웨이
 
 Verify that your organization meets the [ExpressRoute prerequisite requirements][expressroute-prereq] for connecting to Azure.
 
