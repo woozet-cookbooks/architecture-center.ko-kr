@@ -34,7 +34,7 @@ cardTitle: VPN
 
 * **가상 네트워크(VNet)**. 클라우드 응용 프로그램과 Azure VPN 게이트웨이를 위한 구성요소는 동일한 [VNet][azure-virtual-network]에 존재합니다.
 
-* **Azure VPN 게이트웨이**. [VPN gateway][azure-vpn-gateway] 서비스를 활용히면 VPN 어플라이언스를 통해 VNet을 온-프레미스 네트워크에 연결할 수 있습니다. 자세한 내용은 [온-프레미스 네트워크를 Microsoft Azure 가상 네트워크에 연결][connect-to-an-Azure-vnet]을 참조하시기 바랍니다. VPN 게이트웨이에는 다음과 같은 요소들이 포함되어 있습니다.
+* **Azure VPN 게이트웨이**. [VPN gateway][azure-vpn-gateway] 서비스를 활용하면 VPN 어플라이언스를 통해 VNet을 온-프레미스 네트워크에 연결할 수 있습니다. 자세한 내용은 [온-프레미스 네트워크를 Microsoft Azure 가상 네트워크에 연결][connect-to-an-Azure-vnet]을 참조하시기 바랍니다. VPN 게이트웨이에는 다음과 같은 요소들이 포함되어 있습니다.
   
   * **가상 네트워크 게이트웨이**. VNet을 위한 가상 VPN 어플라이언스를 제공하는 리소스. 이 리소스는 온-프레미스 네트워크로부터 VNet으로 트래픽을 라우팅하는 역할을 합니다.
   * **로컬 네트워크 게이트웨이**. 온-프레미스 VPN 어플라이언스의 추상화. 클라우드 응용 프로그램에서 온-프레미스 네트워크로의 네트워크 트래픽은 이 게이트웨이를 통해 라우팅됩니다.
