@@ -69,37 +69,37 @@ ExpressRoute 연결성 공급자는 다음과 같은 방법을 통해 귀하의 
 
 ### ExpressRoute 회로
 
-Ensure that your organization has met the [ExpressRoute prerequisite requirements][expressroute-prereqs] for connecting to Azure.
+귀하의 조직이 Azure 연결을 위한 [ExpressRoute 사전 요구사항][expressroute-prereqs]을 충족하는지 확인하세요.
 
-If you haven't already done so, add a subnet named `GatewaySubnet` to your Azure VNet and create an ExpressRoute virtual network gateway using the Azure VPN gateway service. For more information about this process, see [ExpressRoute workflows for circuit provisioning and circuit states][ExpressRoute-provisioning].
+아직 충족되지 않았다면 GatewaySubnet이라는 이름의 서브넷을 Azure VNet에 추가하고 Azure VPN 게이트웨이 서비스를 이용하여 ExpressRoute 가상 네트워크 게이트웨이를 만듭니다. 이 프로세스에 대한 자세한 내용은 [회로 프로비전 및 회로 상태에 대한 ExpressRoute 워크플로우][ExpressRoute-provisioning]를 참조하세요.
 
-Create an ExpressRoute circuit as follows:
+다음과 같이 ExpressRoute 회로를 생성합니다.
 
-1. Run the following PowerShell command:
+1. 다음과 같은 PowerShell 명령어를 실행합니다.
    
     ```powershell
     New-AzureRmExpressRouteCircuit -Name <<circuit-name>> -ResourceGroupName <<resource-group>> -Location <<location>> -SkuTier <<sku-tier>> -SkuFamily <<sku-family>> -ServiceProviderName <<service-provider-name>> -PeeringLocation <<peering-location>> -BandwidthInMbps <<bandwidth-in-mbps>>
     ```
-2. Send the `ServiceKey` for the new circuit to the service provider.
+2. 새 회로에 대한 서비스키를 서비스 공급자에게 전달합니다.
 
-3. Wait for the provider to provision the circuit. To verify the provisioning state of a circuit, run the following PowerShell command:
+3. 공급자가 회로를 프로비전할 때까지 기다립니다. 회로의 프로비전 상태를 확인하려면 다음과 같은 PowerShell 명령어를 실행합니다.
    
     ```powershell
     Get-AzureRmExpressRouteCircuit -Name <<circuit-name>> -ResourceGroupName <<resource-group>>
     ```
 
-    The `Provisioning state` field in the `Service Provider` section of the output will change from `NotProvisioned` to `Provisioned` when the circuit is ready.
+    회로가 준비되면 출력의 서비스 공급자 섹션의 프로비전 상태 필드가 NotProvisioned에서 Provisioned로 변경됩니다.
 
-    > [!NOTE]
-    > If you're using a layer 3 connection, the provider should configure and manage routing for you. You provide the information necessary to enable the provider to implement the appropriate routes.
+    > [!참고]
+    > 레이어3 연결 사용자의 경우, 공급자는 사용자를 위한 라우팅을 구성하고 관리해야합니다. 공급자가 적합한 루트를 구현하기 위해 필요한 정보를 공급자에게 제공합니다.
     > 
     > 
 
-4. If you're using a layer 2 connection:
+4. 레이어2 연결 사용자의 경우,
 
-    1. Reserve two /30 subnets composed of valid public IP addresses for each type of peering you want to implement. These /30 subnets will be used to provide IP addresses for the routers used for the circuit. If you are implementing private, public, and Microsoft peering, you'll need 6 /30 subnets with valid public IP addresses.     
+    a. 구현하려는 각 피어링 유형에 대한 유효한 공인 IP 주소로 구성된 두 개의 /30 서브넷을 예약합니다. 이 /30 서브넷들은 회로에 사용되는 라우터에 대한 IP 주소를 공급하기 위해 사용됩니다. 사설, 공개 및 Microsoft 피어링을 구현하는 경우에는 유효한 공인 IP 주소를 가진 여섯 개의 /30 서브넷이 필요합니다.      
 
-    2. Configure routing for the ExpressRoute circuit. Run the following PowerShell commands for each type of peering you want to configure (private, public, and Microsoft). For more information, see [Create and modify routing for an ExpressRoute circuit][configure-expressroute-routing].
+    b. ExpressRoute 회로에 대한 라우팅을 구성합니다. 구성하려는 각 피어링 유형(사설, 공개, Microsoft)에 대하여 다음과 같은 PowerShell 명령어를 실행합니다. 자세한 내용은 [ExpressRoute 회로를 위한 라우팅 생성 및 변경][configure-expressroute-routing]을 참조하세요.
    
         ```powershell
         Set-AzureRmExpressRouteCircuitPeeringConfig -Name <<peering-name>> -Circuit <<circuit-name>> -PeeringType <<peering-type>> -PeerASN <<peer-asn>> -PrimaryPeerAddressPrefix <<primary-peer-address-prefix>> -SecondaryPeerAddressPrefix <<secondary-peer-address-prefix>> -VlanId <<vlan-id>>
@@ -107,9 +107,9 @@ Create an ExpressRoute circuit as follows:
         Set-AzureRmExpressRouteCircuit -ExpressRouteCircuit <<circuit-name>>
         ```
 
-    3. Reserve another pool of valid public IP addresses to use for network address translation (NAT) for public and Microsoft peering. It is recommended to have a different pool for each peering. Specify the pool to your connectivity provider, so they can configure border gateway protocol (BGP) advertisements for those ranges.
+    c.	공개 피어링 및 Microsoft 피어링에 대한 네트워크 주소 변환(NAT)에 사용할 또 다른 유효한 IP 주소 풀을 예약합니다. 각 피어링에 대해 별도의 풀을 가지는 것을 권장합니다. 해당하는 풀을 연결성 공급자에게 알려 이 범위에 대한 경계 게이트웨이 프로토콜(BGP) 광고를 구성할 수 있도록 합니다.
 
-5. Run the following PowerShell commands to link your private VNet(s) to the ExpressRoute circuit. For more information,see [Link a virtual network to an ExpressRoute circuit][link-vnet-to-expressroute].
+5. 다음 PowerShell 명령어를 실행하여 사설 VNet을 ExpressRoute 회로에 연결합니다. 자세한 내용은 [가상 네트워크를 ExpressRoute 회로에 연결][link-vnet-to-expressroute]을 참조하세요.
 
     ```powershell
     $circuit = Get-AzureRmExpressRouteCircuit -Name <<circuit-name>> -ResourceGroupName <<resource-group>>
@@ -117,17 +117,17 @@ Create an ExpressRoute circuit as follows:
     New-AzureRmVirtualNetworkGatewayConnection -Name <<connection-name>> -ResourceGroupName <<resource-group>> -Location <<location> -VirtualNetworkGateway1 $gw -PeerId $circuit.Id -ConnectionType ExpressRoute
     ```
 
-You can connect multiple VNets located in different regions to the same ExpressRoute circuit, as long as all VNets and the ExpressRoute circuit are located within the same geopolitical region.
+서로 다른 지역에 위치한 여러 VNet을 동일한 ExpressRoute 회로에 연결할 수 있습니다. 단, 모든 VNet과 ExpressRoute 회로는 하나의 지정학적 지역에 있어야 합니다.
 
-### Troubleshooting 
+### 문제 해결 
 
-If a previously functioning ExpressRoute circuit now fails to connect, in the absence of any configuration changes on-premises or within your private VNet, you may need to contact the connectivity provider and work with them to correct the issue. Use the following Powershell commands to verify that the ExpressRoute circuit has been provisioned:
+온-프레미스나 사설 VNet의 설정 변경 없이 이전에 작동하던 ExpressRoute 회로가 연결이 중단된다면 연결성 공급자에게 연락하여 이 문제를 해결해야 합니다. 다음 PowerShell 명령어를 사용하여 ExpressRoute 회로가 프로비전되었는지 확인할 수 있습니다.
 
 ```powershell
 Get-AzureRmExpressRouteCircuit -Name <<circuit-name>> -ResourceGroupName <<resource-group>>
 ```
 
-The output of this command shows several properties for your circuit, including `ProvisioningState`, `CircuitProvisioningState`, and `ServiceProviderProvisioningState` as shown below.
+이 명령어의 출력은 아래와 같이 `ProvisioningState`, `CircuitProvisioningState`, `ServiceProviderProvisioningState`를 포함한 회로의 여러 속성들을 보여줍니다.
 
 ```
 ProvisioningState                : Succeeded
@@ -140,35 +140,35 @@ CircuitProvisioningState         : Enabled
 ServiceProviderProvisioningState : NotProvisioned
 ```
 
-If the `ProvisioningState` is not set to `Succeeded` after you tried to create a new circuit, remove the circuit by using the command below and try to create it again.
+새 회로의 생성을 시도한 후 `ProvisioningState`가 `Succeeded`로 되어있지 않다면, 아래 명령어를 사용하여 회로를 삭제하고 다시 시도하세요.
 
 ```powershell
 Remove-AzureRmExpressRouteCircuit -Name <<circuit-name>> -ResourceGroupName <<resource-group>>
 ```
 
-If your provider had already provisioned the circuit, and the `ProvisioningState` is set to `Failed`, or the `CircuitProvisioningState` is not `Enabled`, contact your provider for further assistance.
+공급자가 이미 회로를 프로비전했는데도 불구하고 `ProvisioningState`가 `Failed`로 되어있거나 `CircuitProvisioningState`가 `Enabled`가 아니라면, 공급자에게 연락하여 도움을 받으세요.
 
-## Scalability considerations
+## 확장성 고려사항
 
-ExpressRoute circuits provide a high bandwidth path between networks. Generally, the higher the bandwidth the greater the cost. 
+ExpressRoute 회로는 네트워크 간 높은 대역폭 경로를 제공합니다. 일반적으로 대역폭이 높을 수록 비용이 증가합니다. 
 
-ExpressRoute offers two [pricing plans][expressroute-pricing] to customers, a metered plan and an unlimited data plan. Charges vary according to circuit bandwidth. Available bandwidth will likely vary from provider to provider. Use the `Get-AzureRmExpressRouteServiceProvider` cmdlet to see the providers available in your region and the bandwidths that they offer.
+ExpressRoute는 고객에게 계량 요금제와 무제한 데이터 요금제의 두 가지 [요금제][expressroute-pricing]를 제공합니다. 요금은 회로 대역폭에 따라 달라집니다. 사용 가능한 대역폭은 공급자에 따라 다를 수 있습니다. `Get-AzureRmExpressRouteServiceProvider`cmdlet을 사용하면 귀하의 지역의 공급자와 제공되는 대역폭을 확인할 수 있습니다.
  
-A single ExpressRoute circuit can support a certain number of peerings and VNet links. See [ExpressRoute limits](/azure/azure-subscription-service-limits) for more information.
+단일 ExpressRoute 회로는 일정한 수의 피어링과 VNet 링크를 지원합니다. 자세한 내용은 [ExpressRoute 한도](/azure/azure-subscription-service-limits)를 참조하세요.
 
-For an extra charge, the ExpressRoute Premium add-on provides some additional capability:
+추가 요금을 내면 ExpressRoute Premium 애드온을 통해 추가 기능을 사용할 수 있습니다.
 
-* Increased route limits for public and private peering. 
-* Increased number of VNet links per ExpressRoute circuit. 
-* Global connectivity for services.
+* 공개 및 사설 피어링 루트 한도 증가. 
+* ExpressRoute 회로당 VNet 링크 수 증가. 
+* 글로벌 서비스 연결성.
 
-See [ExpressRoute pricing][expressroute-pricing] for details. 
+자세한 내용은 [ExpressRoute 가격 책정][expressroute-pricing]을 참조하세요. 
 
-ExpressRoute circuits are designed to allow temporary network bursts up to two times the bandwidth limit that you procured for no additional cost. This is achieved by using redundant links. However, not all connectivity providers support this feature. Verify that your connectivity provider enables this feature before depending on it.
+ExpressRoute 회로는 추가 비용 없이 구입한 대역폭 한도의 최대 두 배까지 일시적인 네트워크 버스트를 허용하도록 설계됩니다. 이러한 설계는 중복 링크를 통해 구현됩니다.  그러나 모든 연결성 공급자가 이 기능을 제공하지는 않습니다. 이 기능을 선택하기 전에 귀하의 연결성 공급자가 이 기능을 제공하는지 확인하세요.
 
-Although some providers allow you to change your bandwidth, make sure you pick an initial bandwidth that surpasses your needs and provides room for growth. If you need to increase bandwidth in the future, you are left with two options:
+일부 공급자가 대역폭 변경을 허용하더라도 처음부터 니즈보다 여유있는 대역폭을 선택하여 수요 증가에 대비하는 것이 좋습니다. 향후 대역폭을 늘려야하는 경우에는 두 가지 옵션 중 하나를 선택해야 합니다.
 
-- Increase the bandwidth. You should avoid this option as much as possible, and not all providers allow you to increase bandwidth dynamically. But if a bandwidth increase is needed, check with your provider to verify they support changing ExpressRoute bandwidth properties via Powershell commands. If they do, run the commands below.
+- 대역폭 증가. 가능한 한 이 옵션은 피하는 것이 좋으며, 모든 공급자가 동적인 대역폭 증가를 제공하는 것도 아닙니다.  그럼에도 불구하고 대역폭 증가가 필요하다면 공급자가 PowerShell 명령어를 통해 ExpressRoute 대역폭 속성 변경을 지원하는지 확인해 보세요. 만약 공급자가 이를 지원한다면, 아래의 명령어를 실행합니다.
 
     ```powershell
     $ckt = Get-AzureRmExpressRouteCircuit -Name <<circuit-name>> -ResourceGroupName <<resource-group>>
@@ -176,9 +176,9 @@ Although some providers allow you to change your bandwidth, make sure you pick a
     Set-AzureRmExpressRouteCircuit -ExpressRouteCircuit $ckt
     ```
 
-    You can increase the bandwidth without loss of connectivity. Downgrading the bandwidth will result in disruption in connectivity, because you must delete the circuit and recreate it with the new configuration.
+    연결 중단 없이 대역폭을 늘릴 수 있습니다. 대역폭을 낮추는 경우에는 회로를 삭제한 후 새 구성으로 재생성해야 하므로 연결이 중단됩니다.
 
-- Change your pricing plan and/or upgrade to Premium. To do so, run the following commands. The `Sku.Tier` property can be `Standard` or `Premium`; the `Sku.Name` property can be `MeteredData` or `UnlimitedData`.
+- 만약 요금제를 변경하거나 Premium 요금제로 업그레이드하려면 다음 명령을 실행합니다. Sku.Tier 속성은 Standard 또는 Premium, Sku.Name 속성은 MeteredData 또는 UnlimitedData 중 하나입니다.
 
     ```powershell
     $ckt = Get-AzureRmExpressRouteCircuit -Name <<circuit-name>> -ResourceGroupName <<resource-group>>
@@ -190,63 +190,63 @@ Although some providers allow you to change your bandwidth, make sure you pick a
     Set-AzureRmExpressRouteCircuit -ExpressRouteCircuit $ckt
     ```
 
-    > [!IMPORTANT]
-    > Make sure the `Sku.Name` property matches the `Sku.Tier` and `Sku.Family`. If you change the family and tier, but not the name, your connection will be disabled.
+    > [!중요]
+    > SKu.Name 속성이 Sku.Tier 및 Sku.Family와 일치해야 합니다. 패밀리와 계층을 변경하고 이름은 변경하지 않으면 연결을 사용할 수 없게 됩니다.
     > 
     > 
 
-    You can upgrade the SKU without disruption, but you cannot switch from the unlimited pricing plan to metered. When downgrading the SKU, your bandwidth consumption must remain within the default limit of the standard SKU.
+    연결 중단 없이 SKU를 업그레이드할 수는 있지만 무제한 요금제에서 계량 요금제로 변경하는 것은 불가능합니다. SKU를 다운그레이드하는 경우에는 대역폭 소비가 Standard SKU의 기본 한도 내에 있어야 합니다. 
 
-## Availability considerations
+## 가용성 고려사항
 
-ExpressRoute does not support router redundancy protocols such as hot standby routing protocol (HSRP) and virtual router redundancy protocol (VRRP) to implement high availability. Instead, it uses a redundant pair of BGP sessions per peering. To facilitate highly-available connections to your network, Azure provisions you with two redundant ports on two routers (part of the Microsoft edge) in an active-active configuration.
+ExpressRoute는 고가용성을 구현하기 위한 상시 대기 라우팅 프로토콜(HSRP)이나 가상 라우터 중복 프로토콜(VRRP)과 같은 라우터 중복 프로토콜을 지원하지 않습니다. 대신 ExpressRoute는 피어링당 BGP 세션 중복 페어를 사용합니다. 네트워크에 고가용성 연결을 구축하기 위해 Azure는 액티브-액티브로 구성된 두 개의 라우터(Microsoft 에지의 일부)에 대한 두 개의 중복 포트를 제공합니다. 
 
-By default, BGP sessions use an idle timeout value of 60 seconds. If a session times out three times (180 seconds total), the router is marked as unavailable, and all traffic is redirected to the remaining router. This 180-second timeout might be too long for critical applications. If so, you can change your BGP time-out settings on the on-premises router to a smaller value.
+BGP 세션은 60초의 유휴 타임아웃을 사용하도록 기본 설정되어 있습니다. 세션 타임아웃이 세 번(총 180초) 발생하면 라우터는 Unavailable로 표시되고 모든 트래픽이 다른 라우터로 리디렉팅됩니다. 180초 타임 아웃은 중요한 애플리케이션에 적용하기에는 너무 길 수 있습니다. 이 경우에는 온-프레미스 라우터의 BGP 타임아웃 설정값을 줄일 수 있습니다.
 
-You can configure high availability for your Azure connection in different ways, depending on the type of provider you use, and the number of ExpressRoute circuits and virtual network gateway connections you're willing to configure. The following summarizes your availability options:
+공급자 유형, ExpressRoute 회로 수 및 구성하려는 가상 네트워크 게이트웨이 연결에 따라 다양한 방법으로 Azure 연결의 고가용성을 구성할 수 있습니다. 가용성 관련 옵션을 간략히 살펴보면 다음과 같습니다.
 
-* If you're using a layer 2 connection, deploy redundant routers in your on-premises network in an active-active configuration. Connect the primary circuit to one router, and the secondary circuit to the other. This will give you a highly available connection at both ends of the connection. This is necessary if you require the ExpressRoute service level agreement (SLA). See [SLA for Azure ExpressRoute][sla-for-expressroute] for details.
+* 레이어2 연결 사용자의 경우에는 온-프레미스 네트워크에 액티브-액티브 구성의 중복 라우터를 배포합니다. 주 회로를 하나의 라우터에, 부 회로를 다른 라우터에 연결합니다. 이렇게 하면 연결 양 끝에서 고가용성 연결을 얻을 수 있습니다. ExpressRoute 서비스 수준 계약(SLA)을 요구하는 경우 이러한 구성은 반드시 필요합니다. 자세한 내용은 [Azure ExpressRoute를 위한 서비스 수준 계약(SLA)][sla-for-expressroute]을 참조하세요.
 
-    The following diagram shows a configuration with redundant on-premises routers connected to the primary and secondary circuits. Each circuit handles the traffic for a public peering and a private peering (each peering is designated a pair of /30 address spaces, as described in the previous section).
+    다음 다이어그램은 주 회로와 부 회로에 연결된 중복 온-프레미스 라우터의 구성을 보여줍니다. 각 회로는 공개 피어링과 사설 피어링 주소 공간(앞서 설명했듯이 각각 한 쌍의 /30 주소 공간 지정)에 대한 트래픽을 처리합니다.
 
     ![[1]][1]
 
-* If you're using a layer 3 connection, verify that it provides redundant BGP sessions that handle availability for you.
+* 레이어3 연결 사용자인 경우에는 가용성을 처리하는 중복 BGP 세션이 제공되는지 확인합니다.
 
-* Connect the VNet to multiple ExpressRoute circuits, supplied by different service providers. This strategy provides additional high-availability and disaster recovery capabilities.
+* VNet을 서로 다른 서비스 공급자가 공급하는 여러 ExpressRoute 회로에 연결합니다. 이 전략을 통해 추가적인 고가용성과 재해 복구력을 얻을 수 있습니다.
 
-* Configure a site-to-site VPN as a failover path for ExpressRoute. For more about this option, see [Connect an on-premises network to Azure using ExpressRoute with VPN failover][highly-available-network-architecture].
- This option only applies to private peering. For Azure and Office 365 services, the Internet is the only failover path. 
+* •	사이트 간 VPN을 ExpressRoute를 위한 장애조치 경로로 설정합니다. 이 옵션에 대한 자세한 내용은 [VPN 장애조치를 지원하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결][highly-available-network-architecture]을 참조하세요.
+ T이 옵션은 사설 피어링에만 적용할 수 있습니다. Azure와 Office 365 서비스의 경우 유일한 장애조치 경로는 인터넷입니다.
 
-## Manageability considerations
+## 관리 효율성 고려사항
 
-You can use the [Azure Connectivity Toolkit (AzureCT)][azurect] to monitor connectivity between your on-premises datacenter and Azure. 
+[Azure Connectivity Toolkit (AzureCT)][azurect]을 사용하여 온-프레미스 데이터센터와 Azure 간 연결성을 모니터링할 수 있습니다. 
 
-## Security considerations
+## 보안 고려사항
 
-You can configure security options for your Azure connection in different ways, depending on your security concerns and compliance needs. 
+Azure 연결에 대한 보안 옵션을 보안 관심사항과 규제 준수 니즈에 따라 다양한 방법으로 설정할 수 있습니다. 
 
-ExpressRoute operates in layer 3. Threats in the application layer can be prevented by using a network security appliance that restricts traffic to legitimate resources. Additionally, ExpressRoute connections using public peering can only be initiated from on-premises. This prevents a rogue service from accessing and compromising on-premises data from the Internet.
+ExpressRoute는 레이어3에서 실행됩니다. 애플리케이션 계층에서의 위협은 합법적인 리소스에 대한 트래픽을 제한하는 네트워크 보안 어플라이언스를 사용하여 방지할 수 있습니다. 또한 공개 피어링을 사용하는 ExpressRoute 연결은 온-프레미스로부터만 시작할 수 있습니다. 이를 통해 악성 서비스가 인터넷으로부터 온-프레미스 데이터에 접근하여 피해를 주는 것을 방지할 수 있습니다.
 
-To maximize security, add network security appliances between the on-premises network and the provider edge routers. This will help to restrict the inflow of unauthorized traffic from the VNet:
+보안을 극대화하려면 온-프레미스 네트워크와 공급자 에지 라우터 사이에 네트워크 보안 어플라이언스를 추가합니다. 이를 통해 VNet으로부터 불법 트래픽이 유입되는 것을 제한할 수 있습니다.
 
 ![[2]][2]
 
-For auditing or compliance purposes, it may be necessary to prohibit direct access from components running in the VNet to the Internet and implement [forced tunneling][forced-tuneling]. In this situation, Internet traffic should be redirected back through a proxy running  on-premises where it can be audited. The proxy can be configured to block unauthorized traffic flowing out, and filter potentially malicious inbound traffic.
+감사 또는 규제 준수를 위해서는 VNet에서 실행되는 구성 요소에서 인터넷으로의 직접 액세스를 금지하고 [강제 터널링][forced-tuneling]을 구현하는 것이 필요할 수 있습니다. 이 경우 인터넷 트래픽은 감사를 실시할 수 있는 온-프레미스 실행 프록시를 통해 다시 리디렉팅되어야 합니다. 이 프록시는 불법 트래픽이 나가는 것을 차단하고 잠재적 악성 인바운드 트래픽을 필터링하도록 설정될 수 있습니다.
 
 ![[3]][3]
 
-To maximize security, do not enable a public IP address for your VMs, and use NSGs to ensure that these VMs aren't publicly accessible. VMs should only be available using the internal IP address. These addresses can be made accessible through the ExpressRoute network, enabling on-premises DevOps staff to perform configuration or maintenance.
+보안을 극대화하려면 VM에 대해 공인 IP 주소를 사용하도록 설정하는 대신 NSG를 사용하여 VM에 공개적으로 접속할 수 없도록 해야 합니다. VM은 내부 IP 주소를 통해서만 이용하도록 해야 합니다. 이 주소들은 ExpressRoute 네트워크를 통해 접속할 수 있고 온-프레미스 DevOps 담당자가 설정 또는 유지관리를 수행할 수 있습니다.
 
-If you must expose management endpoints for VMs to an external network, use NSGs or access control lists to restrict the visibility of these ports to a whitelist of IP addresses or networks.
+VM에 대한 관리 끝점을 외부 네트워크에 노출해야만 하는 경우에는 NSG 또는 액세스 제어 목록을 사용하여 이 포트들의 가시성을 IP 주소 또는 네트워크 화이트리스트에만 허용하세요.
 
-> [!NOTE]
-> By default, Azure VMs deployed through the Azure portal include a public IP address that provides login access.  
+> [!참고]
+> Azure 포털을 통해 배포된 Azure VM은 기본적으로 로그인 접속을 제공하는 공인 IP 주소를 포함하도록 설정되어 있습니다. 
 > 
 > 
 
 
-## Deploy the solution
+## 솔루션 배포
 
 **Prequisites.** You must have an existing on-premises infrastructure already configured with a suitable network appliance.
 
