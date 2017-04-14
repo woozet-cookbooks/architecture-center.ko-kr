@@ -116,39 +116,39 @@ Active Directory별 보안 고려사항을 확인하려면 [Active Directory를 
     .\Deploy-ReferenceArchitecture.ps1 <subscription id> <location> <mode>
     ```
    
-    Replace `<subscription id>` with your Azure subscription ID.
+    `<subscription id>`를 귀하의 Azure 구독 ID로 대체합니다.
    
-    For `<location>`, specify an Azure region, such as `eastus` or `westus`.
+    `<location>`에는 `eastus`나 `westus` 등 Azure 지역을 입력합니다.
    
-    The `<mode>` parameter controls the granularity of the deployment, and can be one of the following values:
+    `<mode>` 매개변수는 배포의 세분성을 제어하기 위한 것으로 다음 중 하나의 값이 사용됩니다.
    
-   * `Onpremise`: deploys the simulated on-premises environment.
-   * `Infrastructure`: deploys the VNet infrastructure and jump box in Azure.
-   * `CreateVpn`: deploys the Azure virtual network gateway and connects it to the simulated on-premises network.
-   * `AzureADDS`: deploys the VMs acting as Active Directory DS servers, deploys Active Directory to these VMs, and deploys the domain in Azure.
-   * `WebTier`: deploys the web tier VMs and load balancer.
-   * `Prepare`: deploys all of the preceding deployments. **This is the recommended option if If you do not have an existing on-premises network but you want to deploy the complete reference architecture described above for testing or evaluation.** 
-   * `Workload`: deploys the business and data tier VMs and load balancers. Note that these VMs are not included in the `Prepare` deployment.
+   * `Onpremise`: 시뮬레이션된 온-프레미스 환경을 배포합니다.
+   * `Infrastructure`: Azure에 VNet 인프라와 점프 박스를 배포합니다.
+   * `CreateVpn`: dAzure 가상 네트워크 게이트웨이를 배포하고 시뮬레이션된 온-프레미스 네트워크에 연결합니다.
+   * `AzureADDS`: Active Directory DS 서버의 역할을 하는 VM을 배포한 후 이 VM에 Active Directory를 배포하고 Azure에 해당 도메인을 배포합니다.
+   * `WebTier`: 웹 계층 VM 및 부하 분산 장치를 배포합니다.
+   * `Prepare`: 모든 이전 배포를 배포합니다. **기존의 온-프레미스 네트워크가 없지만 테스트나 평가를 위해 위의 완전한 참조 아키텍처를 배포하려는 경우를 위한 추천 옵션입니다.** 
+   * `Workload`: 비즈니스 및 데이터 계층 VM과 부하 분산 장치를 배포합니다. 이 VM은 Prepare 배포에는 포함되지 않습니다.
 
-4. Wait for the deployment to complete. If you are deploying the `Prepare` deployment, it will take several hours.
+4. 명령이 완료될 때까지 기다립니다. Prepare 배포는 수 시간이 소요됩니다.
      
-5. If you are using the simulated on-premises configuration, configure the incoming trust relationship:
+5. 시뮬레이션된 온-프레미스 구성을 사용하는 경우에는 인바운드 트러스트 관계를 설정합니다.
    
-   1. Connect to the jump box (*ra-adtrust-mgmt-vm1* in the *ra-adtrust-security-rg* resource group). Log in as *testuser* with password *AweS0me@PW*.
-   2. On the jump box open an RDP session on the first VM in the *contoso.com* domain (the on-premises domain). This VM has the IP address 192.168.0.4. The username is *contoso\testuser* with password *AweS0me@PW*.
-   3. Download the [incoming-trust.ps1][incoming-trust] script and run it to create the incoming trust from the *treyresearch.com* domain.
+   a.	점프 박스에 연결합니다. (*ra-adtrust-security-rg* 리소스 그룹의 *ra-adtrust-mgmt-vm1*). ID *testuser*, 암호 *AweS0me@PW*로 로그인 합니다.
+   b.	점프 박스에서 *contoso.com* 도메인(온-프레미스 도메인) 내 첫 번째 VM에서 RDP 세션을 엽니다. 이 VM의 IP 주소는 192.168.0.4입니다. ID는 *contoso\testuser*이고 암호는 *AweS0me@PW*입니다.
+   c. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 인바운드 트러스트를 생성합니다.
 
-6. If you are using your own on-premises infrastructure:
+6. 귀하의 온-프레미스 인프라를 사용한다면,
    
-   1. Download the [incoming-trust.ps1][incoming-trust] script.
-   2. Edit the script and replace the value of the `$TrustedDomainName` variable with the name of your own domain.
-   3. Run the script.
+   a. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드합니다.
+   b. 스크립트를 수정하고 변수 `$TrustedDomainName`의 값을 귀하의 도메인 이름으로 대체합니다.
+   c. 스크립트를 실행합니다.
 
-7. From the jump-box, connect to the first VM in the *treyresearch.com* domain (the domain in the cloud). This VM has the IP address 10.0.4.4. The username is *treyresearch\testuser* with password *AweS0me@PW*.
+7. 점프박스로부터 *treyresearch.com* 도메인(클라우드 도메인)의 첫 번째 VM에 접속합니다. 이 VM의 IP 주소는 10.0.4.4입니다. ID는 *treyresearch\testuser*이고 암호는 AweS0me@PW입니다.
 
-8. Download the [outgoing-trust.ps1][outgoing-trust] script and run it to create the incoming trust from the *treyresearch.com* domain. If you are using your own on-premises machines, then edit the script first. Set the `$TrustedDomainName` variable to the name of your on-premises domain, and specify the IP addresses of the Active Directory DS servers for this domain in the `$TrustedDomainDnsIpAddresses` variable.
+8. [outgoing-trust.ps1][outgoing-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 인바운드 트러스트를 생성합니다. 귀하의 온-프레미스 컴퓨터를 사용한다면, 우선 이 스크립트를 수정합니다. 변수 `$TrustedDomainName`을 귀하의 온-프레미스 도메인 이름으로 설정하고, 변수 `$TrustedDomainDnsIpAddresses`에 이 도메인에 대한 Active Directory DS 서버의 IP 주소를 입력합니다.
 
-9. Wait a few minutes for the previous steps to complete, then connect to an on-premises VM and perform the steps outlined in the article [Verify a Trust][verify-a-trust] to determine whether the trust relationship between the *contoso.com* and *treyresearch.com* domains is correctly configured.
+9. 이전 단계가 완료될 때까지 몇 분간 기다린 다음 온-프레미스 VM에 접속하여 [트러스트 확인][verify-a-trust] 문서에 설명된 절차를 수행하여 *contoso.com*과 *treyresearch.com* 도메인 간 트러스트 관계가 정확히 설정되었는지 확인합니다.
 
 ## 다음 단계
 
