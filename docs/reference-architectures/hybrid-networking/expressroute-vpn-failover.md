@@ -14,35 +14,35 @@ pnp.series.title: Connect an on-premises network to Azure
 pnp.series.prev: expressroute
 cardTitle: Improving availability
 ---
-# Connect an on-premises network to Azure using ExpressRoute with VPN failover
+# VPN 장애조치를 지원하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결
 
-This reference architecture shows how to connect an on-premises network to an Azure virtual network (VNet) using ExpressRoute, with a site-to-site virtual private network (VPN) as a failover connection. Traffic flows between the on-premises network and the Azure VNet through an ExpressRoute connection. If there is a loss of connectivity in the ExpressRoute circuit, traffic is routed through an IPSec VPN tunnel. [**Deploy this solution**.](#deploy-the-solution)
+이 참조 아키텍처는 사이트 간 가상 사설 네트워크(VPN)를 장애조치 연결로 사용하는 ExpressRoute를 통해 온-프레미스 네트워크를 Azure에 연결하는 방법을 보여줍니다. 트래픽은 ExpressRoute 연결을 통해 온-프레미스 네트워크와 Azure 가상 네트워크(VNet) 사이를 흐릅니다. ExpressRoute 회로에서 연결이 중단되면, 트래픽은 IPSec VPN 터널을 통해 라우팅됩니다. [**이 솔루션 배포하기.**.](#deploy-the-solution)
 
-Note that if the ExpressRoute circuit is unavailable, the VPN route will only handle private peering connections. Public peering and Microsoft peering connections will pass over the Internet. 
+ExpressRoute 회로를 사용할 수 없는 경우 VPN 루트는 사설 피어링 연결만 처리하게 됩니다. 공개 피어링 및 Microsoft 피어링 연결은 인터넷을 통해 이루어집니다. 
 
 ![[0]][0]
 
-## Architecture 
+## 아키텍처 
 
-The architecture consists of the following components.
+이 아키텍처는 다음과 같은 요소들로 구성되어 있습니다.
 
-* **On-premises network**. A private local-area network running within an organization.
+* **온-프레미스 네트워크**. 조직 내에서 실행되는 사설 로컬 영역 네트워크.
 
-* **VPN appliance**. A device or service that provides external connectivity to the on-premises network. The VPN appliance may be a hardware device, or it can be a software solution such as the Routing and Remote Access Service (RRAS) in Windows Server 2012. For a list of supported VPN appliances and information on configuring selected VPN appliances for connecting to Azure, see [About VPN devices for Site-to-Site VPN Gateway connections][vpn-appliance].
+* **VPN 어플라이언스**. 온-프레미스 네트워크로의 외부 연결을 제공하는 장치 또는 서비스. VPN 어플라이언스는 하드웨어 장치일 수도 있고, Windows Server 2012의 라우팅 및 원격 액세스 서비스(RRAS)와 같은 소프트웨어일 수도 있습니다. 지원되는 VPN 어플라이언스 목록 및 Azure 연결을 위해 선택된 VPN 어플라이언스 설정에 관한 정보는 사이트 간 VPN 게이트웨이 연결을 위한 VPN 장치를 참조하세요.
 
-* **ExpressRoute circuit**. A layer 2 or layer 3 circuit supplied by the connectivity provider that joins the on-premises network with Azure through the edge routers. The circuit uses the hardware infrastructure managed by the connectivity provider.
+* **ExpressRoute 회로**. 에지 라우트(edge router)를 통해 온-프레미스 네트워크를 Azure에 연결하는 연결성 공급자가 제공하는 레이어2 또는 레이어3 회로입니다. 이 회로는 연결성 공급자가 관리하는 하드웨어 인프라를 사용합니다.
 
-* **ExpressRoute virtual network gateway**. The ExpressRoute virtual network gateway enables the VNet to connect to the ExpressRoute circuit used for connectivity with your on-premises network.
+* **ExpressRoute 가상 네트워크 게이트웨이**. ExpressRoute 가상 네트워크 게이트웨이를 통해 온-프레미스 네트워크 연결을 위해 사용되는 ExpressRoute 회로에 VNet을 연결할 수 있습니다.
 
-* **VPN virtual network gateway**. The VPN virtual network gateway enables the VNet to connect to the VPN appliance in the on-premises network. The VPN virtual network gateway is configured to accept requests from the on-premises network only through the VPN appliance. For more information, see [Connect an on-premises network to a Microsoft Azure virtual network][connect-to-an-Azure-vnet].
+* **VPN 가상 네트워크 게이트웨이**. VPN 가상 네트워크 게이트웨이를 통해 VNet을 온-프레미스 네트워크의 VPN 어플라이언스에 연결할 수 있습니다. VPN 가상 네트워크 게이트웨이는 VPN 어플라이언스를 통해서만 온-프레미스 네트워크로부터 오는 요청을 수용하도록 설정됩니다. 자세한 내용은 온-프레미스 네트워크를 Microsoft Azure 가상 네트워크에 연결을 참조하세요.
 
-* **VPN connection**. The connection has properties that specify the connection type (IPSec) and the key shared with the on-premises VPN appliance to encrypt traffic.
+* **VPN 연결**. 연결은 연결 유형(IPSec)과 트래픽을 암호화기 위해 온-프레미스 VPN 어플라이언스와 공유하는 키를 지정하는 속성을 갖습니다.
 
-* **Azure Virtual Network (VNet)**. Each VNet resides in a single Azure region, and can host multiple application tiers. Application tiers can be segmented using subnets in each VNet.
+* **Azure 가상 네트워크(VNet)**. 각 VNet은 단일 Azure 지역에 위치하며 여러 애플리케이션 계층을 호스팅할 수 있습니다. 애플리케이션 계층은 각 VNet의 서브넷을 사용하여 나눌 수 있습니다.
 
-* **Gateway subnet**. The virtual network gateways are held in the same subnet.
+* **게이트웨이 서브넷**. 가상 네트워크 게이트웨이들은 동일한 서브넷에 배치됩니다.
 
-* **Cloud application**. The application hosted in Azure. It might include multiple tiers, with multiple subnets connected through Azure load balancers. For more information about the application infrastructure, see [Running Windows VM workloads][windows-vm-ra] and [Running Linux VM workloads][linux-vm-ra].
+* **클라우드 애플리케이션**. Azure에 호스팅된 애플리케이션. 여러 계층이 포함될 수 있고, 여러 서브넷이 Azure 부하 분산 장치를 통해 연결됩니다. For more information about the application infrastructure, see [Running Windows VM workloads][windows-vm-ra] and [Running Linux VM workloads][linux-vm-ra].
 
 You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
 
