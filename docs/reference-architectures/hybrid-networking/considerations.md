@@ -8,64 +8,64 @@ ms.topic: article
 ms.service: guidance
 ---
 
-# Choose a solution for connecting an on-premises network to Azure
+# 온-프레미스 네트워크를 Azure에 연결하기 위한 솔루션 선택
 
-This article compares options for connecting an on-premises network to an Azure Virtual Network (VNet). We provide a reference architecture and a deployable solution for each option.
+이 문서는 온-프레미스 네트워크를 Azure 가상 네트워크(VNet)에 연결하기 위한 솔루션들을 비교하고 그 장점과 고려사항을 소개합니다. 각 옵션마다 각각 한 개의 참조 아키텍처와 배포가능한 솔루션을 제공합니다. 
 
-## VPN connection
+## 가상 사설 네트워크(VPN) 연결
 
-Use a virtual private network (VPN) to connect your on-premises network with an Azure VNet through an IPSec VPN tunnel.
+트래픽은 IPSec VPN 터널을 통해 온-프레미스 네트워크와 Azure 가상 네트워크(VNet) 사이를 흐릅니다.
 
-This architecture is suitable for hybrid applications where the traffic between on-premises hardware and the cloud is likely to be light, or you are willing to trade slightly extended latency for the flexibility and processing power of the cloud.
+이 아키텍처는 온-프레미스 하드웨어와 클라우드 사이의 트래픽이 적은 경우와 대기 시간이 약간 증가하는 것을 감수하고 클라우드의 유연성과 처리 능력을 높이려는 경우에 사용되는 하이브리드 애플리케이션에 적합합니다. 
 
-**Benefits**
+**이점**
 
-- Simple to configure.
+- 간단한 구성.
 
-**Challenges**
+**고려사항**
 
-- Requires an on-premises VPN device.
-- Although Microsoft guarantees 99.9% availability for each VPN Gateway, this SLA only covers the VPN gateway, and not your network connection to the gateway.
-- A VPN connection over Azure VPN Gateway currently supports a maximum of 200 Mbps bandwidth. You may need to partition your Azure virtual network across multiple VPN connections if you expect to exceed this throughput.
+- 온-프레미스 VPN 장치 필요.
+- Microsoft가 각 VPN 게이트웨이에 대해 99.9%의 가용성을 보장하더라도 서비스 수준 계약(SLA)는 VPN 게이트웨이만 다루고 게이트웨이에 대한 네트워크 연결은 다루지 않습니다.
+- Azure VPN 게이트웨이에 대한 VPN 연결은 현재 최대 200 Mbps의 대역폭을 지원합니다. 이 처리율이 초과될 것으로 예상된다면 여러 VPN 연결에 걸쳐 Azure 가상 네트워크를 분할할 필요가 있습니다.
 
-**[Read more...][vpn]**
+**[자세히 보기][vpn]**
 
-## Azure ExpressRoute connection
+## Azure ExpressRoute 연결
 
-ExpressRoute connections use a private, dedicated connection through a third-party connectivity provider. The private connection extends your on-premises network into Azure. 
+ExpressRoute 연결은 외부 연결성 공급자를 통해 사설 전용 연결을 사용합니다. 사설 연결을 통해 온-프레미스 네트워크를 Azure로 확장할 수 있습니다.  
 
-This architecture is suitable for hybrid applications running large-scale, mission-critical workloads that require a high degree of scalability. 
+이 아키텍처는 높은 확장성을 요구하는 대규모의 중요한 워크로드를 실행하는 하이브리드 애플리케이션에 적합합니다. 
 
-**Benefits**
+**이점**
 
-- Much higher bandwidth available; up to 10 Gbps depending on the connectivity provider.
-- Supports dynamic scaling of bandwidth to help reduce costs during periods of lower demand. However, not all connectivity providers have this option.
-- May allow your organization direct access to national clouds, depending on the connectivity provider.
-- 99.9% availability SLA across the entire connection.
+- 연결성 공급자에 따라 최대 10 Gbps까지의 높은 대역폭 가능.
+- 수요가 적을 때 비용을 절약할 수 있는 동적 대역폭 스케일링 지원. 그러나 모든 연결성 공급자가 이 옵션을 제공하지는 않습니다.
+- 연결성 공급자에 따라 조직이 국가 클라우드에 직접 접속할 수도 있습니다.
+- 전체 연결에 대해 99.9% 가용성 SLA
 
-**Challenges**
+**고려사항**
 
-- Can be complex to set up. Creating an ExpressRoute connection requires working with a third-party connectivity provider. The provider is responsible for provisioning the network connection.
-- Requires high-bandwidth routers on-premises.
+- 연결 생성에는 외부 연결성 공급자의 협력이 필요합니다. 연결성 공급자는 네트워크 연결의 프로비전을 담당합니다.
+- 온-프레미스에 높은 대역폭의 라우터 필요.
 
-**[Read more...][expressroute]**
+**[자세히 보기][expressroute]**
 
-## ExpressRoute with VPN failover
+## VPN 장애조치를 지원하는 Expressroute
 
 This options combines the previous two, using ExpressRoute in normal conditions, but failing over to a VPN connection if there is a loss of connectivity in the ExpressRoute circuit.
 
-This architecture is suitable for hybrid applications that need the higher bandwidth of ExpressRoute, and also require highly available network connectivity. 
+이 아키텍처는 ExpressRoute의 높은 대역폭과 고가용성 네트워크 연결성이 필요한 하이브리드 애플리케이션에 적합합니다.
 
-**Benefits**
+**이점**
 
-- High availability if the ExpressRoute circuit fails, although the fallback connection is on a lower bandwidth network.
+- ExpressRoute 회로 장애 시 고가용성. 그러나 대체 연결(fallback connection)은 더 낮은 대역폭 네트워크에서 이루어집니다.
 
-**Challenges**
+**고려사항**
 
-- Complex to configure. You need to set up both a VPN connection and an ExpressRoute circuit.
-- Requires redundant hardware (VPN appliances), and a redundant Azure VPN Gateway connection for which you pay charges.
+- 복잡한 구성. VPN 연결과 ExpressRoute 회로를 모두 설치해야 합니다.
+- 중복 하드웨어(VPN 어플라이언스) 및 유료 중복 Azure VPN 게이트웨이 연결 필요.
 
-**[Read more...][expressroute-vpn-failover]**
+**[추가 정보][expressroute-vpn-failover]**
 
 <!-- links -->
 [expressroute]: ./expressroute.md
