@@ -20,8 +20,8 @@ ms.author: pnp
                         </div>
                     </div>
                 <div class="cardText">
-                    <h3>Reference Architectures</h3>
-                    <p>A set of recommended architectures for Azure. Each architecture includes best practices, prescriptive steps, and deployable solution.</p>
+                    <h3>참조 아키텍처</h3>
+                    <p>클라우드용으로 권장되는 아키텍처로, 각각의 아키텍처에는 모범 사례, 관행적 단계, 배포 가능한 솔루션이 포함되어 있습니다.</p>
                 </div>
             </div>
         </div>
