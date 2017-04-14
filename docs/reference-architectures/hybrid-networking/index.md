@@ -6,9 +6,9 @@ ms.service: guidance
 ms.author: pnp
 ---
 
-# Connect an on-premises network to Azure
+# 온-프레미스 네트워크를 Azure에 연결
 
-These reference architectures show proven practices for creating a robust network connection between an on-premises network and Azure. [Which should I choose?](./considerations.md)
+이 참조 아키텍처는 온프레미스 네트워크와 Azure 사이의 강력한 네트워크 연결 생성을 위한 검증된 사례들을 보여줍니다. [Which should I choose?](./considerations.md)
 
 <ul class="panelContent cardsH">
     <li>
@@ -23,7 +23,7 @@ These reference architectures show proven practices for creating a robust networ
                         </div>
                         <div class="cardText">
                             <h3>VPN</h3>
-                            <p>Extend an on-premises network to Azure using a site-to-site virtual private network (VPN).</p>
+                            <p>사이트 간 가상 사설 네트워크(VPN)를 통해 온-프레미스 네트워크를 Azure로 확장.</p>
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ These reference architectures show proven practices for creating a robust networ
                         </div>
                         <div class="cardText">
                             <h3>Expressroute</h3>
-                            <p>Extend an on-premises network to Azure using Azure Expressroute</p>
+                            <p>Azure Expressroute를 통해 온-프레미스 네트워크를 Azure로 확장</p>
                         </div>
                     </div>
                 </div>
@@ -60,8 +60,8 @@ These reference architectures show proven practices for creating a robust networ
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Expressroute with VPN failover</h3>
-                            <p>Extend an on-premises network to Azure using Azure Expressroute, with a VPN as a failover connection.</p>
+                            <h3>VPN 장애조치를 지원하는 Expressroute</h3>
+                            <p>VPN을 장애조치 연결로 사용하는 Azure Expressroute를 통해 온-프레미스 네트워크를 Azure로 확장</p>
                         </div>
                     </div>
                 </div>
