@@ -37,7 +37,7 @@ cardTitle: Basic web application
 이 아키텍처는 다음과 같은 요소들로 구성되어 있습니다.
 
 * **리소스 그룹**. [리소스 그룹](/azure/azure-resource-manager/resource-group-overview)은 Azure 리소스를 위한 논리적 컨테이너입니다.
-* **App Service 앱 **. [Azure App Service][app-service]는 클라우드 응용 프로그램을 생성하고 배포하기 위한 완전 관리 플랫폼입니다.     
+* **App Service 앱**. [Azure App Service][app-service]는 클라우드 응용 프로그램을 생성하고 배포하기 위한 완전 관리 플랫폼입니다.     
 * **App Service 요금제**. [App Service 요금제][app-service-plans]는 앱을 호스팅하는 관리 가상 컴퓨터(VM)를 제공합니다. 하나의 요금제에 연결된 모든 앱은 동일한 VM 인스턴스에서 실행됩니다.
 
 * **배포 슬롯**. [배포 슬롯][deployment-slots]을 통해 배포를 스테이징한 후 프로덕션 배포로 변경할 수 있습니다.  이런 방법을 통해 프로덕션 용도로 직접 배포하는 것을 피할 수 있습니다. 구체적인 권장사항은 [관리 효율성](#manageability-considerations) 섹션을 참조하시기 바랍니다.
