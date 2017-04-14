@@ -41,7 +41,7 @@ cardTitle: VPN
   * **연결**. 연결은 연결 유형(IPSec)과 트래픽을 암호화기 위해 온-프레미스 VPN 어플라이언스와 공유하는 키를 지정하는 속성을 갖습니다.
   * **게이트웨이 서브넷**. 가상 네트워크 게이트웨이는 자체 서브넷에 배치됩니다. 이 서브넷에는 아래 권장사항 섹션에 설명된 여러 요구사항이 적용됩니다.
 
-* **클라우드 응용 프로그램**. The application hosted in Azure. It might include multiple tiers, with multiple subnets connected through Azure load balancers. For more information about the application infrastructure, see [Running Windows VM workloads][windows-vm-ra] and [Running Linux VM workloads][linux-vm-ra].
+* **클라우드 응용 프로그램**. Azure에 호스팅된 응용 프로그램. 여러 계층이 포함될 수 있고, Azure 부하 분산 장치를 통해 여러 서브넷을 연결합니다. For more information about the application infrastructure, see [Running Windows VM workloads][windows-vm-ra] and [Running Linux VM workloads][linux-vm-ra].
 
 * **내부 부하 분산 장치**. VPN 게이트웨이로부터의 네트워크 트래픽은 내부 부하 분산 장치를 통해 클라우드 응용 프로그램으로 라우팅됩니다. 이 부하 분산 장치는 응용 프로그램의 프런트엔드 서브넷에 위치합니다.
 
