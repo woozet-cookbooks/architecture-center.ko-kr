@@ -46,20 +46,20 @@ ExpressRoute 회로를 사용할 수 없는 경우 VPN 루트는 사설 피어�
 
 You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
 
-> [!NOTE]
-> Azure has two different deployment models: [Resource Manager](/azure/azure-resource-manager/resource-group-overview) and classic. This reference architecture uses Resource Manager, which Microsoft recommends for new deployments.
+> [!참고]
+> Azure는 [Resource Manager](/azure/azure-resource-manager/resource-group-overview) 와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 참조 아키텍처에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
 > 
 > 
 
-## Recommendations
+## 추천
 
-The following recommendations apply for most scenarios. Follow these recommendations unless you have a specific requirement that overrides them.
+다음 권장사항은 대부분의 시나리오에 적용됩니다. 다른 구체적인 요구사항이 없다면 가급적 권장사항을 따르시기 바랍니다.
 
-### VNet and GatewaySubnet
+### VNet 및 GatewaySubnet
 
-Create the ExpressRoute virtual network gateway and the VPN virtual network gateway in the same VNet. This means that they should share the same subnet named *GatewaySubnet*.
+ExpressRoute 가상 네트워크 게이트웨이와 VPN 가상 네트워크 게이트웨이를 동일한 VNet에 생성합니다. 즉, 두 게이트웨이는 GatewaySubnet이라는 이름의 동일한 서브넷을 공유해야 합니다.
 
-If the VNet already includes a subnet named *GatewaySubnet*, ensure that it has a /27 or larger address space. If the existing subnet is too small, use the following PowerShell command to remove the subnet: 
+VNet이 이미 GatewaySubnet이라는 이름의 서브넷을 포함하고 있는 경우에는 해당 서브넷이 /27 이상의 주소 공간을 가져야 합니다. 기존 서브넷이 너무 작은 경우에는 다음 PowerShell 명령어를 사용하여 해당 서브넷을 삭제합니다. 
 
 ```powershell
 $vnet = Get-AzureRmVirtualNetworkGateway -Name <yourvnetname> -ResourceGroupName <yourresourcegroup>
