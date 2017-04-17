@@ -6,9 +6,9 @@ ms.service: guidance
 ms.author: pnp
 ---
 
-# Running Linux VM workloads
+# Linux VM 워크로드 실행
 
-These reference architectures show proven practices for running Linux VMs in Azure. 
+이 참조 아키텍처들은 Azure에서 Linux VM을 실행하는 검증된 모범 사례들을 보여줍니다.  
 
 <ul class="panelContent cardsH">
     <li>
@@ -22,8 +22,8 @@ These reference architectures show proven practices for running Linux VMs in Azu
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Single VM</h3>
-                            <p>Baseline recommendations for running any Linux VM in Azure.</p>
+                            <h3>단일 VM</h3>
+                            <p>Azure에서 Linux VM을 실행하기 위한 기본 권장사항.</p>
                         </div>
                     </div>
                 </div>
@@ -41,8 +41,8 @@ These reference architectures show proven practices for running Linux VMs in Azu
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Load balanced VMs</h3>
-                            <p>Multiple VMs placed behind a load balancer for scalability and availability.</p>
+                            <h3>부하 분산 VM</h3>
+                            <p>더 높은 확장성과 가용성을 위해 부하 분산 장치 뒤에 배치된 둘 이상의 VM.</p>
                         </div>
                     </div>
                 </div>
@@ -60,8 +60,8 @@ These reference architectures show proven practices for running Linux VMs in Azu
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>N-tier application</h3>
-                            <p>VMs configured for an N-tier application with Apache Cassandra.</p>
+                            <h3>N계층 응용 프로그램</h3>
+                            <p>Apache Cassandra를 사용하는 N계층 응용 프로그램을 위해 구성된 VM.</p>
                         </div>
                     </div>
                 </div>
@@ -79,8 +79,8 @@ These reference architectures show proven practices for running Linux VMs in Azu
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Multi-region application</h3>
-                            <p>N-tier application deployed to two regions for high availability.</p>
+                            <h3>다지역 응용 프로그램</h3>
+                            <p>고가용성을 위해 두 지역에 배포된 N계층 응용 프로그램.</p>
                         </div>
                     </div>
                 </div>
