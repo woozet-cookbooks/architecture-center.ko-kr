@@ -27,7 +27,7 @@ pnp.series.prev: n-tier
 
 * **주 지역 및 부 지역**. 고가용성을 위해 두 지역을 사용합니다. 하나는 주 지역이고 다른 하나는 장애 조치를 위한 지역입니다. 
 * **Azure Traffic Manager**. [Traffic Manager][traffic-manager]는 들어오는 요청을 이 두 지역 중 하나에 라우팅합니다. 정상적으로 실행되는 경우 Traffic Manager는 요청을 주 지역으로 라우팅하는데, 주 지역이 사용 불가능한 경우에 부 지역으로 장애조치합니다. 자세한 내용은 [Traffic Manager 구성](#traffic-manager-configuration)을 참조하시기 바랍니다.
-* **리소스 그룹**. 주 지역, 부 지역, Traffic Manager에 대한 별도의 [리소스 그룹resource groups][resource groups]을 생성합니다. 이를 통해 각 지역을 단일 리소스 모음으로 보다 유연하게 관리할 수 있습니다. 예를 들면 다른 지역의 실행을 중단하지 않고도 한 지역을 재배포할 수 있습니다. [리소스 그룹을 연결][resource-group-links]하여 해당 응용 프로그램에 대한 모든 리소스 목록을 생성하는 쿼리를 실행할 수 있습니다.
+* **리소스 그룹**. 주 지역, 부 지역, Traffic Manager에 대한 별도의 [리소스 그룹][resource groups]을 생성합니다. 이를 통해 각 지역을 단일 리소스 모음으로 보다 유연하게 관리할 수 있습니다. 예를 들면 다른 지역의 실행을 중단하지 않고도 한 지역을 재배포할 수 있습니다. [리소스 그룹을 연결][resource-group-links]하여 해당 응용 프로그램에 대한 모든 리소스 목록을 생성하는 쿼리를 실행할 수 있습니다.
 * **VNets**. 지역별로 별개의 VNet을 생성하는데, 이 때 주소 공간이 겹치지 않도록 주의해야 합니다. 
 * **SQL 서버 Always On 가용성 그룹**. SQL 서버를 사용하는 경우에는 고가용성을 위해 [SQL Always On 가용성 그룹][sql-always-on]을 사용할 것을 권장합니다. 양 지역에 SQL 서버 인스턴스를 포함하는 단일 가용성 그룹을 만듭니다.  
 
