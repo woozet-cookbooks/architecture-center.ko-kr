@@ -33,61 +33,60 @@ cardTitle: DMZ between Azure and on-premises
 ## 아키텍처 다이어그램
 다음 다이어그램은 이 아키텍처의 중요한 요소들을 보여줍니다.
 
-> [Microsoft 다운로드 센터][visio-download]. This diagram is on the "DMZ - Private" page.
+> [Microsoft 다운로드 센터][visio-download]에서 이 아키텍처 다이어그램을 포함한 Visio 문서를 다운로드할 수 있습니다. 이 다이어그램은 "DMZ - Private" 페이지에 있습니다.
 > 
 > 
 
 [![0]][0] 
 
-* **On-premises network**. A  private local-area network implemented in an organization.
-* **Azure virtual network (VNet)**. The VNet hosts the application and other resources running in Azure.
-* **Gateway**. The gateway provides connectivity between the routers in the on-premises network and the VNet.
-* **Network virtual appliance (NVA)**. NVA is a generic term that describes a VM performing tasks such as allowing or denying access as a firewall, optimizing wide area network (WAN) operations (including network compression), custom routing, or other network functionality.
-* **Web tier, business tier, and data tier subnets**. Subnets hosting the VMs and services that implement an example 3-tier application running in the cloud. See [Running Windows VMs for an N-tier architecture on Azure][ra-n-tier] for more information.
-* **User defined routes (UDR)**. [User defined routes][udr-overview] define the flow of IP traffic within Azure VNets.
+* **온-프레미스 네트워크**. 조직에 구현된 사설 로컬 영역 네트워크.
+* **Azure 가상 네트워크(VNet)**. VNet은 Azure에서 실행되는 응용 프로그램과 기타 리소스를 호스팅합니다.
+* **게이트웨이**. 게이트웨이는 온-프레미스 네트워크와 VNet의 라우터 간 연결성을 제공합니다.
+* **네트워크 가상 어플라이언스(NVA)**. 네트워크 가상 어플라이언스(NVA)는 방화벽으로서 액세스의 허용 또는 거부, (네트워크 압축을 포함한) 광역 네트워크(WAN) 작업의 최적화, 사용자 지정 라우팅 또는 기타 네트워크 기능과 같은 작업을 수행하는 가상 컴퓨터를 말합니다.
+* **웹 계층, 비즈니스 계층 및 데이터 계층 서브넷**. 클라우드에서 실행되는 3계층 응용 프로그램을 구현하는 VM 및 서비스를 호스팅하는 서브넷. [Azure에서 N계층 아키텍처를 위한 Windows VM 실행][ra-n-tier]을 참조하시기 바랍니다.
+* **사용자 지정 루트(UDR)**. [사용자 지정 루트][udr-overview]는 Azure VNet 내 IP 트래픽 흐름을 정의합니다.
 
-    > [!NOTE]
-    > Depending on the requirements of your VPN connection, you can configure Border Gateway Protocol (BGP) routes instead of using UDRs to implement the forwarding rules that direct traffic back through the on-premises network.
+    > [!참고]
+    > VPN 연결 요구사항에 따라 UDR 대신 경계 게이트웨이 프로토콜(BGP)을 구성하여 온-프레미스 네트워크를 통해 트래픽을 되돌리는 포워딩 규칙을 구현할 수 있습니다.
     > 
     > 
 
-* **Management subnet.** This subnet contains VMs that implement management and monitoring capabilities for the components running in the VNet.
+* **관리 서브넷.** 이 서브넷은 VNet에서 실행되는 구성요소를 위한 관리 및 모니터링 기능을 구현하는 VM을 포함합니다.
 
-## Recommendations
+## 권장사항
 
-The following recommendations apply for most scenarios. Follow these recommendations unless you have a specific requirement that overrides them. 
+다음 권장사항은 대부분의 시나리오에 적용됩니다. 다른 구체적인 요구사항이 없다면 가급적 권장사항을 따르시기 바랍니다.
 
-### Access control recommendations
+### 액세스 제어 권장사항
 
-Use [Role-Based Access Control ][rbac] (RBAC) to manage the resources in your application. Consider creating the following [custom roles][rbac-custom-roles]:
+[역할 기반 액세스 제어][rbac] (RBAC)를 사용하여 응용 프로그램의 리소스를 관리합니다. 다음과 같은 [사용자 지정 역할][rbac-custom-roles]의 생성을 고려해 보시기 바랍니다.
 
-- A DevOps role with permissions to administer the infrastructure for the application, deploy the application components, and monitor and restart VMs.  
+- 응용 프로그램을 위한 인프라 관리, 응용 프로그램 구성요소 배포, VM 모니터링 및 재시작 권한이 있는 DevOps 역할.  
 
-- A centralized IT administrator role to manage and monitor network resources.
+- 네트워크 리소스를 관리하고 모니터링하는 중앙집중식 IT 관리자 역할.
 
-- A security IT administrator role to manage secure network resources such as the NVAs. 
+- NVA와 같은 네트워크 리소스 보안 관리를 위한 보안 IT 관리자 역할. 
 
-The DevOps and IT administrator roles should not have access to the NVA resources. This should be restricted to the security IT administrator role.
+DevOps 및 IT 관리자 역할에는 NVA 리소스 액세스 권한이 없어야 합니다. 이 권한은 보안 IT 관리자 역할로 한정되어야 합니다. 
 
-### Resource group recommendations
+### 리소스 그룹 권장사항
+VM, VNet, 부하 분산 장치와 같은 Azure 리소스를 리소스 그룹으로 묶어서 보다 쉽게 관리할 수 있습니다. 각각의 리소스 그룹에 RBAC 역할을 할당하여 액세스를을 제한합니다.
 
-Azure resources such as VMs, VNets, and load balancers can be easily managed by grouping them together into resource groups. Assign RBAC roles to each resource group to restrict access.
+다음과 같은 리소스 그룹 생성을 권장합니다.
 
-We recommend creating the following resource groups:
+* (VM을 제외한) 서브넷, 네트워크 보안 그룹, 온-프레미스 네트워크 연결을 위한 게이트웨이 리소스를 포함하는 리소스 그룹.  이 리소스 그룹에 중앙집중식 IT 관리자 역할을 할당합니다.
+* (부하 분산 장치를 포함한) NVA용 VM, 점프박스 및 기타 관리 VM, 모든 트래픽이 NVA를 통하도록 강제하는 게이트웨이 서브넷을 위한 UDR을 포함하는 리소스 그룹. 이 리소스 그룹에 보안 IT 관리자 역할을 할당합니다.
+* 부하 분산 장와 VM을 포함하는 응용 프로그램 계층별 리소스 그룹. 이 리소스 그룹에는 계층별 서브넷이 포함되지 않아야 합니다. 이 리소스 그룹에 DevOps 역할을 할당합니다.
 
-* A resource group containing the subnets (excluding the VMs), NSGs, and the gateway resources for connecting to the on-premises network. Assign the centralized IT administrator role to this resource group.
-* A resource group containing the VMs for the NVAs (including the load balancer), the jumpbox and other management VMs, and the UDR for the gateway subnet that forces all traffic through the NVAs. Assign the security IT administrator role to this resource group.
-* Separate resource groups for each application tier that contain the load balancer and VMs. Note that this resource group shouldn't include the subnets for each tier. Assign the DevOps role to this resource group.
+### 가상 네트워크 게이트웨이 권장사항
 
-### Virtual network gateway recommendations
+온-프레미스 트래픽은 가상 네트워크 게이트웨이를 통해 VNet으로 전달됩니다. [Azure VPN 게이트웨이][guidance-vpn-gateway] 또는 [Azure ExpressRoute 게이트웨이][guidance-expressroute]의 사용을 권장합니다.
 
-On-premises traffic passes to the VNet through a virtual network gateway. We recommend an [Azure VPN gateway][guidance-vpn-gateway] or an [Azure ExpressRoute gateway][guidance-expressroute].
+### 네트워크 가상 어플라이언스(NVA) 권장사항
 
-### NVA recommendations
+NVA는 네트워크 트래픽을 관리하고 모니터링하기 위한 다양한 서비스를 제공합니다. Azure Marketplace는 다음을 포함한 여러 타사 NVA 제품을 제공합니다.
 
-NVAs provide different services for managing and monitoring network traffic. The Azure Marketplace offers several third-party vendor NVAs, including:
-
-* [Barracuda Web Application Firewall][barracuda-waf] and [Barracuda NextGen Firewall][barracuda-nf]
+* [Barracuda Web Application Firewall][barracuda-waf] 및 [Barracuda NextGen Firewall][barracuda-nf]
 * [Cohesive Networks VNS3 Firewall/Router/VPN][vns3]
 * [Fortinet FortiGate-VM][fortinet]
 * [SecureSphere Web Application Firewall][securesphere]
@@ -95,106 +94,106 @@ NVAs provide different services for managing and monitoring network traffic. The
 * [Check Point vSEC][checkpoint]
 * [Kemp LoadMaster Load Balancer ADC Content Switch][kemp-loadmaster]
 
-If none of these third-party NVAs meet your requirements, you can create a custom NVA using VMs. As an example of creating custom NVAs, the solution deployment for this reference architecture implements the following functionality:
+이들 중 귀하의 요구사항을 만족하는 제품이 없다면 VM을 사용하여 사용자 지정 NVA를 생성할 수도 있습니다. 사용자 지정 NVA 생성 예로서, 이 참조 아키텍처를 위한 솔루션 배포는 다음과 같은 기능을 구현합니다.
 
-* Traffic is routed using [IP forwarding][ip-forwarding] on the NVA network interfaces (NICs).
-* Traffic is permitted to pass through the NVA only if it is appropriate to do so. Each NVA VM in the reference architecture is a simple Linux router. Inbound traffic arrives on network interface *eth0*, and outbound traffic matches rules defined by custom scripts dispatched through network interface *eth1*.
-* The NVAs can only be configured from the management subnet. 
-* Traffic routed to the management subnet does not pass through the NVAs. Otherwise, if the NVAs fail, there would be no route to the management subnet to fix them.  
-* The VMs for the NVA are placed in an [availability set][availability-set] behind a load balancer. The UDR in the gateway subnet directs NVA requests to the load balancer.
+* •	NVA 네트워크 인터페이스(NIC)의 [IP 포워딩][ip-forwarding]을 사용하여 트래픽을 라우팅합니다.
+* 적절한 경우에만 트래픽이 NVA를 통과하도록 허용됩니다. 이 참조 아키텍처의 각각의 NVA VM은 단순한 Linux 라우터입니다. 들어오는 트래픽은 네트워크 인터페이스 *eth0*에 도착하고 나가는 트래픽은 네트워크 인터페이스 *eth1*을 통해 보내진 사용자 지정 스크립트에 정의된 규칙에 부응합니다.
+* 이 NVA들은 관리 서브넷을 통해서만 구성할 수 있습니다. 
+* 관리 서브넷으로 라우팅된 트래픽은 NVA를 통과하지 않습니다. 그렇지 않으면, NVA에 장애가 발생할 경우 이를 해결하기 위한 관리 서브넷으로의 루트가 없게 됩니다. 
+* 이 NVA를 위한 VM은 부하 분산 장치 뒤의 [가용성 집합][availability-set]에 배치됩니다. 게이트웨이 서브넷의 UDR은 NVA 요청을 부하 분산 장치로 보냅니다.
 
-Include a layer-7 NVA to terminate application connections at the NVA level and maintain affinity with the backend tiers. This guarantees symmetric connectivity, in which response traffic from the backend tiers returns through the NVA.
+NVA 수준에서 응용 프로그램 연결을 종료하고 백엔드 계층 선호도를 유지하기 위해 레이어7 NVA를 포함시킵니다. 이를 통해 백엔드 계층으로부터의 응답 트래픽이 NVA를 통해 돌아오는 대칭 연결이 보장됩니다. 
 
-Another option to consider is connecting multiple NVAs in series, with each NVA performing a specialized security task. This allows each security function to be managed on a per-NVA basis. For example, an NVA implementing a firewall could be placed in series with an NVA running identity services. The tradeoff for ease of management is the addition of extra network hops that may increase latency, so ensure that this doesn't affect your application's performance.
+또 다른 선택 가능한 방법은 각각 특화된 보안 작업을 수행하는 여러 NVA를 직렬로 연결하는 것입니다. 이를 통해 각 보안 기능이 NVA 단위로 관리될 수 있습니다. 예를 들어, 방화벽을 구현하는 NVA를 계정 서비스를 실행하는 NVA와 함께 직렬로 배치할 수 있습니다. 네트워크 홉을 추가하면 관리 용이성이 개선되지만 대신 대기 시간이 늘어날 수 있으므로 응용 프로그램의 성능에 영향을 미치지 않도록 주의하시기 바랍니다. 
 
 
-### NSG recommendations
+### 네트워크 보안 그룹(NSG) 권장사항
 
-The VPN gateway exposes a public IP address for the connection to the on-premises network. We recommend creating a network security group (NSG) for the inbound NVA subnet, with rules to block all traffic not originating from the on-premises network.
+VPN 게이트웨이는 온-프레미스 네트워크로의 연결을 위해 공용 IP 주소를 노출시킵니다. 따라서 온-프레미스 네트워크가 아닌 다른 곳에서 오는 모든 트래픽을 차단하는 규칙을 가진 수신 NVA 서브넷을 위한 네트워크 보안 그룹(NSG)을 만드는 것을 권장합니다. 
 
-We also recommend NSGs for each subnet to provide a second level of protection against inbound traffic bypassing an incorrectly configured or disabled NVA. For example, the web tier subnet in the reference architecture implements an NSG with a rule to ignore all requests other than those received from the on-premises network (192.168.0.0/16) or the VNet, and another rule that ignores all requests not made on port 80.
+또한 부적절하게 구성되었거나 폐기된 NVA를 우회하는 수신 트래픽으로부터 시스템을 보호하기 위해 서브넷별로 네트워크 보안 그룹을 사용하는 것도 권장합니다. 예를 들어, 이 참조 아키텍처의 웹 계층 서브넷은 온-프레미스 네트워크(192.168.0.0/16) 또는 VNet으로부터 수신하지 않은 모든 요청을 무시하는 규칙과 포트 80을 통하지 않은 모든 요청을 무시하는 규칙을 가진 NSG를 구현합니다.
 
-### Internet access recommendations
+### 인터넷 액세스 권장사항
 
-[Force-tunnel][azure-forced-tunneling] all outbound Internet traffic through your on-premises network using the site-to-site VPN tunnel, and route to the Internet using network address translation (NAT). This prevents accidental leakage of any confidential information stored in your data tier and allows inspection and auditing of all outgoing traffic.
+사이트 간 VPN 터널을 사용하여 모든 송신 트래픽을 온-프레미스 네트워크로 [강제 터널링][azure-forced-tunneling]하고 네트워크 주소 변환(NAT)을 통해 인터넷으로 라우팅합니다. 이를 통해 데이터 계층에 저장된 기밀 정보 유출을 방지하고 모든 나가는 트래픽에 대한 검사 및 감사를 수행할 수 있습니다. 
 
-> [!NOTE]
-> Don't completely block Internet traffic from the application tiers, as this will prevent these tiers from using Azure PaaS services that rely on public IP addresses, such as VM diagnostics logging, downloading of VM extensions, and other functionality. Azure diagnostics also requires that components can read and write to an Azure Storage account.
+> [!참고]
+> VM 진단 로깅, VM 확장 프로그램 다운로드 등과 같은 공용 IP 주소에 의존하는 Azure PaaS 서비스를 사용하려면 응용 프로그램 계층으로부터 인터넷 트래픽을 완전히 차단해서는 안 됩니다. Azure 진단을 이용하려면 구성요소들이 Azure 저장소 계정에 대해 쓰기와 읽기를 수행할 수 있어야 합니다. 
 > 
 > 
 
-Verify that outbound internet traffic is force-tunneled correctly. If you're using a VPN connection with the [routing and remote access service][routing-and-remote-access-service] on an on-premises server, use a tool such as [WireShark][wireshark] or [Microsoft Message Analyzer](https://www.microsoft.com/download/details.aspx?id=44226).
+나가는 인터넷 트래픽이 정확하게 강제 터널링되는지 확인합니다. 온-프레미스 서버에서 [라우팅 및 원격 액세스 서비스][routing-and-remote-access-service]를 제공하는 VPN 연결을 사용한다면 [WireShark][wireshark]나 [Microsoft Message Analyzer](https://www.microsoft.com/download/details.aspx?id=44226)와 같은 도구를 사용하시기 바랍니다.
 
-### Management subnet recommendations
+### 관리 서브넷 권장사항
 
-The management subnet contains a jumpbox that performs management and monitoring functionality. Restrict execution of all secure management tasks to the jumpbox.
+관리 서브넷은 관리 및 모니터링 기능을 수행하는 점프박스를 포함합니다. 점프박스에 대한 모든 보안 관리 작업의 실행을 제한합니다. 
  
-Do not create a public IP address for the jumpbox. Instead, create one route to access the jumpbox through the incoming gateway. Create NSG rules so the management subnet only responds to requests from the allowed route.
+점프박스를 위한 공용 IP 주소를 만들지 않습니다. 대신, 들어오는 게이트웨이를 통해 점프박스에 액세스하는 단일 루트를 만듭니다. 관리 서브넷이 허용된 루트로부터 오는 요청에만 응답하도록 하는 NSG 규칙을 생성합니다. 
 
-## Scalability considerations
+## 확장성 고려사항
 
-The reference architecture uses a load balancer to direct on-premises network traffic to a pool of NVA devices, which route the traffic. The NVAs are placed in an [availability set][availability-set]. This design allows you to monitor the throughput of the NVAs over time and add NVA devices in response to increases in load.
+이 참조 아키텍처는 부하 분산 장치를 사용하여 온-프레미스 네트워크 트래픽을 트래픽을 라우팅하는 NVA 장치 풀로 전달합니다. 이 NVA들은 하나의 [가용성 집합][availability-set]에 배치됩니다. 이러한 설계를 통해 일정 시간 동안의 NVA 처리율을 모니터링하고 부하 증가 시 NVA 장치를 추가할 수 있습니다.
 
-The standard SKU VPN gateway supports sustained throughput of up to 100 Mbps. The High Performance SKU provides up to 200 Mbps. For higher bandwidths, consider upgrading to an ExpressRoute gateway. ExpressRoute provides up to 10 Gbps bandwidth with lower latency than a VPN connection.
+표준 SKU VPN 게이트웨이는 최대 100Mbps의 연속 처리율을 제공합니다. 고성능 SKU는 최대 200 Mbps의 연속 처리율을 제공합니다.  더 높은 대역폭이 필요한 경우 ExpressRoute 게이트웨이로 업그레이드할 것을 고려할 필요가 있습니다. ExpressRoute는 최대 10 Gpbs의 대역폭을 제공하는 동시에 VPN 연결보다 대기 시간이 더 짧습니다.
 
-For more information about the scalability of Azure gateways, see the scalability consideration section in [Implementing a hybrid network architecture with Azure and on-premises VPN][guidance-vpn-gateway-scalability] and [Implementing a hybrid network architecture with Azure ExpressRoute][guidance-expressroute-scalability].
+Azure 게이트웨이의 확장성에 대한 자세한 내용은 [Azure와 온-프레미스 VPN으로 하이브리드 네트워크 아키텍처 구현][guidance-vpn-gateway-scalability] 및 [Azure ExpressRoute로 하이브리드 네트워크 아키텍처 구현][guidance-expressroute-scalability]을 참조하시기 바랍니다.
 
-## Availability considerations
+## 가용성 고려사항
 
-As mentioned, the reference architecture uses a pool of NVA devices behind a load balancer. The load balancer uses a health probe to monitor each NVA and will remove any unresponsive NVAs from the pool.
+앞서 언급했듯이 이 참조 아키텍처는 부하 분산 장치 뒤에 여러 NVA 장치의 풀을 사용합니다. 부하 분산 장치는 상태 프로브를 사용하여 각각의 NVA를 모니터링하고 응답하지 않는 NVA는 풀에서 삭제합니다. 
 
-If you're using Azure ExpressRoute to provide connectivity between the VNet and on-premises network, [configure a VPN gateway to provide failover][ra-vpn-failover] if the ExpressRoute connection becomes unavailable.
+Azure ExpressRoute를 사용하여 VNet과 온-프레미스 네트워크 간 연결성을 제공하는 경우, ExpressRoute 연결이 사용 불가 상태일 때는 [VPN 게이트웨이가 장애조치 기능을 제공하도록 구성해 보시기 바랍니다][ra-vpn-failover].
 
-For specific information on maintaining availability for VPN and ExpressRoute connections, see the availability considerations in [Implementing a hybrid network architecture with Azure and on-premises VPN][guidance-vpn-gateway-availability] and [Implementing a hybrid network architecture with Azure ExpressRoute][guidance-expressroute-availability]. 
+VPN 및 ExpressRoute 연결을 위한 가용성 유지에 관한 자세한 내용은 [Azure와 온-프레미스 VPN으로 하이브리드 네트워크 아키텍처 구현][guidance-vpn-gateway-availability] 및 [Azure ExpressRoute로 하이브리드 네트워크 아키텍처 구현][guidance-expressroute-availability]을 참조하시기 바랍니다. 
 
-## Manageability considerations
+## 관리 효율성 고려사항
 
-All application and resource monitoring should be performed by the jumpbox in the management subnet. Depending on your application requirements, you may need additional monitoring resources in the management subnet. If so, these resources should be accessed through the jumpbox.
+모든 응용 프로그램 및 리소스에 대한 모니터링은 관리 서브넷의 점프박스를 통해 수행되어야 합니다. 응용 프로그램 요구사항에 따라 관리 서브넷에 추가적인 모니터링 리소스가 필요할 수도 있습니다. 이 경우 이 리소스들은 점프박스를 통해 액세스되어야 합니다. 
 
-If gateway connectivity from your on-premises network to Azure is down, you can still reach the jumpbox by deploying a public IP address, adding it to the jumpbox, and remoting in from the internet.
+온-프레미스 네트워크에서 Azure로의 게이트웨이 연결이 중단되는 경우에도 공용 IP 주소를 배포하고 점프박스에 추가한 후 인터넷으로부터 원격 접속을 통해 점프박스에 액세스할 수 있습니다. 
 
-Each tier's subnet in the reference architecture is protected by NSG rules. You may need to create a rule to open port 3389 for remote desktop protocol (RDP) access on Windows VMs or port 22 for secure shell (SSH) access on Linux VMs. Other management and monitoring tools may require rules to open additional ports.
+이 참조 아키텍처의 각 계층의 서브넷은 NSG 규칙을 통해 보호됩니다. Windows VM에서 원격 데스크톱 프로토콜(RDP) 액세스를 위해 포트 3389를 열거나 Linux VM에서 SSH 액세스를 위해 포트 22를 여는 규칙을 생성해야 할 수 있습니다.  다른 관리 및 모니터링 도구의 경우 추가 포트를 여는 규칙이 필요할 수 있습니다. 
 
-If you're using ExpressRoute to provide the connectivity between your on-premises datacenter and Azure, use the [Azure Connectivity Toolkit (AzureCT)][azurect] to monitor and troubleshoot connection issues.
+Azure ExpressRoute를 사용하여 온-프레미스 네트워크와 Azure 간 연결성을 제공하는 경우, [Azure Connectivity Toolkit (AzureCT)][azurect]을 사용하여 연결 문제를 모니터링하고 해결하시기 바랍니다.
 
-You can find additional information specifically aimed at monitoring and managing VPN and ExpressRoute connections in the articles [Implementing a hybrid network architecture with Azure and on-premises VPN][guidance-vpn-gateway-manageability] and [Implementing a hybrid network architecture with Azure ExpressRoute][guidance-expressroute-manageability].
+VPN 및 ExpressRoute 연결의 모니터링 및 관리에 대한 추가 정보는 [Azure와 온-프레미스 VPN으로 하이브리드 네트워크 아키텍처 구현][guidance-vpn-gateway-manageability] 및 [Azure ExpressRoute로 하이브리드 네트워크 아키텍처 구현][guidance-expressroute-manageability]을 참조하시기 바랍니다.
 
-## Security considerations
+## 보안 고려사항
 
-This reference architecture implements multiple levels of security.
+이 참조 아키텍처는 여러 수준의 보안을 구현합니다.
 
-### Routing all on-premises user requests through the NVA
-The UDR in the gateway subnet blocks all user requests other than those received from on-premises. The UDR passes allowed requests to the NVAs in the private DMZ subnet, and these requests are passed on to the application if they are allowed by the NVA rules. You can add other routes to the UDR, but make sure they don't inadvertently bypass the NVAs or block administrative traffic intended for the management subnet.
+### 모든 온-프레미스 사용자 요청을 NVA를 통해 라우팅
+게이트웨이 서브넷의 UDR은 온-프레미스가 아닌 곳으로부터 수신한 모든 사용자 요청을 차단합니다. UDR은 허용된 요청을 사설 DMZ 서브넷의 NVA로 보내고, 이 요청들은 NVA 규칙을 만족하는 경우에만 해당 응용 프로그램으로 전달됩니다. UDR에 접근하는 다른 루트를 추가할 수도 있습니다. 단, 이 루트들이 부주의로 인해 NVA를 우회하거나 관리 서브넷으로 가야할 관리 트래픽을 차단하지 않도록 주의합니다. 
 
-The load balancer in front of the NVAs also acts as a security device by ignoring traffic on ports that are not open in the load balancing rules. The load balancers in the reference architecture only listen for HTTP requests on port 80 and HTTPS requests on port 443. Document any additional rules that you add to the load balancers, and monitor traffic to ensure there are no security issues.
+NVA 앞의 부하 분산 장치 역시 부하 분상 규칙에서 열려있지 않은 포트의 트래픽을 무시하는 방식으로 보안 장치로서의 역할을 수행합니다. 이 참조 아키텍처의 부하 분산 장치는 포트 80의 HTTP 요청과 포트 443의 HTTPS 요청만을 수용합니다. 부하 분산 장치에 추가하는 모든 규칙을 문서화하고 보안 문제가 발생하지 않도록 트래픽을 모니터링합니다.
 
-### Using NSGs to block/pass traffic between application tiers
-Traffic between tiers is restricted by using NSGs. The business tier blocks all traffic that doesn't originate in the web tier, and the data tier blocks all traffic that doesn't originate in the business tier. If you have a requirement to expand the NSG rules to allow broader access to these tiers, weigh these requirements against the security risks. Each new inbound pathway represents an opportunity for accidental or purposeful data leakage or application damage.
+### 네트워크 보안 그룹(NSG)을 사용하여 응용 프로그램 계층 간 트래픽을 차단/허용
+NSG를 사용하여 계층 간 트래픽을 제한할 수 있습니다. 비즈니스 계층은 웹 계층이 아닌 곳에서 오는 모든 트래픽을 차단하고, 데이터 계층은 비즈니스 계층이 아닌 곳에서 오는 모든 트래픽을 차단합니다. 이 계층들에 대해 보다 넓은 범위의 액세스를 허용하기 위해 NSG 규칙을 확대할 필요가 있다면, 이러한 요구사항과 보안 위험 간의 득실을 따져보시기 바랍니다. 새로운 수신 경로가 추가되면 사고 또는 고의에 의한 데이터 유출이나 응용 프로그램 손상의 가능성도 커집니다. 
 
-### DevOps access
-Use [RBAC][rbac] to restrict the operations that DevOps can perform on each tier. When granting permissions, use the [principle of least privilege][security-principle-of-least-privilege]. Log all administrative operations and perform regular audits to ensure any configuration changes were planned.
+### DevOps 액세스
+[RBAC][rbac]를 사용하여 DevOps가 각 계층에 대해 수행하는 작업을 제한할 수 있습니다. 권한을 부여할 때는 [최소 권한의 원칙][security-principle-of-least-privilege]을 적용하시기 바랍니다. 모든 관리 작업의 로그를 작성하고 정기적인 감사를 수행하여 모든 구성 변경이 계획되도록 합니다. 
 
-## Solution deployment
+## 솔루션 배포
 
-A deployment for a reference architecture that implements these recommendations is available on [GitHub][github-folder]. The reference architecture can be deployed by following the directions below:
+이러한 권장사항을 구현하는 참조 아키텍처 배포는 [GitHub][github-folder]를 통해 수행할 수 있습니다. 이 참조 아키텍처는 아래 지침에 따라 배포할 수 있습니다.
 
-1. Click the button below:<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fdmz%2Fsecure-vnet-hybrid%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-2. Once the link has opened in the Azure portal, you must enter values for some of the settings:   
-   * The **Resource group** name is already defined in the parameter file, so select **Create New** and enter `ra-private-dmz-rg` in the text box.
-   * Select the region from the **Location** drop down box.
-   * Do not edit the **Template Root Uri** or the **Parameter Root Uri** text boxes.
-   * Review the terms and conditions, then click the **I agree to the terms and conditions stated above** checkbox.
-   * Click the **Purchase** button.
-3. Wait for the deployment to complete.
-4. The parameter files include hard-coded administrator user name and password for all VMs, and it is strongly recommended that you immediately change both. For each VM in the deployment, select it in the Azure portal and then click **Reset password** in the **Support + troubleshooting** blade. Select **Reset password** in the **Mode** drop down box, then select a new **User name** and **Password**. Click the **Update** button to save.
+1. 아래 버튼을 마우스 오른쪽 단추로 클릭한 후 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fdmz%2Fsecure-vnet-hybrid%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+2. Azure 포털에서 링크가 열리면 일부 설정값을 입력합니다. 
+   * **리소스 그룹 ** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-private-dmz-rg`를 입력합니다.
+   * **위치** 드롭다운 상자에서 지역을 선택합니다.
+   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 확인란을 클릭합니다.
+   * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** checkbox.
+   * **구입** 버튼을 클릭합니다.
+3. 배포가 완료될 때까지 기다립니다.
+4. 매개변수 파일에는 모든 VM에 대한 하드 코딩된 관리자 사용자 이름 및 암호가 포함되어 있는데, 이 둘 모두를 즉시 변경할 것을 권장합니다. Azure 포털에서 배포의 각 VM을 선택한 후 **지원 + 문제해결** 블레이드에서 **암호 재설정**을 클릭합니다. **모드** 드롭다운 상자에서 **암호 재설정**을 선택한 후 새 **사용자 이름** 및 **암호**를 선택합니다. **업데이트** 버튼을 클릭하여 저장합니다.
 
-## Next steps
+## 다음 단계
 
-* Learn how to implement a [DMZ between Azure and the Internet](secure-vnet-dmz.md).
-* Learn how to implement a [highly available hybrid network architecture][ra-vpn-failover].
-* For more information about managing network security with Azure, see [Microsoft cloud services and network security][cloud-services-network-security].
-* For detailed information about protecting resources in Azure, see [Getting started with Microsoft Azure security][getting-started-with-azure-security]. 
-* For additional details on addressing security concerns across an Azure gateway connection, see [Implementing a hybrid network architecture with Azure and on-premises VPN][guidance-vpn-gateway-security] and [Implementing a hybrid network architecture with Azure ExpressRoute][guidance-expressroute-security].
+* [•	Azure와 인터넷 간 DMZ](secure-vnet-dmz.md)를 구현하는 방법에 대해 알아보시기 바랍니다.
+* [•	고가용성 하이브리드 네트워크 아키텍처][ra-vpn-failover]를 구현하는 방법에 대해 알아보시기 바랍니다.
+* •	Azure의 네트워크 보안 관리에 관한 자세한 내용은 [Microsoft 클라우드 서비스 및 네트워크 보안][cloud-services-network-security]을 참조하시기 바랍니다.
+* •	Azure에서의 리소스 보호에 대한 자세한 내용은 [Microsoft Azure 보안 시작하기][getting-started-with-azure-security]를 참조하시기 바랍니다. 
+* •	Azure 게이트웨이 연결 보안 문제 해결에 관한 자세한 내용은 [Azure와 온-프레미스 VPN으로 하이브리드 네트워크 아키텍처 구현][guidance-vpn-gateway-security] 및 [Azure ExpressRoute로 하이브리드 네트워크 아키텍처 구현][guidance-expressroute-security]을 참조하시기 바랍니다.
 > 
 
 <!-- links -->
