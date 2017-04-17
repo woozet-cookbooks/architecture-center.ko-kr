@@ -95,6 +95,7 @@ NVA 수준에서 응용 프로그램 연결을 종료하고 백엔드 계층 호
 
 1. 아래 버튼을 마우스 오른쪽 단추로 클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fdmz%2Fsecure-vnet-dmz%2FvirtualNetwork.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 2. Azure 포털에서 링크가 열리면 일부 설정값을 입력합니다.
+
    * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-public-dmz-network-rg`를 입력합니다.
    * **위치** 드롭다운 상자에서 지역을 선택합니다.
    * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자는 편집하지 않습니다.
