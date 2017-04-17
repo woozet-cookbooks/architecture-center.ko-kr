@@ -12,28 +12,28 @@ pnp.series.prev: ./index
 pnp.series.next: secure-vnet-dmz
 cardTitle: DMZ between Azure and on-premises
 ---
-# DMZ between Azure and your on-premises datacenter
+# Azure와 온-프레미스 데이터센터 사이
 [!INCLUDE [header](../../_includes/header.md)]
 
-This article describes best practices for implementing a secure hybrid network that extends an on-premises network to Azure. This reference architecture implements a DMZ (also called a perimeter network) between an on-premises network and an Azure virtual network. The DMZ includes highly available network virtual appliances (NVAs) that implement security functionality such as firewalls and packet inspection. All outgoing traffic from the VNet is force-tunneled to the Internet through the on-premises network, so that it can be audited.
+이 문서는 온-프레미스 네트워크를 Azure로 확장하는 보안된 하이브리드 네트워크를 구현하기 위한 모범 사례를 소개합니다. 이 참조 아키텍처는 온-프레미스 네트워크와 Azure 가상 네트워크 간 DMZ(또는 경계 네트워크)를 구현합니다. DMZ는 방화벽이나 패킷 검사와 같은 보안 기능을 구현하는 고가용성 네트워크 가상 어플라이언스(NVA)를 포함합니다. VNet에서 나가는 모든 트래픽은 감사를 위해 온-프레미스 네트워크를 통해 인터넷으로 강제 터널링됩니다.
 
-This architecture requires a connection to your on-premises datacenter, using either a [VPN gateway][ra-vpn] or an [ExpressRoute][ra-expressroute] connection.
+이 아키텍처는 [VPN 게이트웨이][ra-vpn]나 [ExpressRoute][ra-expressroute] 연결을 통해 온-프레미스 데이터센터에 연결할 필요가 있습니다.
 
-> [!NOTE]
-> Azure has two different deployment models: [Resource Manager](/azure/azure-resource-manager/resource-group-overview) and classic. This reference architecture uses Resource Manager, which Microsoft recommends for new deployments.
+> [!참고]
+> Azure는 [Resource Manager](/azure/azure-resource-manager/resource-group-overview)와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 참조 아키텍처에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
 > 
 > 
 
-Typical uses for this architecture include:
+일반적으로 이 아키텍처는 다음과 같은 용도로 사용됩니다.
 
-* Hybrid applications where workloads run partly on-premises and partly in Azure.
-* Infrastructure that requires granular control over traffic entering an Azure VNet from an on-premises datacenter.
-* Applications that must audit outgoing traffic. This is often a regulatory requirement of many commercial systems and can help to prevent public disclosure of private information.
+* 워크로드의 일부는 온-프레미스에서, 일부는 Azure에서 실행되는 하이브리드 응용 프로그램.
+* 온-프레미스 데이터센터로부터 Azure VNet으로 들어오는 트래픽에 대한 세분화된 제어가 요구되는 인프라.
+* 나가는 트래픽에 대한 감사가 필요한 응용 프로그램. 나가는 트래픽에 대한 감사는 많은 상업용 시스템의 규제 요건인 경우가 많습니다. 이는 개인 정보가 외부로 공개되는 것을 방지하는데 기여합니다.
 
-## Architecture diagram
-The following diagram highlights the important components in this architecture:
+## 아키텍처 다이어그램
+다음 다이어그램은 이 아키텍처의 중요한 요소들을 보여줍니다.
 
-> A Visio document that includes this architecture diagram is available for download from the [Microsoft download center][visio-download]. This diagram is on the "DMZ - Private" page.
+> [Microsoft 다운로드 센터][visio-download]. This diagram is on the "DMZ - Private" page.
 > 
 > 
 
