@@ -1114,21 +1114,21 @@ API 관리 서비스를 사용해 웹 API를 게시한 경우 Azure 관리 포�
 * [façade](http://en.wikipedia.org/wiki/Facade_pattern) 패턴은 웹 API에 대한 인터페이스 제공 방법을 설명합니다.
 
 ## 자세한 정보
-* •	Microsoft 웹 사이트의 [ASP.NET Web API 살펴보기](http://www.asp.net/web-api) 페이지는 웹 API를 사용한 RESTful 웹 서비스 구축에 대한 자세한 소개를 제공합니다.
-* •	Microsoft 웹 사이트의 [ASP.NET Web API에서의 라우팅](http://www.asp.net/web-api/overview/web-api-routing-and-actions/routing-in-aspnet-web-api) 페이지는 ASP.NET Web API 프레임워크에서 규칙 기반 라우팅이 어떻게 작동하는지를 설명합니다.
-* •	특성 기반 라우팅에 대한 자세한 정보는 Microsoft 웹 사이트에 나와 있는 [Web API 2에서의 특성 라우팅](http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2) 을 참조하십시오.
-* •	OData 웹 사이트의 [기본 자습서](http://www.odata.org/getting-started/basic-tutorial/) 페이지는 OData 프로토콜 기능에 대한 소개를 제공합니다.
-* •	Microsoft 웹 사이트의[ASP.NET Web API OData](http://www.asp.net/web-api/overview/odata-support-in-aspnet-web-api) 페이지에는 ASP.NET을 사용하여 OData web API를 구현하는 예와 추가 정보가 포함되어 있습니다.
-* •	Microsoft 웹 사이트의 [웹 API 및 웹 API OData에서의 일괄 지원 소개](http://blogs.msdn.com/b/webdev/archive/2013/11/01/introducing-batch-support-in-web-api-and-web-api-odata.aspx) 페이지는 OData를 사용해 웹 API에서 일괄 작업을 구현하는 방법을 설명합니다.
-* •	조나단 올리버(Jonathan Oliver)의 블로그에 게재된 [Idempotency 패턴](http://blog.jonathanoliver.com/idempotency-patterns/) 에 관한 기사는 Idempotency 개요 및 Idempotency가 데이터 작업 관리와 어떻게 관련되는지를 설명합니다.
-* •	W3C 웹사이트의 [상태 코드 정의](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) 페이지에는 HTTP 상태 코드 전체 목록 및 해당 설명이 포함되어 있습니다.
-* •	ASP.NET Web API와 관련된 HTTP 예외 처리에 대한 자세한 정보는 Microsoft 웹 사이트의 [ASP.NET Web API에서의 예외 처리](http://www.asp.net/web-api/overview/error-handling/exception-handling) 페이지를 참조하십시오.
-* •	Microsoft 웹 사이트의 [웹 API 전역 오류 처리](http://www.asp.net/web-api/overview/error-handling/web-api-global-error-handling) 기사에서 웹 API에 대한 전역 오류 처리 및 로깅 전략 구현 방법을 설명합니다.
-* •	Microsoft 웹 사이트의 [배경 작업 실행에 WebJobs 사용](/azure/app-service-web/web-sites-create-web-jobs/) 페이지는 Azure 웹 사이트에서 배경 작업을 수행하기 위한 WebJobs 사용에 대한 정보 및 예를 제공합니다.
-* •	Microsoft 웹 사이트의 [Azure 알림 허브 사용자 알림](/azure/notification-hubs/notification-hubs-aspnet-backend-windows-dotnet-wns-notification/) 페이지는 클라이언트 응용 프로그램에 비동기 응답을 푸시하기 위한 Azure 알림 허브 사용 방법을 보여줍니다.
-* •	Microsoft 웹 사이트의 [API 관리](https://azure.microsoft.com/services/api-management/) 페이지에서는 웹 API에 대한 안전하고 제한된 액세스를 제공하는 제품 게시 방법을 설명합니다.
-* •	Microsoft 웹 사이트의 [Azure API Management REST API 리퍼런스](https://msdn.microsoft.com/library/azure/dn776326.aspx) 페이지에서는 사용자 지정 관리 응용 프로그램 구축을 위한 API Management REST API 사용 방법을 설명합니다.
-* •	Microsoft 웹 사이트의 [트래픽 관리자 라우팅 메서드](/azure/traffic-manager/traffic-manager-routing-methods/) 페이지에서는 웹 API를 호스팅하는 웹 사이트의 여러 인스턴스 전반으로 요청을 부하 분산하는 데 Azure 트래픽 관리자를 사용하는 방법을 요약합니다.
-* •	Microsoft 웹 사이트의 [응용 프로그램 인사이트 - ASP.NET으로 시작하기](/azure/application-insights/app-insights-asp-net/) 페이지는 ASP.NET Web API 프로젝트에서 응용 프로그램 인사이트 설치 및 구성에 대한 자세한 정보를 제공합니다.
-* •	Microsoft 웹 사이트의 [단위 테스트를 사용하여 코드 확인](https://msdn.microsoft.com/library/dd264975.aspx) 페이지는 Visual Studio를 사용한 단위 테스트 생성 및 관리에 대한 자세한 정보를 제공합니다.
-* •	Microsoft 웹 사이트의 [릴리스 전 응용 프로그램에 대한 성능 테스트 실행](https://msdn.microsoft.com/library/dn250793.aspx) 페이지는 웹 성능 및 부하 분산 테스트 프로젝트를 생성하기 위한 Visual Studio Ultimate 사용 방법을 설명합니다.
+* Microsoft 웹 사이트의 [ASP.NET Web API 살펴보기](http://www.asp.net/web-api) 페이지는 웹 API를 사용한 RESTful 웹 서비스 구축에 대한 자세한 소개를 제공합니다.
+* Microsoft 웹 사이트의 [ASP.NET Web API에서의 라우팅](http://www.asp.net/web-api/overview/web-api-routing-and-actions/routing-in-aspnet-web-api) 페이지는 ASP.NET Web API 프레임워크에서 규칙 기반 라우팅이 어떻게 작동하는지를 설명합니다.
+* 특성 기반 라우팅에 대한 자세한 정보는 Microsoft 웹 사이트에 나와 있는 [Web API 2에서의 특성 라우팅](http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2) 을 참조하십시오.
+* OData 웹 사이트의 [기본 자습서](http://www.odata.org/getting-started/basic-tutorial/) 페이지는 OData 프로토콜 기능에 대한 소개를 제공합니다.
+* Microsoft 웹 사이트의[ASP.NET Web API OData](http://www.asp.net/web-api/overview/odata-support-in-aspnet-web-api) 페이지에는 ASP.NET을 사용하여 OData web API를 구현하는 예와 추가 정보가 포함되어 있습니다.
+* Microsoft 웹 사이트의 [웹 API 및 웹 API OData에서의 일괄 지원 소개](http://blogs.msdn.com/b/webdev/archive/2013/11/01/introducing-batch-support-in-web-api-and-web-api-odata.aspx) 페이지는 OData를 사용해 웹 API에서 일괄 작업을 구현하는 방법을 설명합니다.
+* 조나단 올리버(Jonathan Oliver)의 블로그에 게재된 [Idempotency 패턴](http://blog.jonathanoliver.com/idempotency-patterns/) 에 관한 기사는 Idempotency 개요 및 Idempotency가 데이터 작업 관리와 어떻게 관련되는지를 설명합니다.
+* W3C 웹사이트의 [상태 코드 정의](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) 페이지에는 HTTP 상태 코드 전체 목록 및 해당 설명이 포함되어 있습니다.
+* ASP.NET Web API와 관련된 HTTP 예외 처리에 대한 자세한 정보는 Microsoft 웹 사이트의 [ASP.NET Web API에서의 예외 처리](http://www.asp.net/web-api/overview/error-handling/exception-handling) 페이지를 참조하십시오.
+* Microsoft 웹 사이트의 [웹 API 전역 오류 처리](http://www.asp.net/web-api/overview/error-handling/web-api-global-error-handling) 기사에서 웹 API에 대한 전역 오류 처리 및 로깅 전략 구현 방법을 설명합니다.
+* Microsoft 웹 사이트의 [배경 작업 실행에 WebJobs 사용](/azure/app-service-web/web-sites-create-web-jobs/) 페이지는 Azure 웹 사이트에서 배경 작업을 수행하기 위한 WebJobs 사용에 대한 정보 및 예를 제공합니다.
+* Microsoft 웹 사이트의 [Azure 알림 허브 사용자 알림](/azure/notification-hubs/notification-hubs-aspnet-backend-windows-dotnet-wns-notification/) 페이지는 클라이언트 응용 프로그램에 비동기 응답을 푸시하기 위한 Azure 알림 허브 사용 방법을 보여줍니다.
+* Microsoft 웹 사이트의 [API 관리](https://azure.microsoft.com/services/api-management/) 페이지에서는 웹 API에 대한 안전하고 제한된 액세스를 제공하는 제품 게시 방법을 설명합니다.
+* Microsoft 웹 사이트의 [Azure API Management REST API 리퍼런스](https://msdn.microsoft.com/library/azure/dn776326.aspx) 페이지에서는 사용자 지정 관리 응용 프로그램 구축을 위한 API Management REST API 사용 방법을 설명합니다.
+* Microsoft 웹 사이트의 [트래픽 관리자 라우팅 메서드](/azure/traffic-manager/traffic-manager-routing-methods/) 페이지에서는 웹 API를 호스팅하는 웹 사이트의 여러 인스턴스 전반으로 요청을 부하 분산하는 데 Azure 트래픽 관리자를 사용하는 방법을 요약합니다.
+* Microsoft 웹 사이트의 [응용 프로그램 인사이트 - ASP.NET으로 시작하기](/azure/application-insights/app-insights-asp-net/) 페이지는 ASP.NET Web API 프로젝트에서 응용 프로그램 인사이트 설치 및 구성에 대한 자세한 정보를 제공합니다.
+* Microsoft 웹 사이트의 [단위 테스트를 사용하여 코드 확인](https://msdn.microsoft.com/library/dd264975.aspx) 페이지는 Visual Studio를 사용한 단위 테스트 생성 및 관리에 대한 자세한 정보를 제공합니다.
+* Microsoft 웹 사이트의 [릴리스 전 응용 프로그램에 대한 성능 테스트 실행](https://msdn.microsoft.com/library/dn250793.aspx) 페이지는 웹 성능 및 부하 분산 테스트 프로젝트를 생성하기 위한 Visual Studio Ultimate 사용 방법을 설명합니다.
