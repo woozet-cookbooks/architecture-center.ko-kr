@@ -9,46 +9,34 @@ ms.author: pnp
 
 pnp.series.title: Best Practices
 ---
-# Naming conventions
+# 명명 규칙
 
 [!INCLUDE [header](../_includes/header.md)]
 
-This article is a summary of the naming rules and restrictions for Azure resources
-and a baseline set of recommendations for naming conventions.  You can use these recommendations 
-as a starting point for your own conventions specific to your needs. 
+이 문서는 Azure 리소스에 대한 명명 규칙 및 제한 사항의 요약과 명명 규칙에 대한 기본 권장 사항을 수록하고 있습니다. 이러한 권장 사항을 자신의 필요에 맞는 고유한 규칙을 정하기 위한 시작점으로 사용할 수 있습니다.  
 
-The choice of a name for any resource in Microsoft Azure is important because:
+Microsoft Azure의 모든 리소스에 대한 이름 선택은 다음과 같은 이유로 중요합니다. 
 
-* It is difficult to change a name later.
-* Names must meet the requirements of their specific resource type.
+* 나중에 이름을 변경하기가 어렵습니다.
+* 이름은 해당 리소스 유형의 요구 사항을 충족시켜야 합니다.
 
-Consistent naming conventions make resources easier to locate. They can also indicate the role of
-a resource in a solution. 
+일관된 명명 규칙을 사용하면 리소스를 보다 쉽게찾을 수 있습니다. 또한 솔루션에서 리소스의 역할을 나타낼 수도 있습니다.   
 
-The key to success with naming conventions is establishing and following them across your applications and organizations. 
+명명 규칙을 성공으로 이끄는 열쇠는 응용 프로그램과 조직 전체에서 이를 수립하고 따르는 것입니다.   
 
-## Naming subscriptions
-When naming Azure subscriptions, verbose names make understanding the context
-and purpose of each subscription clear.  When working in an environment with many subscriptions, following a shared naming convention can improve clarity.
+## 구독 이름 지정
+Azure 구독의 이름을 지정할 때 자세한 이름을 사용하면 각 구독의 컨텍스트와 목적을 명확하게 이해할 수 있습니다. 구독이 많은 환경에서 작업할 때 공유 명명 규칙을 따르면 명확성을 높일 수 있습니다. 
 
-A recommended pattern for naming subscriptions is:
+구독 이름 지정에 권장되는 패턴은 다음과 같습니다. 
 
-`<Company> <Department (optional)> <Product Line (optional)> <Environment>`
+`<회사> <부서(선택 사항))> <제품 라인(선택 사항)> <환경>`
 
-* Company would usually be the same for each subscription. However, some companies may have
-  child companies within the organizational structure. These companies may be managed by a central IT
-  group. In these cases, they could be differentiated by having both the parent company name (*Contoso*)
-  and child company name (*North Wind*).
-* Department is a name within the organization where a group of individuals work. This item within
-  the namespace as optional.
-* Product line is a specific name for a product or function that is performed from within the department.
-  This is generally optional for internal-facing services and applications. However, it is highly recommended to use
-  for public-facing services that require easy separation and identification (such as for clear 
-  separation of billing records).
-* Environment is the name that describes the deployment lifecycle of the applications or services,
-  such as Dev, QA, or Prod.
+* 회사는 일반적으로 각 구독마다 동일합니다. 그러나 일부 회사는 조직 구조 내 하위 회사를 보유하고 있을 수 있습니다. 이러한 회사는 중앙 IT 그룹에서 관리할 수 있습니다. 이 경우, 부모 회사 이름(*Contoso*) 과 자식 회사 이름(*North Wind*) 을 모두 구분하여 차별화할 수 있습니다.
+* 부서는 개인 그룹이 활동하는 조직 내의 이름입니다. 네임스페이스 내의 이 항목은 선택 사항입니다.
+* 제품 라인은 부서 내에서 수행되는 기능 또는 제품의 특정 이름입니다. 이는 일반적으로 내부용 서비스 및 응용 프로그램의 경우 선택 사항입니다. 그러나 쉽게 분리 및 식별해야 하는 공공 서비스(예: 청구 기록의 분명한 분리)에 사용하는 것이 매우 좋습니다.
+* 환경이란 Dev, QA 또는 Prod와 같은 응용 프로그램이나 서비스의 배포 수명 주기를 설명하는 이름입니다.
 
-| Company | Department | Product Line or Service | Environment | Full Name |
+| 회사 | 부서 | 제품 라인 또는 서비스 | 환경 | 전체 이름 |
 | --- | --- | --- | --- | --- |
 | Contoso |SocialGaming |AwesomeService |Production |Contoso SocialGaming AwesomeService Production |
 | Contoso |SocialGaming |AwesomeService |Dev |Contoso SocialGaming AwesomeService Dev |
@@ -57,63 +45,54 @@ A recommended pattern for naming subscriptions is:
 
 <!-- TODO; include more information about organizing subscriptions for application deployment, pods, etc. -->
 
-## Use affixes to avoid ambiguity
-When naming resources in Azure, it is recommended to use common prefixes or suffixes to identify the type and
-context of the resource.  While all the information about type, metadata, context, is available programmatically,
-applying common affixes simplifies visual identification.  When incorporating affixes into your naming convention,
-it is important to clearly specify whether the affix is at the beginning of the name 
-(prefix) or at the end (suffix).  
+## 모호함을 피하기 위해 접속어 사용
+Azure에서 리소스의 이름을 지정할 때 공통 접두어나 접미어를 사용하여 리소스의 유형과 컨텍스트를 식별하는 것이 좋습니다. 유형, 메타데이터, 컨텍스트에 대한 모든 정보는 프로그래밍 방식으로 사용할 수 있지만 공통 접미어를 적용하면 시각적 식별이 간단해집니다. 접속어를 명명 규칙에 포함시키려면 접속어가 이름의 시작 부분(접두사) 또는 끝에 있는지(접미어) 명확하게 지정하는 것이 중요합니다.  
 
-For instance, here are two possible names for a service hosting a calculation engine:
+예를 들어, 다음은 계산 엔진을 호스팅하는 서비스의 두 가지 가능한 이름입니다. 
 
-* SvcCalculationEngine (prefix)
-* CalculationEngineSvc (suffix)
+* SvcCalculationEngine (접두어)
+* CalculationEngineSvc (접미어)
 
-Affixes can refer to different aspects that describe the particular resources. The following table
-shows some examples typically used.
+접속어는 특정 리소스를 설명하는 다양한 측면을 나타낼 수 있습니다. 다음 표는 일반적으로 사용되는 몇 가지 예를 보여줍니다. 
 
-| Aspect | Example | Notes |
+| 측면 | 예 | 참고 |
 | --- | --- | --- |
-| Environment |dev, prod, QA |Identifies the environment for the resource |
-| Location |uw (US West), ue (US East) |Identifies the region into which the resource is deployed |
-| Instance |01, 02 |For resources that have more than one named instance (web servers, etc.). |
-| Product or Service |service |Identifies the product, application, or service that the resource supports |
-| Role |sql, web, messaging |Identifies the role of the associated resource |
+| 환경 |dev, prod, QA |리소스의 환경을 식별합니다. |
+| 위치 |uw (US West), ue (US East) |리소스가 배포되는 지역을 식별합니다. |
+| 인스턴스 |01, 02 |둘 이상의 명명된 인스턴스(웹 서버 등)가 있는 리소스의 경우 |
+| 제품 또는 서비스 |서비스 |리소스가 지원하는 제품, 응용 프로그램 또는 서비스를 식별합니다. |
+| 역할 |sql, web, messaging |관련 리소스의 역할을 식별합니다. |
 
-When developing a specific naming convention for your company or projects, it is importantly to
-choose a common set of affixes and their position (suffix or prefix).
+회사나 프로젝트에 대한 특정 명명 규칙을 개발할 때는 공통 접속어 세트와 위치(접미어 또는 접두어)를 선택하는 것이 중요합니다. 
 
-## Naming Rules and Restrictions
-Each resource or service type in Azure enforces a set of naming restrictions and scope; any naming convention
-or pattern must adhere to the requisite naming rules and scope.  For example, while the name of a VM maps to a DNS
-name (and is thus required to be unique across all of Azure), the name of a VNET is scoped to the Resource Group that
-it is created within.
+## 명명 규칙 및 제한 사항
+Azure의 각 리소스 또는 서비스 유형은 일련의 명명 제한과 범위를 시행합니다. 모든 명명 규칙 또는 패턴은 필수 명명 규칙과 범위를 준수해야 합니다. 예를 들어, VM의 이름이 DNS 이름에 매핑되기 때문에(따라서 모든 Azure에서 고유해야 함) VNET의 이름은 해당 호스트가 생성된 리소스 그룹으로 범위 지정됩니다. 
 
-In general, avoid having any special characters (`-` or `_`) as the first or last character in any name. These characters will cause most validation rules to fail.
+일반적으로 특수 문자(`-` 또는 `_`)를 어떤 이름의 첫 번째 또는 마지막 문자로 사용하지 마십시오. 이러한 문자로 인해 대부분의 유효성 검사 규칙이 실패하게 됩니다. 
 
-| Category | Service or Entity | Scope | Length | Casing | Valid Characters | Suggested Pattern | Example |
+| 카테고리 | 서비스 또는 엔터티 | 범위 | 길이 | 대/소문자 | 유효한 문자 | 제안 패턴 | 예 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Resource Group |Resource Group |Global |1-64 |Case insensitive |Alphanumeric, underscore, and hyphen |`<service short name>-<environment>-rg` |`profx-prod-rg` |
-| Resource Group |Availability Set |Resource Group |1-80 |Case insensitive |Alphanumeric, underscore, and hyphen |`<service-short-name>-<context>-as` |`profx-sql-as` |
-| General |Tag |Associated Entity |512 (name), 256 (value) |Case insensitive |Alphanumeric |`"key" : "value"` |`"department" : "Central IT"` |
-| Compute |Virtual Machine |Resource Group |1-15 |Case insensitive |Alphanumeric, underscore, and hyphen |`<name>-<role>-vm<number>` |`profx-sql-vm1` |
-| Storage |Storage account name (data) |Global |3-24 |Lower case |Alphanumeric |`<gloablly unique name><number>` (use a function to calculate a unique guid for naming storage accounts) |`profxdata001` |
-| Storage |Storage account name (disks) |Global |3-24 |Lower case |Alphanumeric |`<vm name without dashes>st<number>` |`profxsql001st0` |
-| Storage |Container name |Storage account |3-63 |Lower case |Alphanumeric and dash |`<context>` |`logs` |
-| Storage |Blob name |Container |1-1024 |Case sensitive |Any URL char |`<variable based on blob usage>` |`<variable based on blob usage>` |
-| Storage |Queue name |Storage account |3-63 |Lower case |Alphanumeric and dash |`<service short name>-<context>-<num>` |`awesomeservice-messages-001` |
-| Storage |Table name |Storage account |3-63 |Case insensitive |Alphanumeric |`<service short name>-<context>` |`awesomeservice-logs` |
-| Storage |File name |Storage account |3-63 |Lower case |Alphanumeric |`<variable based on blob usage>` |`<variable based on blob usage>` |
-| Networking |Virtual Network (VNet) |Resource Group |2-64 |Case-insensitive |Alphanumeric, dash, underscore, and period |`<service short name>-[section]-vnet` |`profx-vnet` |
-| Networking |Subnet |Parent VNet |2-80 |Case-insensitive |Alphanumeric, underscore, dash, and period |`<descriptive context>` |`web` |
-| Networking |Network Interface |Resource Group |1-80 |Case-insensitive |Alphanumeric, dash, underscore, and period |`<vmname>-nic<num>` |`profx-sql1-nic1` |
-| Networking |Network Security Group |Resource Group |1-80 |Case-insensitive |Alphanumeric, dash, underscore, and period |`<service short name>-<context>-nsg` |`profx-app-nsg` |
-| Networking |Network Security Group Rule |Resource Group |1-80 |Case-insensitive |Alphanumeric, dash, underscore, and period |`<descriptive context>` |`sql-allow` |
-| Networking |Public IP Address |Resource Group |1-80 |Case-insensitive |Alphanumeric, dash, underscore, and period |`<vm or service name>-pip` |`profx-sql1-pip` |
-| Networking |Load Balancer |Resource Group |1-80 |Case-insensitive |Alphanumeric, dash, underscore, and period |`<service or role>-lb` |`profx-lb` |
-| Networking |Load Balanced Rules Config |Load Balancer |1-80 |Case-insensitive |Alphanumeric, dash, underscore, and period |`<descriptive context>` |`http` |
-| Networking |Azure Application Gateway |Resource Group |1-80 |Case-insensitive |Alphanumeric, dash, underscore, and period |`<service or role>-aag` |`profx-agw` |
-| Networking |Traffic Manager Profile |Resource Group |1-63 |Case-insensitive |Alphanumeric, dash, and period |`<descriptive context>` |`app1` |
+| 리소스 그룹 |리소스 그룹 |전역 |1-64 |대소문자 구분 안 함 |영숫자, 밑줄 및 하이픈 |`<서비스 약식 이름>-<환경>-rg` |`profx-prod-rg` |
+| 리소스 그룹 |가용성 설정 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 밑줄 및 하이픈 |`<서비스 약식 이름>-<컨텍스트>-as` |`profx-sql-as` |
+| 일반 |태그 |관련 엔터티 |512 (이름), 256 (값) |대소문자 구분 안 함 |영숫자 |`"키" : "값"` |`"부서" : "중앙 IT"` |
+| 컴퓨팅 |가상 컴퓨터 |리소스 그룹 |1-15 |대소문자 구분 안 함 |영숫자, 밑줄 및 하이픈 |`<이름>-<역할>-vm<번호>` |`profx-sql-vm1` |
+| 저장소 |저장소 계정 이름(데이터) |전역 |3-24 |소문자 |영숫자 |`<전역으로 고유한 이름><번호>` (저장소 계정 이름 지정을 위한 고유한 GUID를 계산하는 함수 사용) |`profxdata001` |
+| 저장소 |저장소 계정 이름(디스크) |전역 |3-24 |소문자 |영숫자 |`<대시를 제외한 vm 이름>st<번호>` |`profxsql001st0` |
+| 저장소 |컨테이너 이름 |저장소 계정 |3-63 |소문자 |영숫자 및 대시 |`<컨텍스트>` |`로그` |
+| 저장소 |Blob 이름 |컨테이너 |1-1024 |대소문자 구분 |모든 URL 문자 |`<Blob 사용에 따라 가변적>` |`<Blob 사용에 따라 가변적>` |
+| 저장소 |대기열 이름 |저장소 계정 |3-63 |소문자 |영숫자 및 대시 |`<서비스 약식 이름>-<컨텍스트>-<번호>` |`awesomeservice-messages-001` |
+| 저장소 |테이블 이름 |저장소 계정 |3-63 |대소문자 구분 안 함 |영숫자 |`<서비스 약식 이름>-<컨텍스트>` |`awesomeservice-logs` |
+| 저장소 |파일 이름 |저장소 계정 |3-63 |소문자 |영숫자 |`<Blob 사용에 따라 가변적>` |`<Blob 사용에 따라 가변적>` |
+| 네트워킹 |가상 네트워크(VNet) |리소스 그룹 |2-64 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<서비스 약식 이름>-[섹션]-vnet` |`profx-vnet` |
+| 네트워킹 |서브넷 |상위 VNet |2-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<설명적 텍스트>` |`웹` |
+| 네트워킹 |네트워크 인터페이스 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<vmname>-nic<num>` |`profx-sql1-nic1` |
+| 네트워킹 |네트워크 보안 그룹 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<서비스 약식 이름>-<컨텍스트>-nsg` |`profx-app-nsg` |
+| 네트워킹 |네트워크 보안 그룹 역할 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<설명적 텍스트>` |`sql-allow` |
+| 네트워킹 |공용 IP 주소 |리소스 그룹 |1-80 |Case-insensitive |영숫자, 대시, 밑줄 및 마침표 |`<vm 또는 서비스 이름>-pip` |`profx-sql1-pip` |
+| 네트워킹 |부하 분산 장치 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<서비스 또는 역할>-lb` |`profx-lb` |
+| 네트워킹 |부하 분산된 규칙 구성 |부하 분산 장치 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<설명적 텍스트>` |`http` |
+| 네트워킹 |Azure Application Gateway |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<서비스 또는 역할>-aag` |`profx-agw` |
+| 네트워킹 |Traffic Manager Profile |리소스 그룹 |1-63 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<설명적 텍스트>` |`app1` |
 
 
 ## Organizing resources with tags
