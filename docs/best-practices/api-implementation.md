@@ -36,7 +36,7 @@ ASP.NET Web API를 사용해 구현되는 서비스의 경우 각각의 요청�
 
     동일한 규칙이 POST, PUT, DELETE HTTP 요청에 적용됩니다. 주문 101의 세부 정보를 업데이트하는 PUT 요청은 URI *http://www.adventure-works.com/api/orders/101* 로 지정되고, 메시지 본문에는 주문의 새로운 세부 정보가 포함되며, 이 정보는 접두사 *Put*으로 시작하는 이름(예:*PutOrder*)을 포함해 주문 컨트롤러의 메서드에 매개 변수로 전달됩니다.
 
-    기본 라우팅 테이블은 RESTful web API에서 하위 리소스를 참조하는 요청(예: *http://www.adventure-works.com/api/customers/1/orders* (고객 1이 한 모든 주문의 세부 정보 검색))을 일치시키지 않습니다. 이러한 경우를 처리하기 위해 라우팅 테이블에 사용자 지정 경로를 추가할 수 있습니다.
+    기본 라우팅 테이블은 RESTful web API에서 하위 리소스를 참조하는 요청(예:*http://www.adventure-works.com/api/customers/1/orders*(고객 1이 한 모든 주문의 세부 정보 검색))을 일치시키지 않습니다. 이러한 경우를 처리하기 위해 라우팅 테이블에 사용자 지정 경로를 추가할 수 있습니다.
 
     ```C#
     config.Routes.MapHttpRoute(
