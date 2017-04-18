@@ -165,7 +165,7 @@ Azure 가상 컴퓨터에 백그라운드 작업을 배포할지 여부를 결�
 * HTTP 엔드포인트를 통해 표시되는 모니터링 프로브 구현을 고려해 볼 수 있습니다. 이 프로브의 코드는 상태 검사를 실시하거나 운영 정보와 통계를 수집하거나 오류 정보를 수집 및 분석하여 관리 응용 프로그램에 반환합니다. 자세한 내용은 [상태 엔드포인트 모니터링 패턴](http://msdn.microsoft.com/library/dn589789.aspx)을 참조하십시오.
 
 ### 자세한 정보
-* •	Azure의 [Virtual Machines](https://azure.microsoft.com/services/virtual-machines/)
+* Azure의 [Virtual Machines](https://azure.microsoft.com/services/virtual-machines/)
 * [Azure Virtual Machines FAQ](/azure/virtual-machines/virtual-machines-linux-classic-faq?toc=%2fazure%2fvirtual-machines%2flinux%2fclassic%2ftoc.json)
 
 ## 설계 고려 사항
