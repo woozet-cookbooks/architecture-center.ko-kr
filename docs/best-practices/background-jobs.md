@@ -9,224 +9,223 @@ ms.author: pnp
 
 pnp.series.title: Best Practices
 ---
-# Background jobs
+# 백그라운드 작업
 [!INCLUDE [header](../_includes/header.md)]
 
-Many types of applications require background tasks that run independently of the user interface (UI). Examples include batch jobs, intensive processing tasks, and long-running processes such as workflows. Background jobs can be executed without requiring user interaction--the application can start the job and then continue to process interactive requests from users. This can help to minimize the load on the application UI, which can improve availability and reduce interactive response times.
+많은 종류의 응용 프로그램에는 사용자 인터페이스(UI)와 무관하게 실행되는 백그라운드 작업이 필요합니다. 그 예로는 일괄 작업, 집약적 처리 작업, 집중 처리 작업, 워크플로와 같은 장기 실행 프로세스가 있습니다. 백그라운드 작업은 사용자 상호 작용 없이 실행될 수 있습니다. 즉, 응용 프로그램은 작업을 시작한 후 계속 사용자의 대화형 요청을 처리할 수 있습니다. 이 작업을 통해 응용 프로그램 UI에서 부하를 최소화하여 가용성을 개선하고 대화형 응답 시간을 개선할 수 있습니다. 
 
-For example, if an application is required to generate thumbnails of images that are uploaded by users, it can do this as a background job and save the thumbnail to storage when it is complete--without the user needing to wait for the process to be completed. In the same way, a user placing an order can initiate a background workflow that processes the order, while the UI allows the user to continue browsing the web app. When the background job is complete, it can update the stored orders data and send an email to the user that confirms the order.
+예를 들어, 사용자가 업로드한 이미지의 축소판 그림을 생성하는 데 응용 프로그램이 필요한 경우, 배경 작업으로 이 작업을 수행하고 이 작업이 완료되는 이 축소판 그림을 스토리지에 저장합니다. 이때 사용자는 프로세스가 완료될 때까지 기다리지 않아도 됩니다. 이와 마찬가지로, 주문하는 사용자는 주문을 처리하는 백그라운드 워크플로를 시작하는 동시에 UI는 사용자가 웹 앱을 계속 검색하도록 해줍니다. 백그라운드 작업이 완료되면, 저장된 주문 데이터를 업데이트하고 주문을 확인한 사용자에게 이메일을 보낼 수 있습니다. 
 
-When you consider whether to implement a task as a background job, the main criteria is whether the task can run without user interaction and without the UI needing to wait for the job to be completed. Tasks that require the user or the UI to wait while they are completed might not be appropriate as background jobs.
+작업을 백그라운드 작업으로 구현할지 여부를 고려할 때 기본 기준은 사용자 상호 작용 없이, 그리고 UI가 작업을 완료할 때까지 기다리지 않고 작업을 실행할 수 있을지 여부입니다. 작업을 완료할 때까지 사용자 또는 UI가 대기하는 작업은 백그라운드 작업으로 적절하지 못할 수도 있습니다. 
 
-## Types of background jobs
-Background jobs typically include one or more of the following types of jobs:
+## 백그라운드 작업 유형
+백그라운드 작업은 일반적으로 다음 작업 유형 중 하나 이상을 포함합니다. 
 
-* CPU-intensive jobs, such as mathematical calculations or structural model analysis.
-* I/O-intensive jobs, such as executing a series of storage transactions or indexing files.
-* Batch jobs, such as nightly data updates or scheduled processing.
-* Long-running workflows, such as order fulfillment, or provisioning services and systems.
-* Sensitive-data processing where the task is handed off to a more secure location for processing. For example, you might not want to process sensitive data within a web app. Instead, you might use a pattern such as [Gatekeeper](http://msdn.microsoft.com/library/dn589793.aspx) to transfer the data to an isolated background process that has access to protected storage.
+* 수학 계산이나 구조 모델 분석과 같은 CPU 집약적 작업.
+* 일련의 스토리지 트랜잭션 실행이나 파일 인덱싱과 같은 I/O 집약적 작업.
+* 매일 밤 데이터 업데이트나 예약된 처리와 같은 일괄 작업.
+* 주문 이행이나 서비스와 시스템 프로비저닝과 같은 장기 실행 워크플로.
+* 처리를 위해 작업을 보다 안전한 위치로 전달하는 중요한 데이터 처리. 예를 들어, 웹 앱 내에서 중요한 데이터를 처리해야 합니다. 그 대신, [Gatekeeper](http://msdn.microsoft.com/library/dn589793.aspx)와 같은 패턴을 사용하여 보호된 저장소에 액세스할 수 있는 분리된 백그라운드 프로세스에 데이터를 전달할 수 있습니다.
 
-## Triggers
-Background jobs can be initiated in several different ways. They fall into one of the following categories:
+## 트리거
+백그라운드 작업은 여러 방식으로 시작할 수 있으며, 다음 카테고리 중 하나에 해당됩니다. 
 
-* [**Event-driven triggers**](#event-driven-triggers). The task is started in response to an event, typically an action taken by a user or a step in a workflow.
-* [**Schedule-driven triggers**](#schedule-driven-triggers). The task is invoked on a schedule based on a timer. This might be a recurring schedule or a one-off invocation that is specified for a later time.
+* [**이벤트 구동 트리거**](#event-driven-triggers). 이 작업은 보통 워크플로에서 사용자가 취하는 조치나 단계 등의 이벤트에 대응하여 시작됩니다.
+* [**일정 구동 트리거**](#schedule-driven-triggers). 타이머 기준으로 일정이 되면 작업이 호출됩니다. 이것은 반복 일정 또는 나중을 위해 지정된 일회성 호출일 수 있습니다.
 
-### Event-driven triggers
-Event-driven invocation uses a trigger to start the background task. Examples of using event-driven triggers include:
+### 이벤트 구동 트리거
+이벤트 구동 호출은 트리거를 사용해 백그라운드 작업을 시작합니다. 이벤트 구동 트리거를 사용한 예는 다음과 같습니다. 
 
-* The UI or another job places a message in a queue. The message contains data about an action that has taken place, such as the user placing an order. The background task listens on this queue and detects the arrival of a new message. It reads the message and uses the data in it as the input to the background job.
-* The UI or another job saves or updates a value in storage. The background task monitors the storage and detects changes. It reads the data and uses it as the input to the background job.
-* The UI or another job makes a request to an endpoint, such as an HTTPS URI, or an API that is exposed as a web service. It passes the data that is required to complete the background task as part of the request. The endpoint or web service invokes the background task, which uses the data as its input.
+* UI 또는 다른 작업은 큐에 메시지를 놓습니다. 이 메시지는 사용자 주문과 같이 발생한 조치에 대한 데이터를 포함합니다. 백그라운드 작업은 이 큐에서 수신 대기하고 새 메시지 도착을 감지합니다. 이 작업은 메시지를 읽고 이 메시지의 데이터를 백그라운드 작업에 대한 입력으로 사용합니다.
+* UI 또는 다른 작업은 저장소의 값을 저장하거나 업데이트합니다. 백그라운드 작업은 저장소를 모니터링하고 변경 내용을 감지합니다. 그리고 데이터를 판독하고 이 데이터를 백그라운드 작업에 대한 입력으로 사용합니다.
+* UI 또는 다른 작업은 HTTPS URI 또는 웹 서비스로 노출되는 API와 같은 엔드포인트에 요청을 보냅니다. 이 작업에서는 요청의 일부로서 백그라운드 작업을 완료하는 데 필요한 데이터를 전달합니다. 엔드포인트 또는 웹 서비스는 데이터를 입력으로 사용하는 백그라운드 작업을 호출합니다.
 
-Typical examples of tasks that are suited to event-driven invocation include image processing, workflows, sending information to remote services, sending email messages, and provisioning new users in multitenant applications.
+이벤트 구동 호출에 적합한 일반 작업의 예로는 이미지 처리, 워크플로, 정보를 원격 서비스에 전송, 이메일 메시지 전송, 다중 테넌트 응용 프로그램에서 신규 사용자 프로비저닝이 있습니다. 
 
-### Schedule-driven triggers
-Schedule-driven invocation uses a timer to start the background task. Examples of using schedule-driven triggers include:
+### 일정 구동 트리거
+일정 구동 호출은 타이머를 사용해 백그라운드 작업을 시작합니다. 일정 구동 트리거를 사용한 예는 다음과 같습니다. 
 
-* A timer that is running locally within the application or as part of the application’s operating system invokes a background task on a regular basis.
-* A timer that is running in a different application, or a timer service such as Azure Scheduler, sends a request to an API or web service on a regular basis. The API or web service invokes the background task.
-* A separate process or application starts a timer that causes the background task to be invoked once after a specified time delay, or at a specific time.
+* 응용 프로그램 내에서 로컬로 응용 프로그램의 운영 체제의 일부로서 실행되고 있는 타이머가 정기적으로 백그라운드 작업을 호출함.
+* 다른 응용 프로그램에서 실행되고 있는 타이머 또는 Azure Scheduler와 같은 타이머 서비스가 API 또는 웹 서비스에 정기적으로 요청을 보냄. API 또는 웹 서비스가 백그라운드 작업을 호출함.
+* 별도의 프로세스나 응용 프로그램은 지정된 시간이 지나거나 지정된 시간이 되면 백그라운드 작업을 호출하는 타이머를 시작합니다.
 
-Typical examples of tasks that are suited to schedule-driven invocation include batch-processing routines (such as updating related-products lists for users based on their recent behavior), routine data processing tasks (such as updating indexes or generating accumulated results), data analysis for daily reports, data retention cleanup, and data consistency checks.
+일정 구동 호출에 적합한 작업의 일반적인 예로는 일괄 처리 루틴(최근 동작을 기준으로 사용자 대신 관련 제품 목록 업데이트 등), 루틴 데이터 처리 작업(인덱스 업데이트 또는 누적 결과 생성 등), 일일 보고서의 데이터 분석, 데이터 보존 정리, 데이터 일관성 확인이 있습니다. 
 
-If you use a schedule-driven task that must run as a single instance, be aware of the following:
+단일 인스턴스로 실행해야 하는 일정 구동 작업을 사용하는 경우, 다음 사항에 주의해야 합니다. 
 
-* If the compute instance that is running the scheduler (such as a virtual machine using Windows scheduled tasks) is scaled, you will have multiple instances of the scheduler running. These could start multiple instances of the task.
-* If tasks run for longer than the period between scheduler events, the scheduler may start another instance of the task while the previous one is still running.
+* 스케줄러(Windows 예약된 작업을 사용한 가상 컴퓨터 등)를 실행하는 계산 인스턴스 크기를 조정하는 경우, 스케줄러에는 여러 인스턴스가 실행됩니다. 이것은 작업 인스턴스를 여러 개 시작할 수 있습니다.
+* 스케줄러 이벤트 간 기간보다 오래 작업을 실행하면, 이 스케줄러는 이전 인스턴스를 계속 실행하면서도 다른 작업 인스턴스를 시작할 수 있습니다.
 
-## Returning results
-Background jobs execute asynchronously in a separate process, or even in a separate location, from the UI or the process that invoked the background task. Ideally, background tasks are “fire and forget” operations, and their execution progress has no impact on the UI or the calling process. This means that the calling process does not wait for completion of the tasks. Therefore, it cannot automatically detect when the task ends.
+## 결과 반환
+백그라운드 작업은 백그라운드 작업을 호출한 프로세스 또는 UI에서 나온 별도의 프로세스 또는 심지어 별도의 위치에서 비동기식으로 실행됩니다. 원칙적으로 백그라운드 작업은 “자체 유도식(fire and forget)” 운영이고 그 실행 진행률은 UI 또는 호출 프로세스에 영향을 주지 않습니다. 즉, 통화 프로세스는 작업이 끝날 때까지 대기하지 않습니다. 따라서 작업이 끝날 때를 자동으로 감지할 수 없습니다. 
 
-If you require a background task to communicate with the calling task to indicate progress or completion, you must implement a mechanism for this. Some examples are:
+백그라운드 작업이 호출 작업과 통신하여 진행률이나 종료를 표시해야 하는 경우에는 이것을 위한 메커니즘을 구현해야 합니다. 다음은 몇 가지 예입니다. 
 
-* Write a status indicator value to storage that is accessible to the UI or caller task, which can monitor or check this value when required. Other data that the background task must return to the caller can be placed into the same storage.
-* Establish a reply queue that the UI or caller listens on. The background task can send messages to the queue that indicate status and completion. Data that the background task must return to the caller can be placed into the messages. If you are using Azure Service Bus, you can use the **ReplyTo** and **CorrelationId** properties to implement this capability. For more information, see [Correlation in Service Bus Brokered Messaging](http://www.cloudcasts.net/devguide/Default.aspx?id=13029).
-* Expose an API or endpoint from the background task that the UI or caller can access to obtain status information. Data that the background task must return to the caller can be included in the response.
-* Have the background task call back to the UI or caller through an API to indicate status at predefined points or on completion. This might be through events raised locally or through a publish-and-subscribe mechanism. Data that the background task must return to the caller can be included in the request or event payload.
+* 상태 표시기 값을 호출자 작업에 액세스 가능한 저장소에 쓰면, 필요할 때 이 값을 모니터링하거나 확인할 수 있습니다. 백그라운드 작업이 호출자에게 반환해야 하는 다른 데이터를 동일한 저장소에 놓을 수 있습니다.
+* UI 또는 호출자가 수신 대기하는 회신 큐를 설정합니다. 백그라운드 작업은 상태와 완료를 나타내는 큐에 메시지를 보낼 수 있습니다. 백그라운드 작업이 호출자에게 반환해야 하는 데이터를 메시지에 배치할 수 있습니다. Azure Service Bus를 사용하는 경우, **ReplyTo** 및 **CorrelationId** 속성을 사용해 이 기능을 구현할 수 있습니다. 자세한 정보는 [서비스 버스에서 조정된 메시징의 상관 관계](http://www.cloudcasts.net/devguide/Default.aspx?id=13029)를 참조하십시오.
+* UI 또는 호출자가 상태 정보를 가져오기 위해 액세스할 수 있는 백그라운드 작업에서 API 또는 엔드포인트를 노출시킵니다. 백그라운드 작업이 호출자에게 반환해야 하는 데이터를 메시지에 포함할 수 있습니다.
+* API를 통해 백그라운드 작업 호출을 UI 또는 호출자에게 다시 보내 사전 정의된 포인트의 상태나 완료 시 상태를 표시합니다. 이것은 로컬이나 게시하고 구독하는 메커니즘을 통해 발생하는 이벤트를 통해서 실시할 수 있습니다. 백그라운드 작업이 호출자에게 반환해야 하는 데이터는 요청이나 이벤트 페이로드에 포함될 수 있습니다.
 
-## Hosting environment
-You can host background tasks by using a range of different Azure platform services:
+## 호스팅 환경
+다양한 Azure 플랫폼 서비스를 사용하여 백그라운드 작업을 호스팅할 수 있습니다. 
 
-* [**Azure Web Apps and WebJobs**](#azure-web-apps-and-webjobs). You can use WebJobs to execute custom jobs based on a range of different types of scripts or executable programs within the context of a web app.
-* [**Azure Cloud Services web and worker roles**](#azure-cloud-services-web-and-worker-roles). You can write code within a role that executes as a background task.
-* [**Azure Virtual Machines**](#azure-virtual-machines). If you have a Windows service or want to use the Windows Task Scheduler, it is common to host your background tasks within a dedicated virtual machine.
-* [**Azure Batch**](/azure/batch/batch-technical-overview/). It's a platform service that schedules compute-intensive work to run on a managed collection of virtual machines, and can automatically scale compute resources to meet the needs of your jobs.
+* [**Azure Web App 및 WebJob**](#azure-web-apps-and-webjobs). WebJob을 사용해 웹 앱의 다양한 스크립트나 실행 프로그램을 기반으로 사용자 지정 작업을 실행할 수 있습니다.
+* [**Azure Cloud Services 웹 및 작업자 역할**](#azure-cloud-services-web-and-worker-roles). 백그라운드 작업으로 실행하는 역할 내에서 코드를 쓸 수 있습니다.
+* [**Azure Virtual Machines**](#azure-virtual-machines). Windows 서비스를 사용하거나 Windows Task Scheduler를 사용해야 하는 경우, 전용 가상 컴퓨터 내에서 백그라운드 작업을 호스팅하는 것이 일반적입니다.
+* [**Azure Batch**](/azure/batch/batch-technical-overview/). 가상 컴퓨터의 관리 컬렉션에서 실행하는 계산 집약적 작업을 예약하고, 사용자의 작업 필요에 맞게 계산 리소스 크기를 자동으로 조정할 수 있는 플랫폼 서비스입니다.
 
-The following sections describe each of these options in more detail, and include considerations to help you choose the appropriate option.
+다음 섹션에서는 이 옵션 각각에 대해 보다 자세히 설명하고 적합한 옵션을 선택하는 고려 사항에 대해 다룹니다. 
 
-## Azure Web Apps and WebJobs
-You can use Azure WebJobs to execute custom jobs as background tasks within an Azure Web App. WebJobs run within the context of your web app as a continuous process. WebJobs also run in response to a trigger event from Azure Scheduler or external factors, such as changes to storage blobs and message queues. Jobs can be started and stopped on demand, and shut down gracefully. If a continuously running WebJob fails, it is automatically restarted. Retry and error actions are configurable.
+## Azure Web App 및 WebJob
+Azure WebJob을 사용하여 Azure Web App 내에서 사용자 지정 작업을 백그라운드 작업으로 실행할 수 있습니다. WebJob은 연속 프로세스로서 웹 앱의 컨텍스트 내에서 실행됩니다. 또한, WebJob은 저장소 blob 및 메시지 큐의 변경 내용과 같이 Azure Scheduler 또는 외부 요소에서 트리거 이벤트에 대한 반응으로 실행됩니다. 작업을 요청에 따라 시작하고 중지하고, 정상적으로 종료할 수 있습니다. WebJob을 계속 실행하지 못할 경우 WebJob을 자동으로 다시 시작합니다. 다시 시도 및 오류 동작을 구성할 수 있습니다. 
 
-When you configure a WebJob:
+WebJob을 구성할 때: 
 
-* If you want the job to respond to an event-driven trigger, you should configure it as **Run continuously**. The script or program is stored in the folder named site/wwwroot/app_data/jobs/continuous.
-* If you want the job to respond to a schedule-driven trigger, you should configure it as **Run on a schedule**. The script or program is stored in the folder named site/wwwroot/app_data/jobs/triggered.
-* If you choose the **Run on demand** option when you configure a job, it will execute the same code as the **Run on a schedule** option when you start it.
+* 작업이 이벤트 구동 트리거에 응답하도록 하려면, 해당 작업을 **계속 실행**으로 구성해야 합니다. 스크립트 또는 프로그램은 site/wwwroot/app_data/jobs/continuous라고 명명된 폴더에 저장됩니다.
+* 작업이 일정 구동 트리거에 응답하도록 하려면, 해당 작업을 **일정에 따라 실행**으로 구성해야 합니다. 스크립트 또는 프로그램은 site/wwwroot/app_data/jobs/triggered라고 명명된 폴더에 저장됩니다.
+* 작업을 구성할 때 **요청 시 실행** 옵션을 선택하면, 시작할 때 동일한 코드를 **일정에 따라 실행** 옵션으로 실행합니다.
 
-Azure WebJobs run within the sandbox of the web app. This means that they can access environment variables and share information, such as connection strings, with the web app. The job has access to the unique identifier of the machine that is running the job. The connection string named **AzureWebJobsStorage** provides access to Azure storage queues, blobs, and tables for application data, and access to Service Bus for messaging and communication. The connection string named **AzureWebJobsDashboard** provides access to the job action log files.
+Azure WebJob은 웹 앱의 샌드박스 내에서 실행됩니다. 즉, 웹 앱을 통해 연결 문자열과 같은 환경 변수에 액세스하고 정보를 공유할 수 있습니다. 작업은 작업을 실행하고 있는 컴퓨터의 고유 식별자에 액세스할 수 있습니다. **AzureWebJobsStorage**로 명명된 연결 문자열은 응용 프로그램 데이터용 Azure 저장소 큐, blob, 테이블에 액세스하고 메시징과 통신용 서비스 버스에도 액세스할 수 있습니다. **AzureWebJobsDashboard** 로 명명된 연결 문자열은 작업 동작 로그 파일에 액세스할 수 있습니다.
 
-Azure WebJobs have the following characteristics:
+Azure WebJob의 특징은 다음과 같습니다. 
 
-* **Security**: WebJobs are protected by the deployment credentials of the web app.
-* **Supported file types**: You can define WebJobs by using command scripts (.cmd), batch files (.bat), PowerShell scripts (.ps1), bash shell scripts (.sh), PHP scripts (.php), Python scripts (.py), JavaScript code (.js), and executable programs (.exe, .jar, and more).
-* **Deployment**: You can deploy scripts and executables by using the Azure portal, by using the [WebJobsVs](https://marketplace.visualstudio.com/items?itemName=Sayed-Ibrahim-Hashimi.WebJobsVs) add-in for Visual Studio or the [Visual Studio 2013 Update 4](http://www.visualstudio.com/news/vs2013-update4-rc-vs) (you can create and deploy with this option), by using the [Azure WebJobs SDK](/azure/app-service-web/websites-dotnet-webjobs-sdk-get-started/), or by copying them directly to the following locations:
-  * For triggered execution: site/wwwroot/app_data/jobs/triggered/{job name}
-  * For continuous execution: site/wwwroot/app_data/jobs/continuous/{job name}
-* **Logging**: Console.Out is treated (marked) as INFO. Console.Error is treated as ERROR. You can access monitoring and diagnostics information by using the Azure portal. You can download log files directly from the site. They are saved in the following locations:
-  * For triggered execution: Vfs/data/jobs/triggered/jobName
-  * For continuous execution: Vfs/data/jobs/continuous/jobName
-* **Configuration**: You can configure WebJobs by using the portal, the REST API, and PowerShell. You can use a configuration file named settings.job in the same root directory as the job script to provide configuration information for a job. For example:
+* **보안**: WebJob은 웹 앱의 배포 자격 증명을 통해 보호됩니다.
+* **지원 파일 형식**: 명령 스크립트(.cmd), 배치 파일(.bat), PowerShell 스크립트(.ps1), bash shell 스크립트(.sh), PHP 스크립트(.php), Python 스크립트(.py), JavaScript 코드(.js), 실행 프로그램(.exe, .jar 등)을 사용하여 WebJob을 정의할 수 있습니다.
+* **배포**: 스크립트 및 실행 파일을 배포하려면 Azure 포털, Visual Studio 또는 [Visual Studio 2013 Update 4](http://www.visualstudio.com/news/vs2013-update4-rc-vs)용 [WebJobsVs](https://marketplace.visualstudio.com/items?itemName=Sayed-Ibrahim-Hashimi.WebJobsVs) 추가 기능(이 옵션을 사용해 만들고 배포할 수 있음), [Azure WebJobs SDK](/azure/app-service-web/websites-dotnet-webjobs-sdk-get-started/) 중 하나를 사용하거나 다음 위치로 직접 복사하면 됩니다.
+  * 트리거된 실행: site/wwwroot/app_data/jobs/triggered/{job name}
+  * 연속 실행: site/wwwroot/app_data/jobs/continuous/{job name}
+* **로깅**: Console.Out은 INFO로 처리됩니다. Console.Error는 ERROR로 처리됩니다. Azure 포털을 사용하여 모니터링 및 진단 정보에 접속할 수 있습니다. 이 사이트에서 직접 로그 파일을 다운로드할 수 있습니다. 로그 파일은 다음 위치에 저장되어 있습니다.
+  * 트리거된 실행: Vfs/data/jobs/triggered/jobName
+  * 연속 실행: Vfs/data/jobs/continuous/jobName
+* **구성**: WebJob을 구성하려면 포털, REST API, PowerShell을 사용하면 됩니다. 구성 파일로 명명된 설정, 작업 스크립트와 동일한 루트 디렉터리의 작업을 사용하여 작업에 대한 구성 정보를 제공할 수 있습니다. 예:
   * { "stopping_wait_time": 60 }
   * { "is_singleton": true }
 
-### Considerations
-* By default, WebJobs scale with the web app. However, you can configure jobs to run on single instance by setting the **is_singleton** configuration property to **true**. Single instance WebJobs are useful for tasks that you do not want to scale or run as simultaneous multiple instances, such as reindexing, data analysis, and similar tasks.
-* To minimize the impact of jobs on the performance of the web app, consider creating an empty Azure Web App instance in a new App Service plan to host WebJobs that may be long running or resource intensive.
+### 고려 사항
+* 기본적으로 WebJob 크기는 웹 앱을 통해 조정됩니다. 그렇지만, **is_singleton** 구성 속성을 **true**로 설정하여 작업을 구성하여 단일 인스턴스에서 실행할 수 있습니다. 단일 인스턴스 WebJob은 재인덱싱, 데이터 분석, 유사한 작업과 같이 크기를 조정하지 않거나 동시 다중 인스턴스로 실행하지 않는 작업에 유용합니다.
+* 작업이 웹 앱의 성능에 미치는 영향을 최소화하려면, 새 App Service 플랜에서 빈 Azure 웹 앱 인스턴스를 만들어 오래 실행하거나 리소스를 많이 사용하는 WebJob을 호스팅하는 것이 좋습니다.
 
-### More information
-* [Azure WebJobs recommended resources](/azure/app-service-web/websites-webjobs-resources/) lists the many useful resources, downloads, and samples for WebJobs.
+### 자세한 정보
+* [Azure WebJob 추천 리소스](/azure/app-service-web/websites-webjobs-resources/)에는 유용한 리소스, 다운로드, WebJob용 샘플 등이 나열되어 있습니다.
 
-## Azure Cloud Services web and worker roles
-You can execute background tasks within a web role or in a separate worker role. When you are deciding whether to use a worker role, consider scalability and elasticity requirements, task lifetime, release cadence, security, fault tolerance, contention, complexity, and the logical architecture. For more information, see [Compute Resource Consolidation Pattern](http://msdn.microsoft.com/library/dn589778.aspx).
+## Azure Cloud Services 웹 및 작업자 역할
+웹 역할이나 별도의 작업자 역할 내에서 백그라운드 작업을 실행할 수 있습니다. 작업자 역할 사용 여부를 결정할 때 확장성과 탄력성 요구사항, 작업 수명, 릴리스 cadence, 보안, 내결함성, 경합, 복잡성, 논리 아키텍처를 고려해야 합니다. 자세한 내용은 [계산 리소스 통합 패턴](http://msdn.microsoft.com/library/dn589778.aspx)을 참조하십시오. 
 
-There are several ways to implement background tasks within a Cloud Services role:
+Cloud Services 역할을 통해 백그라운드 작업을 구현할 수 있는 여러 가지 방법이 있습니다. 
 
-* Create an implementation of the **RoleEntryPoint** class in the role and use its methods to execute background tasks. The tasks run in the context of WaIISHost.exe. They can use the **GetSetting** method of the **CloudConfigurationManager** class to load configuration settings. For more information, see [Lifecycle (Cloud Services)](#lifecycle-cloud-services).
-* Use startup tasks to execute background tasks when the application starts. To force the tasks to continue to run in the background, set the **taskType** property to **background** (if you do not do this, the application startup process will halt and wait for the task to finish). For more information, see [Run startup tasks in Azure](/azure/cloud-services/cloud-services-startup-tasks/).
-* Use the WebJobs SDK to implement background tasks such as WebJobs that are initiated as a startup task. For more information, see [Get started with the Azure WebJobs SDK](/azure/app-service-web/websites-dotnet-webjobs-sdk-get-started/).
-* Use a startup task to install a Windows service that executes one or more background tasks. You must set the **taskType** property to **background** so that the service executes in the background. For more information, see [Run startup tasks in Azure](/azure/cloud-services/cloud-services-startup-tasks/).
+* 역할에서 **RoleEntryPoint** 클래스의 구현을 생성하고 해당 메서드를 사용하여 백그라운드 작업을 실행합니다. 이 작업은 WaIISHost.exe 컨텍스트에서 실행됩니다. 이 작업은 **CloudConfigurationManager** 클래스의 **GetSetting** 메서드를 사용하여 구성 설정을 로드할 수 있습니다. 자세한 내용은 [수명 주기(Cloud Services)](#lifecycle-cloud-services)를 참조하십시오.
+* 시작 작업을 사용하여 응용 프로그램이 시작될 때 백그라운드 작업을 실행합니다. 이 작업을 계속 백그라운드에서 강제로 실행하려면, **taskType** 속성을 설정하여 **백그라운드**로 설정합니다(이 작업을 하지 않을 경우 응용 프로그램 시작 프로세스가 중단되고 작업을 마칠 때까지 대기함). 자세한 내용은 [Azure에서 시작 작업 실행](/azure/cloud-services/cloud-services-startup-tasks/)을 참조하십시오.
+* WebJobs SDK를 사용하면 시작 작업으로 시작되는 WebJob과 같은 백그라운드 작업을 구현할 수 있습니다. 자세한 내용은 [Azure WebJobs SDK 시작](/azure/app-service-web/websites-dotnet-webjobs-sdk-get-started/)을 참조하십시오.
+* 시작 작업을 사용하여 백그라운드 작업 하나 이상을 실행하는 Windows 서비스를 설치할 수 있습니다. **taskType** 속성을 **백그라운드**로 설정하여 백그라운드에서 서비스를 실행해야 합니다. 자세한 내용은 [Azure에서 시작 작업 실행](/azure/cloud-services/cloud-services-startup-tasks/)을 참조하십시오.
 
-### Running background tasks in the web role
-The main advantage of running background tasks in the web role is the saving in hosting costs because there is no requirement to deploy additional roles.
+### 웹 역할에서 백그라운드 작업 실행
+웹 역할에서 백그라운드 작업을 실행하면 추가 역할을 배포하지 않아도 되기 때문에 호스팅 비용이 절감됩니다. 
 
-### Running background tasks in a worker role
-Running background tasks in a worker role has several advantages:
+### 작업자 역할에서 백그라운드 작업 실행
+작업자 역할에서 백그라운드 작업을 실행하면 다음과 같은 여러 이점이 있습니다. 
 
-* It allows you to manage scaling separately for each type of role. For example, you might need more instances of a web role to support the current load, but fewer instances of the worker role that executes background tasks. By scaling background task compute instances separately from the UI roles, you can reduce hosting costs, while maintaining acceptable performance.
-* It offloads the processing overhead for background tasks from the web role. The web role that provides the UI can remain responsive, and it may mean fewer instances are required to support a given volume of requests from users.
-* It allows you to implement separation of concerns. Each role type can implement a specific set of clearly defined and related tasks. This makes designing and maintaining the code easier because there is less interdependence of code and functionality between each role.
-* It can help to isolate sensitive processes and data. For example, web roles that implement the UI do not need to have access to data that is managed and controlled by a worker role. This can be useful in strengthening security, especially when you use a pattern such as the [Gatekeeper Pattern](http://msdn.microsoft.com/library/dn589793.aspx).  
+* 각 역할 유형별로 각기 크기 조정을 관리할 수 있습니다. 예를 들어, 현재 부하를 지원하는 데 웹 역할 인스턴스가 더 많이 필요하지만, 백그라운드 작업을 실행하는 작업자 역할 인스턴스는 줄어듭니다. UI 역할에서 백그라운드 작업 계산 인스턴스 크기를 조정하여 호스팅 비용을 절감하는 동시에 적절한 성능을 유지합니다.
+* 또한, 웹 역할에서 백그라운드 작업의 처리 오버헤드를 오프로드합니다. UI를 제공하는 웹 역할은 계속 응답할 수 있어 지정된 개수의 사용자 요청을 지원하는 데 필요한 인스턴스 개수를 줄여 줍니다.
+* 따라서 관심 사항을 분리할 수 있습니다. 각 역할 유형은 명확하게 정의된 관련 작업 세트를 구현할 수 있습니다. 따라서 각 역할 사이에 코드와 기능의 상호 종속성이 낮기 때문에 코드를 보다 쉽게 설계하고 유지할 수 있습니다.
+* 중요한 프로세스와 데이터를 분리하는 데 도움이 될 수 있습니다. 예를 들어, UI를 구현하는 웹 역할은 작업자 역할이 관리하고 제어하는 데이터에 액세스하지 않아도 됩니다. 이것은 보안을 강화하는 데 유용하고, 특히 [Gatekeeper 패턴](http://msdn.microsoft.com/library/dn589793.aspx)과 같은 패턴을 사용할 때 더욱 유용합니다.   
 
-### Considerations
-Consider the following points when choosing how and where to deploy background tasks when using Cloud Services web and worker roles:
+### 고려 사항
+Cloud Services 웹과 작업자 역할을 사용하는 경우 백그라운드 작업을 배포하는 방법과 위치를 선택할 때에는 다음 사항을 고려해야 합니다. 
 
-* Hosting background tasks in an existing web role can save the cost of running a separate worker role just for these tasks. However, it is likely to affect the performance and availability of the application if there is contention for processing and other resources. Using a separate worker role protects the web role from the impact of long-running or resource-intensive background tasks.
-* If you host background tasks by using the **RoleEntryPoint** class, you can easily move this to another role. For example, if you create the class in a web role and later decide that you need to run the tasks in a worker role, you can move the **RoleEntryPoint** class implementation into the worker role.
-* Startup tasks are designed to execute a program or a script. Deploying a background job as an executable program might be more difficult, especially if it also requires deployment of dependent assemblies. It might be easier to deploy and use a script to define a background job when you use startup tasks.
-* Exceptions that cause a background task to fail have a different impact, depending on the way that they are hosted:
-  * If you use the **RoleEntryPoint** class approach, a failed task will cause the role to restart so that the task automatically restarts. This can affect availability of the application. To prevent this, ensure that you include robust exception handling within the **RoleEntryPoint** class and all the background tasks. Use code to restart tasks that fail where this is appropriate, and throw the exception to restart the role only if you cannot gracefully recover from the failure within your code.
-  * If you use startup tasks, you are responsible for managing the task execution and checking if it fails.
-* Managing and monitoring startup tasks is more difficult than using the **RoleEntryPoint** class approach. However, the Azure WebJobs SDK includes a dashboard to make it easier to manage WebJobs that you initiate through startup tasks.
+* 기존 웹 역할에서 백그라운드 작업을 호스팅하면 이 작업만을 위한 별도의 작업자 역할을 실행할 때 소요되는 비용을 절약할 수 있습니다. 그렇지만, 처리 및 다른 리소스에 대한 경합이 있으면 응용 프로그램의 성능과 가용성에 영향을 줄 수 있습니다. 별도의 작업자 역할을 사용하면 웹 역할이 장기 실행 또는 리소스를 많이 사용하는 백그라운드 작업으로 인해 영향을 받지 않습니다.
+* **RoleEntryPoint** 클래스를 사용하여 백그라운드 작업을 호스팅할 경우, 이 작업을 다른 역할로 쉽게 이동할 수 있습니다. 예를 들어, 웹 역할에서 클래스를 만든 후 작업자 역할에서 이 작업을 실행하기로 결정한 경우 **RoleEntryPoint** 클래스 구현을 작업자 역할로 이동할 수 있습니다.
+* 시작 작업은 프로그램이나 스크립트를 실행할 때 사용됩니다. 백그라운드 작업을 실행 파일 프로그램으로 배포하기는 더 어렵고, 종속 어셈블리를 배포해야 하는 경우에는 특히 더 그러합니다. 시작 작업을 사용하면 스크립트를 배포하고 사용하여 백그라운드 작업을 보다 쉽게 배포할 수 있습니다.
+* 백그라운드 작업이 실패하도록 만드는 예외는 호스팅되는 방식에 따라 다른 영향을 줍니다.
+  * **RoleEntryPoint** 클래스 접근 방식을 사용하는 경우, 작업에 실패하면 역할이 다시 시작되어 작업이 자동으로 다시 시작됩니다. 따라서 응용 프로그램 가용성에 영향을 줄 수 있습니다. 이 상황을 방지하려면, **RoleEntryPoint** 클래스와 모든 백그라운드 작업 내에 확실한 예외 처리를 포함해야 합니다. 코드를 사용해 실패로 끝나는 작업을 다시 시작하고 예외를 발생하여 코드 내의 오류를 정상적으로 복구할 수 없는 경우에만 역할을 다시 시작합니다.
+  * 시작 작업을 사용하는 경우, 작업 실행을 관리하고 실패 여부를 확인해야 합니다.
+* 시작 작업 관리 및 모니터링은 **RoleEntryPoint** 클래스 접근 방식을 사용하는 것보다 더 어렵습니다. 그렇지만, Azure WebJobs SDK에는 대시보드가 포함되어 있어 시작 작업을 통해 시작하는 WebJob을 보다 쉽게 관리할 수 있습니다.
 
-### More information
-* [Compute Resource Consolidation Pattern](http://msdn.microsoft.com/library/dn589778.aspx)
-* [Get started with the Azure WebJobs SDK](/azure/app-service-web/websites-dotnet-webjobs-sdk-get-started/)
+### 자세한 정보
+* [계산 리소스 통합 패턴](http://msdn.microsoft.com/library/dn589778.aspx)
+* [Azure WebJobs SDK 시작](/azure/app-service-web/websites-dotnet-webjobs-sdk-get-started/)
 
 ## Azure Virtual Machines
-Background tasks might be implemented in a way that prevents them from being deployed to Azure Web Apps or Cloud Services, or these options might not be convenient. Typical examples are Windows services, and third-party utilities and executable programs. Another example might be programs written for an execution environment that is different than that hosting the application. For example, it might be a Unix or Linux program that you want to execute from a Windows or .NET application. You can choose from a range of operating systems for an Azure virtual machine, and run your service or executable on that virtual machine.
+백그라운드 작업 구현 방법에 따라 Azure 웹 앱 또는 Cloud Services에 배포되지 않도록 할 수 있지만, 이들 옵션은 편리하지 않을 수도 있습니다. 일반적인 예로는 Windows 서비스, 타사 유틸리티, 실행 프로그램이 있습니다. 다른 예로는 애플리케이션 호스팅과 다른 실행 환경에서 작성된 프로그램이 있습니다. 예를 들어, Windows 또는 .NET 응용 프로그램에서 Unix 또는 Linux 프로그램을 실행하려고 할 수도 있습니다. Azure 가상 컴퓨터에 적합한 다양한 운영 체제 중에서 선택하고, 가상 컴퓨터에서 서비스나 실행 파일을 실행할 수 있습니다. 
 
-To help you choose when to use Virtual Machines, see [Azure App Services, Cloud Services and Virtual Machines comparison](/azure/app-service-web/choose-web-site-cloud-service-vm/). For information about the options for Virtual Machines, see [Virtual Machine and Cloud Service sizes for Azure](http://msdn.microsoft.com/library/azure/dn197896.aspx). For more information about the operating systems and prebuilt images that are available for Virtual Machines, see [Azure Virtual Machines Marketplace](https://azure.microsoft.com/gallery/virtual-machines/).
+가상 컴퓨터를 사용할 때를 선택하려면 [Azure App Services, Cloud Services, Virtual Machines 비교](/azure/app-service-web/choose-web-site-cloud-service-vm/)를 참조하십시오. 가상 컴퓨터 옵션에 대한 자세한 내용은 [Azure용 가상 컴퓨터와 클라우드 서비스 크기](http://msdn.microsoft.com/library/azure/dn197896.aspx)를 참조하십시오. 가상 컴퓨터에서 사용할 수 있는 운영 체제와 기본 제공 이미지에 대한 자세한 내용은 [Azure Virtual Machines 시장](https://azure.microsoft.com/gallery/virtual-machines/)을 참조하십시오. 
 
-To initiate the background task in a separate virtual machine, you have a range of options:
+별도의 가상 컴퓨터에서 백그라운드 작업을 시작할 수 있도록 다음과 같은 다양한 옵션이 마련되어 있습니다. 
 
-* You can execute the task on demand directly from your application by sending a request to an endpoint that the task exposes. This passes in any data that the task requires. This endpoint invokes the task.
-* You can configure the task to run on a schedule by using a scheduler or timer that is available in your chosen operating system. For example, on Windows you can use Windows Task Scheduler to execute scripts and tasks. Or, if you have SQL Server installed on the virtual machine, you can use the SQL Server Agent to execute scripts and tasks.
-* You can use Azure Scheduler to initiate the task by adding a message to a queue that the task listens on, or by sending a request to an API that the task exposes.
+* 작업이 표시되는 엔드포인트에 요청을 보내서 요청 시 응용 프로그램에서 직접 작업을 실행할 수 있습니다. 이 요청은 작업이 필요로 하는 어느 데이터에서든 전달됩니다. 이 엔드포인트는 작업을 호출합니다.
+* 선택한 운영 체제에서 지원되는 스케줄러나 타이머를 사용하여 작업을 구성하고 나서 일정에 따라 실행할 수 있습니다. 예를 들어, Windows에서 Windows Task Scheduler를 사용하여 스크립트와 작업을 실행할 수 있습니다. 그렇지 않고, SQL Server가 가상 컴퓨터에 설치된 경우 SQL Server Agent를 사용해 스크립트와 작업을 실행할 수 있습니다.
+* Azure Scheduler를 사용하여 작업을 시작하기 위해 작업이 수신 대기하고 있는 큐에 메시지를 추가하거나 작업이 표시되는 API에 요청을 보낼 수 있습니다.
 
-See the earlier section [Triggers](#triggers) for more information about how you can initiate background tasks.  
+백그라운드 작업 시작 방법에 대한 자세한 정보는 이전 섹션 [트리거](#triggers)를 참조하십시오.    
 
-### Considerations
-Consider the following points when you are deciding whether to deploy background tasks in an Azure virtual machine:
+### 고려 사항
+Azure 가상 컴퓨터에 백그라운드 작업을 배포할지 여부를 결정할 때 고려할 사항은 다음과 같습니다. 
 
-* Hosting background tasks in a separate Azure virtual machine provides flexibility and allows precise control over initiation, execution, scheduling, and resource allocation. However, it will increase runtime cost if a virtual machine must be deployed just to run background tasks.
-* There is no facility to monitor the tasks in the Azure portal and no automated restart capability for failed tasks--although you can monitor the basic status of the virtual machine and manage it by using the [Azure Service Management Cmdlets](http://msdn.microsoft.com/library/azure/dn495240.aspx). However, there are no facilities to control processes and threads in compute nodes. Typically, using a virtual machine will require additional effort to implement a mechanism that collects data from instrumentation in the task, and from the operating system in the virtual machine. One solution that might be appropriate is to use the [System Center Management Pack for Azure](http://technet.microsoft.com/library/gg276383.aspx).
-* You might consider creating monitoring probes that are exposed through HTTP endpoints. The code for these probes could perform health checks, collect operational information and statistics--or collate error information and return it to a management application. For more information, see [Health Endpoint Monitoring Pattern](http://msdn.microsoft.com/library/dn589789.aspx).
+* 별도의 Azure 가상 컴퓨터에서 백그라운드 작업을 호스팅하면 시작, 실행, 예약, 리소스 할당을 유연하고 정확하게 제어할 수 있습니다. 그렇지만, 가상 컴퓨터가 백그라운드 작업만을 실행하도록 배포하면 런타임 비용이 증가합니다.
+* Azure 포털에서 작업을 모니터링할 시설이 없고 실패한 작업을 자동으로 다시 시작하는 기능이 없습니다. 하지만 [Azure Service Management Cmdlets](http://msdn.microsoft.com/library/azure/dn495240.aspx)를 사용해 가상 컴퓨터의 기본 상태를 모니터링할 수 있습니다. 그렇지만, 계산 노드에서 프로세스와 스레드를 제어할 시설이 없습니다. 일반적으로 가상 컴퓨터를 사용하면 작업 기기 및 가상 컴퓨터의 운영 체제에서 데이터를 수집하는 메커니즘을 구현하는 작업을 추가로 실시해야 합니다. 적합한 한 가지 해결책은 [System Center Management Pack for Azure](http://technet.microsoft.com/library/gg276383.aspx)를 사용하는 것입니다.
+* HTTP 엔드포인트를 통해 표시되는 모니터링 프로브 구현을 고려해 볼 수 있습니다. 이 프로브의 코드는 상태 검사를 실시하거나 운영 정보와 통계를 수집하거나 오류 정보를 수집 및 분석하여 관리 응용 프로그램에 반환합니다. 자세한 내용은 [상태 엔드포인트 모니터링 패턴](http://msdn.microsoft.com/library/dn589789.aspx)을 참조하십시오.
 
-### More information
-* [Virtual Machines](https://azure.microsoft.com/services/virtual-machines/) on Azure
+### 자세한 정보
+* •	Azure의 [Virtual Machines](https://azure.microsoft.com/services/virtual-machines/)
 * [Azure Virtual Machines FAQ](/azure/virtual-machines/virtual-machines-linux-classic-faq?toc=%2fazure%2fvirtual-machines%2flinux%2fclassic%2ftoc.json)
 
-## Design considerations
-There are several fundamental factors to consider when you design background tasks. The following sections discuss partitioning, conflicts, and coordination.
+## 설계 고려 사항
+백그라운드 작업을 설계할 때에는 여러 가지 기본 요소를 고려해야 합니다. 다음 섹션에서는 분할, 충돌 및 조정에 대해 다룹니다. 
 
-## Partitioning
-If you decide to include background tasks within an existing compute instance (such as a web app, web role, existing worker role, or virtual machine), you must consider how this will affect the quality attributes of the compute instance and the background task itself. These factors will help you to decide whether to colocate the tasks with the existing compute instance or separate them out into a separate compute instance:
+## 분할
+기존 계산 인스턴스(웹 앱, 웹 역할, 기존 작업자 역할, 가상 컴퓨터 등) 내에서 백그라운드 작업을 포함하기로 결정한 경우에는 이것이 계산 인스턴스와 백그라운드 작업 자체의 품질 속성에 미치는 영향을 고려해야 합니다. 이 요소를 통해 기존 계산 인스턴스로 여러 작업을 같은 작업에 배치할지 또는 이 작업을 별도의 계산 인스턴스로 분리할지 여부를 결정할 수 있습니다. 
 
-* **Availability**: Background tasks might not need to have the same level of availability as other parts of the application, in particular the UI and other parts that are directly involved in user interaction. Background tasks might be more tolerant of latency, retried connection failures, and other factors that affect availability because the operations can be queued. However, there must be sufficient capacity to prevent the backup of requests that could block queues and affect the application as a whole.
-* **Scalability**: Background tasks are likely to have a different scalability requirement than the UI and the interactive parts of the application. Scaling the UI might be necessary to meet peaks in demand, while outstanding background tasks might be completed during less busy times by a fewer number of compute instances.
-* **Resiliency**: Failure of a compute instance that just hosts background tasks might not fatally affect the application as a whole if the requests for these tasks can be queued or postponed until the task is available again. If the compute instance and/or tasks can be restarted within an appropriate interval, users of the application might not be affected.
-* **Security**: Background tasks might have different security requirements or restrictions than the UI or other parts of the application. By using a separate compute instance, you can specify a different security environment for the tasks. You can also use patterns such as Gatekeeper to isolate the background compute instances from the UI in order to maximize security and separation.
-* **Performance**: You can choose the type of compute instance for background tasks to specifically match the performance requirements of the tasks. This might mean using a less expensive compute option if the tasks do not require the same processing capabilities as the UI, or a larger instance if they require additional capacity and resources.
-* **Manageability**: Background tasks might have a different development and deployment rhythm from the main application code or the UI. Deploying them to a separate compute instance can simplify updates and versioning.
-* **Cost**: Adding compute instances to execute background tasks increases hosting costs. You should carefully consider the trade-off between additional capacity and these extra costs.
+* **가용성**: 백그라운드 작업은 응용 프로그램의 다른 부분과 가용성 수준이 동일하지 않아도 되며, 특히 사용자 상호 작용에 직접 관련된 UI와 다른 부분에서는 더욱 그러합니다. 백그라운드 작업은 대기 시간, 연결 재시도 실패 등 운영 큐 상태로 인해 가용성에 영향을 주는 다른 요소 인해 큰 영향을 받지 않습니다. 그렇지만, 큐를 차단하고 전반적으로 응용 프로그램에 영향을 줄 수 있는 요청 백업을 차단할 수 있는 용량이 충분해야 합니다.
+* **확장성**: 백그라운드 작업의 확장성은 응용 프로그램의 UI 및 대화형 부분과 다를 수 있습니다. UI 크기 조정은 최고 수요량을 맞추는 동시에 처리되지 않은 백그라운드 작업을 더 적은 계산 인스턴스로 사용량이 적은 시간에 완료할 수 있습니다.
+* **탄력성**: 백그라운드 작업만을 호스팅하는 계산 인스턴스 오류가 발생할 때 작업을 다시 사용할 수 있을 때까지 이 작업 요청을 대기 상태에 두거나 지연시켜 응용 프로그램에 전반적으로 치명적인 영향을 주지 않을 수 있습니다. 적절한 간격으로 계산 인스턴스 및 작업을 다시 시작하면, 응용 프로그램의 사용자가 영향을 받지 않을 수 있습니다.
+* **보안**: 백그라운드 작업의 보안 요건이나 제한은 응용 프로그램의 UI 또는 다른 부분과 다르기도 합니다. 별도의 계산 인스턴스를 사용하면, 작업에서 다른 보안 환경을 지정할 수 있습니다. 또한, Gatekeeper와 같은 패턴을 사용하여 배경 계산 인스턴스를 UI와 분리하여 보안과 분리 효과를 극대화할 수 있습니다.
+* **성능**: 특히 작업 성능 요구사항에 맞도록 백그라운드 작업에 적합한 계산 인스턴스 유형을 선택할 수 있습니다. 즉, 작업에서 UI와 동일한 처리 기능이 필요하지 않을 경우 보다 저렴한 계산 옵션을 사용하고, 추가 용량 및 리소스가 필요할 때 더 큰 인스턴스를 사용하면 됩니다.
+* **관리 효율성**: 백그라운드 작업은 개발이나 배포 리듬이 기본 응용 프로그램 코드나 UI와 다를 수 있습니다. 이것을 별도의 계산 인스턴스에 배포하면 업데이트와 버전 관리가 간편해집니다.
+* **비용**: 백그라운드 작업을 실행하기 위해 계산 인스턴스를 추가하면 호스팅 비용이 늘어납니다. 용량 추가와 추가 비용 간의 상관 관계를 잘 고려해야 합니다.
 
-For more information, see [Leader Election Pattern](http://msdn.microsoft.com/library/dn568104.aspx) and [Competing Consumers
-Pattern](http://msdn.microsoft.com/library/dn568101.aspx).
+자세한 내용은 [리더 선택 패턴](http://msdn.microsoft.com/library/dn568104.aspx) 및 [경쟁 소비자 패턴](http://msdn.microsoft.com/library/dn568101.aspx)을 참조하십시오. 
 
-## Conflicts
-If you have multiple instances of a background job, it is possible that they will compete for access to resources and services, such as databases and storage. This concurrent access can result in resource contention, which might cause conflicts in availability of the services and in the integrity of data in storage. You can resolve resource contention by using a pessimistic locking approach. This prevents competing instances of a task from concurrently accessing a service or corrupting data.
+## 충돌
+백그라운드 작업 인스턴스가 여러 개 있으면, 이들은 데이터베이스 및 저장소와 같은 리소스에 액세스하기 위해 경쟁할 수 있습니다. 이 동시 액세스로 인해 리소스 경합이 발생하여 서비스 가용성과 저장소의 데이터 무결성에 충돌이 발생할 수 있습니다. 가장 약한 잠금 방법을 사용하여 리소스 경합을 해결할 수 있습니다. 이 조치를 통해 경합하는 작업 인스턴스가 서비스에 동시 액세스하거나 데이터를 손상시키지 못합니다. 
 
-Another approach to resolve conflicts is to define background tasks as a singleton, so that there is only ever one instance running. However, this eliminates the reliability and performance benefits that a multiple-instance configuration can provide. This is especially true if the UI can supply sufficient work to keep more than one background task busy.
+충돌을 해결하는 또 다른 방법은 백그라운드 작업을 하나의 개체로 정의하여 인스턴스 하나만이 실행되도록 하는 것입니다. 그렇지만, 이 조치는 여러 인스턴스 구성이 제공할 수 있는 안정성 및 성능에 따른 이점을 없애줍니다. 이것은 특히 UI가 백그라운드 작업을 2개 이상 계속 사용할 정도로 충분한 작업을 공급할 수 있는 경우에 그러합니다. 
 
-It is vital to ensure that the background task can automatically restart and that it has sufficient capacity to cope with peaks in demand. You can achieve this by allocating a compute instance with sufficient resources, by implementing a queueing mechanism that can store requests for later execution when demand decreases, or by using a combination of these techniques.
+따라서 백그라운드 작업을 자동으로 다시 시작할 수 있고 최고 수요를 처리할 수 있는 충분한 용량이 마련되어 있어야 합니다. 이를 위해서는 충분한 리소스로 계산 인스턴스를 할당하거나, 수요가 감소할 때 나중에 실행할 수 있도록 요청을 저장하는 큐 메커니즘을 구현하거나, 이 방법을 모두 사용할 수 있습니다. 
 
-## Coordination
-The background tasks might be complex and might require multiple individual tasks to execute to produce a result or to fulfil all the requirements. It is common in these scenarios to divide the task into smaller discreet steps or subtasks that can be executed by multiple consumers. Multistep jobs can be more efficient and more flexible because individual steps might be reusable in multiple jobs. It is also easy to add, remove, or modify the order of the steps.
+## 조정
+백그라운드 작업에서는 개별 작업을 실행하여 결과를 도출하거나 모든 요구사항에 부합해야 합니다. 이 시나리오에서는 일반적으로 여러 소비자가 실행할 수 있는 더 작은 단계 또는 하위 작업으로 작업을 나눕니다. 다단계 작업은 개별 단계를 여러 작업에서 다시 사용할 수 있기 때문에 효율과 유연성이 더 우수합니다. 또한 단계 순서를 쉽게 추가, 제거, 수정할 수도 있습니다. 
 
-Coordinating multiple tasks and steps can be challenging, but there are three common patterns that you can use to guide your implementation of a solution:
+여러 작업과 단계를 조정하는 작업은 어려울 수 있지만, 솔루션 구현 시 유용하게 사용할 수 있는 일반적인 패턴에는 세 가지가 있습니다. 
 
-* **Decomposing a task into multiple reusable steps**. An application might be required to perform a variety of tasks of varying complexity on the information that it processes. A straightforward but inflexible approach to implementing this application might be to perform this processing as a monolithic module. However, this approach is likely to reduce the opportunities for refactoring the code, optimizing it, or reusing it if parts of the same processing are required elsewhere within the application. For more information, see [Pipes and Filters Pattern](http://msdn.microsoft.com/library/dn568100.aspx).
-* **Managing execution of the steps for a task**. An application might perform tasks that comprise a number of steps (some of which might invoke remote services or access remote resources). The individual steps might be independent of each other, but they are orchestrated by the application logic that implements the task. For more information, see [Scheduler Agent Supervisor Pattern](http://msdn.microsoft.com/library/dn589780.aspx).
-* **Managing recovery for task steps that fail**. An application might need to undo the work that is performed by a series of steps (which together define an eventually consistent operation) if one or more of the steps fail. For more information, see [Compensating Transaction Pattern](http://msdn.microsoft.com/library/dn589804.aspx).
+* **작업을 재사용 가능한 여러 단계로 분해**. 응용 프로그램은 처리하는 정보의 복잡성이 각기 다른 작업을 여러 개 실행하기도 합니다. 이 응용 프로그램을 구현하는 간단하지만 유연하지 못한 방법은 모놀리식 모듈로 처리하는 것입니다. 하지만, 이 방법은 동일한 처리 부분이 응용 프로그램의 다른 부분에서 필요할 경우 코드의 재고려, 최적화, 재사용 기회를 줄일 수 있습니다. 자세한 내용은 [파이프 및 필터 패턴](http://msdn.microsoft.com/library/dn568100.aspx)을 참조하십시오.
+* **작업 단계 실행 관리**. 응용 프로그램은 여러 단계로 이뤄진 작업(그 중 일부는 원격 서비스를 호출하거나 원격 리소스를 액세스할 수 있음)을 실행할 수 있습니다. 이 개별 단계는 서로 무관할 수 있지만, 작업을 구현하는 응용 프로그램 논리를 통해 조정됩니다. 자세한 내용은 [Scheduler Agent Supervisor 패턴](http://msdn.microsoft.com/library/dn589780.aspx)을 참조하십시오.
+* **실패한 작업 단계의 복구 관리**. 응용 프로그램에서 하나 이상의 단계에 실패한 경우 여러 단계를 거쳐 실시하는 작업을 취소해야 하는 경우도 있습니다(이 모든 단계는 결국 일관된 운영을 규정함). 자세한 내용은 [트랜잭션 패턴 보상](http://msdn.microsoft.com/library/dn589804.aspx)을 참조하십시오.
 
-## Lifecycle (Cloud Services)
- If you decide to implement background jobs for Cloud Services applications that use web and worker roles by using the **RoleEntryPoint** class, it is important to understand the lifecycle of this class in order to use it correctly.
+## 수명 주기(클라우드 서비스)
+ **RoleEntryPoint** 클래스를 사용하여 웹과 작업자 역할을 사용하는 Cloud Services 응용 프로그램을 위한 백그라운드 작업을 구현하기로 결정한 경우, 이 클래스를 올바르게 사용하려면 이 클래스의 수명 주기를 이해해야 합니다. 
 
-Web and worker roles go through a set of distinct phases as they start, run, and stop. The **RoleEntryPoint** class exposes a series of events that indicate when these stages are occurring. You use these to initialize, run, and stop your custom background tasks. The complete cycle is:
+웹 및 작업자 역할은 시작하고, 실행하고, 중지할 때 고유한 단계를 거칩니다. **RoleEntryPoint** 클래스는 이 단계가 발생할 때를 나타내는 일련의 이벤트를 표시합니다. 이 이벤트를 사용해 사용자 지정 백그라운드 작업을 초기화하고, 실행하고, 중지합니다. 전체 주기는 다음과 같습니다.
 
-* Azure loads the role assembly and searches it for a class that derives from **RoleEntryPoint**.
-* If it finds this class, it calls **RoleEntryPoint.OnStart()**. You override this method to initialize your background tasks.
-* After the **OnStart** method has completed, Azure calls **Application_Start()** in the application’s Global file if this is present (for example, Global.asax in a web role running ASP.NET).
-* Azure calls **RoleEntryPoint.Run()** on a new foreground thread that executes in parallel with **OnStart()**. You override this method to start your background tasks.
-* When the Run method ends, Azure first calls **Application_End()** in the application’s Global file if this is present, and then calls **RoleEntryPoint.OnStop()**. You override the **OnStop** method to stop your background tasks, clean up resources, dispose of objects, and close connections that the tasks may have used.
-* The Azure worker role host process is stopped. At this point, the role will be recycled and will restart.
+* Azure가 역할 어셈블리를 로드하고 **RoleEntryPoint** 에서 파생된 클래스를 검색합니다.
+* 이 클래스를 찾을 경우, **RoleEntryPoint.OnStart()**를 호출합니다. 이 메서드를 재정의하여 백그라운드 작업을 초기화합니다.
+* **OnStart** 메서드를 완료한 후 Azure는 응용 프로그램의 Global 파일(있는 경우)에서 **Application_Start()** 를 호출합니다(예: ASP.NET를 실행하고 있는 웹 역할에서 Global.asax).
+* Azure는 **OnStart()** 와 함께 실행되는 새로운 전경 스레드에서 **RoleEntryPoint.Run()** 을 호출합니다. 이 메서드를 재정의하여 백그라운드 작업을 시작합니다.
+* 이 Run 메서드가 끝나면, Azure는 먼저 응용 프로그램의 Global 파일(있는 경우)에서 **Application_End()** 를 호출하고 나서 **RoleEntryPoint.OnStop()** 을 호출합니다. **OnStop** 메서드를 재정의하여 백그라운드 작업을 중지하고, 리소스를 정리하고, 개체를 삭제하고, 작업이 사용했을 수 있는 연결을 종료합니다.
+* Azure 작업자 역할 호스트 프로세스가 중지됩니다. 이 시점에서 역할이 재생되어 다시 시작됩니다.
 
-For more details and an example of using the methods of the **RoleEntryPoint** class, see [Compute Resource Consolidation Pattern](http://msdn.microsoft.com/library/dn589778.aspx).
+**RoleEntryPoint** 클래스에 대한 자세한 내용과 예는 [계산 리소스 통합 패턴](http://msdn.microsoft.com/library/dn589778.aspx)을 참조하십시오. 
 
-## Considerations
-Consider the following points when you are planning how you will run background tasks in a web or worker role:
+## 고려 사항
+웹이나 작업자 역할에서 백그라운드 작업을 실행하는 방법을 계획할 때에는 다음 사항을 고려해야 합니다. 
 
-* The default **Run** method implementation in the **RoleEntryPoint** class contains a call to **Thread.Sleep(Timeout.Infinite)** that keeps the role alive indefinitely. If you override the **Run** method (which is typically necessary to execute background tasks), you must not allow your code to exit from the method unless you want to recycle the role instance.
-* A typical implementation of the **Run** method includes code to start each of the background tasks and a loop construct that periodically checks the state of all the background tasks. It can restart any that fail or monitor for cancellation tokens that indicate that jobs have completed.
-* If a background task throws an unhandled exception, that task should be recycled while allowing any other background tasks in the role to continue running. However, if the exception is caused by corruption of objects outside the task, such as shared storage, the exception should be handled by your **RoleEntryPoint** class, all tasks should be cancelled, and the **Run** method should be allowed to end. Azure will then restart the role.
-* Use the **OnStop** method to pause or kill background tasks and clean up resources. This might involve stopping long-running or multistep tasks. It is vital to consider how this can be done to avoid data inconsistencies. If a role instance stops for any reason other than a user-initiated shutdown, the code running in the **OnStop** method must be completed within five minutes before it is forcibly terminated. Ensure that your code can be completed in that time or can tolerate not running to completion.  
-* The Azure load balancer starts directing traffic to the role instance when the **RoleEntryPoint.OnStart** method returns the value **true**. Therefore, consider putting all your initialization code in the **OnStart** method so that role instances that do not successfully initialize will not receive any traffic.
-* You can use startup tasks in addition to the methods of the **RoleEntryPoint** class. You should use startup tasks to initialize any settings that you need to change in the Azure load balancer because these tasks will execute before the role receives any requests. For more information, see [Run startup tasks in Azure](/azure/cloud-services/cloud-services-startup-tasks/).
-* If there is an error in a startup task, it might force the role to continually restart. This can prevent you from performing a virtual IP (VIP) address swap back to a previously staged version because the swap requires exclusive access to the role. This cannot be obtained while the role is restarting. To resolve this:
+* **RoleEntryPoint** 클래스에서 기본 **Run** 메서드 구현에는 역할을 무기한으로 유지해 주는 **Thread.Sleep(Timeout.Infinite)** 호출이 포함됩니다. **Run** 메서드(일반적으로 백그라운드 작업을 실행하는 데 필요함)을 재정의하는 경우, 역할 인스턴스를 재생할 필요가 없으면 코드가 이 메서드에서 끝나지 않도록 해야 합니다.
+* **Run** 메서드의 일반적인 구현에는 배경 작업 각각을 시작하기 위한 코드와 모든 백그라운드 작업 상태를 정기적으로 확인하는 루프 구성체가 포함됩니다. 모든 오류를 다시 시작하거나 이 작업이 완료되었음을 나타내는 취소 토큰을 모니터링할 수 있습니다.
+* 백그라운드 작업에서 처리되지 않은 예외가 발생하면, 역할에서 다른 백그라운드 작업을 계속 실행하는 동안 이 작업을 재생해야 합니다. 그렇지만, 예외 발생 원인이 작업 이외의 개체 손상인 경우, **RoleEntryPoint** 클래스를 통해 이 예외를 처리하고, 모든 작업을 취소하고 **Run** 메서드를 종료할 수 있어야 합니다. 그리고 나면 Azure는 역할을 다시 시작합니다.
+* **OnStop** 메서드를 사용하여 백그라운드 작업을 일시 중지하거나 종료하고 리소스를 정리합니다. 여기에는 장기 실행 작업이나 다단계 작업 중지가 포함될 수 있습니다. 데이터 불일치를 방지하기 위해 이 작업을 실시하는 방법을 반드시 고려해야 합니다. 역할 인스턴스가 사용자가 시작한 종료 이외에 어떤 이유로든 중지되는 경우, 강제로 종료되기 전에 **OnStop** 메서드에서 실행되고 있는 코드를 5분 내에 완료해야 합니다. 코드를 이 시간에 내에 완료하거나, 아니면 실행이 완료되지 않도록 허용할 수 있습니다. 
+* **RoleEntryPoint.OnStart** 메서드가 값을 **true**로 반환하면 Azure 부하 분산 장치는 트래픽을 역할 인스턴스로 유도하기 시작합니다. 그러므로, 초기화하지 못한 역할 인스턴스가 어느 트래픽도 수신하지 못하도록 모든 초기화 코드를 **OnStart** 메서드로 배치하는 것이 좋습니다.
+* **RoleEntryPoint** 클래스의 메서드 외에 시작 작업을 사용할 수 있습니다. 시작 작업은 역할이 요청을 받기 전에 실행되기 때문에 시작 작업을 사용하여 Azure 부하 분산 장치에서 변경해야 하는 모든 설정을 초기화해야 합니다. 자세한 내용은 [Azure에서 시작 작업 실행](/azure/cloud-services/cloud-services-startup-tasks/)을 참조하십시오.
+* 시작 작업에 오류가 있으면, 역할을 강제로 계속 다시 시작할 수 있습니다. 따라서 전환에는 역할에 대한 독점 액세스 권한이 필요하기 때문에 가상 IP(VIP) 주소가 이전에 준비된 버전으로 다시 전환되지 않습니다. 역할을 다시 시작하는 동안 이 작업을 실시할 수 없습니다. 이 문제를 해결하는 방법:
   
-  * Add the following code to the beginning of the **OnStart** and **Run** methods in your role:
+  * 사용자 역할에서 **OnStart** 및 **Run** 메서드의 시작에 다음 코드를 추가합니다.
     
     ```C#
     var freeze = CloudConfigurationManager.GetSetting("Freeze");
