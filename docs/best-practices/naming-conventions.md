@@ -155,7 +155,7 @@ Azure Resource Manager는 컨텍스트를 식별하고 자동화를 능률화하
 
 Azure 저장소 계정의 Blob 데이터에 액세스하기 위한 사용자 지정 도메인 이름을 구성할 수 있습니다. Blob 서비스의 기본 끝점은 `https://mystorage.blob.core.windows.net` 입니다. 
 
-그러나 사용자 지정 도메인(예: www.contoso.com)을 저장소 계정의 Blob 끝점에 매핑하면 해당 도메인을 사용하여 저장소 계정의 BLOB 데이터에 액세스할 수도 있습니다. 예를 들어, 사용자 지정 도메인 이름을 사용하면 `http://mystorage.blob.core.windows.net/mycontainer/myblob` 에
+그러나 사용자 지정 도메인(예: www.contoso.com) 을 저장소 계정의 Blob 끝점에 매핑하면 해당 도메인을 사용하여 저장소 계정의 BLOB 데이터에 액세스할 수도 있습니다. 예를 들어, 사용자 지정 도메인 이름을 사용하면 `http://mystorage.blob.core.windows.net/mycontainer/myblob` 에
 `http://www.contoso.com/mycontainer/myblob` 로 액세스할 수 있습니다. 
 
 이 기능 구성에 대한 자세한 내용은 [Blob 저장소 끝점에 대한 사용자 지정 도메인 이름 구성](/azure/storage/storage-custom-domain-name/)을 참조하십시오. 
