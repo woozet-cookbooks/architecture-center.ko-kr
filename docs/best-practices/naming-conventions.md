@@ -95,102 +95,82 @@ Azure의 각 리소스 또는 서비스 유형은 일련의 명명 제한과 범
 | 네트워킹 |Traffic Manager Profile |리소스 그룹 |1-63 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<설명적 텍스트>` |`app1` |
 
 
-## Organizing resources with tags
-The Azure Resource Manager supports tagging entities with arbitrary
-text strings to identify context and streamline automation.  For example, the tag `"sqlVersion: "sql2014ee"` could identify VMs in a deployment running SQL Server 2014 Enterprise Edition for running an automated script against them.  Tags should be used to augment and enhance context along side of the naming conventions chosen.
+## 태그를 사용하여 리소스 구성
+Azure Resource Manager는 컨텍스트를 식별하고 자동화를 능률화하기 위해 임의의 텍스트 문자열로 태그 지정된 엔터티를 지원합니다. 예를 들어, `"sqlVersion: "sql2014ee"` 태그는 SQL Server 2014 Enterprise Edition을 실행하는 배포에서 자동 스크립트를 실행하는 VM을 식별할 수 있습니다. 선택한 명명 규칙의 측면에서 컨텍스트를 보강하고 향상시키는 데 태그를 사용해야 합니다. 
 
-> [!TIP]
-> One other advantage of tags is that tags span resource groups, allowing you to link and correlate entities across
-> disparate deployments.
+> [!팁]
+> 태그의 또 다른 장점 중 하나는 태그가 여러 리소스 그룹에 걸쳐져 있어서 서로 다른 배포 사이에 엔터티를 연결하고 상호 연관시킬 수 있다는 것입니다. 
 > 
 > 
 
-Each resource or resource group can have a maximum of **15** tags. The tag name is limited to 512 characters, and the tag 
-value is limited to 256 characters.
+각 리소스 또는 리소스 그룹은 최대 **15** 개의 태그를 가질 수 있습니다. 태그 이름은 512자로 제한되며 태그 값은 256자로 제한됩니다.
 
-For more information on resource tagging, refer to [Using tags to organize your Azure resources](/azure/azure-resource-manager/resource-group-using-tags/).
+리소스 태그 지정에 대한 자세한 내용은 [태그를 사용하여 Azure 리소스 구성](/azure/azure-resource-manager/resource-group-using-tags/)을 참조하십시오. 
 
-Some of the common tagging use cases are:
+몇 가지 일반적인 태그 지정의 사용 사례는 다음과 같습니다. 
 
-* **Billing**; Grouping resources and associating them with billing or charge back codes.
-* **Service Context Identification**; Identify groups of resources across Resource Groups for common operations and grouping
-* **Access Control and Security Context**; Administrative role identification based on portfolio, system, service, app, instance, etc.
+* **청구**; 리소스를 그룹화하고 청구 또는 환급 코드와 연관시킵니다.
+* **서비스 컨텍스트 식별**; 일반적인 작업 및 그룹화를 위해 전체 리소스 그룹에서 리소스의 그룹을 식별합니다.
+* **액세스 제어 및 보안 컨텍스트**; 포트폴리오, 시스템, 서비스, 응용 프로그램, 인스턴스 등을 기반으로 하는 관리 역할 식별
 
-> [!TIP]
-> Tag early - tag often.  Better to have a baseline tagging scheme in place and adjust over time rather than having
-> to retrofit after the fact.  
+> [!팁]
+> 태그를 일찍, 자주 처리하십시오. 사실에 기반하여 사후 처리하는 것보다 기본 태그 처리 방침을 마련해 놓고 시간에 따라 조정하는 것이 좋습니다.  
 > 
 > 
 
-An example of some common tagging approaches:
+일반적인 태그 처리 접근법의 예: 
 
-| Tag Name | Key | Example | Comment |
+| 태그 이름 | 키 | 예 | 설명 |
 | --- | --- | --- | --- |
-| Bill To / Internal Chargeback ID |billTo |`IT-Chargeback-1234` |An internal I/O or billing code |
-| Operator or Directly Responsible Individual (DRI) |managedBy |`joe@contoso.com` |Alias or email address |
-| Project Name |project-name |`myproject` |Name of the project or product line |
-| Project Version |project-version |`3.4` |Version of the project or product line |
-| Environment |environment |`<Production, Staging, QA >` |Environmental identifier |
-| Tier |tier |`Front End, Back End, Data` |Tier or role/context identification |
-| Data Profile |dataProfile |`Public, Confidential, Restricted, Internal` |Sensitivity of data stored in the resource |
+| 청구 주소/내부 환급 ID |billTo |`IT-Chargeback-1234` |내부 I/O 또는 청구 코드 |
+| 운영자 또는 직속 담당자(DRI) |managedBy |`joe@contoso.com` |별칭 또는 이메일 주소 |
+| 프로젝트 이름 |project-name |`myproject` |프로젝트 또는 제품 라인 이름 |
+| 프로젝트 버전 |project-version |`3.4` |프로젝트 또는 제품 라인 버전 |
+| 환경 |환경 |`<생산, 단계, QA >` |환경 식별자 |
+| 계층 |계층 |`전면 끝, 후면 끝, 데이터` |계층 또는 역할/컨텍스트 식별 |
+| 데이터 프로파일 |dataProfile |`공용, 기밀, 제한, 내부` |리소스에 저장된 데이터의 민감도 |
 
-## Tips and tricks
-Some types of resources may require additional care on naming and conventions.
+## 팁과 트릭
+일부 리소스 유형은 명명 및 규칙과 관련해 추가적인 주의가 필요할 수 있습니다. 
 
-### Virtual machines
-Especially in larger topologies, carefully naming virtual machines streamlines identifying the
-role and purpose of each machine, and enabling more predictable scripting.
+### 가상 컴퓨터
+특히 규모가 큰 토폴로지에서는 가상 컴퓨터를 신중하게 명명하면 각 컴퓨터의 역할과 용도를 보다 효과적으로 파악하고 스크립트를 예측 가능하게 작성할 수 있습니다. 
 
-> [!WARNING]
-> Every virtual machine in Azure has both an Azure resource name, and an operating
-> system host name.  
-> If the resource name and host name are different, managing the VMs may be challenging and should be avoided.
-> For example, if a virtual machine is created from a .vhd that already contains a 
-> configured operating system with a hostname.
+> [!경고]
+> Azure의 모든 가상 컴퓨터에는 Azure 리소스 이름과 운영 체제 호스트 이름이 둘 다 있습니다. 
+> 리소스 이름과 호스트 이름이 다른 경우 VM 관리가 어려울 수 있으므로 이런 경우가 발생하지 않도록 주의해야 합니다. 
+> 호스트 이름이 구성된 운영 체제를 이미 포함하고 있는 .vhd에서 가상 컴퓨터를 생성하는 경우를 예로 들 수 있습니다. 
 > 
 > 
 
-* [Microsoft NetBIOS Computer Naming Conventions](https://support.microsoft.com/en-us/help/188997/microsoft-netbios-computer-naming-conventions)
+* [Microsoft NetBIOS 컴퓨터 명명 규칙](https://support.microsoft.com/en-us/help/188997/microsoft-netbios-computer-naming-conventions)
 
-### Storage accounts and storage entities
-There are two primary use cases for storage accounts - backing disks for VMs, and storing 
-data in blobs, queues and tables.  Storage accounts used for VM disks should follow the naming
-convention of associating them with the parent VM name (and with the potential need for multiple 
-storage accounts for high-end VM SKUs, also apply a number suffix).
+### 저장소 계정 및 저장소 엔터티
+저장소 계정에는 VM용 디스크를 백업하고 BLOB, 대기열 및 테이블에 데이터를 저장하는 두 가지 주요 사용 사례가 있습니다. VM 디스크에 사용되는 저장소 계정은 상위 VM 이름과 연관시키는 명명 규칙을 따라야 합니다(및 하이엔드 VM SKU의 경우 여러 저장소 계정이 필요할 수 있으며 번호 접미어도 추가해야 함). 
 
-> [!TIP]
-> Storage accounts - whether for data or disks - should follow a naming convention that 
-> allows for multiple storage accounts to be leveraged (i.e. always using a numeric suffix).
+> [!팁]
+> 저장소 계정(데이터 또는 디스크)은 여러 저장소 계정을 활용할 수 있도록 하는 명명 규칙(즉, 항상 숫자 접미어 사용)을 따라야 합니다. 
 > 
 > 
 
-It possible to configure a custom domain name for accessing blob data in your Azure Storage account.
-The default endpoint for the Blob service is `https://mystorage.blob.core.windows.net`.
+Azure 저장소 계정의 Blob 데이터에 액세스하기 위한 사용자 지정 도메인 이름을 구성할 수 있습니다. Blob 서비스의 기본 끝점은 `https://mystorage.blob.core.windows.net` 입니다. 
 
-But if you map a custom domain (such as www.contoso.com) to the blob endpoint for your storage account,
-you can also access blob data in your storage account by using that domain. For example, with a custom
-domain name, `http://mystorage.blob.core.windows.net/mycontainer/myblob` could be accessed as
-`http://www.contoso.com/mycontainer/myblob`.
+그러나 사용자 지정 도메인(예: www.contoso.com)을 저장소 계정의 Blob 끝점에 매핑하면 해당 도메인을 사용하여 저장소 계정의 BLOB 데이터에 액세스할 수도 있습니다. 예를 들어, 사용자 지정 도메인 이름을 사용하면 `http://mystorage.blob.core.windows.net/mycontainer/myblob` 에
+`http://www.contoso.com/mycontainer/myblob` 로 액세스할 수 있습니다. 
 
-For more information about configuring this feature, refer to [Configure a custom domain name for your Blob storage endpoint](/azure/storage/storage-custom-domain-name/).
+이 기능 구성에 대한 자세한 내용은 [Blob 저장소 끝점에 대한 사용자 지정 도메인 이름 구성](/azure/storage/storage-custom-domain-name/)을 참조하십시오. 
 
-For more information on naming blobs, containers and tables:
+Blob, 컨테이너 및 테이블의 이름 지정에 대한 자세한 내용은 다음을 참조하십시오. 
 
-* [Naming and Referencing Containers, Blobs, and Metadata](https://msdn.microsoft.com/library/dd135715.aspx)
-* [Naming Queues and Metadata](https://msdn.microsoft.com/library/dd179349.aspx)
-* [Naming Tables](https://msdn.microsoft.com/library/azure/dd179338.aspx)
+* [컨테이너, Blob 및 메타데이터 명명 및 참조](https://msdn.microsoft.com/library/dd135715.aspx)
+* [대기열 및 메타데이터 명명](https://msdn.microsoft.com/library/dd179349.aspx)
+* [명명 테이블](https://msdn.microsoft.com/library/azure/dd179338.aspx)
 
-A blob name can contain any combination of characters, but reserved URL characters must be properly
-escaped. Avoid blob names that end with a period (.), a forward slash (/), or a sequence or combination
-of the two. By convention, the forward slash is the **virtual** directory separator. Do not use a backward 
-slash (\) in a blob name. The client APIs may allow it, but then fail to hash properly, and the 
-signatures will not match.
+Blob 이름은 임의의 문자 조합을 포함할 수 있지만 예약된 URL 문자는 올바르게 이스케이프시켜야 합니다. 마침표(.), 슬래시(/) 또는 시퀀스, 또는 이들의 두 조합으로 끝나는 Blob 이름은 사용하지 마십시오. 규칙에 따라 슬래시는 **가상** 디렉터리 구분 기호입니다. Blob 이름에 백슬래시(\)를 사용하지 마십시오. 클라이언트 API가 이를 허용할 수 있지만 제대로 해시되지 못하면 서명이 일치하지 않습니다. 
 
-It is not possible to modify the name of a storage account or container after it has been created.
-If you want to use a new name, you must delete it and create a new one.
+저장소 계정 또는 컨테이너를 만든 후에는 이름을 수정할 수 없습니다. 새 이름을 사용하려면 일단 삭제하고 새 이름을 만들어야 합니다. 
 
-> [!TIP]
-> We recommend that you establish a naming convention for all storage accounts and types
-> before embarking on the development of a new service or application.
+> [!팁]
+> 새 서비스 또는 응용 프로그램을 개발하기 전에 모든 저장소 계정 및 유형에 대한 명명 규칙을 수립하는 것이 좋습니다.
 > 
 > 
