@@ -9,20 +9,20 @@ ms.author: pnp
 
 pnp.series.title: Best Practices
 ---
-# API implementation
+# API 구현
 [!INCLUDE [header](../_includes/header.md)]
 
-A carefully-designed RESTful web API defines the resources, relationships, and navigation schemes that are accessible to client applications. When you implement and deploy a web API, you should consider the physical requirements of the environment hosting the web API and the way in which the web API is constructed rather than the logical structure of the data. This guidance focusses on best practices for implementing a web API and publishing it to make it available to client applications. Security concerns are described separately in the API Security Guidance document. You can find detailed information about web API design in the API Design Guidance document.
+신중하게 설계된 RESTful web API는 클라이언트 응용 프로그램에 액세스 가능한 리소스, 관계, 탐색 스키마를 정의합니다.  웹 API를 구현 및 배치할 때 웹 API를 호스팅하는 환경의 물리적 요구사항과 데이터의 논리적 구조보다는 API가 구성되는 방식을 고려해야 합니다. 본 지침은 웹 API를 구현하고 클라이언트 응용 프로그램에서 사용할 수 있도록 게시하는 모범 사례에 초점을 맞춥니다. 보안 문제는 API 보안 지침 문서에서 별도로 설명합니다. API 설계 지침 문서에서 웹 API 설계에 대한 자세한 정보를 확인할 수 있습니다. 
 
-## Considerations for implementing a RESTful web API
-The following sections illustrate best practice for using the ASP.NET Web API template to build a RESTful web API. For detailed information on using the Web API template, visit the [Learn About ASP.NET Web API](http://www.asp.net/web-api) page on the Microsoft website.
+## RESTful web API 구현 시 고려사항
+다음 섹션에서는 RESTful web API 구축을 위한 ASP.NET Web API 템플릿 사용의 모범 사례를 설명합니다. 웹 API 템플릿 사용에 관한 자세한 정보는 Microsoft 웹 사이트의 [ASP.NET Web API 살펴보기](http://www.asp.net/web-api) 페이지를 확인하십시오.
 
-## Considerations for implementing request routing
-In a service implemented by using the ASP.NET Web API, each request is routed to a method in a *controller* class. The Web API framework provides two primary options for implementing routing; *convention-based* routing and *attribute-based* routing. Consider the following points when you determine the best way to route requests in your web API:
+## 요청 라우팅 구현 시 고려사항
+ASP.NET Web API를 사용해 구현되는 서비스의 경우 각각의 요청은 *controller(컨트롤러)* 클래스의 메서드로 라우팅됩니다. Web API 프레임워크는 라우팅을 구현하기 위해 두 가지의 기본 옵션인 *convention-based(규칙 기반)* 라우팅 및 *attribute-based(특성 기반)* 라우팅을 제공합니다. 웹 API에서 요청을 라우팅할 최선의 방법을 결정할 때 다음 사항을 고려하십시오. 
 
-* **Understand the limitations and requirements of convention-based routing**.
+* **약속 기반 라우팅의 한계 및 요구 사항을 이해하십시오.**.
 
-    By default, the Web API framework uses convention-based routing. The Web API framework creates an initial routing table that contains the following entry:
+    기본적으로 Web API 프레임워크는 규칙 기반 라우팅을 사용합니다. Web API 프레임워크는 다음 항목이 포함된 초기 라우팅 테이블을 생성합니다.
 
     ```C#
     config.Routes.MapHttpRoute(
@@ -32,11 +32,11 @@ In a service implemented by using the ASP.NET Web API, each request is routed to
     );
     ```
 
-    Routes can be generic, comprising literals such as *api* and variables such as *{controller}* and *{id}*. Convention-based routing allows some elements of the route to be optional. The Web API framework determines which method to invoke in the controller by matching the HTTP method in the request to the initial part of the method name in the API, and then by matching any optional parameters. For example, if a controller named *orders* contains the methods *GetAllOrders()* or *GetOrderByInt(int id)* then the GET request *http://www.adventure-works.com/api/orders/* will be directed to the method *GetAlllOrders()* and the GET request *http://www.adventure-works.com/api/orders/99* will be routed to the method *GetOrderByInt(int id)*. If there is no matching method available that begins with the prefix Get in the controller, the Web API framework replies with an HTTP 405 (Method Not Allowed) message. Additionally, name of the parameter (id) specified in the routing table must be the same as the name of the parameter for the *GetOrderById* method, otherwise the Web API framework will reply with an HTTP 404 (Not Found) response.
+    경로는 일반적이고 *api* 와 같은 리터럴 및 *{controller}* 및 *{id}* 와 같은 변수로 구성될 수 있습니다. 규칙 기반 라우팅을 통해 경로의 일부 요소를 선택적으로 만들 수 있습니다. Web API 프레임워크는 요청의 HTTP 메서드와 API 메서드 이름의 최초 부분을 일치시킨 다음 선택적 매개 변수를 일치시켜 컨트롤러에서 어떤 메서드를 호출할지를 결정합니다. 예를 들어, *orders(주문)* 라는 이름의 컨트롤러에 메서드 *GetAllOrders()* 또는 *GetOrderByInt(int id)* 가 포함되어 있는 경우 GET 요청 *http://www.adventure-works.com/api/orders/* 은 메서드 *GetAlllOrders()* 로 지정되고 GET 요청 *http://www.adventure-works.com/api/orders/99* 은 메서드 *GetOrderByInt(int id)* 로 라우팅됩니다. 컨트롤러에 접두사 Get으로 시작하고 사용 가능한, 일치하는 메서드가 없는 경우 Web API 프레임워크는 HTTP 405(메서드 허용 안 함) 메시지로 회신합니다. 또한, 라우팅 테이블에 지정된 매개 변수의 이름(id)은 *GetOrderById* 메서드에 대한 매개 변수의 이름과 동일해야 합니다. 동일하지 않은 경우 Web API 프레임워크는 HTTP 404(찾을 수 없음) 응답으로 회신합니다.
 
-    The same rules apply to POST, PUT, and DELETE HTTP requests; a PUT request that updates the details of order 101 would be directed to the URI *http://www.adventure-works.com/api/orders/101*, the body of the message will contain the new details of the order, and this information will be passed as a parameter to a method in the orders controller with a name that starts with the prefix *Put*, such as *PutOrder*.
+    동일한 규칙이 POST, PUT, DELETE HTTP 요청에 적용됩니다. 주문 101의 세부 정보를 업데이트하는 PUT 요청은 URI *http://www.adventure-works.com/api/orders/101* 로 지정되고, 메시지 본문에는 주문의 새로운 세부 정보가 포함되며, 이 정보는 접두사 *Put*으로 시작하는 이름(예:*PutOrder*)을 포함해 주문 컨트롤러의 메서드에 매개 변수로 전달됩니다.
 
-    The default routing table will not match a request that references child resources in a RESTful web API, such as *http://www.adventure-works.com/api/customers/1/orders* (find the details of all orders placed by customer 1). To handle these cases, you can add custom routes to the routing table:
+    기본 라우팅 테이블은 RESTful web API에서 하위 리소스를 참조하는 요청(예: *http://www.adventure-works.com/api/customers/1/orders* (고객 1이 한 모든 주문의 세부 정보 검색))을 일치시키지 않습니다. 이러한 경우를 처리하기 위해 라우팅 테이블에 사용자 지정 경로를 추가할 수 있습니다.
 
     ```C#
     config.Routes.MapHttpRoute(
@@ -46,7 +46,7 @@ In a service implemented by using the ASP.NET Web API, each request is routed to
     );
     ```
 
-    This route directs requests that match the URI to the *GetOrdersForCustomer* method in the *Customers* controller. This method must take a single parameter named *custI*:
+    이 경로는 URI와 일치하는 요청을 *Customers* 컨트롤러의 *GetOrdersForCustomer* 메서드에 지정합니다. 이 메서드는 *custI*라는 이름의 단일 매개 변수를 가져와야 합니다.
 
     ```C#
     public class CustomersController : ApiController
@@ -62,18 +62,18 @@ In a service implemented by using the ASP.NET Web API, each request is routed to
     }
     ```
 
-  > [!TIP]
-  > Utilize the default routing wherever possible and avoid defining many complicated custom routes as this can result in brittleness (it is very easy to add methods to a controller that result in ambiguous routes) and reduced performance (the bigger the routing table, the more work the Web API framework has to do to work out which route matches a given URI). Keep the API and routes simple. For more information, see the section Organizing the Web API Around Resources in the API Design Guidance. If you must define custom routes, a preferable approach is to use attribute-based routing described later in this section.
+  > [!팁]
+  > 가능한 한 기본 라우팅을 활용하고 복잡한 사용자 지정 경로를 많이 정의하지 마십시오. 이로 인해 불안정해지고 (메서드를 컨트롤러에 추가하기는 매우 쉽지만 그로 인해 경로가 모호해질 수 있음) 성능이 감소합니다(라우팅 테이블이 클수록 어떤 경로가 주어진 URI와 일치하는지를 확인하기 위해 Web API 프레임워크가 더 많은 작업을 수행해야 함). API 및 경로를 단순하게 유지하십시오. 자세한 내용은 API 설계 지침의 리소스 주변에 웹 API 구성 섹션을 참조하십시오. 사용자 지정 경로를 정의해야 하는 경우 본 섹션의 뒷부분에 설명되어 있는 특성 기반 라우팅을 사용하는 것이 좋습니다.
   >
   >
 
-    For more information about convention-based routing, see the page [Routing in ASP.NET Web API](http://www.asp.net/web-api/overview/web-api-routing-and-actions/routing-in-aspnet-web-api) on the Microsoft website.
-* **Avoid ambiguity in routing**.
+    규칙 기반 라우팅에 대한 자세한 정보는 Microsoft 웹 사이트의 [ASP.NET Web API에서의 라우팅](http://www.asp.net/web-api/overview/web-api-routing-and-actions/routing-in-aspnet-web-api) 페이지를 참조하십시오.
+* **라우팅의 모호성을 방지하십시오**.
 
-    Convention-based routing can result in ambiguous pathways if multiple methods in a controller match the same route. In these situations, the Web API framework responds with an HTTP 500 (Internal Server Error) response message containing the text "Multiple actions were found that match the request".
-* **Prefer attribute-based routing**.
+    컨트롤러의 여러 메서드가 동일한 경로와 일치하는 경우 규칙 기반 라우팅으로 인해 경로가 모호해질 수 있습니다. 이러한 경우 Web API 프레임워크는 다음 텍스트가 포함된 HTTP 500(Internal Server Error(내부 서버 오류)) 응답 메시지로 응답합니다. "Multiple actions were found that match the request(요청과 일치하는 여러 개의 동작이 검색되었습니다.)"
+* **특성 기반 라우팅을 선택하십시오**.
 
-    Attribute-based routing provides an alternative means for connecting routes to methods in a controller. Rather than relying on the pattern-matching features of convention-based routing, you can explicitly annotate methods in a controller with the details of the route to which they should be associated. This approach help to remove possible ambiguities. Furthermore, as explicit routes are defined at design time this approach is more efficient than convention-based routing at runtime. The following code shows how to apply the *Route* attribute to methods in the Customers controller. These methods also use the HttpGet attribute to indicate that they should respond to *HTTP GET* requests. This attribute enables you to name your methods using any convenient naming scheme rather than that expected by convention-based routing. You can also annotate methods with the *HttpPost*, *HttpPut*, and *HttpDelete* attributes to define methods that respond to other types of HTTP requests.
+    특성 기반 라우팅은 컨트롤러에서 경로를 메서드에 연결하기 위한 대안을 제공합니다. 규칙 기반 라우팅의 패턴 일치 기능에 의존하는 것이 아니라 메서드에 연결되어야 하는 경로의 세부 정보와 함께 컨트롤러의 메서드에 명시적으로 주석을 달 수 있습니다. 이 접근 방식은 모호성을 제거하는 데 도움이 됩니다. 더욱이, 명시적 경로가 디자인 타임에서 정의되므로 이 접근 방식이 런타임에서 규칙 기반 라우팅보다 효율적입니다. 다음 코드는 *Route* 특성을 고객 컨트롤러의 메서드에 적용하는 방법을 보여줍니다. 이러한 메서드 또한 *HTTP GET* 요청에 응답해야 함을 표시하기 위해 HttpGet 특성을 사용합니다. 이 특성을 통해 규칙 기반 라우팅에서 예상하는 것이 아니라 편리한 이름 지정 체계를 사용해 메서드 이름을 지정할 수 있습니다. 또한 다른 유형의 HTTP 요청에 응답하는 메서드를 정의하기 위해 메서드에 *HttpPost*, *HttpPut*, *HttpDelete* 특성으로 주석을 달 수 있습니다.
 
     ```C#
     public class CustomersController : ApiController
@@ -100,9 +100,9 @@ In a service implemented by using the ASP.NET Web API, each request is routed to
     }
     ```
 
-    Attribute-based routing also has the useful side-effect of acting as documentation for developers needing to maintain the code in the future; it is immediately clear which method belongs to which route, and the *HttpGet* attribute clarifies the type of HTTP request to which the method responds.
+    특성 기반 라우팅은 앞으로 코드를 유지해야 할 필요가 있는 개발자에게 설명서 역할을 하는 유용한 부수적인 효과도 있습니다. 어떤 메서드가 어느 경로에 속하는지 바로 알 수 있고 *HttpGet* 특성은 메서드가 응답하는 HTTP 요청 유형을 명확하게 보여줍니다.
 
-    Attribute-based routing enables you to define constraints which restrict how the parameters are matched. Constraints can specify the type of the parameter, and in some cases they can also indicate the acceptable range of parameter values. In the following example, the id parameter to the *FindCustomerByID* method must be a non-negative integer. If an application submits an HTTP GET request with a negative customer number, the Web API framework will respond with an HTTP 405 (Method Not Allowed) message:
+    특성 기반 라우팅을 사용해 매개 변수가 일치되는 방법을 제한하는 제약 조건을 정의할 수 있습니다. 제약 조건은 매개 변수 유형을 지정할 수 있으며, 일부 경우에는 매개 변수 값의 수용 가능 범위를 지정할 수도 있습니다. 다음 예에서 *FindCustomerByID* 메서드에 대한 id 매개 변수는 음수가 아닌 정수여야 합니다. 응용 프로그램에서 음수 고객이 포함된 HTTP GET 요청을 제출하는 경우 Web API 프레임워크는 HTTP 450(Method Not Allowed(메서드 허용 안 함)) 메시지로 응답합니다.
 
     ```C#
     public class CustomersController : ApiController
@@ -120,42 +120,42 @@ In a service implemented by using the ASP.NET Web API, each request is routed to
     }
     ```
 
-    For more information on attribute-based routing, see the page [Attribute Routing in Web API 2](http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2) on the Microsoft website.
-* **Support Unicode characters in routes**.
+    특성 기반 라우팅에 대한 자세한 정보는 Microsoft 웹 사이트에 나와 있는 [Web API 2에서의 특성 라우팅](http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2)을 참조하십시오.
+* **경로에서 유니코드 문자를 지원하십시오**.
 
-    The keys used to identify resources in GET requests could be strings. Therefore, in a global application, you may need to support URIs that contain non-English characters.
-* **Distinguish methods that should not be routed**.
+    GET 요청에서 리소스를 식별하는 데 사용되는 키는 문자열이 될 수 있습니다. 따라서 전역 응용 프로그램에서 영어가 아닌 문자가 포함된 URI를 지원해야 할 수도 있습니다.
+* **라우트되어서는 안 되는 메서드를 구별하십시오**.
 
-    If you are using convention-based routing, indicate methods that do not correspond to HTTP actions by decorating them with the *NonAction* attribute. This typically applies to helper methods defined for use by other methods within a controller, and this attribute will prevent these methods from being matched and invoked by an errant HTTP request.
-* **Consider the benefits and tradeoffs of placing the API in a subdomain**.
+    규칙 기반 라우팅을 사용하는 경우 메서드를 *NonAction* 특성으로 장식해 HTTP 동작에 해당하지 않는 메서드를 표시하십시오. 이는 일반적으로 컨트롤러 내 다른 메서드에서 사용하도록 정의되는 도우미 메서드에 적용되며, 이 특성은 이러한 메서드가 잘못된 HTTP 요청에 의해 일치되고 호출되는 것을 방지합니다.
+* **하위 도메인에 API를 위치시키는 것에 따른 혜택과 단점을 고려하십시오**.
 
-    By default, the ASP.NET web API organizes APIs into the */api* directory in a domain, such as `http://www.adventure-works.com/api/orders`. This directory resides in the same domain as any other services exposed by the same host. It may be beneficial to split the web API out into its own subdomain running on a separate host, with URIs such as `http://api.adventure-works.com/orders`. This separation enables you to partition and scale the web API more effectively without affecting any other web applications or services running in the *www.adventure-works.com* domain.
+    기본적으로 ASP.NET web API는 API를 도메인의 */api* 디렉터리에 구성합니다(예: `http://www.adventure-works.com/api/orders`). 이 디렉터리는 동일한 호스트에서 표시하는 다른 서비스와 동일한 도메인에 위치합니다. 웹 API를 `http://api.adventure-works.com/orders`와 같은 URI를 사용해 별도의 호스트에서 실행되는 고유의 하위 도메인에 분할하는 것이 도움이 될 수 있습니다. 이러한 구분을 통해 *www.adventure-works.com* 도메인에서 실행되는 다른 웹 응용 프로그램이나 서비스에 영향을 미치지 않고 웹 API를 보다 효과적으로 파티션 및 확장/축소할 수 있습니다.
 
-    However, placing a web API in a different subdomain can also lead to security concerns. Any web applications or services hosted at *www.adventure-works.com* that invoke a web API running elsewhere may violate the same-origin policy of many web browsers. In this situation, it will be necessary to enable cross-origin resource sharing (CORS) between the hosts. For more information, see the API Security Guidance document.
+    그러나 웹 API를 다른 하위 도메인에 위치시킴으로 인해 보안 문제가 발생할 수 있습니다. 다른 어딘가에서 실행되는 웹 API를 호출하는 *www.adventure-works.com* 에서 호스팅 되는 웹 응용 프로그램 또는 서비스는 많은 웹 브라우저의 동일 원본 정책을 위반할 수 있습니다. 이러한 경우 호스트 간의 크로스-원본 리소스 공유(CORS)를 사용해야 합니다. 자세한 정보는 API 보안 지침 문서를 참조하십시오.
 
-## Considerations for processing requests
-Once a request from a client application has been successfully routed to a method in a web API, the request must be processed in as efficient manner as possible. Consider the following points when you implement the code to handle requests:
+## 요청 처리 시 고려사항
+클라이언트 응용 프로그램의 요청이 웹 API의 메서드에 성공적으로 라우트되면 가능한 효율적인 방법으로 요청을 처리해야 합니다. 요청을 처리할 코드를 구현할 때 다음 사항을 고려하십시오. 
 
-* **GET, PUT, DELETE, HEAD, and PATCH actions should be idempotent**.
+* **GET, PUT, DELETE, HEAD, PATCH 동작은 idempotent가 되어야 합니다**.
 
-    The code that implements these requests should not impose any side-effects. The same request repeated over the same resource should result in the same state. For example, sending multiple DELETE requests to the same URI should have the same effect, although the HTTP status code in the response messages may be different (the first DELETE request might return status code 204 (No Content) while a subsequent DELETE request might return status code 404 (Not Found)).
+    이러한 요청을 구현하는 코드는 파생 작업을 부과해서는 안 됩니다. 동일한 리소스에 대해 반복된 동일한 요청은 동일한 상태를 생성해야 합니다. 예를 들어 동일한 URI에 여러 번 DELETE 요청을 전송하면 후속 DELETE 요청이 상태 코드 404(Not Found(찾을 수 없음))를 반환하는 동안 응답 메시지의 HTTP 상태 코드가 다를 수 있지만(첫 번째 DELETE 요청은 상태 코드 204(No Content(콘텐츠 없음))을 반환할 수 있음), 동일한 효과를 가져와야 합니다.
 
-> [!NOTE]
-> The article [Idempotency Patterns](http://blog.jonathanoliver.com/idempotency-patterns/) on Jonathan Oliver’s blog provides an overview of idempotency and how it relates to data management operations.
+> [!참고]
+> 조나단 올리버(Jonathan Oliver)의 블로그에 게재된 [Idempotency 패턴](http://blog.jonathanoliver.com/idempotency-patterns/)에 관한 기사는 Idempotency 개요 및 Idempotency가 데이터 작업 관리와 어떻게 관련되는지를 설명합니다. 
 >
 >
 
-* **POST actions that create new resources should do so without unrelated side-effects**.
+* **새로운 리소스를 생성하는 POST 동작은 관련 없는 파생 작업을 부과하지 않고 새로운 리소스를 생성해야 합니다**.
 
-    If a POST request is intended to create a new resource, the effects of the request should be limited to the new resource (and possibly any directly related resources if there is some sort of linkage involved) For example, in an ecommerce system, a POST request that creates a new order for a customer might also amend inventory levels and generate billing information, but it should not modify information not directly related to the order or have any other side-effects on the overall state of the system.
-* **Avoid implementing chatty POST, PUT, and DELETE operations**.
+    POST 요청의 목적이 새로운 리소스를 생성하는 것이라면 요청의 영향은 새로운 리소스 (및 몇 가지 연결이 관련되어 있는 경우 직접적으로 관련된 리소스)로 제한되어야 합니다. 예를 들어, Ecommerce 시스템에서 고객에 대한 새로운 주문을 생성하는 POST 요청은 재고 수준을 수정하고 결제 정보를 생성할 수 있지만, 주문과 직접적으로 관련되지 않은 정보를 수정하거나 전반적인 시스템 상태에 파생 작업을 부과해서는 안 됩니다.
+* **수다스러운 POST, PUT, DELETE 작업을 구현하지 마십시오**.
 
-    Support POST, PUT and DELETE requests over resource collections. A POST request can contain the details for multiple new resources and add them all to the same collection, a PUT request can replace the entire set of resources in a collection, and a DELETE request can remove an entire collection.
+    리소스 컬렉션에 대한 POST, PUT, DELETE 요청을 지원하십시오. POST 요청에는 여러 가지 새로운 리소스에 대한 세부 정보가 포함될 수 있고 세부 정보 모두를 동일한 컬렉션에 추가할 수 있고, PUT 요청은 컬렉션의 전체 리소스 세트를 대체할 수 있고, DELETE 요청은 전체 컬렉션을 제거할 수 있습니다.
 
-    Note that the OData support included in ASP.NET Web API 2 provides the ability to batch requests. A client application can package up several web API requests and send them to the server in a single HTTP request, and receive a single HTTP response that contains the replies to each request. For more information, see the page [Introducing Batch Support in Web API and Web API OData](http://blogs.msdn.com/b/webdev/archive/2013/11/01/introducing-batch-support-in-web-api-and-web-api-odata.aspx) on the Microsoft website.
-* **Abide by the HTTP protocol when sending a response back to a client application**.
+    ASP.NET Web API 2에 포함된 OData 지원은 일괄 요청 기능을 제공한다는 점을 유념합니다. 클라이언트 응용 프로그램은 여러 가지 웹 API 요청을 패키지로 묶어 단일 HTTP 요청으로 서버에 전송할 수 있고 각 요청에 대한 회신이 포함된 단일 HTTP 응답을 수신합니다. 자세한 정보는 Microsoft 웹 페이지의 [웹 API 및 웹 API OData의 일괄 지원 소개](http://blogs.msdn.com/b/webdev/archive/2013/11/01/introducing-batch-support-in-web-api-and-web-api-odata.aspx) 페이지를 참조하십시오.
+* **클라이언트 응용프로그램으로 다시 응답을 전송할 때 HTTP 프로토콜을 준수하십시오**.
 
-    A web API must return messages that contain the correct HTTP status code to enable the client to determine how to handle the result, the appropriate HTTP headers so that the client understands the nature of the result, and a suitably formatted body to enable the client to parse the result. If you are using the ASP.NET Web API template, the default strategy for implementing methods that respond to HTTP POST requests is simply to return a copy of the newly created resource, as illustrated by the following example:
+    클라이언트가 결과를 처리하는 방법을 결정할 수 있으려면 웹 API는 올바른 HTTP 상태 코드가 포함된 메시지를 반환해야 하고, 클라이언트가 결과의 속성을 이해하려면 적절한 HTTP 헤더가 포함된 메시지를 반환해야 하고, 클라이언트가 결과를 구문 분석할 수 있으려면 적합하게 포맷된 본문이 포함된 메시지를 반환해야 합니다. ASP.NET Web API 템플릿을 사용하는 경우 HTTP POST 요청에 응답하는 메서드 구현을 위한 기본적인 전략은 다음 예에서 설명하는 것처럼 간단하게 새롭게 생성된 리소스 사본을 반환하는 것입니다.
 
     ```C#
     public class CustomersController : ApiController
@@ -176,9 +176,9 @@ Once a request from a client application has been successfully routed to a metho
     }
     ```
 
-    If the POST operation is successful, the Web API framework creates an HTTP response with status code 200 (OK) and the details of the customer as the message body. However, in this case, according to the HTTP protocol, a POST operation should return status code 201 (Created) and the response message should include the URI of the newly created resource in the Location header of the response message.
+    POST 작업이 성공하는 경우 Web API 프레임워크는 상태 코드 200(OK(확인)) 및 메시지 본문으로 고객 세부 정보가 포함된 HTTP 응답을 생성합니다. 그러나 이러한 경우 HTTP 프로토콜에 따르면, POST 작업은 상태 코드 201(Created(생성됨))을 반환해야 하고 응답 메시지에는 응답 메시지의 Location(위치) 헤더에 새롭게 생성된 리소스의 URI가 포함되어야 합니다.
 
-    To provide these features, return your own HTTP response message by using the `IHttpActionResult` interface. This approach gives you fine control over the HTTP status code, the headers in the response message, and even the format of the data in the response message body, as shown in the following code example. This version of the `CreateNewCustomer` method conforms more closely to the expectations of client following the HTTP protocol. The `Created` method of the `ApiController` class constructs the response message from the specified data, and adds the Location header to the results:
+    이러한 기능을 제공하려면 `IHttpActionResult` 인터페이스를 사용해 고유한 HTTP 응답 메시지를 반환하십시오. 이 접근 방식을 통해 다음 코드 예에서 확인할 수 있는 것처럼 HTTP 상태 코드, 응답 메시지의 헤더, 심지어는 응답 메시지 본문의 데이터 형식을 미세하게 제어할 수 있습니다. 이 버전의 `CreateNewCustomer` 메서드는 HTTP 프로토콜을 준수하는 클라이언트의 기대를 좀 더 철저하게 따릅니다. `ApiController` 클래스의 `Created` 메서드는 지정된 데이터에서 응답 메시지를 구성하고 결과에 Location(위치) 헤더를 추가합니다.
 
     ```C#
     public class CustomersController : ApiController
@@ -203,21 +203,21 @@ Once a request from a client application has been successfully routed to a metho
         ...
     }
     ```
-* **Support content negotiation**.
+* **콘텐츠 협상을 지원하십시오**.
 
-    The body of a response message may contain data in a variety of formats. For example, an HTTP GET request could return data in JSON, or XML format. When the client submits a request, it can include an Accept header that specifies the data formats that it can handle. These formats are specified as media types. For example, a client that issues a GET request that retrieves an image can specify an Accept header that lists the media types that the client can handle, such as "image/jpeg, image/gif, image/png".  When the web API returns the result, it should format the data by using one of these media types and specify the format in the Content-Type header of the response.
+    응답 메시지의 본문에는 다양한 형식의 데이터가 포함될 수 있습니다. 예를 들어, HTTP GET 요청은 JSON 또는 XML 형식으로 데이터를 반환할 수 있습니다. 클라이언트가 요청을 제출하면 요청에는 클라이언트가 처리할 수 있는 데이터 형식을 지정하는 Accept(수락) 헤더가 포함될 수 있습니다. 이러한 형식은 미디어 유형으로 지정됩니다. 예를 들어, 이미지를 검색하는 GET 요청을 발행하는 클라이언트는 처리 가능한 미디어 유형(예: image/jpeg, image/gif, image/png)을 나열하는 Accept(수락) 헤더를 지정할 수 있습니다. 웹 API가 결과를 반환할 때 이러한 미디어 유형 중 하나를 사용해 데이터를 포맷해야 하고 응답의 Content-Type(콘텐츠 유형) 헤더에서 형식을 지정해야 합니다.
 
-    If the client does not specify an Accept header, then use a sensible default format for the response body. As an example, the ASP.NET Web API framework defaults to JSON for text-based data.
+    클라이언트가 Accept(수락) 헤더를 지정하지 않는 경우 응답 본문에 대해 합리적인 기본 형식을 사용합니다. 가령 ASP.NET Web API 프레임워크는 텍스트 기반 데이터에 대해 JSON을 기본값으로 사용합니다.
 
-  > [!NOTE]
-  > The ASP.NET Web API framework performs some automatic detection of Accept headers and handles them itself based on the type of the data in the body of the response message. For example, if the body of a response message contains a CLR (common language runtime) object, the ASP.NET Web API automatically formats the response as JSON with the Content-Type header of the response set to "application/json" unless the client indicates that it requires the results as XML, in which case the ASP.NET Web API framework formats the response as XML and sets the Content-Type header of the response to "text/xml". However, it may be necessary to handle Accept headers that specify different media types explicitly in the implementation code for an operation.
+  > [!참고]
+  > ASP.NET Web API 프레임워크는 Accept(수락) 헤더의 일부 자동 검색을 수행하고 응답 메시지의 본문 데이터 유형을 근거로 처리합니다. 예를 들어 응답 메시지의 본문에 CLR(공용 언어 런타임) 개체가 포함되어 있는 경우 ASP.NET Web API는 클라이언트가 결과를 XML로 포맷해야 함을 표시하지 않는 한, 응답의 Content-Type(콘텐츠 유형) 헤더가 "application/json"로 설정된 상태에서 응답을 자동으로 JSON으로 포맷합니다. 결과를 XML로 포맷해야 함을 표시하는 경우 ASP.NET Web API 프레임워크는 응답을 XML로 포맷하고 응답의 Content-Type(콘텐츠 유형) 헤더를 "text/xml"로 설정합니다. 그러나 작업에 대한 구현 코드에서 명시적으로 다른 미디어 유형을 지정하는 Accept(수락) 헤더를 처리해야 합니다.
   >
   >
-* **Provide links to support HATEOAS-style navigation and discovery of resources**.
+* **HATEOAS 스타일의 리소스 탐색 및 검색을 지원하기 위한 링크를 제공하십시오**.
 
-    The API Design Guidance describes how following the HATEOAS approach enables a client to navigate and discover resources from an initial starting point. This is achieved by using links containing URIs; when a client issues an HTTP GET request to obtain a resource, the response should contain URIs that enable a client application to quickly locate any directly related resources. For example, in a web API that supports an e-commerce solution, a customer may have placed many orders. When a client application retrieves the details for a customer, the response should include links that enable the client application to send HTTP GET requests that can retrieve these orders. Additionally, HATEOAS-style links should describe the other operations (POST, PUT, DELETE, and so on) that each linked resource supports together with the corresponding URI to perform each request. This approach is described in more detail in the API Design Guidance document.
+    API 설계 지침에서는 HATEOAS 접근 방식을 따르면 클라이언트가 어떻게 초기 시작 지점에서 리소스를 탐색 및 검색할 수 있는지에 대해 설명합니다. 클라이언트가 리소스를 얻기 위한 HTTP GET 요청을 발행할 때 URI가 포함된 링크를 사용해 리소스를 시작 지점에서 탐색 및 검색할 수 있고, 응답에는 클라이언트 응용 프로그램이 직접적으로 관련된 리소스를 빠르게 찾을 수 있도록 하는 URI가 포함되어야 합니다. 예를 들어, E-commerce 솔루션을 지원하는 웹 API에서 고객은 많은 주문을 할 수 있습니다. 클라이언트 응용 프로그램이 고객에 대한 세부 정보를 검색할 때 응답에는 클라이언트 응용 프로그램이 이러한 주문을 검색할 수 있는 HTTP GET 요청을 전송하도록 지원하는 링크가 포함되어야 합니다. 뿐만 아니라 HATEOAS 스타일 링크는 각각 링크된 리소스가 해당 URI와 함께 각 요청 수행을 지원하는 다른 작업(POST, PUT, DELETE 등)을 설명해야 합니다. 이 접근 방식은 API 설계 지침 문서에 더 자세히 설명되어 있습니다.
 
-    Currently there are no standards that govern the implementation of HATEOAS, but the following example illustrates one possible approach. In this example, an HTTP GET request that finds the details for a customer returns a response that include HATEOAS links that reference the orders for that customer:
+    현재 HATEOAS 구현을 제어하는 표준은 없지만, 다음 예를 통해 한 가지 접근 방식을 설명합니다. 이 예에서 고객에 대한 세부 정보를 검색하는 HTTP GET 요청은 해당 고객에 대한 주문을 참조하는 HATEOAS 링크가 포함된 응답을 반환합니다.
 
     ```HTTP
     GET http://adventure-works.com/customers/2 HTTP/1.1
@@ -255,7 +255,7 @@ Once a request from a client application has been successfully routed to a metho
     ]}
     ```
 
-    In this example, the customer data is represented by the `Customer` class shown in the following code snippet. The HATEOAS links are held in the `Links` collection property:
+    이 예에서 고객 데이터는 다음 코드 조각에서 확인할 수 있는 것처럼 Customer 클래스로 나타냅니다. HATEOAS 링크는 `Links` 컬렉션 속성에 보관됩니다.
 
     ```C#
     public class Customer
@@ -275,28 +275,28 @@ Once a request from a client application has been successfully routed to a metho
     }
     ```
 
-    The HTTP GET operation retrieves the customer data from storage and constructs a `Customer` object, and then populates the `Links` collection. The result is formatted as a JSON response message. Each link comprises the following fields:
+    HTTP GET 작업은 저장소에서 고객 데이터를 검색하고 `Customer` 개체를 구성한 다음, `Links` 컬렉션을 채웁니다 . 결과는 JSON 응답 메시지로 포맷됩니다. 각각의 링크는 다음 필드로 구성됩니다.
 
-  * The relationship between the object being returned and the object described by the link. In this case "self" indicates that the link is a reference back to the object itself (similar to a `this` pointer in many object-oriented languages), and "orders" is the name of a collection containing the related order information.
-  * The hyperlink (`Href`) for the object being described by the link in the form of a URI.
-  * The type of HTTP request (`Action`) that can be sent to this URI.
-  * The format of any data (`Types`) that should be provided in the HTTP request or that can be returned in the response, depending on the type of the request.
+  * 반환되는 개체와 링크를 통해 설명하는 개체 사이의 관계. 여기서 "self(셀프)"는 링크가 개체 자체를 다시 참조했음을 나타내며(상당수 개체 지향 언어에서 `this` 포인터와 유사), "orders(주문)"는 관련 주문 정보가 포함된 컬렉션의 이름을 의미합니다.
+  * URI 양식의 링크를 통해 설명되는 개체에 대한 하이퍼링크(`Href`).
+  * 이 URI로 전송될 수 있는 HTTP 요청 유형(`Action`).
+  * 요청 유형에 따라 HTTP 요청에 제공되어야 하거나 응답으로 반환할 수 있는 데이터 형식(`Types`).
 
-    The HATEOAS links shown in the example HTTP response indicate that a client application can perform the following operations:
-  * An HTTP GET request to the URI *http://adventure-works.com/customers/2* to fetch the details of the customer (again). The data can be returned as XML or JSON.
-  * An HTTP PUT request to the URI *http://adventure-works.com/customers/2* to modify the details of the customer. The new data must be provided in the request message in x-www-form-urlencoded format.
-  * An HTTP DELETE request to the URI *http://adventure-works.com/customers/2* to delete the customer. The request does not expect any additional information or return data in the response message body.
-  * An HTTP GET request to the URI *http://adventure-works.com/customers/2/orders* to find all the orders for the customer. The data can be returned as XML or JSON.
-  * An HTTP PUT request to the URI *http://adventure-works.com/customers/2/orders* to create a new order for this customer. The data must be provided in the request message in x-www-form-urlencoded format.
+    HTTP 응답 예에 포함된 HATEOAS 링크는 클라이언트 응용 프로그램이 다음 작업을 수행할 수 있음을 나타냅니다.
+  * 고객의 세부 정보를 (다시) 가져오기 위한 URI *http://adventure-works.com/customers/2* 에 대한 HTTP GET 요청. 데이터는 XML 또는 JSON으로 반환될 수 있습니다.
+  * 고객의 세부 정보를 수정하기 위한 URI *http://adventure-works.com/customers/2* 에 대한 HTTP PUT 요청. 새로운 데이터는 x-www-form-urlencoded 형식으로 요청 메시지에 제공되어야 합니다.
+  * 고객을 삭제하기 위한 URI *http://adventure-works.com/customers/2* 에 대한 HTTP DELETE 요청. 요청은 추가 정보를 기대하거나 응답 메시지 본문으로 데이터를 반환하지 않습니다.
+  * 고객에 대한 모든 주문을 검색하기 위한 URI *http://adventure-works.com/customers/2/orders* 에 대한 HTTP GET 요청. 데이터는 XML 또는 JSON으로 반환될 수 있습니다.
+  * 이 고객에 대한 새로운 주문을 생성하기 위한 URI *http://adventure-works.com/customers/2/orders* 에 대한 HTTP PUT 요청. 데이터는 x-www-form-urlencoded 형식으로 요청 메시지에 제공되어야 합니다.
 
-## Considerations for handling exceptions
-By default, in the ASP.NET Web API framework, if an operation throws an uncaught exception the framework returns a response message with HTTP status code 500 (Internal Server Error). In many cases, this simplistic approach is not useful in isolation, and makes determining the cause of the exception difficult. Therefore you should adopt a more comprehensive approach to handling exceptions, considering the following points:
+## 예외 처리 시 고려사항
+기본적으로 ASP.NET Web API 프레임워크에서 작업이 Catch되지 않은 예외를 발생시키는 경우 프레임워크는 HTTP 상태 코드 500(Internal Server Error(내부 서버 오류))이 포함된 응답 메시지를 반환합니다. 많은 경우에 가장 간단한 이 접근 방식은 고립된 상태에서 유용하지 않고, 예외의 원인을 확인하는 것을 어렵게 만듭니다. 따라서 다음 사항을 고려하여 예외를 처리하기 위한 보다 포괄적인 접근 방식을 채택해야 합니다. 
 
-* **Capture exceptions and return a meaningful response to clients**.
+* **예외를 캡처하고 클라이언트에 의미 있는 응답을 반환하십시오**.
 
-    The code that implements an HTTP operation should provide comprehensive exception handling rather than letting uncaught exceptions propagate to the Web API framework. If an exception makes it impossible to complete the operation successfully, the exception can be passed back in the response message, but it should include a meaningful description of the error that caused the exception. The exception should also include the appropriate HTTP status code rather than simply returning status code 500 for every situation. For example, if a user request causes a database update that violates a constraint (such as attempting to delete a customer that has outstanding orders), you should return status code 409 (Conflict) and a message body indicating the reason for the conflict. If some other condition renders the request unachievable, you can return status code 400 (Bad Request). You can find a full list of HTTP status codes on the [Status Code Definitions](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) page on the W3C website.
+    HTTP 작업을 구현하는 코드는 Catch되지 않은 예외가 Web API 프레임워크에 적용되도록 두는 것이 아니라 포괄적인 예외 처리 방식을 제공해야 합니다. 예외로 인해 작업을 성공적으로 완료할 수 없다면 예외는 응답 메시지로 다시 전달될 수 있지만, 예외의 원인이 된 오류에 대한 의미 있는 설명을 포함해야 합니다. 또한, 간단하게 모든 상황에 대해 상태 코드 500을 반환하는 것이 아니라 예외에는 적절한 HTTP 상태 코드가 포함되어야 합니다. 예를 들어, 사용자 요청으로 제약 조건을 위반하는 데이터베이스 업데이트가 수행되는 경우(예: 처리되지 않은 주문이 있는 고객 삭제 시도) 상태 코드 409(Conflict(충돌)) 및 충돌에 대한 이유를 나타내는 메시지 본문을 반환해야 합니다. 일부 다른 조건으로 인해 요청이 수행 불가능한 경우 상태 코드 400(Bad Request(잘못된 요청))을 반환할 수 있습니다. W3C 웹사이트의 [상태 코드 정의](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)에서 HTTP 상태 코드 전체 목록을 확인할 수 있습니다.
 
-    The following code shows an example that traps different conditions and returns an appropriate response.
+    다음 코드는 다른 조건을 트래핑해 적절한 응답을 반환하는 예를 보여줍니다.
 
     ```C#
     [HttpDelete]
@@ -339,37 +339,37 @@ By default, in the ASP.NET Web API framework, if an operation throws an uncaught
     }
     ```
 
-  > [!TIP]
-  > Do not include information that could be useful to an attacker attempting to penetrate your web API.For further information, visit the [Exception Handling in ASP.NET Web API](http://www.asp.net/web-api/overview/error-handling/exception-handling) page on the Microsoft website.
+  > [!팁]
+  > 웹 API를 해킹하려는 해커에게 유용한 정보를 포함해서는 안 됩니다. 자세한 정보는 Microsoft 웹 사이트에 나와 있는 [ASP.NET Web API에서의 예외 처리](http://www.asp.net/web-api/overview/error-handling/exception-handling) 페이지를 참조하십시오.
   >
-  > [!NOTE]
-  > Many web servers trap error conditions themselves before they reach the web API. For example, if you configure authentication for a web site and the user fails to provide the correct authentication information, the web server should respond with status code 401 (Unauthorized). Once a client has been authenticated, your code can perform its own checks to verify that the client should be able access the requested resource. If this authorization fails, you should return status code 403 (Forbidden).
+  > [!참고]
+  > 상당수 웹 서버가 에러 상태가 웹 API에 도달하기 전에 스스로 에러 상태를 트래핑합니다. 예를 들어 웹 사이트에 대한 인증을 구성했는데 사용자가 정확한 인증 정보를 제공하지 못하는 경우 웹 서버는 상태 코드 401(Unauthorized(권한이 없음))로 응답해야 합니다. 클라이언트가 인증되면 코드는 클라이언트가 요청한 리소스에 액세스할 수 있는지를 확인하기 위한 자체 확인을 수행할 수 있습니다. 권한 부여에 실패하면 상태 코드 403(Forbidden(사용할 수 없음))을 반환해야 합니다.
   >
   >
-* **Handle exceptions in a consistent manner and log information about errors**.
+* **일관된 방식으로 예외를 처리하고 오류에 대한 정보를 로그하십시오**.
 
-    To handle exceptions in a consistent manner, consider implementing a global error handling strategy across the entire web API. You can achieve part of this by creating an exception filter that runs whenever a controller throws any unhandled exception that is not an `HttpResponseException` exception. This approach is described on the [Exception Handling in ASP.NET Web API](http://www.asp.net/web-api/overview/error-handling/exception-handling) page on the Microsoft website.
+    일관된 방식으로 예외를 처리하려면 전체 웹 API 전반에서 전역 오류 처리 전략을 구현하는 것을 고려하십시오. `HttpResponseException` 예외가 아닌 처리되지 않은 예외를 컨트롤러가 발생시킬 때마다 실행되는 예외 필터를 생성해 전역 오류 처리 전략의 일부를 구현할 수 있습니다. 이 접근 방식은 Microsoft 웹 사이트 [ASP.NET Web API에서의 예외 처리](http://www.asp.net/web-api/overview/error-handling/exception-handling) 페이지에 설명되어 있습니다.
 
-    However, there are several situations where an exception filter will not catch an exception, including:
+   그러나 다음과 같이 예외 필터가 예외를 캡처하지 않는 여러 상황이 있습니다.
 
-  * Exceptions thrown from controller constructors.
-  * Exceptions thrown from message handlers.
-  * Exceptions thrown during routing.
-  * Exceptions thrown while serializing the content for a response message.
+  * 컨트롤러 생성자에서 발생한 예외.
+  * 메시지 처리기에서 발생한 예외.
+  * 라우팅 동안 발생한 예외.
+  * 응답 메시지에 대한 콘텐츠를 직렬화하는 동안 발생한 예외
 
-    To handle these cases, you may need to implement a more customized approach. You should also incorporate error logging which captures the full details of each exception; this error log can contain detailed information as long as it is not made accessible over the web to clients. The article [Web API Global Error Handling](http://www.asp.net/web-api/overview/error-handling/web-api-global-error-handling) on the Microsoft website shows one way of performing this task.
-* **Distinguish between client-side errors and server-side errors**.
+    이러한 경우를 처리하기 위해 더욱 사용자 지정된 접근 방식을 구현해야 합니다. 각각의 예외에 대한 모든 세부 정보를 캡처하는 오류 로깅을 포함시켜야 합니다. 이 오류 로그에는 웹을 통해 클라이언트가 액세스할 수 없는 한 자세한 정보를 포함할 수 있습니다. Microsoft 웹 사이트의 [웹 API 전역 오류 처리](http://www.asp.net/web-api/overview/error-handling/web-api-global-error-handling) 기사에서는 이 작업을 수행할 수 있는 단 한 가지 방법을 설명합니다.
+* **클라이언트 쪽 오류와 서버 쪽 오류를 구별하십시오**.
 
-    The HTTP protocol distinguishes between errors that occur due to the client application (the HTTP 4xx status codes), and errors that are caused by a mishap on the server (the HTTP 5xx status codes). Make sure that you respect this convention in any error response messages.
+    HTTP 프로토콜은 클라이언트 응용 프로그램 때문에 발생하는 오류(HTTP 4xx 상태 코드)와 서버 문제로 인해 발생하는 오류(HTTP 5xx 상태 코드)를 구별합니다. 오류 응답 메시지에서 이 규칙을 준수하고 있는지 확인하십시오.
 
 <a name="considerations-for-optimizing"></a>
 
-## Considerations for optimizing client-side data access
-In a distributed environment such as that involving a web server and client applications, one of the primary sources of concern is the network. This can act as a considerable bottleneck, especially if a client application is frequently sending requests or receiving data. Therefore you should aim to minimize the amount of traffic that flows across the network. Consider the following points when you implement the code to retrieve and maintain data:
+## 클라이언트 쪽 액세스 최적화 시 고려사항
+웹 서버 및 클라이언트 응용 프로그램이 포함되는 것과 같은 분산 환경에서 주요 우려 사항 중 하나는 네트워크입니다. 네트워크는 특히 클라이언트 응용 프로그램이 자주 요청을 전송하거나 데이터를 수신하는 경우 상당한 병목 현상을 유발할 수 있습니다. 따라서 네트워크 전반을 흐르는 트래픽 양을 최소화하는 것을 목표로 삼아야 합니다. 데이터를 검색하고 유지할 코드를 구현할 때 다음 사항을 고려하십시오. 
 
-* **Support client-side caching**.
+* **클라이언트 쪽 캐싱을 지원하십시오**.
 
-    The HTTP 1.1 protocol supports caching in clients and intermediate servers through which a request is routed by the use of the Cache-Control header. When a client application sends an HTTP GET request to the web API, the response can include a Cache-Control header that indicates whether the data in the body of the response can be safely cached by the client or an intermediate server through which the request has been routed, and for how long before it should expire and be considered out-of-date. The following example shows an HTTP GET request and the corresponding response that includes a Cache-Control header:
+    HTTP 1.1 프로토콜은 클라이언트 및 중간 서버에서 캐싱을 지원하고 이를 통해 요청은 Cache-Control(캐시 제어) 헤더를 사용해 라우트됩니다. 클라이언트 응용 프로그램이 웹 API에 HTTP GET 요청을 전송하면 응답에는 응답 본문의 데이터가 클라이언트 또는 중간 서버에 의해 안전하게 캐시될 수 있는지를 표시하는 Cache-Control(캐시 제어) 헤더가 포함될 수 있습니다(이를 통해 요청이 라우팅 되고, 얼마 후 만료되고 유효하지 않은 요청으로 간주되는 시점을 알 수 있음). 다음 예는 HTTP GET 요청과 Cache-Control(캐시 제어) 헤더가 포함된 해당 응답을 보여줍니다.
 
     ```HTTP
     GET http://adventure-works.com/orders/2 HTTP/1.1
@@ -385,7 +385,7 @@ In a distributed environment such as that involving a web server and client appl
     {"orderID":2,"productID":4,"quantity":2,"orderValue":10.00}
     ```
 
-    In this example, the Cache-Control header specifies that the data returned should be expired after 600 seconds, and is only suitable for a single client and must not be stored in a shared cache used by other clients (it is *private*). The Cache-Control header could specify *public* rather than *private* in which case the data can be stored in a shared cache, or it could specify *no-store* in which case the data must **not** be cached by the client. The following code example shows how to construct a Cache-Control header in a response message:
+    이 예에서 Cache-Control(캐시 제어) 헤더는 반환된 데이터가 600초 후에 만료되어야 하고, 단일 클라이언트에 대해서만 적합하고 다른 클라이언트가 사용하는 공유 캐시에 저장되어서는 안 된다고 지정합니다(*private(비공개)*입니다). Cache-Control(캐시 제어) 헤더는 *private(비공개)*이 아니라 *public(공개)*을 지정할 수 있고 이러한 경우 데이터는 공유 캐시에 저장되며, *no-store*로 지정하는 경우 데이터는 클라이언트에 의해 캐시되지 **않아야 합니다**. 다음 코드 예는 응답 메시지에서 Cache-Control(캐시 제어) 헤더를 구성하는 방법을 보여줍니다.
 
     ```C#
     public class OrdersController : ApiController
@@ -415,7 +415,7 @@ In a distributed environment such as that involving a web server and client appl
     }
     ```
 
-    This code makes use of a custom `IHttpActionResult` class named `OkResultWithCaching`. This class enables the controller to set the cache header contents:
+    이 코드는 `OkResultWithCaching`이라는 이름의 사용자 지정 `IHttpActionResult` 클래스를 사용합니다. 이 클래스를 통해 컨트롤러는 캐시 헤더 콘텐츠를 설정할 수 있습니다.
 
     ```C#
     public class OkResultWithCaching<T> : OkNegotiatedContentResult<T>
@@ -441,24 +441,24 @@ In a distributed environment such as that involving a web server and client appl
     }
     ```
 
-  > [!NOTE]
-  > The HTTP protocol also defines the *no-cache* directive for the Cache-Control header. Rather confusingly, this directive does not mean "do not cache" but rather "revalidate the cached information with the server before returning it"; the data can still be cached, but it is checked each time it is used to ensure that it is still current.
+  > [!참고]
+  > 또한, HTTP 프로토콜은 Cache-Control(캐시 제어) 헤더에 대한 no-cache 지시문을 정의합니다. 다소 혼란스럽지만, 이 지시문은 "do not cache(캐시 안 함)"가 아니라 "revalidate the cached information with the server before returning it(반환하기 전에 서버로 캐시된 정보 유효성 재검사)"을 의미하므로 데이터는 계속 캐시되지만 데이터가 여전히 최신의 것인지 데이터를 사용할 때마다 확인합니다.
   >
   >
 
-    Cache management is the responsibility of the client application or intermediate server, but if properly implemented it can save bandwidth and improve performance by removing the need to fetch data that has already been recently retrieved.
+    캐시 관리는 클라이언트 응용 프로그램 또는 중간 서버의 책임이지만 적절하게 구현된 경우 최근에 이미 검색된 데이터를 가져와야 할 필요성을 제거함으로써 대역폭을 저장하고 성능을 개선할 수 있습니다.
 
-    The *max-age* value in the Cache-Control header is only a guide and not a guarantee that the corresponding data won't change during the specified time. The web API should set the max-age to a suitable value depending on the expected volatility of the data. When this period expires, the client should discard the object from the cache.
+    Cache-Control(캐시 제어) 헤더의 *max-age* 값은 가이드일뿐 해당 데이터가 지정된 시간 동안 변경되지 않을 것을 보장하지 않습니다. 웹 API는 예상되는 데이터 휘발성에 따라 max-age(최대 기간)을 적절한 값으로 설정해야 합니다. 이 기간이 만료되면 클라이언트는 캐시에서 개체를 삭제해야 합니다.
 
-  > [!NOTE]
-  > Most modern web browsers support client-side caching by adding the appropriate cache-control headers to requests and examining the headers of the results, as described. However, some older browsers will not cache the values returned from a URL that includes a query string. This is not usually an issue for custom client applications which implement their own cache management strategy based on the protocol discussed here.
+  > [!참고]
+  > 대부분의 현대식 웹 브라우저는 설명한 대로 적합한 Cache-Control(캐시 제어) 헤더를 요청에 추가하고 결과 헤더를 검사함으로써 클라이언트 쪽 캐싱을 지원합니다. 그러나 일부 이전 웹 브라우저는 쿼리 문자열이 포함된 URL에서 반환된 모든 값을 캐시하지 않습니다. 여기에서 논의하는 프로토콜을 기반으로 고유한 캐시 관리 전략을 구현하는 사용자 지정 클라이언트 응용 프로그램의 경우에는 일반적이지 않은 문제입니다.
   >
-  > Some older proxies exhibit the same behavior and might not cache requests based on URLs with query strings. This could be an issue for custom client applications that connect to a web server through such a proxy.
+  > 일부 이전 프록시는 동일한 동작을 나타내고 쿼리 문자열이 포함된 URL을 기반으로 요청을 캐시하지 않을 수 있습니다. 이는 이러한 프록시를 통해 웹 서버에 연결하는 사용자 지정 클라이언트 응용 프로그램의 경우 문제가 될 수 있습니다.
   >
   >
-* **Provide ETags to Optimize Query Processing**.
+* **쿼리 처리 최적화를 위한 ETag를 제공하십시오**.
 
-    When a client application retrieves an object, the response message can also include an *ETag* (Entity Tag). An ETag is an opaque string that indicates the version of a resource; each time a resource changes the Etag is also modified. This ETag should be cached as part of the data by the client application. The following code example shows how to add an ETag as part of the response to an HTTP GET request. This code uses the `GetHashCode` method of an object to generate a numeric value that identifies the object (you can override this method if necessary and generate your own hash using an algorithm such as MD5) :
+    클라이언트 응용 프로그램이 개체를 검색하는 경우 응답 메시지에는 *ETag (엔터티 태그)*도 포함될 수 있습니다. Etag는 리소스 버전을 나타내는 불투명 문자열입니다. 리소스가 변경될 때마다 Etag도 수정됩니다. 이 Etag는 클라이언트 응용 프로그램에 의해 데이터의 일부로 캐시되어야 합니다. 다음 코드 예는 응답의 일부로 Etag를 HTTP GET 요청에 추가하는 방법을 보여줍니다. 이 코드는 개체를 식별하는 숫자 값을 생성하기 위해 개체의 `GetHashCode` 메서드를 사용합니다(필요한 경우 이 메서드를 다시 정의하고 MD5와 같은 알고리즘을 사용하여 고유한 해시를 생성할 수 있습니다.).
 
     ```C#
     public class OrdersController : ApiController
@@ -486,7 +486,7 @@ In a distributed environment such as that involving a web server and client appl
     }
     ```
 
-    The response message posted by the web API looks like this:
+    웹 API에 의해 게시된 응답 메시지는 다음과 같습니다.
 
     ```HTTP
     HTTP/1.1 200 OK
@@ -498,14 +498,14 @@ In a distributed environment such as that involving a web server and client appl
     {"orderID":2,"productID":4,"quantity":2,"orderValue":10.00}
     ```
 
-  > [!TIP]
-  > For security reasons, do not allow sensitive data or data returned over an authenticated (HTTPS) connection to be cached.
+  > [!팁]
+  > 보안상의 이유로 중요한 데이터 또는 인증된(HTTPS) 연결을 통해 반환되는 데이터가 캐시되도록 하지 마십시오.
   >
   >
 
-    A client application can issue a subsequent GET request to retrieve the same resource at any time, and if the resource has changed (it has a different ETag) the cached version should be discarded and the new version added to the cache. If a resource is large and requires a significant amount of bandwidth to transmit back to the client, repeated requests to fetch the same data can become inefficient. To combat this, the HTTP protocol defines the following process for optimizing GET requests that you should support in a web API:
+    클라이언트 응용 프로그램은 언제라도 동일한 리소스를 검색할 후속 GET 요청을 발행할 수 있고, 리소스가 변화하는 경우 (다른 Etag를 가지는 경우) 캐시된 버전은 삭제되고 새로운 버전이 캐시에 추가되어야 합니다. 리소스가 크고, 클라이언트에 다시 전송하려면 상당히 많은 양의 대역폭이 필요한 경우, 동일한 데이터를 가져오기 위한 반복된 요청은 비효율적일 수 있습니다. 이러한 문제를 해결하기 위해 HTTP 프로토콜은 웹 API에서 지원해야 할 GET 요청을 최적화하기 위한 다음과 같은 프로세스를 정의합니다.
 
-  * The client constructs a GET request containing the ETag for the currently cached version of the resource referenced in an If-None-Match HTTP header:
+  * 클라이언트는 If-None-Match HTTP 헤더에서 참조되는 현재 캐시된 리소스의 버전에 대한 Etag가 포함된 GET 요청을 구성합니다.
 
     ```HTTP
     GET http://adventure-works.com/orders/2 HTTP/1.1
