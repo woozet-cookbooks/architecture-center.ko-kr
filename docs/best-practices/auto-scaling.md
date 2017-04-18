@@ -81,26 +81,26 @@ Azure 솔루션용 자동 확장을 구성하는 옵션은 다음과 같이 몇 
 * 배경 작업이 클라우드 서비스 호스팅 응용 프로그램의 작업자 역할에서와 같이 별도의 컴퓨팅 인스턴스에서 실행되면 다른 확장 정책을 사용하여 응용 프로그램의 다른 부분을 확장해야 할 수 있습니다. 예를 들어, 배경 컴퓨팅 인스턴스의 수를 늘리지 않고 추가 UI(사용자 인터페이스) 컴퓨팅 인스턴스를 배포해야 할 수도 있고 그 반대일 수도 있습니다. 사용자가 여러 수준의 서비스를 제공하는 경우(예: 기본 서비스와 고급 서비스 패키지), SLA를 충족하기 위해 기본 서비스 패키지에 대한 컴퓨팅 리소스보다는 고급 서비스 패키지에 대한 컴퓨팅 리소스를 보다 적극적으로 확장해야 할 수 있습니다.
 * UI와 배경 컴퓨팅 인스턴스가 자동 확장 전략의 기준으로 통신하도록 대기열의 길이를 사용하는 것을 고려해 보십시오. 이것은 배경 작업의 처리 용량과 현재 부하 간의 불균형이나 차이를 나타내는 가장 좋은 지표입니다.
 * 시간당 배치된 주문 수나 복잡한 트랜잭션의 평균 실행 시간 등, 비즈니스 프로세스를 측정하는 카운터에 자동 확장 전략을 적용하는 경우에는 이러한 유형의 카운터에서 나온 결과와 실제 컴퓨팅 용량 요구사항 간의 관계를 완벽하게 이해해야 합니다. 비즈니스 프로세스 카운터의 변경에 대응하여 둘 이상의 구성요소 또는 컴퓨팅 단위를 확장해야 할 수 있습니다.  
-* To prevent a system from attempting to scale out excessively, and to avoid the costs associated with running many thousands of instances, consider limiting the maximum number of instances that can be automatically added. Most autoscaling mechanisms allow you to specify the minimum and maximum number of instances for a rule. In addition, consider gracefully degrading the functionality that the system provides if the maximum number of instances have been deployed, and the system is still overloaded.
-* Keep in mind that autoscaling might not be the most appropriate mechanism to handle a sudden burst in workload. It takes time to provision and start new instances of a service or add resources to a system, and the peak demand may have passed by the time these additional resources have been made available. In this scenario, it may be better to throttle the service. For more information, see the [Throttling Pattern](http://msdn.microsoft.com/library/dn589798.aspx).
-* Conversely, if you do need the capacity to process all requests when the volume fluctuates rapidly, and cost isn't a major contributing factor, consider using an aggressive autoscaling strategy that starts additional instances more quickly. You can also use a scheduled policy that starts a sufficient number of instances to meet the maximum load before that load is expected.
-* The autoscaling mechanism should monitor the autoscaling process, and log the details of each autoscaling event (what triggered it, what resources were added or removed, and when). If you create a custom autoscaling mechanism, ensure that it incorporates this capability. Analyze the information to help measure the effectiveness of the autoscaling strategy, and tune it if necessary. You can tune both in the short term, as the usage patterns become more obvious, and over the long term, as the business expands or the requirements of the application evolve. If an application reaches the upper limit defined for autoscaling, the mechanism might also alert an operator who could manually start additional resources if necessary. Note that, under these circumstances, the operator may also be responsible for manually removing these resources after the workload eases.
+* 시스템이 과도하게 확장되는 것을 방지하고 수천 개의 인스턴스 실행으로 인한 비용을 피하려면 자동으로 추가할 수 있는 인스턴스의 최대 수를 제한하는 것이 좋습니다. 대부분의 자동 확장 메커니즘은 규칙의 최소 및 최대 인스턴스 수를 지정할 수 있게 해줍니다. 또한, 최대 인스턴스 수가 배포되고 시스템이 여전히 과부하 상태이면 시스템이 제공하는 기능을 적절하게 저하시키는 방법을 고려하십시오.
+* 급격히 증가하는 작업량을 처리하는 데 자동 확장이 가장 적합한 메커니즘은 아닐 수 있음을 명심하십시오. 새로운 서비스 인스턴스를 프로비저닝하고 시작하거나 시스템에 리소스를 추가하는 데는 시간이 걸리는데, 이러한 추가 리소스를 사용할 수 있게 될 때쯤 최대 수요는 사라질 수 있습니다. 이 시나리오에서는 서비스를 제한하는 것이 좋을 수 있습니다. 자세한 내용은 [스로틀링 패턴](http://msdn.microsoft.com/library/dn589798.aspx)을 참조하십시오.
+* 반대로, 작업량이 급격히 변동할 때 모든 요청을 처리할 용량이 필요하고 이때 비용이 주요 요인이 아닌 경우에는 추가 인스턴스를 더 빨리 시작하는 공격적인 자동 확장 전략을 사용하는 것을 고려해 보십시오. 부하가 예상되기 전에 최대 부하를 충족하기 위해 충분한 인스턴스 수를 시작하는 예정된 정책을 사용할 수도 있습니다.
+* 자동 확장 메커니즘은 자동 확장 프로세스를 모니터링하고 각 자동 확장 이벤트의 상세 정보를 기록해야 합니다(이벤트 촉발 요인, 추가되거나 제거된 리소스 및 그 시점). 사용자 지정 자동 확장 메커니즘을 생성할 때는 이 기능이 통합되어 있는지 확인하십시오. 자동 확장 전략의 효율성을 측정하고 필요한 경우 조정할 수 있도록 정보를 분석하십시오. 사용 패턴이 더 명확해지면 단기적으로, 비즈니스가 확장되거나 응용 프로그램의 요구사항이 발전하면 장기적으로 조정할 수 있습니다. 응용 프로그램이 자동 확장을 위해 정의된 상한선에 도달하면, 필요시 수동으로 추가 리소스를 시작할 수 있는 운영자에게 메커니즘이 경고를 보낼 수도 있습니다. 이러한 상황에서 작업자는 작업량이 줄어든 후 이 리소스를 수동으로 제거해야 할 수도 있음을 유의하십시오.
 
-## Related patterns and guidance
-The following patterns and guidance may also be relevant to your scenario when implementing autoscaling:
+## 관련 패턴과 지침
+다음 패턴과 지침은 자동 확장을 할 때 사용자 시나리오에 적용될 수도 있습니다. 
 
-* [Throttling Pattern](http://msdn.microsoft.com/library/dn589798.aspx). This pattern describes how an application can continue to function and meet SLAs when an increase in demand places an extreme load on resources. Throttling can be used with autoscaling to prevent a system from being overwhelmed while the system scales out.
-* [Competing Consumers Pattern](http://msdn.microsoft.com/library/dn568101.aspx). This pattern describes how to implement a pool of service instances that can handle messages from any application instance. Autoscaling can be used to start and stop service instances to match the anticipated workload. This approach enables a system to process multiple messages concurrently to optimize throughput, improve scalability and availability, and balance the workload.
-* [Instrumentation and Telemetry Guidance](http://msdn.microsoft.com/library/dn589775.aspx). Instrumentation and telemetry are vital for gathering the information that can drive the autoscaling process.
+* [스로틀링 패턴](http://msdn.microsoft.com/library/dn589798.aspx). 이 패턴은 수요 증가로 리소스에 부하가 극심할 때 응용 프로그램이 SLA를 충족하고 계속 기능할 수 있게 하는 방법을 설명합니다. 스로틀링은 자동 확장과 함께 사용되어 시스템이 확장되는 동안 과부하를 방지할 수 있습니다.
+* [경쟁 소비자 패턴](http://msdn.microsoft.com/library/dn568101.aspx). 이 패턴은 모든 응용 프로그램 인스턴스의 메시지를 처리할 수 있는 서비스 인스턴스의 풀을 구현하는 방법을 설명합니다. 서비스 인스턴스를 시작하고 중지하여 예상되는 작업량과 일치시키는 데 자동 확장을 사용할 수 있습니다. 이 방법을 통해 시스템은 여러 메시지를 동시에 처리하여 처리량을 최적화하고, 확장성과 가용성을 향상시키고, 작업량의 균형을 유지할 수 있습니다.
+* [계측기 및 원격 측정 장치 지침](http://msdn.microsoft.com/library/dn589775.aspx). 계측기 및 원격 측정 장치는 자동 확장 프로세스를 수행할 수 있는 정보를 수집하는 데 매우 중요합니다.
 
-## More information
-* [How to Scale an Application](/azure/cloud-services/cloud-services-how-to-scale/)
-* [Automatically scale an application running Web Roles, Worker Roles, or Virtual Machines](/azure/cloud-services/cloud-services-how-to-manage)
-* [How to: Link a resource to a cloud service](/azure/cloud-services/cloud-services-how-to-manage)
-* [Scale linked resources](/azure/cloud-services/cloud-services-how-to-scale)
+## 자세한 정보
+* [응용 프로그램 확장 방법](/azure/cloud-services/cloud-services-how-to-scale/)
+* [웹 역할, 작업자 역할 또는 가상 머신을 실행하는 응용 프로그램의 자동 확장](/azure/cloud-services/cloud-services-how-to-manage)
+* [리소스를 클라우드 서비스에 연결하는 방법](/azure/cloud-services/cloud-services-how-to-manage)
+* [연결된 리소스 확장](/azure/cloud-services/cloud-services-how-to-scale)
 * [Azure Monitoring Services Management Library](http://www.nuget.org/packages/Microsoft.WindowsAzure.Management.Monitoring)
 * [Azure Service Management REST API](http://msdn.microsoft.com/library/azure/ee460799.aspx)
 * [Azure Resource Manager REST API](https://msdn.microsoft.com/library/azure/dn790568.aspx)
 * [Microsoft Insights library](https://www.nuget.org/packages/Microsoft.Azure.Insights/)
-* [Operations on Autoscaling](http://msdn.microsoft.com/library/azure/dn510374.aspx)
-* [Microsoft.WindowsAzure.Management.Monitoring.Autoscale Namespace](http://msdn.microsoft.com/library/azure/microsoft.windowsazure.management.monitoring.autoscale.aspx)
+* [자동 확장 작업](http://msdn.microsoft.com/library/azure/dn510374.aspx)
+* [Microsoft.WindowsAzure.Management.Monitoring.Autoscale 네임스페이스](http://msdn.microsoft.com/library/azure/microsoft.windowsazure.management.monitoring.autoscale.aspx)
