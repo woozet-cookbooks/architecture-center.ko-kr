@@ -9,39 +9,39 @@ ms.author: pnp
 
 pnp.series.title: Best Practices
 ---
-# API design
+# API 설계
 [!INCLUDE [header](../_includes/header.md)]
 
-Many modern web-based solutions make the use of web services, hosted by web servers, to provide functionality for remote client applications. The operations that a web service exposes constitute a web API. A well-designed web API should aim to support:
+현대의 상당수 웹 기반 솔루션은 원격 클라이언트 응용 프로그램에 기능을 제공하기 위해 웹 서버에 의해 호스팅 되는 웹 서비스를 활용합니다. 웹 서비스가 표시하는 모든 작업이 웹 API를 구성합니다. 잘 설계된 웹 API의 목표는 다음을 지원하는 것이어야 합니다.
 
-* **Platform independence**. Client applications should be able to utilize the API that the web service provides without requiring how the data or operations that API exposes are physically implemented. This requires that the API abides by common standards that enable a client application and web service to agree on which data formats to use, and the structure of the data that is exchanged between client applications and the web service.
-* **Service evolution**. The web service should be able to evolve and add (or remove) functionality independently from client applications. Existing client applications should be able to continue to operate unmodified as the features provided by the web service change. All functionality should also be discoverable, so that client applications can fully utilize it.
+* **플랫폼 독립성**. 클라이언트 응용 프로그램은 API가 표시하는 데이터 또는 작업이 실제로 어떻게 구현되는지와 상관없이 웹 서비스가 제공하는 API를 활용할 수 있어야 합니다. 이를 위해서 API는 공통적인 표준을 준수합니다. 공통적인 표준을 통해 클라이언트 응용 프로그램과 웹 서비스는 어떤 데이터 형식을 사용할 것인지, 그리고 클라이언트 응용 프로그램과 웹 서비스 간에 교환되는 데이터의 구조에 관해 합의할 수 있습니다.
+* **서비스 진화**. 웹 서비스는 클라이언트 응용 프로그램과는 독립적으로 진화하고 기능을 추가 (또는 제거)할 수 있어야 합니다. 기존의 클라이언트 응용 프로그램은 웹 서비스가 제공하는 기능이 변경되더라도 수정되지 않은 상태로 계속 작동해야 합니다. 클라이언트 응용 프로그램이 완전하게 활용할 수 있도록 모든 기능이 검색 가능해야 합니다.
 
-The purpose of this guidance is to describe the issues that you should consider when designing a web API.
+본 지침의 목적은 웹 API를 설계할 때 고려해야 할 문제를 기술하는 데 있습니다.
 
-## Introduction to Representational State Transfer (REST)
-In his dissertation in 2000, Roy Fielding proposed an alternative architectural approach to structuring the operations exposed by web services; REST. REST is an architectural style for building distributed systems based on hypermedia. A primary advantage of the REST model is that it is based on open standards and does not bind the implementation of the model or the client applications that access it to any specific implementation. For example, a REST web service could be implemented by using the Microsoft ASP.NET Web API, and client applications could be developed by using any language and toolset that can generate HTTP requests and parse HTTP responses.
+## REST(Representational State Transfer) 소개
+로이 필딩(Roy Fielding)은 2000년 자신의 논문에서 웹 서비스가 표시하는 작업을 구조화하는 데 있어 대안이 되는 아키텍처 접근방식인 REST를 제안했습니다. REST는 하이퍼미디어를 기반으로 분산 시스템을 구축하기 위한 하나의 아키텍처 스타일입니다. REST 모델이 공개 표준을 기반으로 하고 REST 모델의 구현이나 REST 모델에 액세스할 클라이언트 응용 프로그램을 특정 구현과 결부시키지 않는다는 점이 REST 모델의 기본적인 장점입니다. 예를 들어, REST 웹 서비스는 Microsoft ASP.NET Web API를 사용해 구현 가능하며, 클라이언트 응용 프로그램은 HTTP 요청 및 구문 분석 HTTP 응답을 생성할 수 있는 언어와 도구 집합을 사용해 개발할 수 있습니다. 
 
-> [!NOTE]
-> REST is actually independent of any underlying protocol and is not necessarily tied to HTTP. However, most common implementations of systems that are based on REST utilize HTTP as the application protocol for sending and receiving requests. This document focuses on mapping REST principles to systems designed to operate using HTTP.
+> [!참고]
+> REST는 실질적으로 기본 프로토콜과는 관계가 없으며 반드시 HTTP에 연결될 필요도 없습니다. 그러나 REST를 기반으로 하는 가장 공통적인 시스템 구현은 요청을 전송 및 수신하기 위한 응용 프로그램 프로토콜로 HTTP를 활용합니다. 본 지침은 HTTP를 사용해 작동하도록 설계된 시스템에 REST 원칙을 매핑하는 데 초점을 맞춥니다. 
 >
 >
 
-The REST model uses a navigational scheme to represent objects and services over a network (referred to as *resources*). Many systems that implement REST typically use the HTTP protocol to transmit requests to access these resources. In these systems, a client application submits a request in the form of a URI that identifies a resource, and an HTTP method (the most common being GET, POST, PUT, or DELETE) that indicates the operation to be performed on that resource.  The body of the HTTP request contains the data required to perform the operation. The important point to understand is that REST defines a stateless request model. HTTP requests should be independent and may occur in any order, so attempting to retain transient state information between requests is not feasible.  The only place where information is stored is in the resources themselves, and each request should be an atomic operation. Effectively, a REST model implements a finite state machine where a request transitions a resource from one well-defined non-transient state to another.
+REST 모델은 네트워크를 통해 개체와 서비스를 나타내는 데 탐색 스키마 사용합니다(*리소스*라고 함). REST를 구현하는 많은 시스템이 이러한 리소스에 액세스하기 위한 요청을 전송하는 데 HTTP 프로토콜을 사용하는 것이 일반적입니다. 이러한 시스템에서 클라이언트 응용 프로그램은 리소스를 식별하는 URI 형태로 요청과 해당 리소스에서 수행될 작업을 표시하는 HTTP 메서드(가장 일반적으로 GET, POST, PUT, DELETE)를 제출합니다. HTTP 요청의 본문에는 해당 작업을 수행하는 데 필요한 데이터가 포함되어 있습니다. REST가 상태 비저장 요청 모델을 정의한다는 것이 이해해야 할 중요한 사항입니다. HTTP 요청은 독립적이어야 하고 어떠한 순서로든 발생해, 요청이 가능하지 않을 때 일시적 상태 정보를 유지하려고 시도할 수 있습니다. 정보가 저장되는 유일한 장소가 리소스 그 자체이며, 각각의 요청은 원자성 작업이 되어야 합니다. 효과적으로 REST 모델은 요청이 잘 정의된 비 일시적 상태에서 다른 상태로 리소스를 전환하는 유한 상태 컴퓨터를 구현합니다. 
 
-> [!NOTE]
-> The stateless nature of individual requests in the REST model enables a system constructed by following these principles to be highly scalable. There is no need to retain any affinity between a client application making a series of requests and the specific web servers handling those requests.
+> [!참고]
+> REST 모델에서 개별적인 요청의 상태 비저장 속성 덕분에 다음 원칙에 따라 시스템을 매우 확장성 있게 구성할 수 있습니다. 일련의 요청을 하는 클라이언트 응용 프로그램과 이러한 요청을 처리하는 특정 웹 서버 간에 선호도를 유지할 필요가 없습니다. 
 >
 >
 
-Another crucial point in implementing an effective REST model is to understand the relationships between the various resources to which the model provides access. These resources are typically organized as collections and relationships. For example, suppose that a quick analysis of an ecommerce system shows that there are two collections in which client applications are likely to be interested: orders and customers. Each order and customer should have its own unique key for identification purposes. The URI to access the collection of orders could be something as simple as */orders*, and similarly the URI for retrieving all customers could be */customers*. Issuing an HTTP GET request to the */orders* URI should return a list representing all orders in the collection encoded as an HTTP response:
+효과적인 REST 모델을 구현하는 데 있어 중요한 또 다른 사항은 REST 모델이 액세스를 제공하는 다양한 리소스 간의 관계를 이해하는 것입니다. 일반적으로 이러한 리소스는 컬렉션과 관계로 조직화되어 있습니다. 예를 들어, Ecommerce 시스템에 대한 빠른 분석을 통해 클라이언트 응용 프로그램이 관심을 가질 가능성이 있는 두 가지 컬렉션, 즉, order(주문)와 customer(고객)가 존재하는 것으로 나타났다고 가정해 봅시다. 각 주문과 고객은 식별을 위해 고유한 키를 가지고 있어야 합니다. 주문 컬렉션에 액세스하기 위한 URl는 */orders*와 같이 간단한 무언가가 될 수 있고, 이와 비슷하게 모든 고객을 검색하기 위한 URI는 */customers*가 될 수 있습니다. */orders*에 대해 HTTP GET 요청을 발행하는 URI는 HTTP 응답으로 인코드된 컬렉션의 모든 주문을 표시하는 목록을 반환해야 합니다. 
 
 ```HTTP
 GET http://adventure-works.com/orders HTTP/1.1
 ...
 ```
 
-The response shown below encodes the orders as a JSON list structure:
+아래 표시된 응답은 JSON 목록 구조로 주문을 인코드합니다.
 
 ```HTTP
 HTTP/1.1 200 OK
@@ -50,7 +50,7 @@ Date: Fri, 22 Aug 2014 08:49:02 GMT
 Content-Length: ...
 [{"orderId":1,"orderValue":99.90,"productId":1,"quantity":1},{"orderId":2,"orderValue":10.00,"productId":4,"quantity":2},{"orderId":3,"orderValue":16.60,"productId":2,"quantity":4},{"orderId":4,"orderValue":25.90,"productId":3,"quantity":1},{"orderId":5,"orderValue":99.90,"productId":1,"quantity":1}]
 ```
-To fetch an individual order requires specifying the identifier for the order from the *orders* resource, such as */orders/2*:
+개별적인 주문을 가져오려면 *orders* 리소스의 주문에 대한 식별자를 지정해야 합니다(예:*/orders/2*). 
 
 ```HTTP
 GET http://adventure-works.com/orders/2 HTTP/1.1
@@ -65,99 +65,99 @@ Content-Length: ...
 {"orderId":2,"orderValue":10.00,"productId":4,"quantity":2}
 ```
 
-> [!NOTE]
-> For simplicity, these examples show the information in responses being returned as JSON text data. However, there is no reason why resources should not contain any other type of data supported by HTTP, such as binary or encrypted information; the content-type in the HTTP response should specify the type. Also, a REST model may be able to return the same data in different formats, such as XML or JSON. In this case, the web service should be able to perform content negotiation with the client making the request. The request can include an *Accept* header which specifies the preferred format that the client would like to receive and the web service should attempt to honor this format if at all possible.
+> [!참고]
+> 단순하게 하기 위해 이러한 예는 JSON 텍스트 데이터로 반환되는 응답의 정보를 보여줍니다. 그러나 리소스에 바이너리 또는 암호화된 정보와 같이 HTTP가 지원하는 다른 형식의 데이터가 포함되지 않아야 할 이유는 전혀 없습니다. HTTP 응답의 콘텐츠 형식이 해당 형식을 지정해야 합니다. 또한 REST 모델은 XML 또는 JSON과 같은 다른 형식의 동일한 데이터를 반환할 수 있습니다. 이러한 경우 웹 서비스는 요청하는 클라이언트와 콘텐츠 협상을 수행해야 합니다. 요청에는 클라이언트가 수신하길 원하고 웹 서비스가 가능하면 적용하려고 시도해야 하는 기본 설정 형식을 지정하는 *Accept(수락)* 헤더가 포함될 수 있습니다.
 >
 >
 
-Notice that the response from a REST request makes use of the standard HTTP status codes. For example, a request that returns valid data should include the HTTP response code 200 (OK), while a request that fails to find or delete a specified resource should return a response that includes the HTTP status code 404 (Not Found).
+REST 요청의 응답은 표준 HTTP 상태 코드를 활용한다는 점을 유념합니다. 예를 들어, 유효한 데이터를 반환하는 요청에는 HTTP 응답 코드 200(OK(확인))이 포함되어야 하지만 지정된 리소스 검색 또는 삭제에 실패한 요청은 HTTP 상태 코드 404(Not Found(찾을 수 없음))가 포함된 응답을 반환해야 합니다. 
 
-## Design and structure of a RESTful web API
-The keys to designing a successful web API are simplicity and consistency. A Web API that exhibits these two factors makes it easier to build client applications that need to consume the API.
+## RESTful web API 설계 및 구조
+웹 API를 성공적으로 설계하는 데 있어 핵심은 단순도와 일관성입니다. 이러한 두 가지 요소를 나타내는 웹 API는 API를 사용해야 하는 클라이언트 응용 프로그램 구축을 더욱 용이하게 만들어 줍니다.
 
-A RESTful web API is focused on exposing a set of connected resources, and providing the core operations that enable an application to manipulate these resources and easily navigate between them. For this reason, the URIs that constitute a typical RESTful web API should be oriented towards the data that it exposes, and use the facilities provided by HTTP to operate on this data. This approach requires a different mindset from that typically employed when designing a set of classes in an object-oriented API which tends to be more motivated by the behavior of objects and classes. Additionally, a RESTful web API should be stateless and not depend on operations being invoked in a particular sequence. The following sections summarize the points you should consider when designing a RESTful web API.
+RESTful web API는 연결된 리소스 세트를 표시하고, 응용 프로그램이 이러한 리소스를 조작하고 리소스 간 쉽게 탐색 가능하도록 지원하는 핵심 작업을 제공하는 데 중점을 둡니다. 이러한 이유로 일반적인 RESTful web API를 구성하는 URI는 URI가 표시하는 데이터를 향해야 하며, 이러한 데이터를 기반으로 작동할 수 있도록 HTTP가 제공하는 시설을 사용해야 합니다. 이러한 접근 방식에는 개체 및 클래스의 동작에 의해 더 많은 동기가 부여되는 경향이 있는 개체 지향 API에서 클래스 세트를 설계할 때 일반적으로 가지는 것과는 다른 마음가짐이 필요합니다. 이와 더불어, RESTful web API는 상태 비저장이어야 하고 특정 시퀀스에 의해 호출되는 작업에 의존해서는 안 됩니다. 다음 섹션에서는 RESTful web API를 설계할 때 고려해야 할 점을 요약해 설명합니다. 
 
-### Organizing the web API around resources
-> [!TIP]
-> The URIs exposed by a REST web service should be based on nouns (the data to which the web API provides access) and not verbs (what an application can do with the data).
+### 리소스 주변에 웹 API 구성
+> [!팁]
+> REST 웹 서비스가 표시하는 URI는 동사(응용 프로그램이 데이터로 할 수 있는 것)가 아니라 명사(웹 API가 액세스를 제공하는 데이터)에 기반을 두어야 합니다. 
 >
 >
 
-Focus on the business entities that the web API exposes. For example, in a web API designed to support the ecommerce system described earlier, the primary entities are customers and orders. Processes such as the act of placing an order can be achieved by providing an HTTP POST operation that takes the order information and adds it to the list of orders for the customer. Internally, this POST operation can perform tasks such as checking stock levels, and billing the customer. The HTTP response can indicate whether the order was placed successfully or not. Also note that a resource does not have to be based on a single physical data item. As an example, an order resource might be implemented internally by using information aggregated from many rows spread across several tables in a relational database but presented to the client as a single entity.
+웹 API가 표시하는 비즈니스 엔티티에 초점을 맞추십시오. 예를 들어, 앞서 설명한 Ecommerce 시스템을 지원하도록 설계된 웹 API에서 기본 엔티티는 고객과 주문입니다. 주문하는 행위와 같은 프로세스는 주문 정보를 가져와 해당 고객에 대한 주문 목록에 주문을 추가하는 HTTP POST 작업을 제공함으로써 실현될 수 있습니다. 내부적으로 이러한 POST 작업은 재고 수준 확인 및 고객에게 청구와 같은 작업을 수행할 수 있습니다. HTTP 응답은 주문이 성공적으로 이루어졌는지 아닌지를 표시할 수 있습니다. 리소스는 단일 실제 데이터 항목에 기반을 둘 필요가 없다는 점을 유념합니다. 예를 들어, 주문 리소스는 관계형 데이터베이스의 테이블 여러 개로 분배되는 많은 행에서 집계된 정보를 사용해 내부적으로 구현될 수 있지만, 클라이언트에 단일 엔티티로 제공될 수도 있습니다.
 
-> [!TIP]
-> Avoid designing a REST interface that mirrors or depends on the internal structure of the data that it exposes. REST is about more than implementing simple CRUD (Create, Retrieve, Update, Delete) operations over separate tables in a relational database. The purpose of REST is to map business entities and the operations that an application can perform on these entities to the physical implementation of these entities, but a client should not be exposed to these physical details.
+> [!팁]
+> REST 인터페이스가 표시하는 데이터의 내부 구조에 의존하거나 미러링하는 REST 인터페이스는 설계하지 마십시오. REST는 관계형 데이터베이스의 별도 테이블에 단순한 CRUD(Create(생성), Retrieve(검색), Update(업데이트), Delete(삭제) 작업을 구현하는 것 이상을 의미합니다. REST의 목표는 비즈니스 엔티티와 이러한 엔티티에서 응용 프로그램이 수행할 수 있는 작업을 이러한 엔티티의 물리적인 구현에 매핑하는 데 있지만, 클라이언트가 이러한 물리적인 세부 정보에 노출되어서는 안 됩니다. 
 >
 >
 
-Individual business entities rarely exist in isolation (although some singleton objects may exist), but instead tend to be grouped together into collections. In REST terms, each entity and each collection are resources. In a RESTful web API, each collection has its own URI within the web service, and performing an HTTP GET request over a URI for a collection retrieves a list of items in that collection. Each individual item also has its own URI, and an application can submit another HTTP GET request using that URI to retrieve the details of that item. You should organize the URIs for collections and items in a hierarchical manner. In the ecommerce system, the URI */customers* denotes the customer’s collection, and */customers/5* retrieves the details for the single customer with the ID 5 from this collection. This approach helps to keep the web API intuitive.
+(일부 단일 개체가 존재할 수는 있어도) 개별적인 비즈니스 엔티티가 고립된 상태로 존재하는 경우는 거의 없고 그 대신 컬렉션으로 함께 그룹화되는 경향이 있습니다. REST의 관점에서 볼 때 각각의 엔티티와 각각의 컬렉션이 리소스입니다. RESTful web API에서 각 컬렉션은 웹 서비스 내에 고유한 URI를 보유하고, URI를 통해 컬렉션에 대한 HTTP GET 요청을 수행할 때 해당 컬렉션의 항목 목록을 검색합니다. 각각의 개별적인 항목은 고유한 URI를 보유하고, 응용 프로그램은 해당 항목의 세부 정보를 검색하기 위해 URI를 사용하여 다른 HTTP GET 요청을 제출할 수 있습니다. 계층적인 방법으로 컬렉션과 항목에 대한 URI를 구성해야 합니다. Ecommerce 시스템에서 URI */customers*는 고객의 컬렉션을 나타내고 */customers/5*는 이 컬렉션에서 ID 5를 사용하는 단일 고객의 세부 정보를 검색합니다. 이 접근 방식은 웹 API를 직관적으로 유지하는 데 도움을 줍니다. 
 
-> [!TIP]
-> Adopt a consistent naming convention in URIs; in general it helps to use plural nouns for URIs that reference collections.
+> [!팁]
+> URI에서 일관성 있는 명명 규칙을 채택하십시오. 일반적으로 컬렉션을 참조하는 URI에 대해서 복수형 명사를 사용하는 것이 도움이 됩니다. 
 >
 >
 
-You also need to consider the relationships between different types of resources and how you might expose these associations. For example, customers may place zero or more orders. A natural way to represent this relationship would be through a URI such as */customers/5/orders* to find all the orders for customer 5. You might also consider representing the association from an order back to a specific customer through a URI such as */orders/99/customer* to find the customer for order 99, but extending this model too far can become cumbersome to implement. A better solution is to provide navigable links to associated resources, such as the customer, in the body of the HTTP response message returned when the order is queried. This mechanism is described in more detail in the section Using the HATEOAS Approach to Enable Navigation To Related Resources later in this guidance.
+또한, 다양한 형식의 리소스 간 관계와 이러한 연결을 어떻게 표시할 것인지를 고려해야 합니다. 예를 들어, 고객은 0개 이상의 주문을 할 수 있습니다. 이러한 관계를 표시하는 자연스러운 방법은 고객 5에 대한 모든 주문을 검색하기 위해 */customers/5/orders*와 같은 URI를 사용하는 것입니다. 주문 99에 대한 고객을 검색하기 위해 */orders/99/customer*와 같은 URI를 통해 거꾸로 주문에서 특정 고객으로의 연결을 나타내는 것을 고려해 볼 수 있지만, 이 모델은 구현하는 것이 너무 번거로울 수 있습니다. 더 나은 솔루션은 주문이 쿼리될 때 반환되는 HTTP 응답 메시지의 본문에 고객과 같은 연결된 리소스에 대한 탐색 가능 링크를 제공하는 것입니다. 이 메커니즘은 나중에 본 지침의 관련 리소스에 대한 탐색을 사용하는 HATEOAS 접근 방식 사용 섹션에서 보다 자세하게 설명합니다. 
 
-In more complex systems there may be many more types of entity, and it can be tempting to provide URIs that enable a client application to navigate through several levels of relationships, such as */customers/1/orders/99/products* to obtain the list of products in order 99 placed by customer 1. However, this level of complexity can be difficult to maintain and is inflexible if the relationships between resources change in the future. Rather, you should seek to keep URIs relatively simple. Bear in mind that once an application has a reference to a resource, it should be possible to use this reference to find items related to that resource. The preceding query can be replaced with the URI */customers/1/orders* to find all the orders for customer 1, and then query the URI */orders/99/products* to find the products in this order (assuming order 99 was placed by customer 1).
+더욱 복잡한 시스템의 경우 훨씬 더 많은 형식의 엔티티가 존재할 수 있고, 고객 1이 한 주문 99에서 제품 목록을 얻기 위해 클라이언트 응용 프로그램이 */customers/1/orders/99/products*와 같은 여러 수준의 관계를 탐색하도록 하는 URI를 제공하는 것이 매력적일 수 있습니다. 그러나 이러한 수준의 복잡성은 유지하기 어려울 수 있고 향후 리소스 간의 관계가 변화하는 경우 유연하지 않습니다. 따라서, 그 보다는 URI를 상대적으로 단순하게 유지하도록 해야 합니다. 응용 프로그램이 일단 리소스를 참조하면 해당 리소스와 관련된 항목을 검색하는 데 이 참조를 사용하는 것이 가능해야 한다는 점을 유념하십시오. 이전 쿼리는 고객 1에 대한 모든 주문을 검색하기 위한 URI */customers/1/orders*로 대체될 수 있고, 그 다음 쿼리는 이 주문의 모든 제품을 검색하기 위한 URI */orders/99/products*로 대체될 수 있습니다(주문 99를 고객 1이 했다고 가정). 
 
-> [!TIP]
-> Avoid requiring resource URIs more complex than *collection/item/collection*.
+> [!팁]
+> *collection/item/collection(컬렉션/항목/컬렉션)*보다 복잡한 리소스 URI를 요구하지 마십시오. 
 >
 >
 
-Another point to consider is that all web requests impose a load on the web server, and the greater the number of requests the bigger the load. You should attempt to define your resources to avoid “chatty” web APIs that expose a large number of small resources. Such an API may require a client application to submit multiple requests to find all the data that it requires. It may be beneficial to denormalize data and combine related information together into bigger resources that can be retrieved by issuing a single request. However, you need to balance this approach against the overhead of fetching data that might not be frequently required by the client. Retrieving large objects can increase the latency of a request and incur additional bandwidth costs for little advantage if the additional data is not often used.
+모든 웹 요청은 웹 서버에 부하를 가져오고, 요청 수가 늘어날수록 부하도 커진다는 점을 고려해야 합니다. 많은 수의 작은 리소스를 표시하는 "수다스러운" 웹 API가 되지 않도록 리소스를 정의하려고 시도해야 합니다. 이러한 API에는 요구하는 모든 데이터를 검색하기 위해 여러 개의 요청을 제출하는 클라이언트 응용 프로그램이 필요할 수 있습니다. 데이터를 비정규화하고 관련 정보와 결합해 단일 요청 발행으로 검색 가능한 더 큰 리소스로 만드는 것이 유익할 수 있습니다. 그러나 이러한 접근 방식은 클라이언트가 자주 요구하지 않는 데이터를 가져올 때의 오버헤드와 비교해 균형을 맞추어야 합니다. 큰 개체 검색은 요청 대기 시간을 늘리고, 추가 데이터가 자주 사용되지 않는 경우에는 별 것 아닌 혜택으로 인해 대역폭 비용이 추가로 발생할 수 있습니다. 
 
-Avoid introducing dependencies between the web API to the structure, type, or location of the underlying data sources. For example, if your data is located in a relational database, the web API does not need to expose each table as a collection of resources. Think of the web API as an abstraction of the database, and if necessary introduce a mapping layer between the database and the web API. In this way, if the design or implementation of the database changes (for example, you move from a relational database containing a collection of normalized tables to a denormalized NoSQL storage system such as a document database) client applications are insulated from these changes.
+웹 API와 기본 데이터 소스의 구조, 형식, 위치 간의 의존성을 추가하지 마십시오. 예를 들어, 데이터가 관계형 데이터베이스에 위치한 경우 웹 API는 리소스 컬렉션으로 각 테이블을 표시할 필요가 없습니다. 웹 API를 데이터베이스의 추상화로 간주하고, 필요한 경우 데이터베이스와 웹 API 간의 매핑 레이어를 추가하십시오. 이러한 방식을 사용하면, 데이터베이스의 설계 또는 구현이 변화하는 경우 (예를 들어, 정규화된 테이블의 컬렉션이 포함되어 있는 관계형 데이터베이스에서 문서 데이터베이스와 같이 비정규화된 NoSQL 저장 시스템으로 이동하는 경우) 클라이언트 응용 프로그램은 이러한 변화에 영향을 받지 않습니다. 
 
-> [!TIP]
-> The source of the data that underpins a web API does not have to be a data store; it could be another service or line-of-business application or even a legacy application running on-premises within an organization.
+> [!팁]
+> 웹 API를 지탱하는 데이터 소스가 데이터 저장소가 될 필요는 없지만, 다른 서비스 또는 기간 업무 응용 프로그램이나 심지어는 조직 내 온프레미스에서 실행하는 레거시 응용 프로그램이 될 수 있습니다. 
 >
 >
 
-Finally, it might not be possible to map every operation implemented by a web API to a specific resource. You can handle such *non-resource* scenarios through HTTP GET requests that invoke a piece of functionality and return the results as an HTTP response message. A web API that implements simple calculator-style operations such as add and subtract could provide URIs that expose these operations as pseudo resources and utilize the query string to specify the parameters required. For example a GET request to the URI */add?operand1=99&operand2=1* could return a response message with the body containing the value 100, and GET request to the URI */subtract?operand1=50&operand2=20* could return a response message with the body containing the value 30. However, only use these forms of URIs sparingly.
+마지막으로 웹 API가 구현하는 모든 작업을 특정 리소스에 매핑하는 것은 가능하지 않습니다. 일부 기능을 호출하고 HTTP 응답 메시지로 결과를 반환하는 HTTP GET 요청을 통해 이러한 *non-resource(비리소스)* 시나리오도 처리할 수 있습니다. 더하기 및 빼기와 같은 단순한 계산기 스타일의 작업을 구현하는 웹 API는 의사 리소스로 이러한 작업을 표시하는 URI를 제공하고 필요한 매개 변수를 지정하는 데 쿼리 문자열을 활용할 수 있습니다. 예를 들어, URI */add?operand1=99&operand2=1*에 대한 GET 요청은 값 100이 포함된 본문과 함께 응답 메시지를 반환할 수 있고, URI */subtract?operand1=50&operand2=20*에 대한 GET 요청은 값 30이 포함된 본문과 함께 응답 메시지를 반환할 수 있습니다. 그러나 이러한 형식의 URI는 조금만 사용하십시오. 
 
-### Defining operations in terms of HTTP methods
-The HTTP protocol defines a number of methods that assign semantic meaning to a request. The common HTTP methods used by most RESTful web APIs are:
+### HTTP 메서드 관점에서 작업 정의
+HTTP 프로토콜은 요청에 유의적 의미를 할당하는 수 많은 메서드를 정의합니다. 대부분의 RESTful web API에서 사용하는 공통적인 HTTP 메서드는 다음과 같습니다. :
 
-* **GET**, to retrieve a copy of the resource at the specified URI. The body of the response message contains the details of the requested resource.
-* **POST**, to create a new resource at the specified URI. The body of the request message provides the details of the new resource. Note that POST can also be used to trigger operations that don't actually create resources.
-* **PUT**, to replace or update the resource at the specified URI. The body of the request message specifies the resource to be modified and the values to be applied.
-* **DELETE**, to remove the resource at the specified URI.
+* **GET**, 지정된 URI에서 리소스 사본을 검색할 때 사용. 응답 메시지의 본문에는 요청 리소스에 대한 세부 정보가 포함되어 있습니다.
+* **POST**, 지정된 URI에서 새로운 리소스를 생성할 때 사용. 요청 메시지의 본문은 새로운 리소스에 대한 세부 정보를 제공합니다. POST는 실제로 리소스를 생성하지 않고 작업을 트리거하는 데 사용할 수도 있다는 점을 유념합니다.
+* **PUT**, 지정된 URI에서 리소스를 대체하거나 업데이트할 때 사용. 요청 메시지의 본문에서는 수정이 필요한 리소스 및 적용되어야 하는 값을 지정합니다.
+* **DELETE**, 지정된 URI에서 리소스를 제거할 때 사용.
 
-> [!NOTE]
-> The HTTP protocol also defines other less commonly-used methods, such as PATCH which is used to request selective updates to a resource, HEAD which is used to request a description of a resource, OPTIONS which enables a client information to obtain information about the communication options supported by the server, and TRACE which allows a client to request information that it can use for testing and diagnostics purposes.
+> [!참고]
+> HTTP 프로토콜은 리소스에 대한 선택적인 업데이트를 요청하는 데 사용되는 PATCH, 리소스 설명을 요청하는 데 사용되는 HEAD, 클라이언트 정보가 서버에서 지원하는 통신 옵션에 관한 정보를 획득하도록 하는 OPTIONS, 클라이언트가 테스트 및 진단 목적으로 사용할 수 있는 정보를 요청하도록 허용하는 TRACE 등 덜 공통적으로 사용되는 메서드도 정의합니다. 
 >
 >
 
-The effect of a specific request should depend on whether the resource to which it is applied is a collection or an individual item. The following table summarizes the common conventions adopted by most RESTful implementations using the ecommerce example. Note that not all of these requests might be implemented; it depends on the specific scenario.
+특정 요청의 영향은 요청이 적용되는 리소스가 컬렉션인지 아니면 개별적인 항목인지에 따라 달라집니다. 다음 표는 Ecommerce 예를 사용해 대부분의 RESTful 구현에서 채택하는 공통적인 규칙을 요약해 보여줍니다. 이러한 모든 요청이 구현되는 것은 아니며, 특정 시나리오에 따라 달라진다는 점을 유념합니다. 
 
-| **Resource** | **POST** | **GET** | **PUT** | **DELETE** |
+| **리소스** | **POST** | **GET** | **PUT** | **DELETE** |
 | --- | --- | --- | --- | --- |
-| /customers |Create a new customer |Retrieve all customers |Bulk update of customers (*if implemented*) |Remove all customers |
-| /customers/1 |Error |Retrieve the details for customer 1 |Update the details of customer 1 if it exists, otherwise return an error |Remove customer 1 |
-| /customers/1/orders |Create a new order for customer 1 |Retrieve all orders for customer 1 |Bulk update of orders for customer 1 (*if implemented*) |Remove all orders for customer 1(*if implemented*) |
+| /customers |새 고객 생성 |모든 고객 검색 |고객 일괄 업데이트(*구현되는 경우*) |모든 고객 제거 |
+| /customers/1 |오류 |고객 1에 대한 세부 정보 검색 |존재하는 경우 고객 1 세부 정보 업데이트, 불가능한 경우 오류 반환 |고객 1 제거 |
+| /customers/1/orders |고객 1에 대한 새 주문 생성 |고객 1에 대한 모든 주문 검색 |고객 1에 대한 주문 일괄 업데이트(*구현되는 경우*) |고객 1에 대한 모든 주문 제거(*구현되는 경우*) |
 
-The purpose of GET and DELETE requests are relatively straightforward, but there is scope for confusion concerning the purpose and effects of POST and PUT requests.
+GET 및 DELETE 요청의 목적은 상대적으로 간단하지만, POST 및 PUT 요청의 목적과 영향과 관련해 혼란이 있을 수 있습니다. 
 
-A POST request should create a new resource with data provided in the body of the request. In the REST model, you frequently apply POST requests to resources that are collections; the new resource is added to the collection.
+POST 요청은 요청 본문에서 제공된 데이터를 사용해 새 리소스를 생성해야 합니다. REST 모델의 경우 POST 요청을 컬렉션인 리소스에 자주 적용합니다. 새로운 리소스가 컬렉션에 추가됩니다. 
 
-> [!NOTE]
-> You can also define POST requests that trigger some functionality (and that don't necessarily return data), and these types of request can be applied to collections. For example you could use a POST request to pass a timesheet to a payroll processing service and get the calculated taxes back as a response.
+> [!참고]
+> 일부 기능을 트리거하는 POST 요청을 정의할 수도 있고 (반드시 데이터를 반환하는 것은 아님), 이러한 유형의 요청을 컬렉션에 적용할 수도 있습니다. 예를 들어, POST 요청을 사용해 급료 지불 명세서 처리 서비스에 작업표를 전달하고 응답으로 계산된 세금을 받아볼 수 있습니다. 
 >
 >
 
-A PUT request is intended to modify an existing resource. If the specified resource does not exist, the PUT request could return an error (in some cases, it might actually create the resource). PUT requests are most frequently applied to resources that are individual items (such as a specific customer or order), although they can be applied to collections, although this is less-commonly implemented. Note that PUT requests are idempotent whereas POST requests are not; if an application submits the same PUT request multiple times the results should always be the same (the same resource will be modified with the same values), but if an application repeats the same POST request the result will be the creation of multiple resources.
+PUT 요청의 목적은 기존 리소스를 수정하는 것입니다. 지정된 리소스가 존재하지 않는 경우 PUT 요청은 오류를 반환할 수 있습니다(일부 경우에는 실제로 리소스를 생성할 수 있습니다.). PUT 요청은 컬렉션에 적용될 수 있지만 (덜 공통적으로 구현됨) (특정 고객 또는 주문과 같은) 개별적인 항목에 적용되는 경우가 가장 많습니다. PUT 요청은 idempotent인 반면에 POST 요청은 그렇지 않다는 점을 유념합니다. 응용 프로그램에서 동일한 PUT 요청을 여러 번 제출하는 경우 결과는 항상 동일하지만 (동일한 리소스가 동일한 값으로 수정됨), 응용 프로그램에서 동일한 POST 요청을 반복하는 경우 결과는 여러 개의 리소스가 생성되는 것입니다. 
 
-> [!NOTE]
-> Strictly speaking, an HTTP PUT request replaces an existing resource with the resource specified in the body of the request. If the intention is to modify a selection of properties in a resource but leave other properties unchanged, then this should be implemented by using an HTTP PATCH request. However, many RESTful implementations relax this rule and use PUT for both situations.
+> [!참고]
+> 엄밀히 말하면, HTTP PUT 요청은 기존 리소스를 요청 본문에 지정된 리소스로 대체합니다. 리소스의 속성 선택을 수정하지만 다른 속성은 변경되지 않은 상태로 두는 것이 목적이라면 이는 HTTP PATCH 요청을 사용해 구현해야 합니다. 그러나 상당수 RESTful RESTful 구현이 이러한 규칙을 완화시켰고 두 가지 상황 모두에서 PUT를 사용합니다. 
 >
 >
 
-### Processing HTTP requests
-The data included by a client application in many HTTP requests, and the corresponding response messages from the web server, could be presented in a variety of formats (or media types). For example, the data that specifies the details for a customer or order could be provided as XML, JSON, or some other encoded and compressed format. A RESTful web API should support different media types as requested by the client application that submits a request.
+### HTTP 요청 처리
+클라이언트 응용 프로그램에 의해 상당수 HTTP 요청에 포함된 데이터와 웹 서버의 해당 응답 메시지는 다양한 형식 (또는 미디어 유형)으로 표시될 수 있습니다. 예를 들어, 고객 또는 주문에 대한 세부 정보를 지정하는 데이터는 XML, JSON 또는 일부 인코드 된 압축 형식으로 제공될 수 있습니다. RESTful web API는 요청을 제출하는 클라이언트 응용 프로그램이 요청하는 다양한 미디어 유형을 지원해야 합니다. 
 
-When a client application sends a request that returns data in the body of a message, it can specify the media types it can handle in the Accept header of the request. The following code illustrates an HTTP GET request that retrieves the details of customer 1 and requests the result to be returned as JSON (the client should still examine the media type of the data in the response to verify the format of the data returned):
+클라이언트 응용 프로그램이 메시지 본문에서 데이터 반환 요청을 전송하는 경우 요청의 Accept(수락) 헤더에서 처리할 수 있는 미디어 유형을 지정할 수 있습니다. 다음 코드는 고객 1의 세부 정보를 검색하는 HTTP GET 요청 및 결과를 JSON으로 반환하는 요청을 보여줍니다(클라이언트는 반환 데이터 형식을 확인하기 위해 응답에서 데이터 미디어 유형을 검사해야 합니다.). 
 
 ```HTTP
 GET http://adventure-works.com/orders/2 HTTP/1.1
@@ -166,10 +166,10 @@ Accept: application/json
 ...
 ```
 
-If the web server supports this media type, it can reply with a response that includes Content-Type header that specifies the format of the data in the body of the message:
+웹 서버가 이 미디어 유형을 지원하는 경우 메시지 본문에 데이터 형식을 지정하는 Content-Type(콘텐츠 유형) 헤더가 포함된 응답으로 회신할 수 있습니다. 
 
-> [!NOTE]
-> For maximum interoperability, the media types referenced in the Accept and Content-Type headers should be recognized MIME types rather than some custom media type.
+> [!참고]
+> 상호 운용성을 최대화하기 위해 Accept(수락) 및 Content-Type(콘텐츠 유형) 헤더에서 참조된 미디어 유형은 일부 사용자 지정 미디어 유형이 아니라 인식된 MIME 유형이어야 합니다. 
 >
 >
 
@@ -183,9 +183,9 @@ Content-Length: ...
 {"orderID":2,"productID":4,"quantity":2,"orderValue":10.00}
 ```
 
-If the web server does not support the requested media type, it can send the data in a different format. IN all cases it must specify the media type (such as *application/json*) in the Content-Type header. It is the responsibility of the client application to parse the response message and interpret the results in the message body appropriately.
+웹 서버가 요청한 미디어 유형을 지원하지 않는 경우 다른 형식으로 데이터를 전송할 수 있습니다. 모든 경우에 Content-Type(콘텐츠 유형) 헤더에서 미디어 유형 (예:*application/json*)을 지정해야 합니다. 응답 메시지를 구문 분석하고 메시지 본문에서 결과를 적절하게 해석하는 것은 클라이언트 응용 프로그램의 책임입니다. 
 
-Note that in this example, the web server successfully retrieves the requested data and indicates success by passing back a status code of 200 in the response header. If no matching data is found, it should instead return a status code of 404 (not found) and the body of the response message can contain additional information. The format of this information is specified by the Content-Type header, as shown in the following example:
+이 예에서 웹 서버는 성공적으로 요청 데이터를 검색하고 응답 헤더에 상태 코드 200을 다시 전달함으로써 성공을 표시한다는 점을 유념합니다. 일치하는 데이터가 검색되지 않는 경우에는 상태 코드 404(not found(찾을 수 없음))를 대신 반환하고 응답 메시지 본문에 추가 정보를 포함할 수 있습니다. 이 정보 형식은 아래 예에서 확인할 수 있는 것처럼 Content-Type(콘텐츠 유형) 헤더에서 지정합니다. 
 
 ```HTTP
 GET http://adventure-works.com/orders/222 HTTP/1.1
@@ -194,7 +194,7 @@ Accept: application/json
 ...
 ```
 
-Order 222 does not exist, so the response message looks like this:
+주문 222가 존재하지 않는 경우 응답 메시지는 다음과 같습니다.
 
 ```HTTP
 HTTP/1.1 404 Not Found
@@ -206,7 +206,7 @@ Content-Length: ...
 {"message":"No such order"}
 ```
 
-When an application sends an HTTP PUT request to update a resource, it specifies the URI of the resource and provides the data to be modified in the body of the request message. It should also specify the format of this data by using the Content-Type header. A common format used for text-based information is *application/x-www-form-urlencoded*, which comprises a set of name/value pairs separated by the & character. The next example shows an HTTP PUT request that modifies the information in order 1:
+응용 프로그램이 리소스 업데이트를 위해 HTTP PUT 요청을 전송하는 경우 리소스의 URI를 지정하고 요청 메시지 본문에 수정할 데이터를 제공합니다. Content-Type(콘텐츠 유형) 헤더를 사용해 이 데이터의 형식도 지정해야 합니다. 텍스트 기반 정보에 대해 사용되는 공통적인 형식은 *application/x-www-form-urlencoded*로 정관사 the와 문자로 구별되는 이름/값 쌍의 세트로 구성됩니다. 다음 예는 주문 1의 정보를 수정하는 HTTP PUT 요청을 보여줍니다. 
 
 ```HTTP
 PUT http://adventure-works.com/orders/1 HTTP/1.1
@@ -218,7 +218,7 @@ Content-Length: ...
 ProductID=3&Quantity=5&OrderValue=250
 ```
 
-If the modification is successful, it should ideally respond with an HTTP 204 status code, indicating that the process has been successfully handled, but that the response body contains no further information. The Location header in the response contains the URI of the newly updated resource:
+성공적으로 수정한 경우 프로세스가 성공적으로 처리되었음을 나타내는 HTTP 204 상태 코드로 응답하는 것이 이상적이지만, 응답 본문에는 추가 정보가 포함되지 않습니다. 응답의 Location(위치) 헤더에는 새롭게 업데이트된 리소스의 URI가 포함됩니다. 
 
 ```HTTP
 HTTP/1.1 204 No Content
@@ -228,19 +228,18 @@ Location: http://adventure-works.com/orders/1
 Date: Fri, 22 Aug 2014 09:18:37 GMT
 ```
 
-> [!TIP]
-> If the data in an HTTP PUT request message includes date and time information, make sure that your web service accepts dates and times formatted following the ISO 8601 standard.
+> [!팁]
+> HTTP PUT 요청 메시지의 데이터에 날짜 및 시간 정보가 포함되는 경우 웹 서비스가 ISO 8601 표준에 따라 포맷된 날짜 및 시간을 수락하는지 확인하십시오. >
+>
+
+업데이트할 리소스가 존재하지 않는 경우 웹 서버는 앞서 설명한 것처럼 Not Found(찾을 수 없음) 응답으로 응답할 수 있습니다. 또는 웹 서버가 실제로 개체 자체를 생성한 경우 상태 코드 HTTP 200(OK(확인)) 또는 HTTP 201(Created(생성됨))을 반환할 수 있고 응답 본문에는 새로운 리소스에 대한 데이터가 포함될 수 있습니다. 요청의 Content-Type(콘텐츠 유형) 헤더가 웹 서버에서 처리할 수 없는 데이터를 지정한 경우 HTTP 상태 코드 415(Unsupported Media Type(지원되지 않는 미디어 유형))로 응답해야 합니다. 
+
+> [!팁]
+> 컬렉션에서 여러 개의 리소스를 배치 업데이트할 수 있는 일괄 HTTP PUT 작업 구현을 고려해 보십시오. PUT 요청은 컬렉션의 URI를 지정해야 하고, 요청 본문은 수정할 리소스의 세부 정보를 지정해야 합니다. 이 접근 방식은 수다스러움을 줄이고 성능을 개선하는 데 도움을 줄 수 있습니다. 
 >
 >
 
-If the resource to be updated does not exist, the web server can respond with a Not Found response as described earlier. Alternatively, if the server actually creates the object itself it could return the status codes HTTP 200 (OK) or HTTP 201 (Created) and the response body could contain the data for the new resource. If the Content-Type header of the request specifies a data format that the web server cannot handle, it should respond with HTTP status code 415 (Unsupported Media Type).
-
-> [!TIP]
-> Consider implementing bulk HTTP PUT operations that can batch updates to multiple resources in a collection. The PUT request should specify the URI of the collection, and the request body should specify the details of the resources to be modified. This approach can help to reduce chattiness and improve performance.
->
->
-
-The format of an HTTP POST requests that create new resources are similar to those of PUT requests; the message body contains the details of the new resource to be added. However, the URI typically specifies the collection to which the resource should be added. The following example creates a new order and adds it to the orders collection:
+새로운 리소스를 생성하는 HTTP POST 요청의 형식은 PUT 요청의 형식과 유사합니다. 메시지 본문에는 추가할 새로운 리소스의 세부 정보가 포함됩니다. 그러나 일반적으로 URI는 리소스를 추가해야 하는 컬렉션을 지정합니다. 다음 예에서는 새로운 주문을 생성하고 주문을 주문 컬렉션에 추가합니다. 
 
 ```HTTP
 POST http://adventure-works.com/orders HTTP/1.1
@@ -252,7 +251,7 @@ Content-Length: ...
 productID=5&quantity=15&orderValue=400
 ```
 
-If the request is successful, the web server should respond with a message code with HTTP status code 201 (Created). The Location header should contain the URI of the newly created resource, and the body of the response should contain a copy of the new resource; the Content-Type header specifies the format of this data:
+요청이 성공적인 경우 웹 서버는 HTTP 상태 코드 201(Created(생성됨))로 응답해야 합니다. Location(위치) 헤더에는 새롭게 생성된 리소스의 URI가 포함되어야 하고 응답 본문에는 새로운 리소스 사본이 포함되어야 합니다. Content-Type(콘텐츠 유형) 헤더가 이 데이터의 형식을 지정합니다. 
 
 ```HTTP
 HTTP/1.1 201 Created
@@ -265,19 +264,19 @@ Content-Length: ...
 {"orderID":99,"productID":5,"quantity":15,"orderValue":400}
 ```
 
-> [!TIP]
-> If the data provided by a PUT or POST request is invalid, the web server should respond with a message with HTTP status code 400 (Bad Request). The body of this message can contain additional information about the problem with the request and the formats expected, or it can contain a link to a URL that provides more details.
+> [!팁]
+> PUT 또는 POST 요청에서 제공한 데이터가 잘못된 경우 웹 서버는 HTTP 상태 코드 400(Bad Request(잘못된 요청))이 포함된 메시지로 응답해야 합니다. 이 메시지의 본문에는 요청 및 예상되는 형식과 관련된 문제에 대한 추가 정보가 포함되거나 더욱 자세한 세부 정보를 제공하는 URL 링크가 포함될 수 있습니다. 
 >
 >
 
-To remove a resource, an HTTP DELETE request simply provides the URI of the resource to be deleted. The following example attempts to remove order 99:
+리소스를 제거하려면 HTTP DELETE 요청이 제거할 리소스의 URI를 제공하기만 하면 됩니다. 다음 예에서는 주문 99 제거를 시도합니다. 
 
 ```HTTP
 DELETE http://adventure-works.com/orders/99 HTTP/1.1
 ...
 ```
 
-If the delete operation is successful, the web server should respond with HTTP status code 204, indicating that the process has been successfully handled, but that the response body contains no further information (this is the same response returned by a successful PUT operation, but without a Location header as the resource no longer exists.) It is also possible for a DELETE request to return HTTP status code 200 (OK) or 202 (Accepted) if the deletion is performed asynchronously.
+삭제 작업이 성공적인 경우 웹 서버는 프로세스가 성공적으로 처리되었음을 나타내는 HTTP 상태 코드 204로 응답해야 하지만, 응답 본문에는 추가 정보가 포함되지 않습니다(이는 성공적인 PUT 작업으로 인해 반환되는 응답과 동일하지만 리소스가 더 이상 존재하지 않기 때문에 Location(위치) 헤더는 없습니다.). 삭제가 비동기적으로 수행된 경우 DELETE 요청이 HTTP 상태 코드 200(OK(확인)) 또는 202(Accepted(수락됨))를 반환할 수 있습니다. 
 
 ```HTTP
 HTTP/1.1 204 No Content
@@ -285,42 +284,42 @@ HTTP/1.1 204 No Content
 Date: Fri, 22 Aug 2014 09:18:37 GMT
 ```
 
-If the resource is not found, the web server should return a 404 (Not Found) message instead.
+리소스가 검색되지 않는 경우 웹 서버는 404(Not Found(찾을 수 없음)) 메시지를 대신 반환해야 합니다. 
 
-> [!TIP]
-> If all the resources in a collection need to be deleted, enable an HTTP DELETE request to be specified for the URI of the collection rather than forcing an application to remove each resource in turn from the collection.
+> [!팁]
+> 컬렉션의 모든 리소스를 삭제해야 하는 경우 응용 프로그램이 해당 컬렉션의 각 리소스를 차례대로 제거하도록 강제하는 것이 아니라 컬렉션의 URI에 대해 HTTP DELETE 요청이 지정될 수 있도록 하십시오. 
 >
 >
 
-### Filtering and paginating data
-You should endeavor to keep the URIs simple and intuitive. Exposing a collection of resources through a single URI assists in this respect, but it can lead to applications fetching large amounts of data when only a subset of the information is required. Generating a large volume of traffic impacts not only the performance and scalability of the web server but also adversely affect the responsiveness of client applications requesting the data.
+### 데이터 필터링 및 페이지 매기기
+URI를 단순하고 직관적으로 유지하도록 노력해야 합니다. 단일 URI를 통해 리소스 컬렉션을 표시하는 것이 이러한 측면에서는 도움이 되지만 정보의 하위 집합만 필요한 경우에도 응용 프로그램에서 대량의 데이터를 가져오도록 합니다. 많은 양의 트래픽을 생성하는 것은 웹 서버의 성능 및 확장성에 영향을 줄 뿐만 아니라 데이터를 요청하는 클라이언트 응용 프로그램의 응답성에도 부정적인 영향을 미칩니다. 
 
-For example, if orders contain the price paid for the order, a client application that needs to retrieve all orders that have a cost over a specific value might need to retrieve all orders from the */orders* URI and then filter these orders locally. Clearly this process is highly inefficient; it wastes network bandwidth and processing power on the server hosting the web API.
+예를 들어, 주문에 해당 주문에 대해 지불된 가격이 포함되어 있는 경우 특정 값을 초과하는 비용의 모든 주문을 검색해야 하는 클라이언트 응용 프로그램은 */orders* URI에서 모든 주문을 검색한 다음 이러한 주문을 로컬에서 필터링해야 합니다. 이러한 프로세스가 매우 비효율적이고 네트워크 대역폭 및 웹 API를 호스팅하는 서버의 처리 능력을 낭비하는 것은 분명합니다. 
 
-One solution may be to provide a URI scheme such as */orders/ordervalue_greater_than_n* where *n* is the order price, but for all but a limited number of prices such an approach is impractical. Additionally, if you need to query orders based on other criteria, you can end up being faced with providing with a long list of URIs with possibly non-intuitive names.
+*/orders/ordervalue_greater_than_n*와 같은 URI 스키마를 제공하는 것이 하나의 솔루션이 될 수 있습니다. 여기서 *n*은 주문 가격이지만, 제한된 수의 가격을 제외하고 이러한 접근 방식은 실용적이지 않습니다. 또한 다른 조건에 근거해 주문을 쿼리해야 하는 경우 직관적이지 않은 이름이 포함된 긴 URI 목록을 제공하는 것으로 끝날 가능성이 있습니다. 
 
-A better strategy to filtering data is to provide the filter criteria in the query string that is passed to the web API, such as */orders?ordervaluethreshold=n*. In this example, the corresponding operation in the web API is responsible for parsing and handling the `ordervaluethreshold` parameter in the query string and returning the filtered results in the HTTP response.
+데이터를 필터링하는 더 나은 전략은 */orders?ordervaluethreshold=n*과 같이 웹 API에 전달하는 쿼리 문자열에 필터링 조건을 제공하는 것입니다. 이 예의 경우 웹 API의 해당 작업이 쿼리 문자열의 `ordervaluethreshold` 매개 변수를 구문 분석 및 처리하고 HTTP 응답에서 필터링 된 결과를 반환할 책임이 있습니다.
 
-Some simple HTTP GET requests over collection resources could potentially return a large number of items. To combat the possibility of this occurring you should design the web API to limit the amount of data returned by any single request. You can achieve this by supporting query strings that enable the user to specify the maximum number of items to be retrieved (which could itself be subject to an upperbound limit to help prevent Denial of Service attacks), and a starting offset into the collection. For example, the query string in the URI */orders?limit=25&offset=50* should retrieve 25 orders starting with the 50th order found in the orders collection. As with filtering data, the operation that implements the GET request in the web API is responsible for parsing and handling the `limit` and `offset` parameters in the query string. To assist client applications, GET requests that return paginated data should also include some form of metadata that indicate the total number of resources available in the collection. You might also consider other intelligent paging strategies; for more information, see [API Design Notes: Smart Paging](http://bizcoder.com/api-design-notes-smart-paging)
+컬렉션 리소스에 대한 일부 단순한 HTTP GET 요청이 많은 수의 항목을 반환할 가능성이 있습니다. 이러한 경우가 발생할 가능성을 없애기 위해 단일 요청에 의해 반환되는 데이터의 양을 제한하도록 웹 API를 설계해야 합니다. 사용자가 검색할 항목의 최대수를 지정하도록 하는 쿼리 문자열(이 문자열 자체도 서비스 거부 공격을 방지하는 데 도움을 주기 위한 upperbound 제한의 적용을 받음)을 지원하거나 컬렉션에 대한 오프셋을 시작함으로써 앞서 기술한 것과 같이 웹 API를 설계할 수 있습니다. 예를 들어, URI */orders?limit=25&offset=50*의 쿼리 문자열은 해당 주문 컬렉션에서 검색한 50번째 주문으로 시작하는 25개 주문을 검색해야 합니다. 데이터 필터링과 마찬가지로 웹 API에서 GET 요청을 구현하는 작업이 쿼리 문자열에서  `limit` 및 `offset` 매개 변수를 구문 분석하고 처리할 책임이 있습니다. 클라이언트 응용 프로그램을 지원하기 위해 페이지 매겨진 데이터를 반환하는 GET 요청에는 해당 컬렉션에서 사용 가능한 총 리소스 수를 표시하는 몇 가지 양식의 메타데이터가 포함되어야 합니다. 기타 지능형 페이징 전략을 고려할 수도 있습니다. 자세한 정보는 다음을 참조하십시오.[API 설계 참고: 스마트 페이징](http://bizcoder.com/api-design-notes-smart-paging)
 
-You can follow a similar strategy for sorting data as it is fetched; you could provide a sort parameter that takes a field name as the value, such as */orders?sort=ProductID*. However, note that this approach can have a deleterious effect on caching (query string parameters form part of the resource identifier used by many cache implementations as the key to cached data).
+데이터를 가져올 때 데이터 정렬에 대해서도 비슷한 전략을 따를 수 있습니다. */orders?sort=ProductID*와 같은 값으로 필드 이름을 가져오는 정렬 매개 변수를 제공할 수도 있습니다. 그러나 이 접근 방식은 캐싱에 유해한 영향을 미칠 수 있다는 점을 유념해야 합니다(쿼리 문자열 매개 변수는 캐시된 데이터에 대한 키로 많은 캐시 구현에 사용되는 리소스 식별자의 일부를 구성합니다.). 
 
-You can extend this approach to limit (project) the fields returned if a single resource item contains a large amount of data. For example, you could use a query string parameter that accepts a comma-delimited list of fields, such as */orders?fields=ProductID,Quantity*.
+이러한 접근 방식을 확대해 단일 리소스 항목에 많은 양의 데이터가 포함된 경우 반환되는 필드를 제한(프로젝트)할 수 있습니다. 예를 들어, */orders?fields=ProductID,Quantity*와 같이 쉼표로 분리된 필드 목록을 수락하는 쿼리 문자열 매개 변수를 사용할 수 있습니다. 
 
-> [!TIP]
-> Give all optional parameters in query strings meaningful defaults. For example, set the `limit` parameter to 10 and the `offset` parameter to 0 if you implement pagination, set the sort parameter to the key of the resource if you implement ordering, and set the `fields` parameter to all fields in the resource if you support projections.
+> [!팁]
+> 쿼리 문자열의 모든 선택적 매개 변수에 의미 있는 기본값을 부여하십시오. 예를 들어, 페이지 매김을 구현하는 경우 `limit` 매개 변수는 10으로, `offset` 매개 변수는 0으로 설정하십시오. 순서 지정을 구현하는 경우 정렬 매개 변수는 리소스의 키로 설정하고 프로젝션을 지원하는 경우 `fields` 매개 변수를 리소스의 모든 필드에 설정하십시오.
 >
 >
 
-### Handling large binary resources
-A single resource may contain large binary fields, such as files or images. To overcome the transmission problems caused by unreliable and intermittent connections and to improve response times, consider providing operations that enable such resources to be retrieved in chunks by the client application. To do this, the web API should support the Accept-Ranges header for GET requests for large resources, and ideally implement HTTP HEAD requests for these resources. The Accept-Ranges header indicates that the GET operation supports partial results, and that a client application can submit GET requests that return a subset of a resource specified as a range of bytes. A HEAD request is similar to a GET request except that it only returns a header that describes the resource and an empty message body. A client application can issue a HEAD request to determine whether to fetch a resource by using partial GET requests. The following example shows a HEAD request that obtains information about a product image:
+### 큰 바이너리 리소스 처리
+단일 리소스에는 파일 또는 이미지와 같은 큰 바이너리 필드가 포함될 수 있습니다. 신뢰할 수 없는 일시적 연결로 인해 야기되는 전송 문제를 해결하고 응답 시간을 개선할 수 있도록, 이러한 리소스가 클라이언트 응용 프로그램에 의해 청크에서 검색되도록 하는 작업을 제공하는 것을 고려해 보십시오. 이를 위해서 웹 API는 큰 리소스에 대한 GET 요청을 위해 Accept-Ranges(범위 수락) 헤더를 지원하고, 이러한 리소스에 대한 HTTP HEAD 요청을 구현하는 것이 이상적입니다. Accept-Ranges(범위 수락) 헤더는 GET 작업이 부분적인 결과를 지원하고, 클라이언트 응용 프로그램이 바이트 범위로 지정된 리소스 하위 집합을 반환하는 GET 요청을 제출할 수 있음을 나타냅니다. HEAD 요청은 리소스와 비어 있는 메시지 본문을 설명하는 헤더만 반환한다는 점을 제외하면 GET 요청과 유사합니다. 클라이언트 응용 프로그램은 부분적인 GET 요청을 사용함으로써 리소스를 가져올지를 결정하기 위한 HEAD 요청을 발행할 수 있습니다. 다음 예는 제품 이미지에 대한 정보를 받는 HEAD 요청을 보여줍니다. 
 
 ```HTTP
 HEAD http://adventure-works.com/products/10?fields=productImage HTTP/1.1
 ...
 ```
 
-The response message contains a header that includes the size of the resource (4580 bytes), and the Accept-Ranges header that the corresponding GET operation supports partial results:
+응답 메시지에는 리소스 크기(4580바이트)를 포함하는 헤더와 해당 GET 작업이 부분적인 결과를 지원하는 Accept-Ranges(범위 수락) 헤더가 포함되어 있습니다. 
 
 ```HTTP
 HTTP/1.1 200 OK
@@ -331,7 +330,7 @@ Content-Length: 4580
 ...
 ```
 
-The client application can use this information to construct a series of GET operations to retrieve the image in smaller chunks. The first request fetches the first 2500 bytes by using the Range header:
+클라이언트 응용 프로그램은 이 정보를 사용해 더 작은 청크에서 이미지를 검색하기 위한 일련의 GET 작업을 구성할 수 있습니다. 첫 번째 요청은 Range(범위) 헤더를 사용해 처음 2500바이트를 가져옵니다. 
 
 ```HTTP
 GET http://adventure-works.com/products/10?fields=productImage HTTP/1.1
@@ -339,7 +338,7 @@ Range: bytes=0-2499
 ...
 ```
 
-The response message indicates that this is a partial response by returning HTTP status code 206. The Content-Length header specifies the actual number of bytes returned in the message body (not the size of the resource), and the Content-Range header indicates which part of the resource this is (bytes 0-2499 out of 4580):
+응답 메시지는 HTTP 상태 코드 206을 반환함으로써 부분적인 응답임을 나타냅니다. Content-Length(콘텐츠 길이) 헤더는 메시지 본문에서 반환된 (리소스 크기가 아니라) 실제 바이트 수를 지정하고, Content-Range(콘텐츠 범위) 헤더는 어떤 부분의 리소스가 여기에 해당하는지를 표시합니다(4580 중 0-2499바이트). 
 
 ```HTTP
 HTTP/1.1 206 Partial Content
@@ -352,7 +351,7 @@ Content-Range: bytes 0-2499/4580
 _{binary data not shown}_
 ```
 
-A subsequent request from the client application can retrieve the remainder of the resource by using an appropriate Range header:
+클라이언트 응용 프로그램의 후속 요청은 적절한 Range(범위) 헤더를 사용해 리소스의 나머지를 검색할 수 있습니다. 
 
 ```HTTP
 GET http://adventure-works.com/products/10?fields=productImage HTTP/1.1
@@ -360,7 +359,7 @@ Range: bytes=2500-
 ...
 ```
 
-The corresponding result message should look like this:
+해당 결과 메시지는 다음과 같습니다. 
 
 ```HTTP
 HTTP/1.1 206 Partial Content
@@ -372,15 +371,15 @@ Content-Range: bytes 2500-4580/4580
 ...
 ```
 
-## Using the HATEOAS approach to enable navigation to related resources
-One of the primary motivations behind REST is that it should be possible to navigate the entire set of resources without requiring prior knowledge of the URI scheme. Each HTTP GET request should return the information necessary to find the resources related directly to the requested object through hyperlinks included in the response, and it should also be provided with information that describes the operations available on each of these resources. This principle is known as HATEOAS, or Hypertext as the Engine of Application State. The system is effectively a finite state machine, and the response to each request contains the information necessary to move from one state to another; no other information should be necessary.
+## 관련 리소스에 탐색을 적용하기 위한 HATEOAS 접근 방식 사용
+REST를 사용하는 기본적인 동기 중 하나는 URI 스키마에 대한 사전 지식 없이 리소스 전체 세트를 탐색할 수 있어야 한다는 것입니다. 각 HTTP GET 요청은 응답에 포함된 하이퍼링크를 통해 요청된 개체와 직접적으로 관련된 리소스를 검색하는 데 필요한 정보를 반환해야 하고, 이러한 리소스 각각에서 사용 가능한 작업을 설명하는 정보도 함께 제공되어야 합니다. 이러한 원칙은 HATEOAS(Hypertext as the Engine of Application State)로 알려져 있습니다. 이 시스템은 실질적으로 유한 상태 컴퓨터이고, 각 요청에 대한 응답에는 하나의 상태에서 다른 상태로 이동하는 데 필요한 정보가 포함되어 있습니다. 그 외 다른 정보는 필요하지 않아야 합니다. 
 
-> [!NOTE]
-> Currently there are no standards or specifications that define how to model the HATEOAS principle. The examples shown in this section illustrate one possible solution.
+> [!참고]
+> 현재 HATEOAS 원칙을 모델링하는 방법을 정의한 표준이나 사양은 없습니다. 이 섹션에서 제공하는 예를 통해 한 가지 솔루션을 제안합니다. 
 >
 >
 
-As an example, to handle the relationship between customers and orders, the data returned in the response for a specific order should contain URIs in the form of a hyperlink identifying the customer that placed the order, and the operations that can be performed on that customer.
+하나의 예로서, 고객과 주문 사이의 관계를 처리하기 위해 특정 주문에 대한 응답으로 반환된 데이터에는 해당 주문을 한 고객을 식별하는 하이퍼링크 양식의 URI와 해당 고객에 대해 수행될 수 있는 작업이 포함되어야 합니다. 
 
 ```HTTP
 GET http://adventure-works.com/orders/3 HTTP/1.1
@@ -388,7 +387,7 @@ Accept: application/json
 ...
 ```
 
-The body of the response message contains a `links` array (highlighted in the code example) that specifies the nature of the relationship (*Customer*), the URI of the customer (*http://adventure-works.com/customers/3*), how to retrieve the details of this customer (*GET*), and the MIME types that the web server supports for retrieving this information (*text/xml* and *application/json*). This is all the information that a client application needs to be able to fetch the details of the customer. Additionally, the Links array also includes links for the other operations that can be performed, such as PUT (to modify the customer, together with the format that the web server expects the client to provide), and DELETE.
+응답 메시지 본문에는 관계의 속성(*Customer*)을 지정하는 `links` 배열(코드 예에서 강조 표시되어 있음), 고객의 URI (*http://adventure-works.com/customers/3*), 이 고객의 세부 정보를 검색하는 방법(*GET*), 웹 서버가 이 정보 검색에 대해 지원하는 MIME 유형(*text/xml* 및 *application/json*)이 포함되어 있습니다. 이것이 클라이언트 응용 프로그램이 고객의 세부 정보를 가져오는 데 필요한 모든 정보입니다. 또한 Link(링크) 배열에는 PUT(웹 서버에서 클라이언트가 제공하기를 기대하는 형식과 더불어 고객을 수정할 때 사용) 및 DELETE 등 수행 가능한 다른 작업에 대한 링크도 포함되어 있습니다.
 
 ```HTTP
 HTTP/1.1 200 OK
@@ -400,7 +399,7 @@ Content-Length: ...
 customer","href":" http://adventure-works.com /customers/3", "action":"PUT","types":["application/x-www-form-urlencoded"]},{"rel":"customer","href":" http://adventure-works.com /customers/3","action":"DELETE","types":[]}]}
 ```
 
-For completeness, the Links array should also include self-referencing information pertaining to the resource that has been retrieved. These links have been omitted from the previous example, but are highlighted in the following code. Notice that in these links, the relationship *self* has been used to indicate that this is a reference to the resource being returned by the operation:
+완결성을 위해 Links(링크) 배열에는 검색된 리소스와 관련된 자신을 참조하는 정보도 포함되어야 합니다. 이러한 링크가 이전 예에서는 생략되었지만 다음 코드에서는 강조 표시되어 있습니다. 이러한 링크에서 관계 *self*는 이것이 해당 작업에 의해 반환 중인 리소스에 대한 참조임을 나타내기 위해 사용되었습니다. 
 
 ```HTTP
 HTTP/1.1 200 OK
@@ -412,17 +411,17 @@ Content-Length: ...
 "href":" http://adventure-works.com /customers/3", "action":"GET","types":["text/xml","application/json"]},{"rel":" customer" (customer links omitted)}]}
 ```
 
-For this approach to be effective, client applications must be prepared to retrieve and parse this additional information.
+이 접근 방식이 효과적으로 구현되기 위해서는 클라이언트 응용 프로그램이 이러한 추가 정보를 검색하고 구문 분석할 준비가 되어 있어야 합니다. 
 
-## Versioning a RESTful web API
-It is highly unlikely that in all but the simplest of situations that a web API will remain static. As business requirements change new collections of resources may be added, the relationships between resources might change, and the structure of the data in resources might be amended. While updating a web API to handle new or differing requirements is a relatively straightforward process, you must consider the effects that such changes will have on client applications consuming the web API. The issue is that although the developer designing and implementing a web API has full control over that API, the developer does not have the same degree of control over client applications which may be built by third party organizations operating remotely. The primary imperative is to enable existing client applications to continue functioning unchanged while allowing new client applications to take advantage of new features and resources.
+## RESTful web API 버전 관리
+가장 간단한 상황을 제외하면, 웹 API가 정적으로 유지될 가능성은 매우 낮습니다. 비즈니스 요구 사항이 변화하고 새로운 리소스 컬렉션이 추가됨에 따라 리소스 간의 관계가 변화하고, 리소스의 데이터 구조가 수정될 수 있습니다. 새롭거나 다른 요구 사항을 처리하기 위해 웹 API를 업데이트하는 것은 상대적으로 간단한 프로세스이지만, 이러한 변경이 웹 API를 사용하는 클라이언트 응용 프로그램에 미칠 영향을 반드시 고려해야 합니다. 웹 API를 설계 및 구현하는 개발자가 해당 API에 대한 모든 권한을 보유하지만 개발자가 제삼자가 구축하고 원격으로 운영되는 클라이언트 응용 프로그램에 대해서도 동일한 수준의 권한을 보유하는 것은 아닙니다. 기본적으로 새로운 클라이언트 응용 프로그램이 새로운 기능 및 리소스를 이용하는 것을 허용하면서 기존 클라이언트 응용 프로그램이 변경되지 않은 상태로 계속 작동하도록 해야 합니다. 
 
-Versioning enables a web API to indicate the features and resources that it exposes, and a client application can submit requests that are directed to a specific version of a feature or resource. The following sections describe several different approaches, each of which has its own benefits and trade-offs.
+버전 관리를 통해 웹 API는 웹 API가 표시하는 기능 및 리소스를 표시할 수 있고, 클라이언트 응용 프로그램은 기능 또는 리소스의 특정 버전으로 지정되는 요청을 제출할 수 있습니다. 다음 섹션에서는 다양한 접근 방식을 설명합니다. 각 접근 방식에는 고유의 장점과 단점이 있습니다. 
 
-### No versioning
-This is the simplest approach, and may be acceptable for some internal APIs. Big changes could be represented as new resources or new links.  Adding content to existing resources might not present a breaking change as client applications that are not expecting to see this content will simply ignore it.
+### 버전 관리 안 함
+가장 간단한 접근 방식이며, 일부 내부 API용으로 허용될 수 있습니다. 대대적인 변경은 새로운 리소스 또는 새로운 링크로 나타낼 수 있습니다. 기존 리소스에 콘텐츠를 추가하는 것은 해당 콘텐츠가 추가될 것으로 예상하지 않고 있는 클라이언트 응용 프로그램이 단순하게 무시해버리기 때문에 새로운 변경으로 표시되지 않을 수 있습니다. 
 
-For example, a request to the URI *http://adventure-works.com/customers/3* should return the details of a single customer containing `id`, `name`, and `address` fields expected by the client application:
+예를 들어, URI *http://adventure-works.com/customers/3*에 대한 요청은 클라이언트 응용 프로그램이 예상하는 `id`, `name` 및 `address` 필드를 포함한 단일 고객의 세부 정보를 반환해야 합니다.
 
 ```HTTP
 HTTP/1.1 200 OK
@@ -433,12 +432,12 @@ Content-Length: ...
 {"id":3,"name":"Contoso LLC","address":"1 Microsoft Way Redmond WA 98053"}
 ```
 
-> [!NOTE]
-> For the purposes of simplicity and clarity, the example responses shown in this section do not include HATEOAS links.
+> [!참고]
+> 단순도 및 명확성을 위해 이 섹션에서 제공되는 응답 예에는 HATEOAS 링크가 포함되어 있지 않습니다. 
 >
 >
 
-If the `DateCreated` field is added to the schema of the customer resource, then the response would look like this:
+만일 `DateCreated` 필드를 고객 리소스 스키마에 추가하는 경우 응답은 다음과 같습니다. 
 
 ```HTTP
 HTTP/1.1 200 OK
@@ -449,12 +448,12 @@ Content-Length: ...
 {"id":3,"name":"Contoso LLC","dateCreated":"2014-09-04T12:11:38.0376089Z","address":"1 Microsoft Way Redmond WA 98053"}
 ```
 
-Existing client applications might continue functioning correctly if they are capable of ignoring unrecognized fields, while new client applications can be designed to handle this new field. However, if more radical changes to the schema of resources occur (such as removing or renaming fields) or the relationships between resources change then these may constitute breaking changes that prevent existing client applications from functioning correctly. In these situations you should consider one of the following approaches.
+기존 클라이언트 응용 프로그램에 인식할 수 없는 필드를 무시하는 기능이 있다면 기존 클라이언트 응용 프로그램은 계속해서 올바르게 작동하고 이 새로운 필드를 처리하도록 클라이언트 응용 프로그램을 새로 설계할 수 있습니다. 그러나 리소스 스키마에 대한 보다 근본적인 변경이 이루어지거나(예: 필드 제거 또는 이름 바꾸기) 리소스 간의 관계가 변경되는 경우 이러한 변경은 기존 클라이언트 응용 프로그램이 올바르게 작동하지 못하도록 방해하는 새로운 변경을 구성할 수 있습니다. 이러한 경우에는 다음 접근 방식 중 하나를 고려해야 합니다. 
 
-### URI versioning
-Each time you modify the web API or change the schema of resources, you add a version number to the URI for each resource. The previously existing URIs should continue to operate as before, returning resources that conform to their original schema.
+### URI 버전 관리
+웹 API를 수정하거나 리소스 스키마를 변경할 때마다 각 리소스에 대한 URI에 버전 번호를 추가합니다. 이전에 존재하는 URI는 이전과 마찬가지로 계속 작동하고, 원래의 스키마를 준수하는 리소스를 반환해야 합니다. 
 
-Extending the previous example, if the `address` field is restructured into sub-fields containing each constituent part of the address (such as `streetAddress`, `city`, `state`, and `zipCode`), this version of the resource could be exposed through a URI containing a version number, such as http://adventure-works.com/v2/customers/3:
+앞의 예를 확대해 `address` 필드가 주소의 각 구성 요소(예:`streetAddress`, `city`, `state`, `zipCode`)를 포함하는 하위 필드로 재구성되는 경우 이 리소스 버전은 http://adventure-works.com/v2/customers/3과 같은 버전 번호를 포함하는 URI를 통해 표시될 수 있습니다. 
 
 ```HTTP
 HTTP/1.1 200 OK
@@ -465,22 +464,22 @@ Content-Length: ...
 {"id":3,"name":"Contoso LLC","dateCreated":"2014-09-04T12:11:38.0376089Z","address":{"streetAddress":"1 Microsoft Way","city":"Redmond","state":"WA","zipCode":98053}}
 ```
 
-This versioning mechanism is very simple but depends on the server routing the request to the appropriate endpoint. However, it can become unwieldy as the web API matures through several iterations and the server has to support a number of different versions. Also, from a purist’s point of view, in all cases the client applications are fetching the same data (customer 3), so the URI should not really be different depending on the version. This scheme also complicates implementation of HATEOAS as all links will need to include the version number in their URIs.
+이 버전 관리 메커니즘은 단순하지만, 요청을 적절한 끝점으로 라우팅하는 서버에 따라 달라집니다. 그러나 웹 API가 여러 번의 반복 횟수를 통해 발달하고 서버가 다양한 버전을 지원해야 함에 따라 번거로울 수 있습니다. 또한, 순수주의자의 관점에서 볼 때 이러한 모든 경우에 클라이언트 응용 프로그램이 동일한 데이터(고객 3)를 가져오므로 URI가 버전에 따라 정말로 다른 것은 아닙니다. 모든 링크가 모든 링크의 URI에 버전 번호를 포함해야 하므로 이 스키마는 HATEOAS 구현을 복잡하게 만듭니다. 
 
-### Query string versioning
-Rather than providing multiple URIs, you can specify the version of the resource by using a parameter within the query string appended to the HTTP request, such as *http://adventure-works.com/customers/3?version=2*. The version parameter should default to a meaningful value such as 1 if it is omitted by older client applications.
+### 쿼리 문자열 버전 관리
+여러 개의 URI를 제공하는 것이 아니라 *http://adventure-works.com/customers/3?version=2* 와 같이 HTTP 요청에 추가된 쿼리 문자열 내의 매개 변수를 사용해 리소스 버전을 지정할 수 있습니다. 이 버전 매개 변수는 이전 클라이언트 응용 프로그램에 의해 생략된 경우 1과 같이 의미 있는 값을 기본값으로 가져야 합니다.
 
-This approach has the semantic advantage that the same resource is always retrieved from the same URI, but it depends on the code that handles the request to parse the query string and send back the appropriate HTTP response. This approach also suffers from the same complications for implementing HATEOAS as the URI versioning mechanism.
+이 접근 방식은 동일한 리소스가 항상 동일한 URI에서 검색된다는 유의적 장점을 가지고 있지만 쿼리 문자열을 구문 분석하고 적절한 HTTP 응답으로 다시 전송하기 위한 요청을 처리하는 코드에 따라 달라집니다. 또한, 이 접근 방식은 URI 버전 관리 메커니즘으로 HATEOAS를 구현할 때 나타나는 문제가 동일하게 나타납니다. 
 
-> [!NOTE]
-> Some older web browsers and web proxies will not cache responses for requests that include a query string in the URL. This can have an adverse impact on performance for web applications that use a web API and that run from within such a web browser.
+> [!참고]
+> 일부 이전 웹 브라우저 및 웹 프록시는 URL에 쿼리 문자열을 포함하는 요청에 대한 응답을 캐시하지 않습니다. 이는 웹 API를 사용하고 이러한 웹 브라우저 내에서 실행되는 웹 응용 프로그램의 성능에 부정적인 영향을 미칠 수 있습니다. 
 >
 >
 
-### Header versioning
-Rather than appending the version number as a query string parameter, you could implement a custom header that indicates the version of the resource. This approach requires that the client application adds the appropriate header to any requests, although the code handling the client request could use a default value (version 1) if the version header is omitted. The following examples utilize a custom header named *Custom-Header*. The value of this header indicates the version of web API.
+### 헤더 버전 관리
+쿼리 문자열 매개 변수로 버전 번호를 첨부하는 것이 아니라 리소스의 버전을 표시하는 사용자 지정 헤더를 구현할 수 있습니다. 이 접근 방식을 사용하려면, 버전 헤더가 생략된 경우 클라이언트 요청을 처리하는 코드가 기본값(버전 1)을 사용할 수 있지만, 클라이언트 응용 프로그램은 요청에 적절한 헤더를 추가해야 합니다. 다음 예는 *Custom-Header(사용자 정의 헤더)*라고 이름 붙여진 사용자 헤더를 활용합니다. 사용자 정의 헤더의 값은 웹 API의 버전을 나타냅니다. 
 
-Version 1:
+버전 1:
 
 ```HTTP
 GET http://adventure-works.com/customers/3 HTTP/1.1
@@ -498,7 +497,7 @@ Content-Length: ...
 {"id":3,"name":"Contoso LLC","address":"1 Microsoft Way Redmond WA 98053"}
 ```
 
-Version 2:
+버전 2:
 
 ```HTTP
 GET http://adventure-works.com/customers/3 HTTP/1.1
@@ -516,10 +515,10 @@ Content-Length: ...
 {"id":3,"name":"Contoso LLC","dateCreated":"2014-09-04T12:11:38.0376089Z","address":{"streetAddress":"1 Microsoft Way","city":"Redmond","state":"WA","zipCode":98053}}
 ```
 
-Note that as with the previous two approaches, implementing HATEOAS requires including the appropriate custom header in any links.
+앞서 기술한 두 가지 접근 방식과 마찬가지로 HATEOAS를 구현하려면 적절한 사용자 정의 헤더가 링크에 포함되어야 한다는 점을 유념합니다. 
 
-### Media type versioning
-When a client application sends an HTTP GET request to a web server it should stipulate the format of the content that it can handle by using an Accept header, as described earlier in this guidance. Frequently the purpose of the *Accept* header is to allow the client application to specify whether the body of the response should be XML, JSON, or some other common format that the client can parse. However, it is possible to define custom media types that include information enabling the client application to indicate which version of a resource it is expecting. The following example shows a request that specifies an *Accept* header with the value *application/vnd.adventure-works.v1+json*. The *vnd.adventure-works.v1* element indicates to the web server that it should return version 1 of the resource, while the *json* element specifies that the format of the response body should be JSON:
+### 미디어 유형 버전 관리
+클라이언트 응용 프로그램이 웹 서버에 HTTP GET 요청을 전송할 때 본 지침에서 앞서 설명한 것처럼 Accept(수락) 헤더를 사용해 처리할 수 있는 콘텐츠의 형식을 명기해야 합니다. *Accept(수락)* 헤더의 일반적인 목적은 응답의 본문이 XML, JSON 또는 클라이언트가 구문 분석할 수 있는 기타 공통적인 형식인지 클라이언트 응용 프로그램이 지정하도록 허용하는 데 있습니다. 그러나 클라이언트 응용 프로그램이 예상하는 리소스 버전이 무엇인지를 표시하도록 하는 정보를 포함한 사용자 정의 미디어 유형을 정의하는 것도 가능합니다. 다음 예는 값 *application/vnd.adventure-works.v1+json*으로 *Accept(수락)* 헤더를 지정하는 요청을 보여줍니다. *vnd.adventure-works.v1* 요소는 웹 서버가 리소스 버전 1을 반환해야 함을 웹 서버에 표시하고, *json* 요소는 응답 본문의 형식이 JSON이 되어야 함을 지정합니다.
 
 ```HTTP
 GET http://adventure-works.com/customers/3 HTTP/1.1
@@ -528,7 +527,7 @@ Accept: application/vnd.adventure-works.v1+json
 ...
 ```
 
-The code handling the request is responsible for processing the *Accept* header and honoring it as far as possible (the client application may specify multiple formats in the *Accept* header, in which case the web server can choose the most appropriate format for the response body). The web server confirms the format of the data in the response body by using the Content-Type header:
+요청을 처리하는 코드는 *Accept(수락)* 헤더를 처리하고 가능한 한 적용해야 할 책임이 있습니다(클라이언트 응용 프로그램은 *Accept(수락)* 헤더에서 여러 개의 형식을 지정할 수 있으며, 이러한 경우 웹 서버가 응답 본문에 대해 가장 적절한 형식을 선택할 수 있습니다.). 웹 서버는 Content-Type(콘텐츠 유형) 헤더를 사용해 응답 본문에서 데이터 형식을 확인합니다. 
 
 ```HTTP
 HTTP/1.1 200 OK
@@ -539,17 +538,17 @@ Content-Length: ...
 {"id":3,"name":"Contoso LLC","address":"1 Microsoft Way Redmond WA 98053"}
 ```
 
-If the Accept header does not specify any known media types, the web server could generate an HTTP 406 (Not Acceptable) response message or return a message with a default media type.
+Accept(수락) 헤더가 알려진 미디어 유형을 지정하지 않는 경우 웹 서버는 HTTP 406(Not Acceptable(허용되지 않음)) 응답 메시지를 생성하거나 기본 미디어 유형으로 메시지를 반환할 수 있습니다. 
 
-This approach is arguably the purest of the versioning mechanisms and lends itself naturally to HATEOAS, which can include the MIME type of related data in resource links.
+논란의 여지가 있기는 하지만 이 접근 방식은 버전 관리 메커니즘 중에서 가장 간단하며, 자연스럽게 리소스 링크에 관련 데이터의 MIME 유형을 포함시킬 수 있는 HATEOAS에 적합합니다. 
 
-> [!NOTE]
-> When you select a versioning strategy, you should also consider the implications on performance, especially caching on the web server. The URI versioning and Query String versioning schemes are cache-friendly inasmuch as the same URI/query string combination refers to the same data each time.
+> [!참고]
+> 버전 관리 전략을 선택할 때 특히 웹 서버에서의 캐싱을 포함해 성능에 미치는 영향을 고려해야 합니다. URI 버전 관리 및 쿼리 문자열 버전 관리 스키마는 동일한 URI/쿼리 문자열 조합이 매번 동일한 데이터를 참조하는 한 캐시 친화적입니다. 
 >
-> The Header versioning and Media Type versioning mechanisms typically require additional logic to examine the values in the custom header or the Accept header. In a large-scale environment, many clients using different versions of a web API can result in a significant amount of duplicated data in a server-side cache. This issue can become acute if a client application communicates with a web server through a proxy that implements caching, and that only forwards a request to the web server if it does not currently hold a copy of the requested data in its cache.
+> 헤더 버전 관리 및 미디어 유형 버전 관리 메커니즘에는 일반적으로 Custom(사용자 정의) 헤더 또는 Accept(수락) 헤더에서 값을 검사하기 위한 추가 로직이 필요합니다. 대규모 환경에서 다양한 버전의 웹 API를 사용하는 많은 클라이언트는 서버 쪽 캐시에서 상당한 양의 중복된 데이터를 생성할 수 있습니다. 클라이언트 응용 프로그램이 캐싱을 구현하는 프록시를 통해 웹 서버와 통신하는 경우 이 문제는 심각해질 수 있고, 캐시에 요청된 데이터 사본을 현재 보유하고 있지 않은 경우에는 웹 서버로만 요청을 전달합니다. 
 >
 >
 
-## More information
-* The [RESTful Cookbook](http://restcookbook.com/) contains an introduction to building RESTful APIs.
-* The Web [API Checklist](https://mathieu.fenniak.net/the-api-checklist/) contains a useful list of items to consider when designing and implementing a Web API.
+## 자세한 정보
+* [RESTful 쿡북](http://restcookbook.com/)에는 RESTful API 구축에 대한 소개가 포함되어 있습니다.
+* 웹 [API 체크리스트](https://mathieu.fenniak.net/the-api-checklist/)에는 웹 API를 설계 및 구현할 때 고려해야 할 유용한 항목 리스트가 포함되어 있습니다.
