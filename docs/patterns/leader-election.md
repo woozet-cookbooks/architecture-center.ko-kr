@@ -13,67 +13,66 @@ pnp.pattern.categories: [design-implementation, resiliency]
 
 ---
 
-# Leader Election
+# 리더 선정
 
 [!INCLUDE [header](../_includes/header.md)]
 
-Coordinate the actions performed by a collection of collaborating instances in a distributed application by electing one instance as the leader that assumes responsibility for managing the others. This can help to ensure that instances don't conflict with each other, cause contention for shared resources, or inadvertently interfere with the work that other instances are performing.
+하나의 인스턴스를 다른 인스턴스의 관리를 책임지는 리더로 선정해 배포 응용 프로그램 내에 있는 공동 작업 인스턴스 모음이 수행하는 동작을 조율합니다. 이렇게 하면 인스턴스가 서로 충돌하지 않고, 공유 리소스를 위한 경합을 초래하지 않으며, 다른 인스턴스가 수행 중인 작업을 실수로 방해하지 않는 데 도움을 줄 수 있습니다. 
 
-## Context and problem
+## 배경 및 문제
 
-A typical cloud application has many tasks acting in a coordinated manner. These tasks could all be instances running the same code and requiring access to the same resources, or they might be working together in parallel to perform the individual parts of a complex calculation.
+일반적인 클라우드 응용 프로그램에는 조율 방식으로 동작하는 많은 작업이 있습니다. 이런 작업은 모두 동일한 코드를 실행하고 동일한 리소스에 액세스할 필요가 있는 인스턴스일 수 있고 또는 복잡한 계산의 개별 부분을 수행하기 위해 동시에 함께 실행될 수 있습니다.
 
-The task instances might run separately for much of the time, but it might also be necessary to coordinate the actions of each instance to ensure that they don’t conflict, cause contention for shared resources, or accidentally interfere with the work that other task instances are performing.
+작업 인스턴스는 대부분 개별적으로 실행되지만 인스턴스가 서로 충돌하지 않고, 공유 리소스를 위한 경합을 초래하지 않으며, 다른 작업 인스턴스가 수행 중인 작업을 실수로 방해하지 않도록 각 인스턴스의 동작을 조율할 필요가 있습니다.
 
-For example:
+예를 들어
 
-- In a cloud-based system that implements horizontal scaling, multiple instances of the same task could be running at the same time with each instance serving a different user. If these instances write to a shared resource, it's necessary to coordinate their actions to prevent each instance from overwriting the changes made by the others.
-- If the tasks are performing individual elements of a complex calculation in parallel, the results need to be aggregated when they all complete.
+- 수평 확장을 구현하는 클라우드 기반 시스템에서 동일한 작업의 여러 인스턴스는 각각의 인스턴스를 서로 다른 사용자가 사용함에 따라 동시에 실행될 수 있습니다. 이런 인스턴스가 공유 리소스에 쓰기를 수행하는 경우, 각 인스턴스가 다른 인스턴스에서 수행된 변경 사항을 덮어쓰지 않도록 동작을 조율할 필요가 있습니다.
+- 복잡한 계산의 개별 요소를 동시에 수행하는 작업의 경우, 작업이 모두 완료되면 결과를 집계할 필요가 있습니다.
 
-The task instances are all peers, so there isn't a natural leader that can act as the coordinator or aggregator.
+작업 인스턴스는 모두 동료이므로 조율자 또는 집계자로 작용할 수 있는 기본 리더가 없습니다.
 
-## Solution
+## 해결책
 
-A single task instance should be elected to act as the leader, and this instance should coordinate the actions of the other subordinate task instances. If all of the task instances are running the same code, they are each capable of acting as the leader. Therefore, the election process must be managed carefully to prevent two or more instances taking over the leader role at the same time.
+리더로 동작할 단일 작업 인스턴스를 선정해야 하고, 선정된 리더 인스턴스는 다른 하위 작업 인스턴스의 동작을 조율해야 합니다. 동일한 코드를 실행하는 작업 인스턴스는 모두 리더로 동작할 수 있습니다. 따라서 둘 이상의 인스턴스가 동시에 리더 역할을 맡지 않도록 리더 선정 프로세스를 신중하게 관리해야 합니다.
 
-The system must provide a robust mechanism for selecting the leader. This method has to cope with events such as network outages or process failures. In many solutions, the subordinate task instances monitor the leader through some type of heartbeat method, or by polling. If the designated leader terminates unexpectedly, or a network failure makes the leader unavailable to the subordinate task instances, it's necessary for them to elect a new leader.
+시스템은 리더를 선정하는 탄탄한 방식을 제공해야 합니다. 이 방법은 네트워크 중단 또는 프로세스 실패와 같은 이벤트를 처리해야 합니다. 많은 솔루션에서 하위 작업 인스턴스는 특정 유형의 하트비트 방법 또는 폴링을 통해 리더를 모니터링합니다.  지정된 리더가 예기치 않게 종료되거나 네트워크 장애로 인해 리더와 하위 작업 인스턴스의 연결이 해제되는 경우, 새로운 리더를 선정할 필요가 있습니다.
 
-There are several strategies for electing a leader among a set of tasks in a distributed environment, including:
-- Selecting the task instance with the lowest-ranked instance or process ID.
-- Racing to acquire a shared, distributed mutex. The first task instance that acquires the mutex is the leader. However, the system must ensure that, if the leader terminates or becomes disconnected from the rest of the system, the mutex is released to allow another task instance to become the leader.
-- Implementing one of the common leader election algorithms such as the [Bully Algorithm](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/BullyExample.html) or the [Ring Algorithm](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/RingElectExample.html). These algorithms assume that each candidate in the election has a unique ID, and that it can communicate with the other candidates reliably.
+분산 환경에서 작업 집합 중 리더를 선정하는 여러 전략은 다음과 같습니다.
+- 최저 순위 인스턴스 또는 프로세스 ID를 포함하는 작업 인스턴스를 선정
+- 공유되고 분산된 뮤텍스를 가져오기 위해 경쟁. 뮤텍스를 가져오는 첫 번째 작업 인스턴스는 리더입니다. 그러나 리더가 종료되거나 시스템의 나머지와 리더의 연결이 해제되는 경우 시스템은 다른 작업 인스턴스를 리더로 허용하도록 뮤텍스가 해제되는지 확인해야 합니다.
+- [불리 알고리즘](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/BullyExample.html) 또는 [링 알고리즘](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/RingElectExample.html)과 일반 리더 선정 알고리즘 중 하나를 구현. 이런 알고리즘은 각각의 리더 후보가 고유 ID를 보유하고 다른 후보와 안정적으로 통신할 수 있다고 가정합니다. 
 
-## Issues and considerations
+## 문제 및 고려 사항
 
-Consider the following points when deciding how to implement this pattern:
-- The process of electing a leader should be resilient to transient and persistent failures.
-- It must be possible to detect when the leader has failed or has become otherwise unavailable (such as due to a communications failure). How quickly detection is needed is system dependent. Some systems might be able to function for a short time without a leader, during which a transient fault might be fixed. In other cases, it might be necessary to detect leader failure immediately and trigger a new election.
-- In a system that implements horizontal autoscaling, the leader could be terminated if the system scales back and shuts down some of the computing resources.
-- Using a shared, distributed mutex introduces a dependency on the external service that provides the mutex. The service constitutes a single point of failure. If it becomes unavailable for any reason, the system won't be able to elect a leader.
-- Using a single dedicated process as the leader is a straightforward approach. However, if the process fails there could be a significant delay while it's restarted. The resulting latency can affect the performance and response times of other processes if they're waiting for the leader to coordinate an operation.
-- Implementing one of the leader election algorithms manually provides the greatest flexibility for tuning and optimizing the code.
+이 패턴의 구현 방법을 결정할 때는 다음 사항을 고려해야 합니다.
+- 리더를 선정하는 프로세스는 일시적 및 지속적 실패에 대해 복원력이 있어야 합니다. 
+- 리더가 고장 났거나 그 밖의 이유로 사용할 수 없게 되었을 때(예: 통신 장애) 이를 감지할 수 있어야 합니다. 얼마나 빨리 감지해야 하는가의 문제는 시스템에 따라 달라집니다. 일시적 오류를 해결하는 짧은 시간 동안 리더 없이 작동할 수 있는 시스템도 있지만 리더 장애를 즉시 감지하고 새로운 리더 선정을 트리거해야 하는 시스템도 있습니다.
+- 수평 확장을 구현하는 시스템에서 시스템이 규모를 축소하고 계산 리소스 중 일부를 종료하면 리더가 종료될 수 있습니다.
+- 공유되고 분산된 뮤텍스를 사용하면 뮤텍스를 제공하는 외부 서비스에 의존하게 됩니다. 서비스는 단일 실패 지점을 구성합니다. 어떤 이유로든 서비스를 사용할 수 없게 되면 시스템은 리더를 선정할 수 없게 됩니다.
+- 단일 전용 프로세스를 리더로 사용하는 간단한 접근 방식도 있습니다. 그러나 이 경우 프로세스가 실패하면 다시 시작하는 동안 상당한 지연이 초래될 수 있습니다. 다른 프로세스가 작업을 조율할 리더를 기다리는 경우, 결과적인 대기 시간은 다른 프로세스의 성능과 응답 시간에 영향을 미칠 수 있습니다.
+- 리더 선정 알고리즘 중 하나를 수동으로 구현하면 코드의 튜닝과 최적화에 최고의 유연성을 제공할 수 있습니다.
 
-## When to use this pattern
+## 패턴 사용 사례
 
-Use this pattern when the tasks in a distributed application, such as a cloud-hosted solution, need careful coordination and there's no natural leader.
+이 패턴은 클라우드 호스팅 솔루션과 같은 분산 응용 프로그램의 작업에 신중한 조율이 필요하고 기본 리더가 없을 때 사용합니다.
 
->  Avoid making the leader a bottleneck in the system. The purpose of the leader is to coordinate the work of the subordinate tasks, and it doesn't necessarily have to participate in this work itself&mdash;although it should be able to do so if the task isn't elected as the leader.
+>  리더가 시스템에서 병목 현상을 일으키지 않도록 주의해야 합니다. 리더의 목적은 하위 작업의 동작을 조율하는 것입니다. 리더로 선정되지 않더라도 하위 작업의 동작에 참여할 수 있지만, 리더로 선정되든 아니든 하위 작업의 동작에 반드시 참여할 필요는 없습니다.
 
-This pattern might not be useful if:
-- There's a natural leader or dedicated process that can always act as the leader. For example, it might be possible to implement a singleton process that coordinates the task instances. If this process fails or becomes unhealthy, the system can shut it down and restart it.
-- The coordination between tasks can be achieved using a more lightweight method. For example, if several task instances simply need coordinated access to a shared resource, a better solution is to use optimistic or pessimistic locking to control access.
-- A third-party solution is more appropriate. For example, the Microsoft Azure HDInsight service (based on Apache Hadoop) uses the services provided by Apache Zookeeper to coordinate the map and reduce tasks that collect and summarize data.
+다음의 경우에는 이 패턴이 유용하지 않습니다.
+- 항상 리더로 작용할 수 있는 기본 리더 또는 전용 프로세스가 있는 경우. 예를 들면 작업 인스턴스를 조율하는 단일 프로세스를 구현할 수 있습니다. 이 프로세스가 실패하거나 비정상이 되면 시스템은 프로세스를 종료하고 다시 시작할 수 있습니다.
+- 더 간단한 방법을 사용해 작업을 조율할 수 있는 경우. 예를 들어 여러 작업 인스턴스가 단순히 공유 리소스에 대한 조율된 액세스를 필요로 하는 경우, 효율적인 솔루션은 낙관적 잠금 또는 최악 잠금을 사용해 액세스를 제어하는 것입니다.
+- 타사 솔루션이 더 적절한 경우. 예를 들면 Microsoft Azure HDInsight 서비스(Apache Hadoop 기반)는 Apache Zookeeper가 제공하는 서비스를 사용해 지도를 조정하고 데이터 수집 및 요약 작업을 줄입니다.
 
-## Example
+## 예제
 
-The DistributedMutex project in the LeaderElection solution (a sample that demonstrates this pattern is available on [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/leader-election)) shows how to use a lease on an Azure Storage blob to provide a mechanism for implementing a shared, distributed mutex. This mutex can be used to elect a leader among a group of role instances in an Azure cloud service. The first role instance to acquire the lease is elected the leader, and remains the leader until it releases the lease or isn't able to renew the lease. Other role instances can continue to monitor the blob lease in case the leader is no longer available.
+LeaderElection 솔루션의 DistributedMutex 프로젝트(이 패턴을 보여주는 샘플은 [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/leader-election)에서 다운로드 가능)는 Azure Storage Blob 임대를 사용해 공유되고 분산된 뮤텍스를 구현하기 위한 메커니즘을 제공하는 방법을 보여줍니다. 이런 뮤텍스는 Azure 클라우드 서비스에서 역할 인스턴스의 그룹 중 리더를 선정하는 데 사용할 수 있습니다. 임대를 가져오는 첫 번째 역할 인스턴스는 리더로 선정되고 임대를 해제하거나 임대를 갱신할 수 없을 때까지 리더로 유지됩니다. 다른 역할 인스턴스는 리더를 더 이상 사용할 수 없는 경우 Blob 임대를 계속 모니터링할 수 있습니다.
 
->  A blob lease is an exclusive write lock over a blob. A single blob can be the subject of only one lease at any point in time. A role instance can request a lease over a specified blob, and it'll be granted the lease if no other role instance holds a lease over the same blob. Otherwise the request will throw an exception.
+>  Blob 임대는 Blob에 대한 배타적 쓰기 잠금입니다. 단일 Blob은 특정 시점에 한 번뿐인 임대의 대상일 수 있습니다. 역할 인스턴스는 지정된 Blob에 대한 임대를 요청할 수 있고 다른 역할 인스턴스가 동일한 Blob에 대한 임대를 유지하지 않으면 임대가 허용됩니다. 그렇지 않으면 요청은 예외를 발생시킵니다.
 
-> To avoid a faulted role instance retaining the lease indefinitely, specify a lifetime for the lease. When this expires, the lease becomes available. However, while a role instance holds the lease it can request that the lease is renewed, and it'll be granted the lease for a further period of time. The role instance can continually repeat this process if it wants to retain the lease.
-For more information on how to lease a blob, see [Lease Blob (REST API)](https://msdn.microsoft.com/library/azure/ee691972.aspx).
+> 오류가 발생한 역할 인스턴스가 임대를 무한정 유지하는 것을 방지하려면 임대의 수명을 지정합니다. 수명이 만료되면 임대는 사용할 수 있게 됩니다. 그러나 역할 인스턴스가 임대를 유지하는 동안에는 임대의 갱신을 요청할 수 있고 갱신되면 임대를 추가 기간 동안 유지하게 됩니다. 임대를 유지하길 원하는 경우 역할 인스턴스는 이런 프로세스를 계속 반복할 수 있습니다. Blob 임대 방법에 대한 추가 정보는 [Blob 임대(REST API)](https://msdn.microsoft.com/library/azure/ee691972.aspx)를 참조하시기 바랍니다.
 
-The `BlobDistributedMutex` class in the C# example below contains the `RunTaskWhenMutexAquired` method that enables a role instance to attempt to acquire a lease over a specified blob. The details of the blob (the name, container, and storage account) are passed to the constructor in a `BlobSettings` object when the `BlobDistributedMutex` object is created (this object is a simple struct that is included in the sample code). The constructor also accepts a `Task` that references the code that the role instance should run if it successfully acquires the lease over the blob and is elected the leader. Note that the code that handles the low-level details of acquiring the lease is implemented in a separate helper class named `BlobLeaseManager`.
+다음 C# 예제의 `BlobDistributedMutex` 클래스는 역할 인스턴스가 지정된 Blob에 대한 임대를 획득하게 해주는 `RunTaskWhenMutexAquired` 메서드를 포함합니다. Blob의 세부 정보(이름, 컨테이너, 저장소 계정)는 `BlobDistributedMutex` 개체(샘플 코드에 포함된 간단한 구조체)를 생성할 때 `BlobSettings` 개체 내의 생성자에 전달됩니다. 또한 생성자는 blob에 대한 임대를 성공적으로 획득하고 리더로 선정된 경우 역할 인스턴스가 실행해야 하는 코드를 참조하는 `Task` 를 수락합니다. 임대 획득에 대한 낮은 수준의 세부 정보를 처리하는 코드는 `BlobLeaseManager` 이름의 별도 도우미 클래스 내에 구현됩니다.
 
 ```csharp
 public class BlobDistributedMutex
@@ -98,7 +97,7 @@ public class BlobDistributedMutex
   ...
 ```
 
-The `RunTaskWhenMutexAquired` method in the code sample above invokes the `RunTaskWhenBlobLeaseAcquired` method shown in the following code sample to actually acquire the lease. The `RunTaskWhenBlobLeaseAcquired` method runs asynchronously. If the lease is successfully acquired, the role instance has been elected the leader. The purpose of the `taskToRunWhenLeaseAcquired` delegate is to perform the work that coordinates the other role instances. If the lease isn't acquired, another role instance has been elected as the leader and the current role instance remains a subordinate. Note that the `TryAcquireLeaseOrWait` method is a helper method that uses the `BlobLeaseManager` object to acquire the lease.
+위의 코드 샘플에 포함되어 있는 `RunTaskWhenMutexAquired` 메서드는 실제로 임대를 획득하기 위해 다음 코드 샘플에 제시된 `RunTaskWhenBlobLeaseAcquired` 메서드를 호출합니다. `RunTaskWhenBlobLeaseAcquired` 메서드는 비동기적으로 실행됩니다. 임대를 성공적으로 획득하면 역할 인스턴스는 리더로 선정된 상태입니다. `taskToRunWhenLeaseAcquired` 대리자의 목적은 다른 역할 인스턴스를 조율하는 동작을 수행하는 것입니다. 임대를 획득하지 못하면 다른 역할 인스턴스가 리더로 선정되고 현재 역할 인스턴스는 하위로 내려갑니다. `TryAcquireLeaseOrWait` 메서드는 `BlobLeaseManager` 개체를 사용해 임대를 획득하는 도우미 메서드입니다.
 
 ```csharp
   private async Task RunTaskWhenBlobLeaseAcquired(
@@ -128,9 +127,9 @@ The `RunTaskWhenMutexAquired` method in the code sample above invokes the `RunTa
   }
 ```
 
-The task started by the leader also runs asynchronously. While this task is running, the `RunTaskWhenBlobLeaseAquired` method shown in the following code sample periodically attempts to renew the lease. This helps to ensure that the role instance remains the leader. In the sample solution, the delay between renewal requests is less than the time specified for the duration of the lease in order to prevent another role instance from being elected the leader. If the renewal fails for any reason, the task is canceled.
+리더가 시작한 작업도 비동기적으로 실행됩니다. 이 작업이 실행되는 동안 다음 코드 샘플에 제시된 `RunTaskWhenBlobLeaseAquired` 메서드는 임대를 주기적으로 갱신합니다. 갱신은 역할 인스턴스를 리더로 유지하는 것을 도와줍니다. 샘플 솔루션에서 갱신 요청 사이의 지연은 임대의 지속을 위해 지정하는 시간보다 짧아야 합니다. 그래야 다른 역할 인스턴스가 리더로 선정되는 것을 막을 수 있습니다. 어떤 이유로든 갱신이 실패하면 작업이 취소됩니다.
 
-If the lease fails to be renewed or the task is canceled (possibly as a result of the role instance shutting down), the lease is released. At this point, this or another role instance might be elected as the leader. The code extract below shows this part of the process.
+임대가 갱신에 실패하거나 작업이 취소되면(역할 인스턴스 종료의 결과로 가능) 임대가 해제됩니다. 임대가 해제되면 갱신에 실패한 역할 인스턴스 또는 다른 역할 인스턴스는 리더로 선정될 수 있습니다.  다음 인용 코드는 프로세스 중 갱신 부분을 보여줍니다.
 
 ```csharp
   private async Task RunTaskWhenBlobLeaseAcquired(
@@ -161,12 +160,12 @@ If the lease fails to be renewed or the task is canceled (possibly as a result o
 }
 ```
 
-The `KeepRenewingLease` method is another helper method that uses the `BlobLeaseManager` object to renew the lease. The `CancelAllWhenAnyCompletes` method cancels the tasks specified as the first two parameters. The following diagram illustrates using the `BlobDistributedMutex` class to elect a leader and run a task that coordinates operations.
+`KeepRenewingLease` 메서드는 `BlobLeaseManager` 개체를 사용해 임대를 갱신하는 다른 도우미 메서드입니다. `CancelAllWhenAnyCompletes` 메서드는 처음 두 매개 변수로 지정된 작업을 취소합니다. 다음 다이어그램은 `BlobDistributedMutex` 클래스를 사용해 리더를 선정하고 동작을 조율하는 작업을 실행하는 과정을 보여줍니다.
 
 ![Figure 1 illustrates the functions of the BlobDistributedMutex class](./_images/leader-election-diagram.png)
 
 
-The following code example shows how to use the `BlobDistributedMutex` class in a worker role. This code acquires a lease over a blob named `MyLeaderCoordinatorTask` in the lease's container in development storage, and specifies that the code defined in the `MyLeaderCoordinatorTask` method should run if the role instance is elected the leader.
+다음 코드 예제는 작업자 역할에서 `BlobDistributedMutex` 클래스의 사용 방법을 보여줍니다. 이 코드는 개발 단계에서 임대의 컨테이너 내에 있는 `MyLeaderCoordinatorTask` 이름의 Blob에 대한 임대를 획득하고 역할 인스턴스가 리더로 선정된 경우 `MyLeaderCoordinatorTask` 메서드에 정의된 코드의 실행을 지정합니다.
 
 ```csharp
 var settings = new BlobSettings(CloudStorageAccount.DevelopmentStorageAccount,
@@ -183,20 +182,20 @@ private static async Task MyLeaderCoordinatorTask(CancellationToken token)
 }
 ```
 
-Note the following points about the sample solution:
-- The blob is a potential single point of failure. If the blob service becomes unavailable, or is inaccessible, the leader won't be able to renew the lease and no other role instance will be able to acquire the lease. In this case, no role instance will be able to act as the leader. However, the blob service is designed to be resilient, so complete failure of the blob service is considered to be extremely unlikely.
-- If the task being performed by the leader stalls, the leader might continue to renew the lease, preventing any other role instance from acquiring the lease and taking over the leader role in order to coordinate tasks. In the real world, the health of the leader should be checked at frequent intervals.
-- The election process is nondeterministic. You can't make any assumptions about which role instance will acquire the blob lease and become the leader.
-- The blob used as the target of the blob lease shouldn't be used for any other purpose. If a role instance attempts to store data in this blob, this data won't be accessible unless the role instance is the leader and holds the blob lease.
+샘플 솔루션과 관련해 다음 사항에 유의하시기 바랍니다.
+- Blob은 잠재적인 단일 실패 지점입니다. Blob 서비스를 사용할 수 없거나 액세스할 수 없게 되면 리더는 임대를 갱신할 수 없게 되고 다른 역할 인스턴스가 임대를 획득할 수 없게 됩니다. 이 경우 어떤 역할 인스턴스도 리더로 작용할 수 없게 됩니다. 그러나 Blob 서비스는 복원력이 있도록 설계되었으므로 Blob 서비스의 완전한 장애는 거의 가능성이 없다고 간주됩니다.
+- 리더가 수행 중인 작업이 중지되면 리더는 다른 역할 인스턴스가 임대를 획득하지 못하게 하고 작업을 조율하는 리더 역할을 맡도록 임대를 계속 갱신할 수 있습니다. 실제로 리더의 상태는 자주 확인해야 합니다.
+- 선정 프로세스는 비결정적입니다. 사용자는 어떤 역할 인스턴스가 Blob 임대를 획득해 리더가 될지를 가정할 수 없습니다.
+- Blob 임대의 대상으로 사용되는 Blob은 다른 목적으로 사용되지 않아야 합니다. 역할 인스턴스가 데이터를 이 Blob에 저장하는 경우, 역할 인스턴스가 리더이고 Blob 임대를 유지하지 않으면 이 데이터에 액세스할 수 없습니다. 
 
-## Related patterns and guidance
+## 관련 패턴 및 지침
 
-The following guidance might also be relevant when implementing this pattern:
-- This pattern has a downloadable [sample application](https://github.com/mspnp/cloud-design-patterns/tree/master/leader-election).
-- [Autoscaling Guidance](https://msdn.microsoft.com/library/dn589774.aspx). It's possible to start and stop instances of the task hosts as the load on the application varies. Autoscaling can help to maintain throughput and performance during times of peak processing.
-- [Compute Partitioning Guidance](https://msdn.microsoft.com/library/dn589773.aspx). This guidance describes how to allocate tasks to hosts in a cloud service in a way that helps to minimize running costs while maintaining the scalability, performance, availability, and security of the service.
-- The [Task-based Asynchronous Pattern](https://msdn.microsoft.com/library/hh873175.aspx).
-- An example illustrating the [Bully Algorithm](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/BullyExample.html).
-- An example illustrating the [Ring Algorithm](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/RingElectExample.html).
-- The article [Apache Zookeeper on Microsoft Azure](https://msopentech.com/opentech-projects/apache-zookeeper-on-windows-azure-2/) on the Microsoft Open Technologies website.
-- The article [Lease Blob (REST API)](https://msdn.microsoft.com/library/azure/ee691972.aspx) on MSDN.
+이 패턴을 구현할 때 관련될 수 있는 지침은 다음과 같습니다.
+- 이 패턴에는 다운로드할 수 있는 [샘플 응용 프로그램](https://github.com/mspnp/cloud-design-patterns/tree/master/leader-election)이 포함되어 있습니다.
+- [자동 크기 조정 지침](https://msdn.microsoft.com/library/dn589774.aspx). 응용 프로그램 부하의 변동에 따라 작업 호스트의 인스턴스를 시작하고 정지할 수 있습니다. 자동 크기 조정은 최대 처리 시간 동안 처리량과 성능을 유지하는 데 도움을 줄 수 있습니다.
+- [계산 분할 지침](https://msdn.microsoft.com/library/dn589773.aspx). 이 지침은 서비스의 확장성, 성능, 가용성 및 보안을 유지하면서 운영 비용을 최소화하는 데 도움을 주는 방식으로 클라우드 서비스에서 작업을 호스트에 할당하는 방법을 설명합니다.
+- [작업 기반 비동기 패턴](https://msdn.microsoft.com/library/hh873175.aspx).
+- [불리 알고리즘](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/BullyExample.html)을 보여주는 예제
+- [링 알고리즘](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/RingElectExample.html)을 보여주는 예제
+- Microsoft Open Technologies 웹 사이트에 게시된 [Microsoft Azure에서 Apache Zookeeper](https://msopentech.com/opentech-projects/apache-zookeeper-on-windows-azure-2/)
+- MSDN에 게시된 [Blob 임대(REST API)](https://msdn.microsoft.com/library/azure/ee691972.aspx) 
