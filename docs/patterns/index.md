@@ -5,20 +5,20 @@ keywords: Azure
 ms.service: guidance
 ms.author: pnp
 ---
-# Cloud Design Patterns
+# 클라우드 설계 패턴
 
-These design patterns are useful for building reliable, scalable, secure applications in the cloud.
+클라우드 설계 패턴은 클라우드에서 신뢰할 수 있고, 확장이 가능하며, 안전한 응용 프로그램을 작성하는 데 유용합니다.
 
-Each pattern describes the problem that the pattern addresses, considerations for applying the pattern, and an example based on Microsoft Azure. Most of the patterns include code samples or snippets that show how to implement the pattern on Azure. However, most of the patterns are relevant to any distributed system, whether hosted on Azure or on other cloud platforms.
+각각의 패턴은 패턴이 초점을 맞추는 문제, 패턴 적용을 위한 고려 사항 및 Microsoft Azure를 기반으로 하는 예제를 설명합니다. 대부분의 패턴에는 Azure에서 패턴의 구현 방법을 보여주는 코드 샘플이나 코드 조각이 포함되어 있습는데, 대부분의 패턴은 Azure 또는 다른 클라우드 플랫폼에서 호스팅하는 분산 시스템과 관련이 있습니다.
 
-## Challenges in cloud development
+## 클라우드 개발의 당면 과제
 
 <table>
 <tr>
     <td style="width: 64px; vertical-align: middle;"><a href="./category/availability.md"><img src="_images/category/availability.svg" alt="Availability" /></a></td>
     <td>
-        <h3><a href="./category/availability.md">Availability</a></h3>
-        <p>Availability is the proportion of time that the system is functional and working, usually measured as a percentage of uptime. It can be affected by system errors, infrastructure problems, malicious attacks, and system load.  Cloud applications typically provide users with a service level agreement (SLA), so applications must be designed to maximize availability.</p>
+        <h3><a href="./category/availability.md">가용성</a></h3>
+        <p>가용성은 시스템이 기능하고 작동하는 시간의 비율로, 일반적으로 작동 시간의 백분율로 측정합니다. 가용성은 시스템 오류, 인프라 문제, 악의적인 공격, 시스템 부하에 영향을 받을 수 있습니다. 보통 클라우드 응용 프로그램은 사용자에게 서비스 수준 계약(SLA)을 제공합니다. 즉, 응용 프로그램은 가용성을 최대화하는 방식으로 설계되어야 합니다.</p>
     </td>
 </tr>
 <tr>
