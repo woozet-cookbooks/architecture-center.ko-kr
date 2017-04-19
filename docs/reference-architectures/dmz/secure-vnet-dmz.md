@@ -75,6 +75,7 @@ NVA 수준에서 응용 프로그램 연결을 종료하고 백엔드 계층 호
 
 ## 관리 효율성 고려사항
 
+
 공용 DMZ 내 NVA에 대한 모든 모니터링 및 관리는 관리 서브넷의 점프박스를 통해 수행되어야 합니다. [Azure와 온-프레미스 데이터센터 간 DMZ를 구현][implementing-a-secure-hybrid-network-architecture]에서 언급되었듯이, 온-프레미스 네트워크로부터 게이트웨이를 거쳐 점프박스로 이어지는 단일의 네트워크 루트를 정의하여 액세스를 제한합니다.
 
 온-프레미스 네트워크에서 Azure로의 게이트웨이 연결이 중단되는 경우에도 공용 IP 주소를 배포하고 점프박스에 추가한 후 인터넷으로부터 로그인하여 점프박스에 액세스할 수 있습니다.
@@ -95,7 +96,6 @@ NVA 수준에서 응용 프로그램 연결을 종료하고 백엔드 계층 호
 
 1. 아래 버튼을 마우스 오른쪽 단추로 클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fdmz%2Fsecure-vnet-dmz%2FvirtualNetwork.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 2. Azure 포털에서 링크가 열리면 일부 설정값을 입력합니다.
-
    * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-public-dmz-network-rg`를 입력합니다.
    * **위치** 드롭다운 상자에서 지역을 선택합니다.
    * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자는 편집하지 않습니다.
@@ -106,7 +106,6 @@ NVA 수준에서 응용 프로그램 연결을 종료하고 백엔드 계층 호
 3. 배포가 완료될 때까지 기다립니다.
 4. 아래 버튼을 마우스 오른쪽 단추로 클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fdmz%2Fsecure-vnet-dmz%2Fworkload.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 5. Azure 포털에서 링크가 열리면 일부 설정값을 입력합니다.
-
    * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-public-dmz-wl-rg`를 입력합니다.
    * **위치** 드롭다운 상자에서 지역을 선택합니다.
    * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자는 편집하지 않습니다.
