@@ -9,196 +9,209 @@ ms.author: pnp
 
 pnp.series.title: Best Practices
 ---
-# Data partitioning
+# 데이터 분할
 [!INCLUDE [header](../_includes/header.md)]
 
-In many large-scale solutions, data is divided into separate partitions that can be managed and accessed separately. The partitioning strategy must be chosen carefully to maximize the benefits while minimizing adverse effects. Partitioning can help improve scalability, reduce contention, and optimize performance. Another benefit of partitioning is that it can provide a mechanism for dividing data by the pattern of use. For example, you can archive older, less active (cold) data in cheaper data storage.
+많은 대규모 솔루션에서 데이터는 별도로 관리 및 액세스할 수 있는 별도의 파티션으로 나뉩니다. 분할 전략을 주의 깊게 선택하여 장점을 극대화하고 부작용을 최소화해야 합니다. 분할은 확장성을 개선하고, 경합을 줄이며, 성능을 최적화합니다. 분할의 다른 이점으로는 사용 패턴에 따라 데이터를 나누는 메커니즘을 지원할 수 있다는 점입니다. 예를 들어, 저렴한 데이터 저장소에 오래된 비활성(콜드) 데이터를 보관할 수 있습니다. 
 
-## Why partition data?
-Most cloud applications and services store and retrieve data as part of their operations. The design of the data stores that an application uses can have a significant bearing on the performance, throughput, and scalability of a system. One technique that is commonly applied in large-scale systems is to divide the data into separate partitions.
+## 왜 파티션 데이터인가?
+대다수 클라우드 응용 프로그램과 서비스는 데이터 저장과 검색 기능을 갖추고 있습니다. 응용 프로그램이 사용하는 데이터 저장소 설계는 시스템의 성능, 처리량 및 확장성과 밀접한 관련이 있습니다. 대규모 시스템에서 일반적으로 적용되는 한 가지 기법은 데이터를 별도의 파티션으로 나누는 것입니다. 
 
-> The term *partitioning* that's used in this guidance refers to the process of physically dividing data into separate data stores. This is not the same as SQL Server table partitioning, which is a different concept.
+> 이 지침에서 사용되는 *분할*이라는 용어는 데이터를 별도의 데이터 저장소로 물리적으로 나누는 프로세스를 말합니다. 여기서 분할은 SQL Server 테이블의 분할과는 다른 개념입니다.
 >
 >
 
-Partitioning data can offer a number of benefits. For example, it can be applied in order to:
+데이터를 분할하면 다양한 이점이 있습니다. 예를 들면, 다음과 같은 이점을 위해 데이터 분할을 적용할 수 있습니다. 
 
-* **Improve scalability**. When you scale up a single database system, it will eventually reach a physical hardware limit. If you divide data across multiple partitions, each of which is hosted on a separate server, you can scale out the system almost indefinitely.
-* **Improve performance**. Data access operations on each partition take place over a smaller volume of data. Provided that the data is partitioned in a suitable way, partitioning can make your system more efficient. Operations that affect more than one partition can run in parallel. Each partition can be located near the application that uses it to minimize network latency.
-* **Improve availability**. Separating data across multiple servers avoids a single point of failure. If a server fails, or is undergoing planned maintenance, only the data in that partition is unavailable. Operations on other partitions can continue. Increasing the number of partitions reduces the relative impact of a single server failure by reducing the percentage of data that will be unavailable. Replicating each partition can further reduce the chance of a single partition failure affecting operations. It also makes it possible to separate critical data that must be continually and highly available from low-value data that has lower availability requirements (log files, for example).
-* **Improve security**. Depending on the nature of the data and how it is partitioned, it might be possible to separate sensitive and non-sensitive data into different partitions, and therefore into different servers or data stores. Security can then be specifically optimized for the sensitive data.
-* **Provide operational flexibility**. Partitioning offers many opportunities for fine tuning operations, maximizing administrative efficiency, and minimizing cost. For example, you can define different strategies for management, monitoring, backup and restore, and other administrative tasks based on the importance of the data in each partition.
-* **Match the data store to the pattern of use**. Partitioning allows each partition to be deployed on a different type of data store, based on cost and the built-in features that data store offers. For example, large binary data can be stored in a blob data store, while more structured data can be held in a document database. For more information, see [Building a polyglot solution] in the patterns & practices guide and [Data access for highly-scalable solutions: Using SQL, NoSQL, and polyglot persistence] on the Microsoft website.
+* **확장성 향상**. 단일 데이터베이스 시스템을 강화하다 보면 결국 물리적 하드웨어의 한계에 도달하게 됩니다. 각기 별도의 서버에서 호스팅되는 파티션 여러 개에서 데이터를 나눌 경우, 시스템은 거의 무제한적으로 규모가 확장됩니다.
+* **성능 개선**. 각 파티션에서 데이터 액세스 작업은 적은 양의 데이터에서 진행됩니다. 데이터가 적절한 방식으로 분할되기만 하면, 분할은 시스템의 효율성을 높여 줄 수 있습니다. 2개 이상의 파티션에 영향을 주는 작업은 동시에 실행될 수 있습니다. 각 파티션은 해당 파티션을 사용하는 응용 프로그램 근처에 위치하여 네트워크 대기 시간을 최소화할 수 있습니다.
+* **가용성 개선**. 여러 서버에서 데이터를 분리하면 단일 장애 지점을 차단해 줍니다. 서버에 장애가 발생하거나 예정된 유지 관리 작업이 실행중인 경우, 해당 파티션의 데이터만 사용할 수 없는 상태가 됩니다. 다른 파티션에서는 작업을 계속할 수 있습니다. 파티션 수가 늘어나면 사용할 수 없는 데이터의 비율이 줄어 단일 서버 장애와 관련된 영향이 감소합니다. 각 파티션을 복제하면 작업에 영향을 주는 단일 파티션 장애 발생 가능성이 더 줄어들 수 있습니다. 또한 가용성 요구사항이 낮은 저가치 데이터에서 계속 많이 사용해야 하는 중요 데이터를 분리할 수도 있습니다.
+* **보안 강화**. 데이터와 분할 방식 특성에 따라 중요한 데이터와 중요하지 않은 데이터를 다른 파티션으로 분리한 다음, 다른 서버나 데이터 저장소로 분리할 수도 있습니다. 그리고 나면 특히 보안이 중요한 데이터에 맞게 최적화될 수 있습니다.
+* **운영 유연성 지원**. 분할은 그 자체로 작업을 미세 조정할 수 있는 다양한 가능성을 열어 주므로, 관리 효율을 극대화하고 비용을 최소화할 수 있습니다. 예를 들어, 관리, 모니터링, 백업, 복원 등 각 파티션의 데이터 중요도에 따라 관리 작업별 전략을 정의할 수 있습니다.
+* **데이터 저장소와 사용 패턴 일치**. 분할을 통해 데이터 저장소가 지원하는 기본 제공 기능과 비용에 따라 각 파티션을 다양한 유형의 데이터 저장소에서 배포할 수 있습니다. 예를 들어, 대형 이진 데이터를 blob 데이터 저장소에 저장하면서도, 더 많은 구조적 데이터를 문서 데이터베이스에 보관할 수 있습니다. 자세한 내용은 패턴 및 사례 가이드의 [Polyglot 솔루션 빌드]와 Microsoft 웹사이트의 [확장성이 우수한 솔루션의 데이터 액세스:. SQL, NoSQL 및 Polyglot 지속성]을 참조하십시오.
 
-Some systems do not implement partitioning because it is considered a cost rather than an advantage. Common reasons for this rationale include:
+일부 시스템은 이점 이외에 비용을 감안하여 분할을 구현하지 않습니다. 이에 대한 일반적인 이유는 다음과 같습니다. 
 
-* Many data storage systems do not support joins across partitions, and it can be difficult to maintain referential integrity in a partitioned system. It is frequently necessary to implement joins and integrity checks in application code (in the partitioning layer), which can result in additional I/O and application complexity.
-* Maintaining partitions is not always a trivial task. In a system where the data is volatile, you might need to rebalance partitions periodically to reduce contention and hot spots.
-* Some common tools do not work naturally with partitioned data.
+•	많은 데이터 저장소 시스템이 여러 파티션에서 조인을 지원하지 않아 분할된 시스템에서 참조 무결성을 유지하기 어려울 수 있습니다. 흔히 응용 프로그램 코드(분할 계층)에서 조인과 무결성 검사를 구현해야 하기 때문에 추가 입출력이 필요하고 응용 프로그램 복잡성이 발생할 수 있습니다.
 
-## Designing partitions
-Data can be partitioned in different ways: horizontally, vertically, or functionally. The strategy you choose depends on the reason for partitioning the data, and the requirements of the applications and services that will use the data.
+•	파티션 유지는 언제나 사소한 작업이 아닙니다. 데이터가 변동이 심한 시스템에서는 정기적으로 파티션 균형을 다시 맞춰 경합과 핫스폿을 줄여야 합니다.
 
-> [!NOTE]
-> The partitioning schemes described in this guidance are explained in a way that is independent of the underlying data storage technology. They can be applied to many types of data stores, including relational and NoSQL databases.
+•	일반적인 도구는 자연히 분할된 데이터에서 작동하지 않습니다.
+
+
+## 파티션 설계
+데이터 분할 방식으로는 수평, 수직 및 기능이 있습니다. 선택하는 전략은 데이터 분할 이유와 데이터를 사용하는 응용 프로그램 및 서비스 요구사항에 따라 달라집니다. 
+
+> [!참고]
+> 이 지침에 설명된 분할 체계 방식은 기본 데이터 저장소 기술과 무관합니다. 또한 그 근거와 NoSQL 데이터베이스를 포함한 많은 유형의 데이터 저장소에 적용될 수 있습니다. 
 >
 >
 
-### Partitioning strategies
-The three typical strategies for partitioning data are:
+### 분할 전략
+일반적인 데이터 분할 전략 세 가지는 다음과 같습니다. 
 
-* **Horizontal partitioning** (often called *sharding*). In this strategy, each partition is a data store in its own right, but all partitions have the same schema. Each partition is known as a *shard* and holds a specific subset of the data, such as all the orders for a specific set of customers in an e-commerce application.
-* **Vertical partitioning**. In this strategy, each partition holds a subset of the fields for items in the data store. The fields are divided according to their pattern of use. For example, frequently accessed fields might be placed in one vertical partition and less frequently accessed fields in another.
-* **Functional partitioning**. In this strategy, data is aggregated according to how it is used by each bounded context in the system. For example, an e-commerce system that implements separate business functions for invoicing and managing product inventory might store invoice data in one partition and product inventory data in another.
+* **수평 분할**(흔히 샤딩*[sharding]*이라고 함). 이 전략에서는 각 파티션이 그 자체로 데이터 저장소이지만, 모든 파티션의 체계가 동일합니다. 각 파티션은 *샤드(shard)*로 알려져 있고 전자 상거래 응용 프로그램에서 특정 고객 집합의 모든 주문과 같은 특정 데이터 하위 집합을 보관합니다.
+* **수직 분할**. 이 전략에서 각 파티션은 데이터 저장소의 여러 항목 필드의 하위 집합을 저장합니다. 이 필드는 사용 패턴에 따라 나뉩니다. 예를 들어, 자주 액세스하는 필드를 하나의 수직 파티션에 배치하고 자주 액세스하지 않는 필드는 다른 파티션에 배치할 수 있습니다.
+* **기능 분할**. 이 전략에서는 시스템에서 바인딩된 각 컨텍스트가 데이터를 사용하는 방법에 따라 데이터를 집계합니다. 예를 들어, 청구 및 제품 재고 관리를 위해 별도의 비즈니스 기능을 구현한 전자 상거래 시스템은 송장 데이터와 제품 재고 데이터를 각기 다른 파티션에 저장할 수 있습니다.
 
-It’s important to note that the three strategies described here can be combined. They are not mutually exclusive, and we recommend that you consider them all when you design a partitioning scheme. For example, you might divide data into shards and then use vertical partitioning to further subdivide the data in each shard. Similarly, the data in a functional partition can be split into shards (which can also be vertically partitioned).
+여기에 나와 있는 이 세 가지 전략을 조합하여 사용할 수 있다는 점을 잘 알고 있어야 합니다. 이들 전략은 서로 배타적이지 않으므로, 분할 체계를 설계할 때 모든 전략을 고려하는 것이 좋습니다. 예를 들어, 데이터를 샤드로 나눈 후 수직 분할을 사용해 각 샤드에서 데이터를 추가로 세분화할 수 있습니다. 마찬가지로, 기능 파티션의 데이터를 샤드로 분할할 수 있습니다(수직으로도 분할 가능). 
 
-However, the differing requirements of each strategy can raise a number of conflicting issues. You must evaluate and balance all of these when designing a partitioning scheme that meets the overall data processing performance targets for your system. The following sections explore each of the strategies in more detail.
+그렇지만, 각 전략의 요구사양이 다양하여 많은 충돌 문제가 발생할 수 있습니다. 전체 데이터 처리 성능 목표에 부합하는 분할 체계를 설계할 때에는 이 모든 사항을 평가하고 균형을 맞춰야 합니다. 다음 섹션에서는 각 전략에 대해 자세히 알아봅니다. 
 
-### Horizontal partitioning (sharding)
-Figure 1 shows an overview of horizontal partitioning or sharding. In this example, product inventory data is divided into shards based on the product key. Each shard holds the data for a contiguous range of shard keys (A-G and H-Z), organized alphabetically.
+### 수평 분할(샤딩)
+그림 1은 수평 분할 또는 샤딩에 대한 개요를 나타냅니다. 이 예에서 제품 재고 데이터는 제품 키를 기준으로 샤드(shard)로 나뉩니다. 각 샤드에는 알파벳 순으로 정렬된 연속 범위의 샤드 키((A-G 및 H-Z) 데이터가 저장되어 있습니다. 
 
 ![Horizontally partitioning (sharding) data based on a partition key](./images/data-partitioning/DataPartitioning01.png)
 
-*Figure 1. Horizontally partitioning (sharding) data based on a partition key*
+*그림 1. 파티션 키 기준의 수평 분할(샤딩) 데이터*
 
-Sharding helps you spread the load over more computers, which reduces contention and improves performance. You can scale the system out by adding further shards that run on additional servers.
+샤딩(Sharding)을 통해 더 많은 컴퓨터에서 부하를 분산시켜 경합을 줄이고 성능을 개선할 수 있습니다. 시스템을 확장하려면 추가 서버에서 실행되는 샤드를 추가합니다. 
 
-The most important factor when implementing this partitioning strategy is the choice of sharding key. It can be difficult to change the key after the system is in operation. The key must ensure that data is partitioned so that the workload is as even as possible across the shards.
+이 분할 전략을 구현할 때 가장 중요한 요소는 샤딩 키를 선택하는 것입니다. 시스템을 작동한 후에는 키를 변경하기 어려울 수 있습니다. 키는 데이터가 분할되어 워크로드가 샤드에서 가능한 한 균등하도록 보장해야 합니다. 
 
-Note that different shards do not have to contain similar volumes of data. Rather, the more important consideration is to balance the number of requests. Some shards might be very large, but each item is the subject of a low number of access operations. Other shards might be smaller, but each item is accessed much more frequently. It is also important to ensure that a single shard does not exceed the scale limits (in terms of capacity and processing resources) of the data store that's being used to host that shard.
+다른 샤드에는 유사한 분량의 데이터가 포함되어 있어서는 안 됩니다. 그 보다 더 중요한 고려 사항은 요청 개수의 균형을 유지하는 것입니다. 일부 샤드는 매우 클 수 있지만, 각 항목은 적은 수의 액세스 작업의 제목입니다. 물론, 작은 샤드가 있을 수 있고, 각 항목은 훨씬 더 자주 액세스됩니다. 단일 샤드는 샤드를 호스팅하는 데 사용되고 있는 데이터 저장소의 규모 제한(용량 및 리소스 처리 측면)을 초과해서는 안 됩니다. 
 
-If you use a sharding scheme, avoid creating hotspots (or hot partitions) that can affect performance and availability. For example, if you use a hash of a customer identifier instead of the first letter of a customer’s name, you prevent the unbalanced distribution that results from common and less common initial letters. This is a typical technique that helps distribute data more evenly across partitions.
+샤딩 체계를 사용할 경우, 성능과 가용성에 영향을 줄 수 있는 핫스폿(또는 핫 파티션)을 만들지 말아야 합니다. 예를 들어, 고객 이름의 첫 번째 문자가 아닌 고객 식별자의 해시를 사용할 경우, 일반적인 머리글자와 일반적이지 않은 머리글자로 인한 배포 불균형을 방지해 줍니다. 이것은 여러 파티션에서 더 고르게 데이터를 배포하도록 해주는 일반적인 기법입니다. 
 
-Choose a sharding key that minimizes any future requirements to split large shards into smaller pieces, coalesce small shards into larger partitions, or change the schema that describes the data stored in a set of partitions. These operations can be very time consuming, and might require taking one or more shards offline while they are performed.
+샤딩 키를 선택할 때에는 대규모 샤드를 작은 조각으로 분할하거나, 작은 샤드를 큰 파티션으로 합치거나, 파티션 집합에 저장된 데이터를 설명하는 체계를 변경하는 데 따른 향후 요구사항을 최소화해야 합니다. 이 작업은 매우 시간 소모적일 수 있고, 이 작업을 실행하는 동안 하나 이상의 샤드를 오프라인으로 전환해야 할 수도 있습니다. 
 
-If shards are replicated, it might be possible to keep some of the replicas online while others are split, merged, or reconfigured. However, the system might need to limit the operations that can be performed on the data in these shards while the reconfiguration is taking place. For example, the data in the replicas can be marked as read-only to limit the scope of inconsistences that might occur while shards are being restructured.
+샤드를 복제하는 경우, 온라인 상태를 유지해야 하는 복제본도 있고 분할, 병합 또는 재구성해야 하는 복제본도 있습니다. 그렇지만, 이 시스템은 재구성을 실행하는 동안 이 샤드에서 실행할 수 있는 작업을 제한해야 합니다. 예를 들어, 복제본의 데이터는 읽기 전용으로 표시되어 샤드가 재구성되는 동안 발생할 수 있는 불일치 범위를 제한할 수 있습니다. 
 
-> For more detailed information and guidance about many of these considerations, and good practice techniques for designing data stores that implement horizontal partitioning, see [Sharding pattern].
+>이 많은 고려 사항들을 비롯해, 수평 분할을 구현하는 데이터 저장소를 설계할 때의 모범 사례 기법에 대한 자세한 정보와 지침은 [샤딩 패턴]을 참조하십시오. 
 >
 >
 
-### Vertical partitioning
-The most common use for vertical partitioning is to reduce the I/O and performance costs associated with fetching the items that are accessed most frequently. Figure 2 shows an example of vertical partitioning. In this example, different properties for each data item are held in different partitions. One partition holds data that is accessed more frequently, including the name, description, and price information for products. Another holds the volume in stock and the last ordered date.
+### 수직 분할
+수직 분할의 가장 일반적인 용도는 가장 자주 액세스하는 항목 가져오기와 관련된 I/O 및 성능 비용을 절감하는 데 있습니다. 그림 2에는 수직 분할의 예가 나와 있습니다. 이 예에서 각 데이터 항목별 속성은 파티션별로 다릅니다. 제품 이름, 설명, 가격 정보 등 자주 액세스되는 데이터를 저장한 파티션도 있고, 재고 수량과 마지막 주문 날짜를 저장한 파티션도 있습니다. 
 
 ![Vertically partitioning data by its pattern of use](./images/data-partitioning/DataPartitioning02.png)
 
-*Figure 2. Vertically partitioning data by its pattern of use*
+*그림 2. 사용 패턴별 수직 분할 데이터*
 
-In this example, the application regularly queries the product name, description, and price when displaying the product details to customers. The stock level and date when the product was last ordered from the manufacturer are held in a separate partition because these two items are commonly used together.
+이 예에서 제품 세부 정보를 고객에게 표시할 때 응용 프로그램은 제품 이름, 설명, 가격에 대해 정기적으로 쿼리합니다. 제조업체에서 제품을 마지막으로 주문했을 당시 재고 수준과 날짜는 보통 함께 사용되기 때문에 별도의 파티션에 보관됩니다. 
 
-This partitioning scheme has the added advantage that the relatively slow-moving data (product name, description, and price) is separated from the more dynamic data (stock level and last ordered date). An application might find it beneficial to cache the slow-moving data in memory if it is frequently accessed.
+이 분할 체계는 비교적 유동성이 낮은 데이터(제품 이름, 설명, 가격)가 보다 동적인 데이터(재고 수준과 마지막 주문 날짜)와 분리되는 추가적인 이점이 있습니다. 응용 프로그램은 자주 액세스되는 유동성이 낮은 데이터를 메모리에 캐시하는 것이 유용할 수 있습니다. 
 
-Another typical scenario for this partitioning strategy is to maximize the security of sensitive data. For example, you can do this by storing credit card numbers and the corresponding card security verification numbers in separate partitions.
+이 분할 전략의 또 다른 시나리오로는 중요한 데이터의 보안을 극대화하는 것입니다. 예를 들어, 신용카드 번호와 해당 카드의 보안 확인 번호를 분리된 파티션에 저장함으로써 보안을 극대화할 수 있습니다. 
 
-Vertical partitioning can also reduce the amount of concurrent access that's needed to the data.
+또한 수직 분할은 데이터에 필요한 동시 액세스 분량을 줄여줄 수도 있습니다. 
 
-> Vertical partitioning operates at the entity level within a data store, partially normalizing an entity to break it down from a *wide* item to a set of *narrow* items. It is ideally suited for column-oriented data stores such as HBase and Cassandra. If the data in a collection of columns is unlikely to change, you can also consider using column stores in SQL Server.
+> 수직 분할은 데이터 저장소 내에서 엔터티 수준에서 작동하면서 엔터티를 일부 정규화하여 *넓은* 항목에서 *좁은* 항목 집합으로 분해합니다. 이 분할 방식은 HBase 및 Cassandra와 같은 열 기반 데이터 저장소에 적합합니다. 열 컬렉션의 데이터가 변경될 가능성이 적으면, SQL Server에서 열 저장소를 사용하는 것을 고려해 볼 수도 있습니다. 
 >
 >
 
-### Functional partitioning
-For systems where it is possible to identify a bounded context for each distinct business area or service in the application, functional partitioning provides a technique for improving isolation and data access performance. Another common use of functional partitioning is to separate read-write data from read-only data that's used for reporting purposes. Figure 3 shows an overview of functional partitioning where inventory data is separated from customer data.
+### 기능 분할
+시스템이 응용 프로그램에서 고유한 각 비즈니스 영역이나 서비스별로 바인딩된 컨텍스트를 식별할 수 있는 경우, 기능 분할 기법은 분리 및 데이터 액세스 성능을 높여 줍니다. 기능 분할의 또 다른 일반적인 용도는 보고 목적으로 사용되는 읽기 전용 데이터에서 읽기-쓰기 데이터를 분리하는 것입니다. 그림 3은 재고 데이터가 고객 데이터와 분리되는 기능 분할에 대한 개요를 나타냅니다. 
 
 ![Functionally partitioning data by bounded context or subdomain](./images/data-partitioning/DataPartitioning03.png)
 
-*Figure 3. Functionally partitioning data by bounded context or subdomain*
+*그림 3. 바운딩된 컨텍스트 또는 하위 도메인별 기능 분할 데이터*
 
-This partitioning strategy can help reduce data access contention across different parts of a system.
+이 분할 전략은 시스템의 여러 부분에서 데이터 액세스 경합을 줄이는 데 도움이 될 수 있습니다. 
 
-## Designing partitions for scalability
-It's vital to consider size and workload for each partition and balance them so that data is distributed to achieve maximum scalability. However, you must also partition the data so that it does not exceed the scaling limits of a single partition store.
+## 확장성을 고려한 파티션 설계
+확장성을 극대화하는 방향으로 데이터를 배포하기 위해서는 각 파티션별로 크기와 워크로드를 고려하고 균형을 맞추는 것이 필수적입니다. 그렇지만, 단일 파티션 저장소의 크기 조정 한도를 초과하지 않으면서 데이터를 분할해야 합니다. 
 
-Follow these steps when designing partitions for scalability:
+확장성을 고려하면서 파티션을 설계할 때에는 다음 단계를 따릅니다. 
 
-1. Analyze the application to understand the data access patterns, such as the size of the result set returned by each query, the frequency of access, the inherent latency, and the server-side compute processing requirements. In many cases, a few major entities will demand most of the processing resources.
-2. Use this analysis to determine the current and future scalability targets, such as data size and workload. Then distribute the data across the partitions to meet the scalability target. In the horizontal partitioning strategy, choosing the appropriate shard key is important to make sure distribution is even. For more information, see the [Sharding pattern].
-3. Make sure that the resources available to each partition are sufficient to handle the scalability requirements in terms of data size and throughput. For example, the node that's hosting a partition might impose a hard limit on the amount of storage space, processing power, or network bandwidth that it provides. If the data storage and processing requirements are likely to exceed these limits, it might be necessary to refine your partitioning strategy or split data out further. For example, one scalability approach might be to separate logging data from the core application features. You do this by using separate data stores to prevent the total data storage requirements from exceeding the scaling limit of the node. If the total number of data stores exceeds the node limit, it might be necessary to use separate storage nodes.
-4. Monitor the system under use to verify that the data is distributed as expected and that the partitions can handle the load that is imposed on them. It's possible that the usage does not match the usage that's anticipated by the analysis. In that case, it might be possible to rebalance the partitions. Failing that, it might be necessary to redesign some parts of the system to gain the required balance.
+1.	응용 프로그램을 분석하여 각 쿼리에서 반환한 결과 집합 크기, 액세스 빈도, 내재된 대기 시간, 서버 측 계산 처리 요구사항과 같은 데이터 액세스 패턴을 파악합니다. 많은 경우 일부 주요 엔터티가 처리 리소스의 대부분을 요구하게 됩니다.
+2.	이 분석을 사용하여 데이터의 크기 및 워크로드와 같은 현재 및 향후 확장성 목표를 결정합니다. 그런 다음, 여러 파티션에서 데이터를 배포하여 확장성 목표를 충족합니다. 균등한 배포를 위해서는 반드시 수평 분할 전략에서 적절한 샤드 키를 선택해야 합니다. 자세한 내용은 [샤딩 패턴]을 참조하십시오.
+3.	각 파티션에서 사용할 수 있는 리소스는 데이터 크기와 처리량 측면에서 확장성 요구사항을 처리하기에 충분해야 합니다. 예를 들어, 파티션을 호스팅하고 있는 노드로 인해 저장소 공간의 용량, 처리 능력, 지원되는 네트워크 대역폭에 엄격한 제한이 걸릴 수도 있습니다. 데이터 저장소와 처리 요구사항이 이 제한을 초과할 경우, 분할 전략을 정비하거나 데이터를 추가로 분할할 수도 있습니다. 예를 들어, 한 가지 확장성 접근 방식은 로깅 데이터를 핵심 응용 프로그램 기능과 분리하는 것입니다. 이 작업을 하려면 별도의 데이터 저장소를 사용하여 전체 데이터 저장소 요구사항이 노드의 확장 제한을 초과하지 않도록 해야 합니다. 데이터 저장소의 전체 개수가 노드 제한을 초과할 경우, 별도의 저장소 노드를 사용해야 할 수도 있습니다.
+4.	데이터가 예상대로 배포되고 파티션이 자체 부하를 처리할 수 있는지 확인하기 위해 용도에 따라 시스템을 모니터링합니다. 사용 현황은 분석에 따라 예상되는 사용 현황과 일치하지 않을 수도 있습니다. 이 경우에 파티션 균형을 재조정할 수도 있습니다. 이 작업에 실패하면, 시스템의 일부 부분을 재설계하여 필요한 균형을 확보할 수도 있습니다.
 
-Note that some cloud environments allocate resources in terms of infrastructure boundaries. Ensure that the limits of your selected boundary provide enough room for any anticipated growth in the volume of data, in terms of data storage, processing power, and bandwidth.
+일부 클라우드 환경은 인프라 경계 관점에서 리소스를 할당합니다. 선택한 경계 한도는 데이터 저장소, 처리 능력 및 대역폭 측면에서 데이터 볼륨을 예상대로 증가시킬 수 있는 여지가 있어야 합니다. 
 
-For example, if you use Azure table storage, a busy shard might require more resources than are available to a single partition to handle requests. (There is a limit to the volume of requests that can be handled by a single partition in a particular period of time. See the page [Azure storage scalability and performance targets] on the Microsoft website for more details.)
+예를 들어 Azure 테이블 저장소를 사용하는 경우, 사용 중인 샤드는 요청을 처리하기 위해 단일 파티션에서 사용할 수 있는 것보다 더 많은 리소스가 필요할 수 있습니다. (특정 기간 동안 단일 파티션에서 처리 가능한 요청 볼륨에는 제한이 있습니다. 자세한 내용은 Microsoft 웹사이트에서 [Azure 저장소 확장성 및 성능 목표] 페이지를 참조하십시오.
 
- If this is the case, the shard might need to be repartitioned to spread the load. If the total size or throughput of these tables exceeds the capacity of a storage account, it might be necessary to create additional storage accounts and spread the tables across these accounts. If the number of storage accounts exceeds the number of accounts that are available to a subscription, then it might be necessary to use multiple subscriptions.
+ 이 경우에 샤드를 다시 분할하여 부하를 분산시켜야 할 수도 있습니다. 이 테이블의 전체 크기나 처리량이 저장소 계정의 용량을 초과하는 경우, 추가 저장소 계정을 만들고 이 계정에서 테이블을 분산시켜야 합니다. 저장소 계정 개수가 1회 구독 시 사용 가능한 계정 개수를 초과하는 경우, 여러 번 구독해야 합니다. 
 
-## Designing partitions for query performance
-Query performance can often be boosted by using smaller data sets and by running parallel queries. Each partition should contain a small proportion of the entire data set. This reduction in volume can improve the performance of queries. However, partitioning is not an alternative for designing and configuring a database appropriately. For example, make sure that you have the necessary indexes in place if you are using a relational database.
+## 쿼리 성능을 고려한 파티션 설계
+쿼리 성능은 흔히 소량 데이터 집합을 사용하고 병렬 쿼리를 실행하여 강화할 수 있습니다. 각 파티션은 전체 데이터 집합 중 적은 비율을 포함해야 합니다. 볼륨을 줄이면 쿼리 성능이 개선됩니다. 그렇지만, 분할은 데이터베이스를 설계하고 구성할 수 있는 대체 방안이 아닙니다. 예를 들어, 관계형 데이터베이스를 사용하고 있는 경우 필요한 인덱스를 지정해야 합니다. 
 
-Follow these steps when designing partitions for query performance:
+쿼리 성능을 고려하면서 파티션을 설계할 때에는 다음 단계를 따릅니다. 
 
-1. Examine the application requirements and performance:
-   * Use the business requirements to determine the critical queries that must always perform quickly.
-   * Monitor the system to identify any queries that perform slowly.
-   * Establish which queries are performed most frequently. A single instance of each query might have minimal cost, but the cumulative consumption of resources could be significant. It might be beneficial to separate the data that's retrieved by these queries into a distinct partition, or even a cache.
-2. Partition the data that is causing slow performance:
-   * Limit the size of each partition so that the query response time is within target.
-   * Design the shard key so that the application can easily find the partition if you are implementing horizontal partitioning. This prevents the query from having to scan through every partition.
-   * Consider the location of a partition. If possible, try to keep data in partitions that are geographically close to the applications and users that access it.
-3. If an entity has throughput and query performance requirements, use functional partitioning based on that entity. If this still doesn't satisfy the requirements, apply horizontal partitioning as well. In most cases a single partitioning strategy will suffice, but in some cases it is more efficient to combine both strategies.
-4. Consider using asynchronous queries that run in parallel across partitions to improve performance.
+1.	다음과 같이 응용 프로그램 요구사항과 성능을 점검합니다.
+•	비즈니스 요구사항을 사용하여 항상 빠르게 실행해야 하는 필수 쿼리를 결정합니다.
 
-## Designing partitions for availability
-Partitioning data can improve the availability of applications by ensuring that the entire dataset does not constitute a single point of failure and that individual subsets of the dataset can be managed independently. Replicating partitions that contain critical data can also improve availability.
+•	시스템을 모니터링하여 천천히 실행되는 모든 쿼리를 식별합니다.
 
-When designing and implementing partitions, consider the following factors that affect availability:
+•	가장 자주 실행되는 쿼리를 설정합니다. 각 쿼리의 단일 인스턴스는 비용을 최소화하면서도 리소스의 누적 사용량은 클 수 있습니다. 이들 쿼리에 의해 검색된 별도의 파티션이나 캐시 안에 따로 분리시키는 것이 유용합니다.
 
-* **How critical the data is to business operations**. Some data might include critical business information such as invoice details or bank transactions. Other data might include less critical operational data, such as log files, performance traces, and so on. After identifying each type of data, consider:
-  * Storing critical data in highly-available partitions with an appropriate backup plan.
-  * Establishing separate management and monitoring mechanisms or procedures for the different criticalities of each dataset. Place data that has the same level of criticality in the same partition so that it can be backed up together at an appropriate frequency. For example, partitions that hold data for bank transactions might need to be backed up more frequently than partitions that hold logging or trace information.
-* **How individual partitions can be managed**. Designing partitions to support independent management and maintenance provides several advantages. For example:
-  * If a partition fails, it can be recovered independently without affecting instances of applications that access data in other partitions.
-  * Partitioning data by geographical area allows scheduled maintenance tasks to occur at off-peak hours for each location. Ensure that partitions are not too big to prevent any planned maintenance from being completed during this period.
-* **Whether to replicate critical data across partitions**. This strategy can improve availability and performance, although it can also introduce consistency issues. It takes time for changes made to data in a partition to be synchronized with every replica. During this period, different partitions will contain different data values.
+2.	다음과 같이 성능을 저하시키는 데이터를 분할합니다.
+•	쿼리 응답 시간이 목표 내에 들어오도록 각 파티션 크기를 제한합니다.
 
-## Understanding how partitioning affects design and development
-Using partitioning adds complexity to the design and development of your system. Consider partitioning as a fundamental part of system design even if the system initially only contains a single partition. If you address partitioning as an afterthought, when the system starts to suffer performance and scalability issues, the complexity increases because you already have a live system to maintain.
+•	수평 분할을 구현하는 경우 응용 프로그램이 파티션을 쉽게 찾을 수 있도록 샤드 키를 설계합니다. 그러면 쿼리가 모든 파티션을 스캔할 필요가 없습니다.
 
-If you update the system to incorporate partitioning in this environment, it necessitates modifying the data access logic. It can also involve migrating large quantities of existing data to distribute it across partitions, often while users expect to be able to continue using the system.
+•	파티션의 위치를 고려합니다. 가능한 한 응용 프로그램과 이 응용 프로그램에  액세스하는 사용자와 지리적으로 가까운 곳에 있는 파티션에 데이터를 보관해야 합니다.
 
-In some cases, partitioning is not considered important because the initial dataset is small and can be easily handled by a single server. This might be true in a system that is not expected to scale beyond its initial size, but many commercial systems need to expand as the number of users increases. This expansion is typically accompanied by a growth in the volume of data.
+3.	엔터티에 처리량 및 쿼리 성능 요구사항이 있으면, 해당 엔터티 기반의 기능 분할을 사용합니다. 하지만 그래도 이 요구사항에 계속 부합하지 않으면, 수평 분할도 적용합니다. 대다수의 경우 단일 분할 전략으로 충분하지만, 경우에 따라서는 두 가지 전략을 조합하는 것이 더 효율적입니다.
+4.	성능을 개선하려면 여러 파티션에서 동시에 실행되는 비동기 쿼리를 사용하는 것이 좋습니다.
 
-It's also important to understand that partitioning is not always a function of large data stores. For example, a small data store might be heavily accessed by hundreds of concurrent clients. Partitioning the data in this situation can help to reduce contention and improve throughput.
+## 가용성을 고려한 파티션 설계
+분할 데이터를 통해 응용 프로그램의 가용성을 개선하려면 전체 데이터 집합에 단일 장애 지점이 포함되지 않고 데이터 집합의 개별 하위 집합이 독립적으로 관리될 수 있도록 보장해야 합니다. 필수 데이터를 포함하는 파티션 복제도 가용성을 개선할 수 있습니다. 
 
-Consider the following points when you design a data partitioning scheme:
+파티션을 설계하고 구현할 때에는 가용성에 영향을 주는 다음 요소를 고려해야 합니다. 
 
-* **Where possible, keep data for the most common database operations together in each partition to minimize cross-partition data access operations**. Querying across partitions can be more time-consuming than querying only within a single partition, but optimizing partitions for one set of queries might adversely affect other sets of queries. When you can't avoid querying across partitions, minimize query time by running parallel queries and aggregating the results within the application. This approach might not be possible in some cases, such as when it's necessary to obtain a result from one query and use it in the next query.
-* **If queries make use of relatively static reference data, such as postal code tables or product lists, consider replicating this data in all of the partitions to reduce the requirement for separate lookup operations in different partitions**. This approach can also reduce the likelihood of the reference data becoming a "hot" dataset that is subject to heavy traffic from across the entire system. However,   there is an additional cost associated with synchronizing any changes that might occur to this reference data.
-* **Where possible, minimize requirements for referential integrity across vertical and functional partitions**. In these schemes, the application itself is responsible for maintaining referential integrity across partitions when data is updated and consumed. Queries that must join data across multiple partitions run more slowly than queries that join data only within the same partition because the application typically needs to perform consecutive queries based on a key and then on a foreign key. Instead, consider replicating or de-normalizing the relevant data. To minimize the query time where cross-partition joins are necessary, run parallel queries over the partitions and join the data within the application.
-* **Consider the effect that the partitioning scheme might have on the data consistency across partitions.** Evaluate whether strong consistency is actually a requirement. Instead, a common approach in the cloud is to implement eventual consistency. The data in each partition is updated separately, and the application logic ensures that the updates are all completed successfully. It also handles the inconsistencies that can arise from querying data while an eventually consistent operation is running. For more information about implementing eventual consistency, see the [Data consistency primer].
-* **Consider how queries locate the correct partition**. If a query must scan all partitions to locate the required data, there is a significant impact on performance, even when multiple parallel queries are running. Queries that are used with vertical and functional partitioning strategies can naturally specify the partitions. However, horizontal partitioning (sharding) can make locating an item difficult because every shard has the same schema. A typical solution for sharding is to maintain a map that can be used to look up the shard location for specific items of data. This map can be implemented in the sharding logic of the application, or maintained by the data store if it supports transparent sharding.
-* **When using a horizontal partitioning strategy, consider periodically rebalancing the shards**. This helps distribute the data evenly by size and by workload to minimize hotspots, maximize query performance, and work around physical storage limitations. However, this is a complex task that often requires the use of a custom tool or process.
-* **If you replicate each partition, it provides additional protection against failure**. If a single replica fails, queries can be directed towards a working copy.
-* **If you reach the physical limits of a partitioning strategy, you might need to extend the scalability to a different level**. For example, if partitioning is at the database level, you might need to locate or replicate partitions in multiple databases. If partitioning is already at the database level, and physical limitations are an issue, it might mean that you need to locate or replicate partitions in multiple hosting accounts.
-* **Avoid transactions that access data in multiple partitions**. Some data stores implement transactional consistency and integrity for operations that modify data, but only when the data is located in a single partition. If you need transactional support across multiple partitions, you will probably need to implement this as part of your application logic because most partitioning systems do not provide native support.
+* **비즈니스 작업에서 데이터의 중요도**. 일부 데이터에는 송장 세부 정보 및 은행 거래 내역과 같은 중요한 비즈니스 정보가 포함되기도 하고, 로그 파일, 성능 추적 등 중요도가 낮은 운영 데이터가 포함되기도 합니다. 각 데이터 형식을 확인한 후 다음 사항을 고려해야 합니다.
+o	적절한 백업 계획이 지원되는 고가용성 파티션에 중요 데이터 저장.
 
-All data stores require some operational management and monitoring activity. The tasks can range from loading data, backing up and restoring data, reorganizing data, and ensuring that the system is performing correctly and efficiently.
+o	각 데이터 집합의 서로 다른  중요도에 맞게 별도의 관리 및 모니터링 메커니즘이나 절차 수립. 적절한 빈도로 함께 백업할 수 있도록 동일한 파티션에 중요도가 동일한 데이터 배치. 예를 들어, 은행 거래용 데이터를 저장한 파티션은 로깅이나 추적 정보를 저장한 파티션보다 더 자주 백업해야 합니다.
 
-Consider the following factors that affect operational management:
+* **개별 파티션을 관리하는 방법**. 독립적인 관리와 유지 관리를 지원하는 파티션을 설계하면 여러 장점이 있습니다. 예:
+o	파티션에 오류가 발생하면, 다른 파티션의 데이터에 액세스하는 응용 프로그램의 인스턴스에 영향을 주지 않고 독립적으로 복구할 수 있습니다.
 
-* **How to implement appropriate management and operational tasks when the data is partitioned**. These tasks might include backup and restore, archiving data, monitoring the system, and other administrative tasks. For example, maintaining logical consistency during backup and restore operations can be a challenge.
-* **How to load the data into multiple partitions and add new data that's arriving from other sources**. Some tools and utilities might not support sharded data operations such as loading data into the correct partition. This means that you might have to create or obtain new tools and utilities.
-* **How to archive and delete the data on a regular basis**. To prevent the excessive growth of partitions, you need to archive and delete data on a regular basis (perhaps monthly). It might be necessary to transform the data to match a different archive schema.
-* **How to locate data integrity issues**. Consider running a periodic process to locate any data integrity issues such as data in one partition that references missing information in another. The process can either attempt to fix these issues automatically or raise an alert to an operator to correct the problems manually. For example, in an e-commerce application, order information might be held in one partition but the line items that constitute each order might be held in another. The process of placing an order needs to add data to other partitions. If this process fails, there might be line items stored for which there is no corresponding order.
+o	지리적 영역별로 데이터를 분할하면 예정된 유지 관리 작업이 각 위치별로 사용량이 적은 시간에 진행됩니다. 이 기간 중에 예정된 유지 관리를 완료하지 못할 정도로 파티션이 너무 커서는 안 됩니다.
 
-Different data storage technologies typically provide their own features to support partitioning. The following sections summarize the options that are implemented by data stores commonly used by Azure applications. They also describe considerations for designing applications that can best take advantage of these features.
+* **여러 파티션에서 중요 데이터의 복제 여부**. 이 전략은 일관성 문제를 발생시킬 수 있지만 가용성과 성능을 높여 줍니다. 파티션의 데이터에 적용된 변경 내용이 모든 복제본과 동기화되기까지는 다소 시간이 걸립니다. 이 기간 중에 다른 파티션은 다른 데이터 값을 포함합니다.
 
-## Partitioning strategies for Azure SQL Database
-Azure SQL Database is a relational database-as-a-service that runs in the cloud. It is based on Microsoft SQL Server. A relational database divides information into tables, and each table holds information about entities as a series of rows. Each row contains columns that hold the data for the individual fields of an entity. The page [What is Azure SQL Database?] on the Microsoft website provides detailed documentation about creating and using SQL databases.
+## 분할이 설계와 개발에 미치는 영향 파악
+분할을 사용하면 시스템 설계와 개발에 따른 복잡성이 커집니다. 시스템이 처음에 단일 파티션만을 포함하더라도 시스템 설계의 기본 부분으로서 분할을 고려해야 합니다. 분할을 나중에 추가하게 된 경우, 시스템에 성능 및 확장성 문제가 발생하면 이미 실행간 시스템을 유지해야 하기 때문에 복잡성이 커집니다.
 
-## Horizontal partitioning with Elastic Database
-A single SQL database has a limit to the volume of data that it can contain. Throughput is constrained by architectural factors and the number of concurrent connections that it supports. The Elastic Database feature of SQL Database supports horizontal scaling for a SQL database. Using Elastic Database, you can partition your data into shards that are spread across multiple SQL databases. You can also add or remove shards as the volume of data that you need to handle grows and shrinks. Using Elastic Database can also help reduce contention by distributing the load across databases.
+시스템이 이 환경에서 분할을 포함하도록 업데이트하는 경우, 데이터 액세스 논리를 수정해야 합니다. 또한 대량의 기존 데이터를 마이그레이션하여 여러 파티션에서 배포할 수도 있고, 이와 동시에 사용자는 흔히 시스템을 계속 사용할 수 있을 것으로 예상합니다. 
 
-> [!NOTE]
-> Elastic Database is a replacement for the Federations feature of Azure SQL Database. Existing SQL Database Federation installations can be migrated to Elastic Database by using the Federations migration utility. Alternatively, you can implement your own sharding mechanism if your scenario does not lend itself naturally to the features that are provided by Elastic Database.
+경우에 따라서는 초기 데이터 집합이 작으며 단일 서버로 쉽게 처리할 수 있기 때문에 분할이 중요하게 고려되지 않습니다. 이것은 초기의 크기 이상으로 확장할 것으로 예상되지 않는 시스템의 경우에 적용되지만, 많은 상업용 시스템은 사용자 수 증가에 따라 확장해야 합니다. 이러한 확장에는 보통 데이터 볼륨 증가가 동반됩니다. 
+
+또한 분할이 항상 대형 데이터 저장소의 기능이 아님을 이해해야 합니다. 예를 들어, 작은 데이터 저장소를 수백 개의 동시 클라이언트가 과도하게 액세스할 수도 있습니다. 이 상황에서 데이터를 분할하면 경합을 줄이고 처리량을 개선할 수 있습니다.
+
+데이터 분할 체계를 설계할 때에는 다음 사항에 유의해야 합니다. 
+
+* **가능한 경우, 각 파티션에 가장 많이 사용되는 데이터베이스 작업용 데이터를 보관하여 교차 파티션 액세스 작업을 최소화합니다**. 여러 파티션에서 쿼리를 진행하면 단일 파티션의 쿼리보다 시간이 더 소요될 수 있지만, 하나의 쿼리 집합에서 파티션을 최적화하면 다른 쿼리 집합에 부정적인 영향을 줄 수 있습니다. 어쩔 수 없이 여러 파티션에서 쿼리해야 하는 경우 응용 프로그램 내에서 병렬 쿼리를 실행하고 결과를 집계하여 쿼리 시간을 최소화합니다. 이 접근 방식은 하나의 쿼리에서 결과를 가져와 다음 쿼리에서 사용하는 경우 등 경우에 따라 불가능할 수 있습니다.
+* **쿼리가 우편 번호 테이블이나 제품 목록과 같은 비교적 정적 참조 데이터를 사용하는 경우, 모든 파디션에서 이 데이터를 복제하여 다른 파티션에서 별도의 조회 작업 요구사항을 줄여야 합니다**. 또한, 이 접근 방식은 참조 데이터가 전체 시스템에서 많은 트래픽을 발생시킬 수 있는 "핫" 데이터 집합이 될 가능성을 낮출 수 있습니다.  그렇지만, 발생 가능한 모든 변경 내용을 이 참조 데이터와 동기화할 때 관련 비용이 추가됩니다.
+* **가능한 경우, 수직 및 기능 파티션에서 참조 무결성의 요구사항을 최소화합니다**. 이 체계에서 응용 프로그램은 데이터가 업데이트 및 소비되면 전체 파티션에서 직접 참조 무결성을 유지해야 합니다. 여러 파티션에서 데이터를 조인해야 하는 쿼리는 동일한 파티션 내에서만 데이터를 조인하는 쿼리보다 더 느리게 실행됩니다. 왜냐하면, 일반적으로 응용 프로그램은 키와 외래 키 순서로 연속 쿼리를 실행하기 때문입니다. 그 대신, 관련 데이터의 복제나 비정규화를 고려해야 합니다. 교차 파티션 조인이 필요한 쿼리 시간을 최소화하려면, 파티션에서 쿼리를 실행하고 응용 프로그램 내에서 데이터를 조인해야 합니다.
+* **분할 체계가 파티션 전체의 데이터 일관성에 미칠 수 있는 영향을 고려합니다.** 철저한 일관성이 실제로 꼭 필요한지 여부를 평가합니다. 그 대신, 클라우드에서 일반적인 접근 방식은 최종 일관성을 구현하는 것입니다. 각 파티션에서 데이터는 개별적으로 업데이트되고, 응용 프로그램 논리는 업데이트를 모두 완료하도록 보장합니다. 또한, 결국 일관된 작업을 실행하는 동안 데이터를 쿼리하면서 발생할 수 있는 불일치를 처리합니다. 최종 일관성에 대한 자세한 내용은 [데이터 일관성 프라이머]를 참조하십시오.
+* **쿼리가 올바른 파티션을 찾는 방법을 고려합니다**. 쿼리가 모든 파티션을 스캔하여 필요한 데이터를 찾아야 하면, 여러 병렬 쿼리를 실행하고 있더라도 성능에 상당한 영향을 주게 됩니다. 수직 및 기능 분할 전략에서 사용되는 쿼리는 당연히 파티션을 지정할 수 있습니다. 그렇지만, 수평 분할(샤딩)은 모든 샤드의 체계가 동일하기 때문에 항목을 찾기 어렵게 만들기도 합니다. 샤딩에서 일반적인 해결책은 데이터의 특정 항목에서 샤드 위치를 찾는 데 사용할 수 있는 맵을 유지하는 것입니다. 이 맵은 응용 프로그램의 샤딩 논리에서 구현되거나 데이터 저장소가 투명한 샤딩을 지원하는 경우 이 데이터 저장소를 통해 유지됩니다.
+* **수평 분할 전략을 사용할 때에는 정기적으로 샤드 균형을 다시 맞춰야 합니다**. 이 작업을 통해 크기 및 워크로드별로 데이터를 균일하게 배포하여 핫스폿을 최소화하고, 쿼리 성능을 극대화하고, 물리적 저장소 제한을 잘 처리할 수 있습니다. 그렇지만, 이 작업은 흔히 사용자 지정 도구나 프로세스를 사용해야 하기 때문에 복잡합니다.
+* **각 파티션을 복제하는 경우, 오류 발생을 차단해 주는 추가 보호 장치가 마련됩니다**. 단일 복제본에 오류가 발생하면, 쿼리가 실행 중인 복사본으로 전달될 수 있습니다.
+* **분할 전략의 물리적 제한에 도달하면, 확장성을 다양한 수준으로 넓혀야 할 수도 있습니다**. 예를 들어, 분할이 데이터베이스 수준인 경우 여러 데이터베이스에서 파티션을 찾거나 복제해야 합니다. 분할이 이미 데이터베이스 수준이고 물리적 제한에 대한 문제가 생기면 여러 호스팅 계정에서 파티션을 찾거나 복제해야 합니다.
+* **여러 파티션에서 데이터에 액세스하는 트랜잭션을 차단합니다**. 일부 데이터 저장소는 단일 파티션에서 데이터를 찾을 때에만 데이터를 수정하는 작업에서 트랜잭션 일관성과 무결성을 구현합니다. 여러 파티션에서 트랜잭션 지원이 필요한 경우, 대다수 분할 시스템은 기본 지원을 제공하지 않기 때문에 응용 프로그램 논리의 일부로서 이것을 구현해야 합니다.
+
+모든 데이터 저장소는 운영 관리 및 모니터링 활동을 필요로 합니다. 이 작업은 데이터 로드에서부터 데이터 백업 및 복원, 데이터 재구성, 시스템의 올바르고 효율적인 실행 보장에 이르기까지 포괄적입니다. 
+
+운영 관리에 영향을 주는 다음 요소를 고려해야 합니다. 
+
+* **데이터를 분할할 때 적절한 관리와 운영 작업을 구현하는 방법**. 이 작업에는 백업과 복원, 데이터 보관, 시스템 모니터링 등 여타 관리 작업이 포함됩니다. 예를 들어, 백업과 복원 작업 중에 논리 일관성을 유지하는 일이 문제가 될 수 있습니다.
+* **데이터를 여러 파티션에 로드하고 다른 소스에서 오는 새 데이터를 추가하는 방법**. 일부 도구와 유틸리티는 데이터를 올바른 파티션에 로드하는 작업 등 샤딩된 데이터 작업을 지원하지 않을 수도 있습니다. 즉, 새 도구와 유틸리티를 만들거나 가져와야 할 수도 있습니다.
+* **정기적으로 데이터를 보관하고 삭제하는 방법**. 과도한 파티션 증가를 방지하려면, 정기적으로(보통월 단위로) 데이터를 보관하고 삭제해야 합니다. 각기 다른 보관 체계에 맞게 데이터를 변환해야 할 수도 있습니다.
+* **데이터 무결성 문제를 찾는 방법**. 한 파티션의 데이터가 다른 파티션의 누락된 정보를 참조하는 경우 등 데이터 무결성 문제를 찾는 정기적인 프로세스를 실행하는 것을 고려해 보십시오. 이 프로세스에서 이 문제를 자동으로 수정하거나 작업자에게 경고를 보내 문제를 직접 수정하도록 할 수 있습니다. 예를 들어, 전자 상거래 응용 프로그램에서 주문 정보는 하나의 파티션에 저장될 수 있지만 각 주문을 구성하는 품목은 다른 파티션에 저장될 수 있습니다. 주문 프로세스는 데이터를 다른 파티션에 추가해야 합니다. 이 프로세스가 실패하면, 해당 주문이 없는 줄 항목에 저장될 수 있습니다.
+
+다른 데이터 저장소 기술은 일반적으로 분할을 지원하는 자체 기능을 내장하고 있습니다. 다음 섹션에서는 Azure 응용 프로그램에서 많이 사용되는 데이터 저장소의 실행 옵션에 대해 간략하게 알아봅니다. 또한, 이 기능을 최대한 활용할 수 있는 응용 프로그램 설계 시 고려 사항에 대해서도 설명합니다. 
+
+## Azure SQL Database에 적합한 분할 전략
+Azure SQL Database는 클라우드에서 실행되는 관계형 DaaS(database-as-a-service) 데이터베이스로서 Microsoft SQL Server를 기반으로 합니다. 관계형 데이터베이스는 정보를 테이블로 나누고, 각 테이블에 엔터티에 대한 정보를 일련의 행으로 보관합니다. 각 행에는 개별 엔터티 필드에 대한 데이터가 있는 열이 포함되어 있습니다. Microsoft 웹사이트의 [Azure SQL Database란?] 페이지에는 SQL 데이터베이스 만들기와 사용에 대한 세부 설명서가 나와 있습니다. 
+
+## Elastic Database를 사용한 수평 분할
+단일 SQL 데이터베이스는 저장할 수 있는 데이터의 용량에 제한이 있습니다. 처리량은 구조적인 요소와 지원되는 많은 수의 동시 연결로 인해 제약을 받습니다. SQL Database의 Elastic Database 기능은 SQL 데이터베이스의 수평 크기 조정을 지원합니다. Elastic Database를 사용하면, 데이터를 샤드로 분할하여 여러 SQL 데이터베이스에 분산시킬 수 있습니다. 또한 증가와 감소를 처리해야 하는 데이터 볼륨으로서 샤드를 추가 또는 제거할 수도 있습니다. Elastic Database를 사용하면 데이터베이스에서 부하를 분산시켜 경합을 줄이는 데도 도움이 됩니다. 
+
+> [!참고]
+Elastic Database는 Azure SQL Database의 Federations 기능을 대체할 수 있는 기능입니다. 기존 SQL Database Federation 설치는 Federations 마이그레이션 유틸리티를 사용하여 Elastic Database로 마이그레이션할 수 있습니다. 그렇지 않고, 시나리오가 Elastic Database가 제공하는 기능에 잘 부합하지 않는 경우 자체 샤딩 메커니즘을 구현하는 방법도 있습니다. 
 >
 >
 
-Each shard is implemented as a SQL database. A shard can hold more than one dataset (referred to as a *shardlet*). Each database maintains metadata that describes the shardlets that it contains. A shardlet can be a single data item, or it can be a group of items that share the same shardlet key. For example, if you are sharding data in a multitenant application, the shardlet key can be the tenant ID, and all data for a given tenant can be held as part of the same shardlet. Data for other tenants would be held in different shardlets.
+각 샤드는 SQL 데이터베이스로서 구현됩니다. 샤드는 2개 이상의 데이터 집합 (*샤들렛[shardlet]*이라고 함)을 가질 수 있습니다. 각 데이터베이스는 각각 갖고 있는 샤들렛에 대해 설명된 메타데이터를 유지합니다. 샤들렛은 단일 데이터 항목이거나 동일한 샤들렛 키를 공유하는 항목 그룹입니다. 예를 들어, 다중 테넌트 응용 프로그램의 데이터를 샤딩하는 경우, 샤들렛 키는 테넌트 ID일 수 있고, 지정된 테넌트의 모든 데이터는 동일한 샤들렛의 일부로 저장될 수 있습니다. 다른 테넌트의 데이터는 각기 다른 샤들렛에 저장됩니다. 
 
-It is the programmer's responsibility to associate a dataset with a shardlet key. A separate SQL database acts as a global shard map manager. This database contains a list of all the shards and shardlets in the system. A client application that accesses data connects first to the global shard map manager database to obtain a copy of the shard map (listing shards and shardlets), which it then caches locally.
+데이터 집합을 샤들렛 키와 연결하는 것은 프로그래머의 책임입니다. 별도의 SQL 데이터베이스는 전역 샤드 맵 관리자 역할을 합니다. 이 데이터베이스에는 시스템에 있는 모든 샤드와 샤들렛 목록이 들어 있습니다. 데이터에 액세스하는 클라이언트 응용 프로그램은 먼저 전역 샤드 맵 관리자 데이터베이스에 연결되어 샤드 맵(샤드와 샤들렛 열거) 복사본을 가져온 후 로컬에서 캐시합니다. 
 
-The application then uses this information to route data requests to the appropriate shard. This functionality is hidden behind a series of APIs that are contained in the Azure SQL Database Elastic Database Client Library, which is available as a NuGet package. The page [Elastic Database features overview] on the Microsoft website provides a more comprehensive introduction to Elastic Database.
+그런 다음 이 응용 프로그램은 이 정보를 사용해 데이터 요청을 적절한 샤드에 전달합니다. 이 기능은 NuGet 패키지로 출시된 Azure SQL Database Elastic Database Client Library에 포함된 일련의 API 뒤에 숨겨져 있습니다. Microsoft 웹사이트의 [Elastic Database 기능 개요] 페이지에는 Elastic Database에 대한 보다 포괄적인 소개가 나와 있습니다.
 
 > [!NOTE]
 > You can replicate the global shard map manager database to reduce latency and improve availability. If you implement the database by using one of the Premium pricing tiers, you can configure active geo-replication to continuously copy data to databases in different regions. Create a copy of the database in each region in which users are based. Then configure your application to connect to this copy to obtain the shard map.
