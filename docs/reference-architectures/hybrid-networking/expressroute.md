@@ -254,7 +254,9 @@ VM에 대한 관리 끝점을 외부 네트워크에 노출해야만 하는 경�
 
 1. 아래 단추를 우클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 2. Azure 포털에서 링크가 열리면 다음 절차를 따릅니다.
-   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-hybrid-er-rg`를 입력하세요.   * **위치** 드롭다운 상자에서 지역을 선택하세요.
+   
+   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-hybrid-er-rg`를 입력하세요.   
+   * **위치** 드롭다운 상자에서 지역을 선택하세요.
    * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
    * 사용약관을 검토한 후 **위에 명시된 사용약관에 동의함** 확인란을 클릭합니다.
    * **구입** 단추를 클릭합니다.
