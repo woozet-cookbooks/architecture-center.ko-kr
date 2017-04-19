@@ -11,7 +11,7 @@ ms.service: guidance
 pnp.series.title: Cloud Design Patterns
 ---
 
-# M관리와 모니터링 패턴
+# 관리와 모니터링 패턴
 
 [!INCLUDE [header](../../_includes/header.md)]
 
