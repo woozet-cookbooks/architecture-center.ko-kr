@@ -242,7 +242,7 @@ public interface IProductsDomain
 
 - [구체화된 뷰 패턴](materialized-view.md). CQRS를 구현한 읽기 모델은 쓰기 모델 데이터의 구체화된 뷰를 포함할 수 있습니다. 또는 구체화된 뷰를 생성하는 데 읽기 모델을 사용할 수 있습니다.
 
-- 패턴 및 사례 가이드 [CQRS Journey](http://aka.ms/cqrs). 특히 [명령과 쿼리의 역할 분리 패턴 개요](https://msdn.microsoft.com/library/jj591573.aspx) 는 패턴과 유용한 경우를 탐색하며, [에필로그: 교훈](https://msdn.microsoft.com/library/jj591568.aspx) 은 이 패턴을 사용할 때 발생하는 문제 중 일부를 이해하는 데 도움을 줍니다.
+- 패턴 및 사례 가이드 [CQRS 여정](http://aka.ms/cqrs). 특히 [명령과 쿼리의 역할 분리 패턴 개요](https://msdn.microsoft.com/library/jj591573.aspx) 는 패턴과 유용한 경우를 탐색하며, [에필로그: 교훈](https://msdn.microsoft.com/library/jj591568.aspx) 은 이 패턴을 사용할 때 발생하는 문제 중 일부를 이해하는 데 도움을 줍니다.
 
 - [Martin Fowler가 게시한 CQRS](http://martinfowler.com/bliki/CQRS.html) 포스팅은 패턴의 기본 내용을 설명하고 다른 유용한 리소스에 연결되는 링크를 제공합니다.
 
