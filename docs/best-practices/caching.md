@@ -12,658 +12,360 @@ pnp.series.title: Best Practices
 # Caching
 [!INCLUDE [header](../_includes/header.md)]
 
-Caching is a common technique that aims to improve the performance and
-scalability of a system. It does this by temporarily copying frequently accessed data
-to fast storage that's located close to the application. If this fast data storage
-is located closer to the application than the original source, then caching
-can significantly improve response times for client applications by serving
-data more quickly.
+캐싱은 시스템의 성능과 확장성 향상을 목표로 하는 일반적인 기술입니다. 성능과 확장성을 향상하기 위해 자주 액세스하는 데이터를 응용 프로그램 가까이에 있는 빠른 저장소에 임시로 복사하는데, 이때 빠른 데이터 저장소가 원래 소스보다 응용 프로그램에 더 가까운 위치에 있으면 캐싱은 데이터를 보다 신속하게 배치하여 클라이언트 응용 프로그램의 응답 시간을 크게 향상시킬 수 있습니다. 
 
-Caching is most effective when a client instance repeatedly
-reads the same data, especially if all the following conditions apply to the original data store:
+캐싱은 클라이언트 인스턴스가 동일한 데이터를 반복적으로 읽을 때 가장 효과적입니다. 특히 원래 데이터 저장소에 다음 조건이 모두 적용되는 경우에 더욱 효과적입니다. 
 
-* It remains relatively static.
-* It's slow compared to the speed of the cache.
-* It's subject to a high level of contention.
-* It's far away when network latency can cause access to be slow.
+•	상대적으로 정적인 상태를 유지.
+•	캐시 속도에 비해 느림.
+•	많은 경합을 일으킴.
+•	네트워크 대기 시간 때문에 액세스 속도가 느려질 수 있는 경우 훨씬 멀어짐.
 
-## Caching in distributed applications
-Distributed applications typically implement either or both of the
-following strategies when caching data:
 
-* Using a private cache, where data is held locally on the computer that's running an instance of an application or service.
-* Using a shared cache, serving as a common source which can be accessed by multiple processes and/or machines.
+## 분산 응용 프로그램에서의 캐싱.
+일반적으로 분산 응용 프로그램은 데이터를 캐싱할 때 다음 전략 중 하나 또는 둘 다를 구현합니다. 
 
-In both cases, caching can be performed client-side and/or server-side. Client-side caching is done by the process that provides
-the user interface for a system, such as a web browser or desktop application.
-Server-side caching is done by the process that provides the business services
-that are running remotely.
+•	응용 프로그램이나 서비스의 인스턴스를 실행하는 컴퓨터에 데이터가 로컬로 배치되는 개인 캐시 사용.
+•	여러 프로세스 및/또는 시스템에서 액세스할 수 있는 공통 소스의 역할을 하는 공유 캐시 사용.
 
-### Private caching
-The most basic type of cache is an in-memory store. It's held in the address
-space of a single process and accessed directly by the code that runs
-in that process. This type of cache is very quick to access. It can
-also provide an extremely effective means for storing modest amounts of
-static data, since the size of a cache is typically constrained by the
-volume of memory that's available on the machine hosting the process.
 
-If you need to cache more information than is physically possible in memory,
-you can write cached data to the local file system. This will
-be slower to access than data that's held in-memory, but should
-still be faster and more reliable than retrieving data across a network.
+이 두 경우 모두에서, 캐싱은 클라이언트 쪽 및/또는 서버 쪽에서 수행될 수 있습니다. 클라이언트 쪽 캐싱은 웹 브라우저 또는 데스크탑 응용 프로그램 등 시스템에 대한 사용자 인터페이스를 제공하는 프로세스에 의해 수행됩니다. 서버 쪽 캐싱은 원격으로 실행되는 비즈니스 서비스를 제공하는 프로세스에 의해 수행됩니다. 
 
-If you have multiple instances of an application that uses this model
-running concurrently, each application instance has its own
-independent cache holding its own copy of the data.
+### 개인 캐싱(Private caching)
+가장 기본적인 캐시 유형은 인메모리 저장소입니다. 인메모리 저장소는 단일 프로세스의 주소 공간에 배치되며 해당 프로세스에서 실행되는 코드에 의해 직접 액세스됩니다. 이 캐시 유형은 액세스 속도가 매우 빠릅니다. 인메로리 저장소는 적은 양의 정적 데이터를 저장할 때 매우 효과적인 수단이 될 수도 있습니다. 캐시 크기는 일반적으로 프로세스를 호스팅하는 시스템에서 사용할 수 있는 메모리의 용량에 따라 제한받기 때문입니다. 
 
-Think of a cache as a snapshot of the original data at some
-point in the past. If this data is not static, it is likely that
-different application instances hold different versions of the
-data in their caches. Therefore, the same query performed by these
-instances can return different results, as shown in Figure 1.
+메모리에 물리적으로 담을 수 있는 양보다 많은 정보를 캐시해야 하는 경우에는 캐시된 데이터를 로컬 파일 시스템에 쓸 수 있습니다. 그러면 메모리에 있는 데이터보다는 액세스 속도가 느리지만 네트워크에서 데이터를 검색하는 것보다는 더 빠르고  안정적입니다. 
+
+이 모델을 동시에 실행하는 응용 프로그램의 인스턴스가 여러 개 있으면, 각 응용 프로그램 인스턴스는 고유의 데이터 사본을 가진 고유의 독립 캐시를 갖게 됩니다.
+
+캐시를 과거의 원래 데이터 스냅샷이라고 생각하십시오. 이 데이터가 정적인 데이터가 아니라면, 다른 응용 프로그램 인스턴스가 해당 캐시에 다른 버전의 데이터를 갖게 될 가능성이 큽니다. 따라서 그림 1에 나타난 바와 같이, 이러한 인스턴스에서 수행된 동일한 쿼리가 다른 결과를 반환할 수 있습니다. 
 
 ![Using an in-memory cache in different instances of an application](./images/caching/Figure1.png)
 
-*Figure 1: Using an in-memory cache in different instances of an application*
+*그림 1: 응용 프로그램의 다른 인스턴스에서 인메모리 캐시 사용 *
 
-### Shared caching
-Using a shared cache can help alleviate concerns that data might
-differ in each cache, which can occur with in-memory caching. Shared
-caching ensures that different application instances see the same
-view of cached data. It does this by locating the cache in a separate location,
-typically hosted as part of a separate service, as shown in Figure 2.
+### 공유 캐싱
+공유 캐시를 사용하면 인메모리 캐싱의 각 캐시 데이터가 서로 다를 수 있다는 우려를 덜 수 있습니다. 공유 캐싱은 서로 다른 응용 프로그램 인스턴스가 캐시된 데이터에 대한 동일한 뷰를 볼 수 있게 해줍니다. 그림 2에 나타난 바와 같이, 이는 별도의 위치(일반적으로 별도 서비스의 일부로 호스팅된 위치)에 캐시를 배치하는 방식으로 실행됩니다. 
 
 ![Using a shared cache](./images/caching/Figure2.png)
 
-*Figure 2: Using a shared cache*
+*그림 2: 공유 캐시 사용 *
 
-An important benefit of the shared caching approach is the
-scalability it provides. Many shared cache services are
-implemented by using a cluster of servers, and utilize software that
-distributes the data across the cluster in a transparent manner. An
-application instance simply sends a request to the cache service.
-The underlying infrastructure is responsible for determining the
-location of the cached data in the cluster. You can easily scale the
-cache by adding more servers.
+공유 캐싱 방법이 가지는 중요한 이점은 확장성입니다. 많은 공유 캐시 서비스는 서버 클러스터를 사용하여 구현되고 투명한 방식으로 클러스터에 데이터를 분배하는 소프트웨어를 사용합니다. 응용 프로그램 인스턴스는 단순히 캐시 서비스에 요청을 보냅니다. 기본 인프라는 캐시된 데이터의 클러스터 내 위치를 결정합니다. 사용자는 더 많은 서버를 추가하여 캐시를 쉽게 확장할 수 있습니다. 
 
-There are two main disadvantages of the shared caching approach:
+공유 캐싱 방법의 단점은 다음과 같이 크게 두 가지가 있습니다. 
 
-* The cache is slower to  access because it is no longer held locally to each
-  application instance.
-* The requirement to implement a separate
-  cache service might add complexity to the solution.
+•	캐시가 더 이상 각 응용 프로그램 인스턴스에 로컬로 배치되지 않기 때문에 액세스 속도가 느립니다.
+•	별도의 캐시 서비스 구현이라는 요구사항 때문에 솔루션이 더 복잡해질 수 있습니다.
 
-## Considerations for using caching
-The following sections describe in more detail the considerations
-for designing and using a cache.
 
-### Decide when to cache data
-Caching can dramatically improve performance, scalability, and availability. The more data
-that you have and the larger the number of users that need to access this data, the greater
-the benefits of caching become. That's because caching reduces the latency and contention that's associated with handling
-large volumes of concurrent requests in the original data store.
+## 캐싱 사용 시 고려사항
+다음 섹션에서는 캐시 설계 및 사용 시 고려할 사항에 대해 자세히 설명합니다. 
 
-For example, a database
-might support a limited number of concurrent connections. Retrieving data from a shared
-cache, however, rather than the underlying database, makes it possible for a client application to access this data
-even if the number of available connections is currently exhausted. Additionally, if the
-database becomes unavailable, client applications might be able to continue by using the
-data that's held in the cache.
+### 데이터를 캐시할 시점 결정
+캐싱은 성능, 확장성 및 가용성을 크게 향상시킬 수 있습니다. 가지고 있는 데이터가 많고 이 데이터에 액세스해야 하는 사용자 수가 많을수록 캐싱의 이점이 더 커집니다. 캐싱이 원래 데이터 저장소에서 대량의 동시 요청을 처리하는 문제와 관련하여 대기 시간과 경합을 줄여 주기 때문입니다. 
 
-Consider caching data that is read frequently but modified infrequently
-(for example, data that has a higher proportion of read operations than write operations). However,
-we don't recommend that you use the cache as the authoritative store of critical information. Instead,
-ensure that all changes that your application cannot afford to lose are always saved to a
-persistent data store. This means that if the cache is unavailable, your application can
-still continue to operate by using the data store, and you won't  lose important
-information.
+예를 들어, 데이터베이스는 제한된 수의 동시 연결을 지원할 수 있습니다. 기본 데이터베이스가 아니라 공유 캐시에서 데이터를 검색하면, 현재 사용 가능한 연결 수가 없는 경우에도 클라이언트 응용 프로그램이 이 데이터에 액세스할 수 있습니다. 또한, 데이터베이스를 사용할 수 없게 되면 클라이언트 응용 프로그램이 캐시에 있는 데이터를 사용하여 작업을 계속할 수 있습니다. 
 
-### Determine how to cache data effectively
-The key to using a cache effectively lies in determining the most appropriate data to
-cache, and caching it at the appropriate time. The data can be added to the cache on
-demand the first time it is retrieved by an application. This means that the application needs to
-fetch the data only once from the data store, and that subsequent access can be satisfied
-by using the cache.
+읽기는 자주 하지만 수정이 드물게 이루어지는 데이터를 캐싱하는 것이 좋습니다(예: 쓰기 작업보다 읽기 작업의 비율이 높은 데이터) . 그러나 캐시를 중요한 정보의 신뢰할 수 있는 저장소로 사용하는 것은 권장되지 않습니다. 대신, 손실되어서는 안 되는 응용 프로그램의 모든 변경사항은 항상 영구 데이터 저장소에 저장하십시오. 그러면 캐시를 사용할 수 없는 경우에도 데이터 저장소를 사용하여 응용 프로그램이 작업을 계속할 수 있으므로 중요한 정보가 손실되지 않습니다. 
 
-Alternatively, a cache can be partially or fully populated with data in advance,
-typically when the application starts (an approach known as seeding). However, it might
-not be advisable to implement seeding for a large cache because this approach can impose
-a sudden, high load on the original data store when the application starts running.
+### 데이터를 효과적으로 캐시하는 방법 결정
+효과적인 캐시 사용의 핵심은 캐시에 가장 적합한 데이터를 쓰도록 결정하고 적절한 시점에 캐싱하는 것입니다. 데이터는 응용 프로그램에 의해 처음 검색될 때 요청 시 캐시에 추가할 수 있습니다. 즉, 응용 프로그램은 데이터 저장소에서 데이터를 한 번만 가져오면 되고 이후의 액세스는 캐시를 사용하면 됩니다. 
 
-Often an analysis of usage patterns can help you decide whether to fully or partially
-prepopulate a cache, and to choose the data to cache. For example, it
-can be useful to seed the cache with the static user profile data for
-customers who use the application regularly (perhaps every day), but not for
-customers who use the application only once a week.
+또는, 일반적으로 응용 프로그램이 시작될 때 캐시에 데이터가 부분적으로나 전체적으로 채워질 수 있습니다(이 방법을 시딩이라고 함). 그러나 이 방법을 사용하면 응용 프로그램이 실행되기 시작할 때 원래 데이터 저장소에 갑자기 높은 부하가 걸릴 수 있기 때문에 대량 캐시에 대한 시딩은 바람직하지 않을 수 있습니다. 
 
-Caching typically works well with data that is immutable or that changes
-infrequently. Examples include reference information such as product and pricing
-information in an e-commerce application, or shared static resources that are costly
-to construct. Some or all of this data can be loaded into the cache at application
-startup to minimize demand on resources and to improve performance. It might also be
-appropriate to have a background process that periodically updates reference data
-in the cache to ensure it is up to date, or that refreshes the cache when reference
-data changes.
+사용 패턴을 분석하면 캐시를 전체적으로 또는 부분적으로 미리 채울지 여부를 결정하고 캐시할 데이터를 선택하는 데 도움이 될 때가 많습니다. 예를 들어, 정기적으로(아마도 매일) 응용 프로그램을 사용하는 고객에 대해서는 캐시를 정적 사용자 프로필 데이터로 시드하는 것이 유용할 수 있지만, 응용 프로그램을 일주일에 한 번만 사용하는 고객에게는 이 방법이 유용하지 않을 수 있습니다. 
 
-Caching is less useful for dynamic data, although there are some exceptions to
-this consideration (see the section Cache highly dynamic data later in this
-article for more information). When the original data changes regularly, either
-the cached information becomes stale very quickly or the overhead of synchronizing the cache with the original data store reduces the effectiveness of
-caching.
+일반적으로 캐싱은 변경할 수 없거나 드물게 변경되는 데이터와 잘 작동합니다. 이러한 예로는 전자상거래 응용 프로그램의 제품 및 가격 정보 같은 참조 정보, 그리고 구성하는 데 비용이 많이 드는 공유 정적 리소스 같은 것을 들 수 있습니다. 이 데이터의 일부 또는 전부는 응용 프로그램을 시작할 때 캐시에 로드되어 리소스에 대한 수요를 최소화하고 성능을 향상시킬 수 있습니다. 또한 캐시의 참조 데이터를 정기적으로 업데이트하여 최신 상태를 유지하는지 확인하고 참조 데이터가 변경될 때 캐시를 새로 고치게 하는 백그라운드 프로세스를 갖추는 게 좋을 것입니다.  
 
-Note that a cache does not have to include the complete data for an
-entity. For example, if a data item represents a multivalued object such as a bank
-customer with a name, address, and account balance, some of these elements might
-remain static (such as the name and address), while others (such as the account balance)
-might be more dynamic. In these situations, it can be useful to cache the static
-portions of the data and retrieve (or calculate) only the remaining information when it is required.
+캐싱은 동적 데이터에는 유용하지 않지만, 이때 몇 가지 예외가 있습니다(자세한 내용은 본 문서의 뒷부분에 나오는 '매우 동적인 데이터 캐싱' 섹션 참조). 원래 데이터가 정기적으로 변경되면 캐시된 정보가 매우 빨리 부실해지거나 캐시를 원래 데이터 저장소와 동기화하는 오버헤드가 캐싱의 효율성을 감소시킵니다. 
 
-We recommend that you carry out performance testing and usage analysis to determine whether
-pre-population or on-demand loading of the cache, or a combination of both, is
-appropriate. The decision should be based on the volatility and
-usage pattern of the data. Cache utilization and performance analysis is
-particularly important in applications that encounter heavy loads and must be
-highly scalable. For example, in highly scalable scenarios it might make sense to
-seed the cache to reduce the load on the data store at peak times.
+캐시가 엔터티(entitiy)에 대한 완전한 데이터를 포함할 필요는 없습니다. 예를 들어, 데이터 항목이 이름, 주소, 계정 잔액을 가진 은행 고객 등의 다중 값 개체를 나타내는 경우, 이러한 요소 중 일부는 정적(예: 이름 및 주소)으로 유지되는 반면 다른 요소(예: 계정 잔액)는 더 동적이 될 수 있습니다. 이러한 상황에서는 데이터의 정적인 부분을 캐시하고 필요시 나머지 정보만 검색(또는 계산)하는 방법이 유용할 수 있습니다. 
 
-Caching can also be used to avoid repeating computations while the application is
-running. If an operation transforms data or performs a complicated calculation,
-it can save the results of the operation in the cache. If the same calculation
-is required afterward, the application can simply retrieve the results from
-the cache.
+성능 테스트와 사용 분석을 수행하여 캐시를 사전에 채우거나 주문 시 로딩하거나 또는 두 가지를 결합하는 방식 중 적합한 것을 결정하는 게 좋습니다. 이 결정은 데이터의 변동성 및 사용 패턴을 기반으로 해야 합니다. 캐시 사용과 성능 분석은 과부하가 발생하고 확장성이 높은 응용 프로그램에서 특히 중요합니다. 예를 들어, 확장성이 뛰어난 시나리오에서는 사용량이 많은 시간에 데이터 저장소의 부하를 줄이기 위해 캐시를 시드하는 것이 좋습니다. 
 
-An application can modify data that's held in a cache. However, we recommend thinking of the
-cache as a transient data store that could disappear at any time. Do not store
-valuable data in the cache only; make sure that you maintain the information
-in the original data store as well. This means that if the cache becomes
-unavailable, you minimize the chance of losing data.
+응용 프로그램이 실행되는 동안 반복 계산을 방지하기 위해 캐싱을 사용할 수도 있습니다. 어떤 작업이 데이터를 변환하거나 복잡한 계산을 수행하는 경우 해당 작업의 결과를 캐시에 저장할 수 있습니다. 이후에 동일한 계산이 필요하면 응용 프로그램은 단순히 캐시에서 결과만 검색하면 됩니다. 
 
-### Cache highly dynamic data
-When you store rapidly-changing information in a persistent data store, it can impose
-an overhead on the system. For example, consider a device that continually reports
-status or some other measurement. If an application chooses not to cache this
-data on the basis that the cached information will nearly always be outdated, then
-the same consideration could be true when storing and retrieving this information
-from the data store. In the time it takes to save and fetch this data, it might have
-changed.
+응용 프로그램은 캐시에 있는 데이터를 수정할 수 있습니다. 그러나, 캐시는 언제든지 사라질 수 있는 임시 데이터 저장소로 생각하는 것이 좋습니다. 중요한 데이터를 캐시에만 저장해서는 안 됩니다. 원래 데이터 저장소에도 해당 정보를 보관해야 합니다. 그래야 캐시를 사용할 수 없게 될 경우 데이터 손실 가능성을 최소화할 수 있습니다. 
 
-In a situation such as this, consider the benefits of storing the dynamic
-information directly in the cache instead of in the persistent data store. If the
-data is non-critical and does not require auditing, then it doesn't matter
-if the occasional change is lost.
+### 매우 동적인 데이터 캐싱
+빠르게 변경되는 정보를 영구 데이터 저장소에 저장하면 시스템에 오버헤드가 발생할 수 있습니다. 예를 들어, 상태 또는 기타 측정치를 계속 보고하는 장치를 생각해 보십시오. 캐시된 정보는 거의 항상 오래된 데이터가 되어 버리기 때문에 응용 프로그램에서 이 데이터를 캐시하지 않도록 선택하면, 데이터 저장소에 이 정보를 저장하고 데이터 저장소에서 검색할 때 동일한 문제가 발생할 수 있습니다. 이 데이터를 저장하고 가져오는 데 소요되는 시간은 바뀔 수 있습니다. 
 
-### Manage data expiration in a cache
-In most cases, data that's held in a cache is a copy of data that's held in the original data
-store. The data in the original data store might change after it was cached, causing
-the cached data to become stale. Many caching systems enable you to configure the
-cache to expire data and reduce the period for which data may be out of date.
+이와 같은 상황에서는, 동적 정보를 영구 데이터 저장소가 아니라 캐시에 직접 저장하여 얻을 수 있는 이점을 고려해 보십시오. 데이터가 중요하지 않고 감사가 필요하지 않은 경우에는 변경사항이 가끔 손실되더라도 상관없습니다. 
 
-When cached data expires, it's removed from the cache, and the application must
-retrieve the data from the original data store (it can put the newly-fetched
-information back into cache). You can set a default expiration policy when you
-configure the cache. In many cache services, you can also stipulate the expiration
-period for individual objects when you store them programmatically in the cache.
-Some caches enable you to specify the expiration period as an absolute value, or
-as a sliding value that causes the item to be removed from the cache if it is not
-accessed within the specified time. This setting overrides any cache-wide
-expiration policy, but only for the specified objects.
+### 캐시의 데이터 만료 관리
+대부분의 경우, 캐시에 있는 데이터는 원래 데이터 저장소에 있는 데이터의 사본입니다. 원래 데이터 저장소의 데이터는 캐시된 후에 변경되어 캐시된 데이터가 부실해질 수 있습니다. 많은 캐싱 시스템이 사용자가 데이터를 만료하도록 캐시를 구성하고 데이터가 만료되는 기간을 줄일 수 있도록 지원합니다. 
 
-> [!NOTE]
-> Consider the expiration period for the cache and the objects that it contains carefully. If you make it too short, objects will expire too quickly and you will reduce the benefits of using the cache. If you make the period too long, you risk the data becoming stale.
+캐시된 데이터가 만료되면 이 데이터는 캐시에서 제거되고, 응용 프로그램은 원래 데이터 저장소에서 데이터를 검색해야 합니다(새로 가져온 정보를 다시 캐시에 넣을 수 있음). 사용자는 캐시를 구성할 때 기본 만료 정책을 설정할 수 있습니다. 많은 캐시 서비스에서, 개체를 프로그래밍 방식으로 캐시에 저장할 때 개별 개체의 만료 기간을 지정할 수도 있습니다. 일부 캐시에서는 사용자가 만료 기간을 절대값으로 지정하거나, 지정된 시간 내에 액세스하지 않으면 캐시에서 항목이 제거되는 슬라이딩 값으로 지정할 수 있습니다. 이 설정은 캐시 전체의 모든 만료 정책을 재정의하되, 지정된 개체에 대해서만 재정의합니다. 
+
+> [!참고]
+> 캐시 및 캐시에 포함된 개체의 만료 기간을 신중히 고려하십시오. 너무 짧게 설정하면 개체가 너무 빨리 만료되어 캐시를 사용하는 이점이 줄어듭니다. 기간을 너무 길게 설정하면 데이터가 부실해질 위험이 있습니다. 
 > 
 > 
 
-It's also possible that the cache might fill up if data is allowed to remain
-resident for a long time. In this case, any requests to add new items to the
-cache might cause some items to be forcibly removed in a process known as
-eviction. Cache services typically evict data on a least-recently-used (LRU)
-basis, but you can usually override this policy and prevent items from being
-evicted. However, if you adopt this approach, you risk exceeding the
-memory that's available in the cache. An application that attempts to add an item
-to the cache will fail with an exception.
+데이터를 오래 머무르게 하면 캐시가 가득 찰 수도 있습니다. 이 경우, 캐시에 새 항목을 추가하라는 요청이 오면 일부 항목이 제거(eviction)라고 하는 프로세스에서 강제로 제거될 수 있습니다. 캐시 서비스는 보통 LRU(오래 전에 사용한 항목) 기준으로 데이터를 제거하지만, 사용자는 일반적으로 이 정책을 재정의해서 항목이 제거되는 것을 방지할 수 있습니다. 그러나 이 방법을 채택하면 캐시에서 사용할 수 있는 메모리를 초과할 위험이 있습니다. 응용 프로그램이 항목을 캐시에 추가하려고 시도하면 일부 예외를 제외하고는 대부분 실패합니다. 
 
-Some caching implementations might provide additional eviction policies. There are several types of eviction policies. These include:
+일부 캐싱 구현에서는 추가 제거 정책이 제공될 수 있습니다. 제거 정책에는 여러 가지 유형이 있습니다. 예를 들면 다음과 같습니다. 
 
-* A most-recently-used policy (in the expectation that the
-  data will not be required again).
-* A first-in-first-out policy (oldest data is
-  evicted first).
-* An explicit removal policy based on a triggered event (such as the
-  data being modified).
+•	가장 최근에 사용된 정책(데이터가 다시 필요하지 않을 것으로 예상되는 경우).
+•	선입 선출 정책(가장 오래된 데이터가 먼저 제거됨).
+•	트리거된 이벤트를 기반으로 하는 명시적 제거 정책(예: 수정 중인 데이터).
 
-### Invalidate data in a client-side cache
-Data that's held in a client-side cache is generally considered to be outside
-the auspices of the service that provides the data to the client. A service
-cannot directly force a client to add or remove information from a
-client-side cache.
 
-This means that it's possible for a client that uses
-a poorly configured cache to continue using outdated information. For example, if the expiration policies of the cache aren't
-properly implemented, a client might use outdated information that's cached
-locally when the information in the original data source has changed.
+### 클라이언트 쪽 캐시의 데이터 무효화
+클라이언트 쪽 캐시에 있는 데이터는 일반적으로 데이터를 클라이언트에 제공하는 서비스의 범위를 벗어나 외부에 있는 것으로 간주됩니다. 서비스는 직접 강제적으로 클라이언트가 클라이언트 쪽 캐시에서 정보를 추가하거나 제거하는 작업을 수행하게 할 수는 없습니다. 
 
-If you are building a web application that serves data over an HTTP
-connection, you can implicitly force a web client (such as a browser or
-web proxy) to fetch the most recent information. You can do this if a resource is updated by a change in the URI of that resource. Web clients typically use the URI
-of a resource as the key in the client-side cache, so if the URI changes,
-the web client ignores any previously cached versions of a
-resource and fetches the new version instead.
+즉, 잘못 구성된 캐시를 사용하는 클라이언트가 오래된 정보를 계속 사용하게 될 수 있습니다. 예를 들어, 캐시의 만료 정책이 제대로 구현되지 않은 경우, 원래 데이터 원본의 정보가 변경될 때 클라이언트가 로컬로 캐시된 오래된 정보를 사용하게 될 수 있습니다. 
 
-## Managing concurrency in a cache
-Caches are often designed to be shared by multiple instances of an
-application. Each application instance can read and modify data in
-the cache. Consequently, the same concurrency issues that arise with
-any shared data store also apply to a cache. In a situation
-where an application needs to modify data that's held in the cache, you might
-need to ensure that updates made by one instance of the application
-do not overwrite the changes made by another instance.
+사용자가 HTTP 연결을 통해 데이터를 제공하는 웹 응용 프로그램을 구축하는 경우, 웹 클라이언트(예: 브라우저 또는 웹 프록시)가 암묵적으로 가장 최신 정보를 강제로 가져오게 할 수 있습니다. 리소스의 URI가 변경되어 해당 리소스가 업데이트되는 경우에 이 작업을 수행할 수 있습니다. 웹 클라이언트는 일반적으로 리소스의 URI를 클라이언트 쪽 캐시의 키로 사용하므로, URI가 변경되면 웹 클라이언트는 이전에 캐시된 버전의 모든 리소스를 무시하고 새 버전을 가져옵니다. 
 
-Depending on the nature of the data and the likelihood of collisions,
-you can adopt one of two approaches to concurrency:
+## 캐시의 동시성 관리
+캐시는 흔히 응용 프로그램의 여러 인스턴스를 공유하도록 설계되어 있습니다. 각 응용 프로그램 인스턴스는 캐시의 데이터를 읽고 수정할 수 있습니다. 따라서 모든 공유 데이터 저장소에서 발생하는 것과 동일한 동시성 문제가 캐시에서도 발생합니다. 응용 프로그램이 캐시에 있는 데이터를 수정해야 하는 상황에서, 사용자는 응용 프로그램의 한 인스턴스에 의해 수행된 업데이트가 다른 인스턴스에 의해 이루어진 변경사항을 겹쳐 쓰지 않게 해야 합니다. 
+데이터의 유형과 충돌 가능성에 따라, 사용자는 동시성에 대한 다음 두 가지 방법 중에서 하나를 채택할 수 있습니다. 
 
-* **Optimistic.** Immediately prior to updating the data, the application checks to see whether the data in the cache has changed since it was retrieved. If the data is still the same, the change can be made. Otherwise, the application has to decide whether to update it. (The business logic that drives this decision will be application-specific.) This approach is suitable for situations where updates are infrequent, or where collisions are unlikely to occur.
-* **Pessimistic.** When it retrieves the data, the application locks it in the cache to prevent another instance from changing it. This process ensures that collisions cannot occur, but they can also block other instances that need to process the same data. Pessimistic concurrency can affect the scalability of a solution and is recommended only for short-lived operations. This approach might be appropriate for situations where collisions are more likely, especially if an application updates multiple items in the cache and must ensure that these changes are applied consistently.
+* **낙관적 동시성.** 데이터를 업데이트하기 직전에 응용 프로그램이 캐시의 데이터가 검색 후 변경되었는지 여부를 확인합니다. 데이터가 여전히 동일하면 변경할 수 있습니다. 그렇지 않으면, 응용 프로그램이 업데이트 여부를 결정해야 합니다. (이러한 결정을 내리는 비즈니스 로직은 응용 프로그램에 따라 다름) 이 방법은 업데이트가 드물게 발생하거나 충돌이 발생할 가능성이 적은 상황에서 적합합니다.
+* **비관적 동시성.** 데이터를 검색하면 응용 프로그램이 캐시의 데이터를 잠가서 다른 인스턴스가 변경하지 못하게 합니다. 이 프로세스는 충돌이 발생하지 않게 해주지만 동일한 데이터를 처리해야 하는 다른 인스턴스까지 차단할 수 있습니다. 비관적 동시성은 솔루션의 확장성에 영향을 줄 수 있으며 단기 작업에만 권장됩니다. 이 방법은 충돌 발생 가능성이 높은 상황에서 적합할 수 있습니다. 특히 응용 프로그램이 캐시의 여러 항목을 업데이트하고 이러한 변경사항이 일관되게 적용되어야 하는 경우에 적합합니다.
 
-### Implement high availability and scalability, and improve performance
-Avoid using a cache as the primary repository of data; this is the role
-of the original data store from which the cache is populated. The
-original data store is responsible for ensuring the persistence of the
-data.
+### 고가용성 및 확장성의 구현, 그리고 성능 향상
+캐시를 데이터의 기본 리포지토리로 사용하지 마십시오. 기본 리포지토리는 캐시가 채워지는 원래 데이터 저장소의 역할을 합니다. 원래 데이터 저장소는 데이터의 지속성을 보장해 줍니다. 
 
-Be careful not to introduce critical dependencies on the availability
-of a shared cache service into your solutions. An application should be
-able to continue functioning if the service that provides the shared cache
-is unavailable. The application should not hang or fail while waiting
-for the cache service to resume.
+공유 캐시 서비스의 가용성에 대한 중요한 종속성을 솔루션에 부여하지 않도록 주의하십시오. 공유 캐시를 제공하는 서비스를 사용할 수 없는 경우에도 응용 프로그램은 계속 작동할 수 있어야 합니다. 캐시 서비스의 재개를 기다리는 동안 응용 프로그램이 종료되거나 장애가 발생해서는 안 됩니다. 
 
-Therefore, the application must be
-prepared to detect the availability of the cache service and fall back
-to the original data store if the cache is inaccessible. The
-[Circuit-Breaker pattern](http://msdn.microsoft.com/library/dn589784.aspx) is useful for handling this scenario. The
-service that provides the cache can be recovered, and once it becomes
-available, the cache can be repopulated as data is read form the
-original data store, following a strategy such as the [Cache-aside pattern](http://msdn.microsoft.com/library/dn589799.aspx).
+따라서 응용 프로그램은 캐시 서비스의 가용성을 감지하고 캐시에 액세스할 수 없을 때 원래 데이터 저장소를 대신 사용할  준비가 되어 있어야 합니다. [회로 차단기 패턴](http://msdn.microsoft.com/library/dn589784.aspx)은 이 시나리오를 처리하는 데 유용합니다. 캐시를 제공하는 서비스는 복구될 수 있으며, 일단 사용할 수 있게 되면 캐시는[캐시 배제 패턴](http://msdn.microsoft.com/library/dn589799.aspx) 등의 전략에 따라 원래 데이터 저장소에서 데이터를 읽을 때 다시 채워질 수 있습니다.
 
-However, there might be a scalability impact on the system if the application falls back to the original data store when the cache is
-temporarily unavailable.
-While the data store is being recovered, the original data store
-could be swamped with requests for data, resulting in timeouts and
-failed connections.
+그러나 캐시를 일시적으로 사용할 수 없을 때 응용 프로그램이 원래 데이터 저장소를 대신 사용하게 되면 시스템 확장성에 영향을 미칠 수 있습니다. 데이터 저장소가 복구되는 동안 원래 데이터 저장소에는 데이터 요청이 너무 많이 밀려들어 시간 초과와 연결 실패가 발생할 수 있습니다. 
 
-Consider
-implementing a local, private cache in each instance of an application,
-together with the shared cache that all application instances
-access. When the application retrieves an item, it can check first
-in its local cache, then in the shared cache, and finally in the original
-data store. The local cache can be populated using the data in either the
-shared cache, or in the database if the shared cache is unavailable.
+모든 응용 프로그램 인스턴스가 액세스하는 공유 캐시와 함께 응용 프로그램의 각 인스턴스에 로컬의 개인 캐시를 구현하는 작업을 고려해 보십시오. 응용 프로그램이 항목을 검색하면 먼저 해당 로컬 캐시에서 확인한 후 공유 캐시에서 확인하고 마지막으로 원래 데이터 저장소에서 확인할 수 있습니다. 로컬 캐시는 공유 캐시를 사용할 수 없는 경우 공유 캐시나  데이터베이스에 있는 데이터를 사용하여 채울 수 있습니다. 
 
-This approach requires careful configuration to prevent the local
-cache from becoming too stale with respect to the shared cache. However, the local cache acts as a buffer if the shared cache is unreachable. Figure 3
-shows this structure.
+이 방법을 사용할 때는 로컬 캐시가 공유 캐시에 비해 너무 부실해지지 않도록 신중하게 구성해야 합니다. 그러나 공유 캐시를 사용할 수 없는 경우 공유 캐시는 버퍼 역할을 합니다. 그림 3은 이 구조를 보여줍니다. 
 
 ![Using a local, private cache with a shared cache](./images/caching/Caching3.png)
-*Figure 3: Using a local, private cache with a shared cache*
+*그림 3: 공유 캐시가 있는 로컬의 개인 캐시 사용 *
 
-To support large caches that hold relatively long-lived data, some
-cache services provide a high-availability option that implements
-automatic failover if the cache becomes unavailable. This approach
-typically involves replicating the cached data that's stored on a primary
-cache server to a secondary cache server, and switching to the
-secondary server if the primary server fails or connectivity is
-lost.
+비교적 장기적인 데이터를 갖고 있는 대형 캐시를 지원하기 위해 일부 캐시 서비스는 캐시를 사용할 수 없을 경우 자동 장애 조치를 실행하는 고가용성 옵션을 제공합니다. 이 방법은 일반적으로 기본 캐시 서버에 저장된 캐시된 데이터를 보조 캐시 서버로 복제하고 기본 서버에 장애가 발생하거나 연결이 끊어질 때 보조 서버로 전환하는 작업도 포함합니다.
 
-To reduce the latency that's associated with writing to multiple
-destinations, the replication to the secondary server might occur
-asynchronously when data is written to the cache on the primary
-server. This approach leads to the possibility that some
-cached information might be lost in the event of a failure, but the
-proportion of this data should be small compared to the overall
-size of the cache.
+여러 대상에 대한 쓰기와 관련된 대기 시간을 줄이기 위해, 데이터가 기본 서버의 캐시에 기록될 때 보조 서버로 복제되는 작업이 비동기적으로 발생할 수 있습니다. 이 방법을 사용하면 장애가 발생할 때 일부 캐시된 정보가 손실될 수 있지만 이 데이터의 비율은 전체 캐시 크기에 비해 작습니다. 
 
-If a shared cache is large, it might be beneficial to partition the
-cached data across nodes to reduce the chances of contention and
-improve scalability. Many shared caches support the ability to
-dynamically add (and remove) nodes and rebalance the data across
-partitions. This approach might involve clustering, in which the
-collection of nodes is presented to client applications as a
-seamless, single cache. Internally, however, the data is dispersed
-between nodes following a predefined distribution strategy
-that balances the load evenly. The [Data partitioning guidance document](http://msdn.microsoft.com/library/dn589795.aspx)
-on the Microsoft website provides more information about possible
-partitioning strategies.
+공유 캐시가 클 경우 경합 가능성을 줄이고 확장성을 향상시키려면 캐시된 데이터를 노드 전반에 분할하는 방법이 유용할 수 있습니다. 많은 공유 캐시는 노드를 동적으로 추가(및 제거)하고 파티션 간에 데이터의 균형을 다시 맞추는 기능을 지원합니다. 이 방법은 노드 집합이 클라이언트 응용 프로그램에 원활한 단일 캐시로 제공되는 클러스터링 작업을 포함할 수 있습니다. 그러나, 내부적으로는 부하의 균형을 고르게 맞추는 사전 정의된 배포 전략에 따라 데이터가 노드 사이에 골고루 분산되어 있습니다. Microsoft 웹 사이트의 [데이터 분할 지침 문서](http://msdn.microsoft.com/library/dn589795.aspx)는 사용 가능한 분할 전략에 대한 자세한 정보를 제공합니다.
 
-Clustering can also increase the availability of the cache. If a
-node fails, the remainder of the cache is still accessible.
-Clustering is frequently used in conjunction with replication
-and failover. Each node can be replicated, and the replica can be
-quickly brought online if the node fails.
+클러스터링도 캐시의 가용성을 증가시킬 수 있습니다. 노드에 장애가 발생해도 나머지 캐시에는 계속 액세스할 수 있습니다. 클러스터링은 복제 및 장애 조치와 함께 자주 사용됩니다. 각 노드는 복제할 수 있으며 노드에 장애가 발생하면 복제본을 온라인으로 신속하게 가져올 수 있습니다. 
 
-Many read and write operations are likely to involve single data
-values or objects. However, at times it might be
-necessary to store or retrieve large volumes of data quickly.
-For example, seeding a cache could involve writing hundreds or
-thousands of items to the cache. An application might also need to
-retrieve a large number of related items from the cache as
-part of the same request.
+많은 읽기 및 쓰기 작업에는 단일 데이터 값이나 개체가 관련될 가능성이 큽니다. 그러나 가끔은 대량 데이터를 빠르게 저장하거나 검색해야 할 수도 있습니다. 예를 들어, 캐시를 시드하는 작업은 수백내지는 수천 개의 항목을 캐시에 기록하는 작업과 관련됩니다. 응용 프로그램은 동일한 요청의 일환으로 캐시에서 관련 항목을 대량으로 검색해야 할 수도 있습니다. 
 
-Many large-scale caches provide batch
-operations for these purposes. This enables a client application to
-package up a large volume of items into a single request and
-reduces the overhead that's associated with performing a large number
-of small requests.
+대규모의 많은 캐시는 이러한 목적을 위해 일괄 처리 작업을 제공합니다. 그러면 클라이언트 응용 프로그램이 대량 항목을 단일 요청으로 패키지화 할 수 있으며 많은 수의 작은 요청을 수행할 때의 오버헤드를 줄일 수 있습니다. 
 
-## Caching and eventual consistency
-For the cache-aside pattern to work, the instance of the application
-that populates the cache must have access to the most recent and
-consistent version of the data. In a system that implements
-eventual consistency (such as a replicated data store) this might
-not be the case.
+## 캐싱 및 최종 일관성
+캐시 배제 패턴이 작동하려면 캐시를 채우는 응용 프로그램의 인스턴스가 가장 최근의 일관된 데이터 버전에 액세스해야 합니다. 하지만 최종 일관성을 구현하는 시스템(예: 복제된 데이터 저장소)에서는 그럴 필요가 없을 것 입니다. 
 
-One instance of an application could modify a
-data item and invalidate the cached version of that item. Another
-instance of the application might attempt to read this item from
-a cache, which causes a cache-miss, so it reads the data from the
-data store and adds it to the cache. However, if the data store
-has not been fully synchronized with the other replicas, the
-application instance could read and populate the cache with the
-old value.
+응용 프로그램의 한 인스턴스가 데이터 항목을 수정할 수 있고 해당 항목의 캐시된 버전을 무효화할 수 있습니다. 응용 프로그램의 또 다른 인스턴스가 캐시에서 이 항목을 읽으려고 시도할 수 있는데, 캐시 누락이 발생하면 데이터 저장소에서 데이터를 읽고 이것을 캐시에 추가합니다. 그러나, 데이터 저장소가 다른 복제본과 완전히 동기화되지 않은 경우에는 응용 프로그램 인스턴스가 이전 값의 캐시를 읽어 채울 수 있습니다. 
 
-For more information about handling data consistency, see the
-[Data consistency primer](http://msdn.microsoft.com/library/dn589800.aspx) page on the Microsoft website.
+데이터 일관성 처리에 대한 자세한 내용은 Microsoft 웹 사이트의 [데이터 일관성 기본 지침서](http://msdn.microsoft.com/library/dn589800.aspx) 페이지를 참조하십시오. 
 
-### Protect cached data
-Irrespective of the cache service you use, consider
-how to protect the data that's held in the cache from unauthorized
-access. There are two main concerns:
+### 캐시된 데이터 보호
+사용 중인 캐시 서비스와 관계없이 캐시에 있는 데이터를 무단 액세스로부터 보호하는 방법을 고려해 보십시오. 여기에는 중요한 점이 아래와 같이 크게 두 가지 있습니다. 
 
-* The privacy of the data in the cache
-* The privacy of data as it flows between the cache and the
-  application that's using the cache
+•	캐시에 있는 데이터의 프라이버시
+•	캐시를 사용하는 응용 프로그램과 캐시 사이에 흐르는 데이터의 프라이버시
 
-To protect data in the cache, the cache service might implement
-an authentication mechanism that requires that applications specify the following:
+캐시에 있는 데이터를 보호하기 위해 캐시 서비스는 인증 메커니즘을 구현할 수 있는데, 이때 응용 프로그램은 다음 사항을 지정해야 합니다. 
 
-* Which identities can access data in the cache.
-* Which operations (read and write) that these identities are
-  allowed to perform.
+•	캐시의 데이터에 액세스할 수 이는 ID.
+•	이러한 ID가 수행할 수 있는 작업(읽기 및 쓰기).
 
-To reduce overhead that's associated with
-reading and writing data, after an identity has been granted
-write and/or read access to the cache, that identity can use
-any data in the cache.
 
-If you need to restrict access to
-subsets of the cached data, you can do one of the following:
+데이터 읽기 및 쓰기와 관련된 오버헤드를 줄이기 위해, 캐시에 대한 쓰기 및/또는 읽기 권한이 ID에 부여된 후 해당 ID는 캐시의 모든 데이터를 사용할 수 있습니다. 
 
-* Split the cache into partitions (by using different cache
-  servers) and only grant access to identities for the
-  partitions that they should be allowed to use.
-* Encrypt the data in each subset by using different keys,
-  and provide the encryption keys only to identities that
-  should have access to each subset. A client application
-  might still be able to retrieve all of the data in the cache,
-  but it will only be able to decrypt the data for which it
-  has the keys.
+캐시된 데이터의 하위 집합에 대한 액세스 권한을 제한해야 하는 경우, 다음 중 하나를 수행할 수 있습니다. 
 
-You must also protect the data as it flows in and out of the cache. To do this,
-you depend on the security features provided by the network
-infrastructure that client applications use to connect to the
-cache. If the cache is implemented using an on-site server
-within the same organization that hosts the client applications,
-then the isolation of the network itself might not require you to
-take  additional steps. If the cache is located remotely and
-requires a TCP or HTTP connection over a public network (such
-as the Internet), consider implementing SSL.
+•	(서로 다른 캐시 서버를 사용하여) 캐시를 파티션으로 분할하고, 사용하도록 허용해야 하는 파티션에 대해서만 액세스 권한을 ID에 부여합니다.
+•	서로 다른 키를 사용하여 각 하위 집합의 데이터를 암호화하고 각 하위 집합에 액세스해야 하는 ID에만 암호화 키를 제공합니다. 클라이언트 응용 프로그램은 여전히 캐시의 모든 데이터를 검색할 수 있지만 암호 해독을 할 수 있는 데이터는 키가 있는 데이터로 제한됩니다.
 
-## Considerations for implementing caching with Microsoft Azure
-Azure provides the Azure Redis Cache. This is an implementation
-of the open source Redis cache that runs as a service in an
-Azure datacenter. It provides a caching service that can be
-accessed from any Azure application, whether the application
-is implemented as a cloud service, a website, or inside an
-Azure virtual machine. Caches can be shared by client
-applications that have the appropriate access key.
 
-Azure Redis Cache is a high-performance caching solution that provides
-availability, scalability and security. It typically runs
-as a service spread across one or more dedicated machines. It
-attempts to store as much information as it can in memory to
-ensure fast access. This architecture is intended to provide
-low latency and high throughput by reducing the need to
-perform slow I/O operations.
+또한 사용자는 데이터가 캐시를 드나들 때 이 데이터를 보호해야 합니다. 이렇게 하기 위해, 클라이언트 응용 프로그램이 캐시에 연결하는 데 사용하는 네트워크 인프라에서 제공하는 보안 기능에 의존하게 됩니다. 클라이언트 응용 프로그램을 호스팅하는 동일한 조직 내의 온사이트 서버를 사용하여 캐시가 구현되는 경우, 네트워크 자체를 격리해도 추가 단계를 수행할 필요가 없습니다. 캐시가 원격으로 위치해 있고 공용 네트워크(예: 인터넷)를 통한 TCP 또는 HTTP 연결이 필요한 경우에는 SSL을 구현하는 것이 좋습니다. 
 
- Azure Redis Cache is compatible with many of the various
-APIs that are used by client applications. If you have existing
-applications that already use Azure Redis Cache running on-premises, the
-Azure Redis Cache provides a quick migration path to caching
-in the cloud.
+## Microsoft Azure로 캐싱 구현 시 고려사항
+Azure는 Azure Redis Cache를 제공합니다. 이것은 Azure 데이터센터에서 서비스로 실행되는 오픈 소스 Redis 캐시를 구현한 것입니다. 이는 응용 프로그램이 클라우드 서비스나 웹 사이트로 구현되든지 Azure 가상 컴퓨터 내에서 구현되든지 관계없이 모든 Azure 응용 프로그램에서 액세스할 수 있는 캐싱 서비스를 제공합니다. 캐시는 적절한 액세스 키가 있는 클라이언트 응용 프로그램에 의해 공유될 수 있습니다. 
 
-> [!NOTE]
-> Azure also provides the Managed Cache Service. This
-> service is based on the Azure Service Fabric Cache engine. It
-> enables you to create a distributed cache that can be shared
-> by loosely-coupled applications. The cache is hosted on
-> high-performance servers running in an Azure datacenter.
-> However, this option is no longer recommended and is only
-> provided to support existing applications that have been built
-> to use it. For all new development, use Azure Redis
-> Cache instead.
+Azure Redis Cache는 가용성, 확장성 및 보안을 제공하는 고성능 캐싱 솔루션입니다. 이는 일반적으로 하나 이상의 전용 시스템에 분배된 서비스로 실행됩니다. 그리고 빠른 액세스를 위해 최대한 많은 정보를 메모리에 저장하려고 시도합니다. 이 아키텍처는 느린 I/O 작업을 줄여주어 대기 시간을 단축하고 처리량을 증가시키기 위한 것입니다. 
+
+Azure Redis Cache는 클라이언트 응용 프로그램에 의해 사용되는 다양한 API와 호환됩니다. 이미 온프레미스로 실행하는 Azure Redis Cache를 사용하는 기존 응용 프로그램이 있으면 Azure Redis Cache는 클라우드에서 캐싱에 대한 빠른 마이그레이션 경로를 제공합니다. 
+
+> [!참고]
+> Azure는 Managed Cache Service도 제공합니다. 이 서비스는 Azure Service Fabric Cache 엔진을 기반으로 합니다. 이를 통해 사용자는 느슨하게 연결된 응용 프로그램에 의해 공유될 수 있는 분산 캐시를 생성할 수 있습니다. 캐시는 Azure 데이터센터에서 실행되는 고성능 서버에서 호스팅됩니다. 그러나, 이 옵션은 더 이상 권장되지 않으며 이것을 사용하도록 구축된 기존 응용 프로그램을 지원하기 위해서만 제공됩니다. 대신, 모든 새로운 개발 작업을 위해서는 Azure Redis Cache를 사용하십시오. 
+
+> Azure는 역할 내(in-role) 캐싱도 지원합니다. 이 기능을 통해 사용자는 클라우드 서비스 전용 캐시를 생성할 수 있습니다. 캐시는 웹 또는 작업자 역할의 인스턴스에 의해 호스팅되며, 동일한 클라우드 서비스 배포 단위의 일부로 작동되는 역할에 의해서만 액세스될 수 있습니다. (배포 단위는 특정 지역에 클라우드 서비스로 배포되는 역할 인스턴스의 집합) 캐시가 클러스터되고, 캐시를 호스트하는 동일한 배포 단위 내의 모든 역할 인스턴스가 동일한 캐시 클러스터의 일부가 됩니다. 그러나, 이 옵션은 더 이상 권장되지 않으며 이것을 사용하도록 구축된 기존 응용 프로그램을 지원하기 위한 용도로만 제공됩니다. 대신, 모든 새로운 개발 작업을 위해서는 Azure Redis Cache를 사용하십시오. 
 > 
-> Additionally, Azure supports in-role caching. This feature
-> enables you to create a cache that's specific to a cloud service.
-> The cache is hosted by instances of a web or worker role, and
-> can only be accessed by roles that are operating as part of the same
-> cloud service deployment unit. (A deployment unit is the set
-> of role instances that are deployed as a cloud service to a specific
-> region.) The cache is clustered, and all instances of the
-> role within the same deployment unit that hosts the cache
-> become part of the same cache cluster. However, this option is
-> no longer recommended and is only provided to support existing
-> applications that have been built to use it. For all new
-> development, use Azure Redis Cache instead.
-> 
-> Both Azure Managed Cache Service and Azure In-Role Cache
-> are currently slated for retirement on November 16th, 2016.
-> It is recommended that you migrate to Azure Redis Cache in
-> preparation for this retirement. For more information, see
-> [What is Azure Redis Cache offering and what size should I use?](/azure/redis-cache/cache-faq#what-redis-cache-offering-and-size-should-i-use)e.
+> 현재, Azure Managed Cache Service와 Azure In-Role Cache는 2016년 11월 16일부로 종료될 예정입니다. 사용자는 이 종료에 대비하여 Azure Redis Cache로 마이그레이션하는 것을 권장합니다. 자세한 내용은 [Azure Redis Cache 제공 기능 및 권장 사용 크기 안내](/azure/redis-cache/cache-faq#what-redis-cache-offering-and-size-should-i-use)를 참조하십시오.
 > 
 > 
 
-### Features of Redis
- Redis is more than a simple cache server. It provides a distributed in-memory
-database with an extensive command set that supports many common scenarios. These
-are described later in this document, in the section Using  Redis caching. This section summarizes some of the key features that Redis
-provides.
+### Redis의 특징
+Redis는 단순한 캐시 서버 이상의 기능을 합니다. 이는 분산된 인메모리 데이터베이스에 많은 공통 시나리오를 지원하는 광범위한 명령 집합을 제공합니다. 이러한 내용은 본 문서 뒷부분에 나오는 Redis 캐싱 사용 섹션에 설명되어 있습니다. 이 섹션에서는 Redis가 제공하는 몇 가지 주요 기능을 요약합니다. 
 
-### Redis as an in-memory database
-Redis supports both read and write operations. In Redis, writes can be protected from system failure either by being stored  periodically in a local snapshot file or in an append-only log file. This is not the case in many caches (which should be considered  transitory data stores).
+### 인메모리 데이터베이스로서 Redis
+Redis는 읽기 및 쓰기 작업을 모두 지원합니다. Redis에서는 쓰기가 로컬 스냅샷 파일이나 추가 전용 로그 파일에 주기적으로 저장됨으로써 시스템 장애로부터 보호될 수 있습니다. 대부분의 캐시(일시적인 데이터 저장소로 간주되어야 함)에서는 그렇지 않습니다. 
 
- All writes are asynchronous and do not block clients from reading and writing data. When Redis starts running, it reads the data from the snapshot or log file and uses it to construct the in-memory cache. For more information, see [Redis persistence](http://redis.io/topics/persistence) on the Redis website.
+모든 쓰기는 비동기이며 클라이언트가 데이터를 읽고 쓰는 것을 차단하지 않습니다. Redis는 실행을 시작할 때 스냅샷 또는 로그 파일에서 데이터를 읽고, 이를 사용해 인메모리 캐시를 구성합니다. 자세한 내용은 Redis 웹 사이트의 [Redis 지속성](http://redis.io/topics/persistence)을 참조하십시오.
 
-> [!NOTE]
-> Redis does not guarantee that all writes will be saved in the event
-> of a catastrophic failure, but at worst you might lose only a few seconds
-> worth of data. Remember that a cache is not intended to act as an
-> authoritative data source, and it is the responsibility of the applications
-> using the cache to ensure that critical data is saved successfully to an
-> appropriate data store. For more information, see the [cache-aside pattern](http://msdn.microsoft.com/library/dn589799.aspx).
+> [!참고]
+> Redis는 치명적인 오류 발생 시 모든 쓰기가 저장된다고 보증하지는 않지만, 최악의 경우에도 사용자는 단 몇 초 분량의 데이터만 손실하게 됩니다. 캐시는 신뢰할 수 있는 데이터 원본의 역할을 하기 위한 것이 아니며 중요한 데이터가 적절한 데이터 저장소에 성공적으로 저장되게 하는 것은 캐시를 사용하는 응용 프로그램의 책임이라는 점을 기억하십시오. 자세한 내용은 [캐시 배제 패턴](http://msdn.microsoft.com/library/dn589799.aspx)을 참조하십시오.
 > 
 > 
 
-#### Redis data types
-Redis is a key-value store, where values can contain simple types or complex data structures such as hashes, lists, and sets. It supports a set of atomic operations on these data types. Keys can be permanent or tagged with a limited time-to-live, at which point the key and its corresponding value are automatically removed from the cache. For more information about Redis keys and values, visit the page [An introduction to Redis data types and abstractions](http://redis.io/topics/data-types-intro) on the Redis website.
+#### Redis 데이터 형식
+Redis는 키-값 저장소로, 여기서 값에는 해시, 목록, 집합 등의 복잡한 데이터 구조 또는 단순한 형식이 포함될 수 있습니다. Redis는 이러한 데이터 형식에 대한 일련의 원자성 작업 집합을 지원합니다. 키는 영구적이 되거나 제한된 TTL(Time to Live)로 태그가 지정될 수 있습니다. 이 시점에서 키와 해당 값은 캐시에서 자동으로 제거됩니다. Redis 키 및 값에 대한 자세한 내용은 Redis 웹 사이트의 [Redis 데이터 형식 및 추상화 소개](http://redis.io/topics/data-types-intro) 페이지에서 확인하십시오. 
 
-#### Redis replication and clustering
-Redis supports master/subordinate replication to help ensure availability and maintain throughput. Write operations to a Redis master node are replicated to one or more subordinate nodes. Read operations can be served by the master or any of the subordinates.
+#### Redis 복제 및 클러스터링
+Redis는 가용성을 보장하고 처리량을 유지하는 데 도움이 되는 마스터/하위 복제를 지원합니다. Redis 마스터 노드에 대한 쓰기 작업은 하나 이상의 하위 노드에 복제됩니다. 마스터나 모드 하위 노드가 읽기 작업을 수행할 수 있습니다. 
 
-In the event of a network partition, subordinates can continue to serve data and then transparently resynchronize with the master when the connection is reestablished. For further details, visit the [Replication](http://redis.io/topics/replication) page on the Redis website.
+네트워크 파티션이 이루어지는 경우, 하위 노드는 데이터를 계속 제공한 후 연결이 다시 설정되면 마스터와 투명하게 다시 동기화할 수 있습니다. 자세한 내용은 Redis 웹 사이트의 [복제](http://redis.io/topics/replication) 페이지에서 확인하십시오. 
 
-Redis also provides clustering, which enables  you to transparently partition data into shards across servers and spread the load. This feature improves scalability, because new Redis servers can be added and the data repartitioned as the size of the cache increases.
+또한 Redis가 클러스터링을 제공하므로 사용자는 데이터를 서버 전반에 조각으로 투명하게 분할하고 부하를 분산할 수 있습니다. 이 기능은 확장성을 향상시킵니다. 캐시 크기가 증가함에 따라 새로운 Redis 서버가 추가되고 데이터가 다시 분할되기 때문입니다. 
 
-Furthermore, each server in the cluster can be replicated by using master/subordinate replication. This ensures availability across each node in the cluster. For more information about clustering and sharding, visit the [Redis cluster tutorial page](http://redis.io/topics/cluster-tutorial) on the Redis website.
+또한, 마스터/하위 복제를 사용하여 클러스터의 각 서버를 복제할 수 있습니다. 이렇게 하면 클러스터의 각 노드에서 가용성을 보장할 수 있습니다. 클러스터링 및 샤딩에 대한 자세한 내용은 Redis 웹 사이트의 [Redis 클러스터 자습서 페이지](http://redis.io/topics/cluster-tutorial)에서 확인하십시오.
 
-### Redis memory use
-A Redis cache has a finite size that depends on the resources available on the host computer. When you configure a Redis server, you can specify the maximum amount of memory it can use. You can also configure a key in a Redis cache to have an expiration time, after which it is automatically removed from the cache. This feature can help prevent the in-memory cache from filling with old or stale data.
+### Redis 메모리 사용
+Redis 캐시는 호스트 컴퓨터에서 사용할 수 있는 리소스에 따라 제한된 크기를 가지고 있습니다. Redis 서버를 구성할 때 이 서버가 사용할 수 있는 최대 메모리 용량을 지정할 수 있습니다. 또한 사용자는 Redis 캐시의 키가 만료 시간을 갖도록 구성할 수 있는데, 이렇게 하면 캐시에서 키가 자동으로 제거됩니다. 이 기능을 사용하면 인메모리 캐시가 오래된 데이터나 부실 데이터로 가득 차는 것을 방지할 수 있습니다. 
 
-As memory fills up, Redis can automatically evict keys and their values by following a number of policies. The default is LRU (least recently used), but you can also select other policies such as evicting keys at random or turning off eviction altogether (in which, case attempts to add items to the cache fail if it is full). The page [Using Redis as an LRU cache](http://redis.io/topics/lru-cache) provides more information.
+메모리가 가득 차면 Redis는 여러 가지 정책에 따라 키와 키 값을 자동으로 제거할 수 있습니다. 기본값은 LRU(오래 전에 사용한 항목)이지만, 사용자는 임의의 키 제거 또는 제거의 완전 해제(이 경우, 캐시에 항목을 추가하려고 하면 캐시가 가득 차 있을 경우 실패함) 등 다른 정책을 선택할 수도 있습니다. [Redis를 LRU Cache로 사용](http://redis.io/topics/lru-cache) 페이지에 자세한 내용이 나와 있습니다. 
 
-### Redis transactions and batches
-Redis enables a client application to submit a series of operations that read and write data in the cache as an atomic transaction. All the commands in the transaction are guaranteed to run sequentially, and no commands issued by other concurrent clients will be interwoven between them.
+### Redis 트랜잭션 및 일괄 처리
+Redis는 클라이언트 응용 프로그램이 원자성 트랜잭션으로서 캐시에서 데이터를 읽고 쓰는 일련의 작업을 제출할 수 있게 해줍니다. 트랜잭션의 모든 명령은 순서대로 실행되도록 보장되며, 다른 동시 클라이언트가 보낸 명령은 이들 사이에서 뒤섞이지 않습니다. 
 
-However, these are not true transactions as a relational database would perform them. Transaction processing consists of two stages--the first is when the commands are queued, and the second is when the commands are run. During the command queuing stage, the commands that comprise the transaction are submitted by the client. If some sort of error occurs at this point (such as a syntax error, or the wrong number of parameters) then Redis refuses to process the entire transaction and discards it.
+그러나 이것은 실제 트랜잭션이 아닙니다. 관계형 데이터베이스가 이를 수행하기 때문입니다. 트랜잭션 처리는 두 단계로 구성됩니다. 첫 번째는 명령이 대기 중일 때이고 두 번째는 명령이 실행될 때입니다. 명령 대기 단계에서 트랜잭션을 구성하는 명령이 클라이언트에 의해 제출됩니다. 이 시점에서 일종의 오류가 발생할 경우(예: 구문 오류 또는 잘못된 매개 변수의 수) Redis는 전체 트랜잭션의 처리를 거부하고 이를 취소합니다. 
 
-During the run phase, Redis performs each queued command in sequence. If a command fails during this phase, Redis continues with the next queued command and does not roll back the effects of any commands that have already been run. This simplified form of transaction helps to maintain performance and avoid performance problems that are caused by contention.
+실행 단계에서 Redis는 각 대기 명령을 순서대로 수행합니다. 이 단계에서 명령이 실패할 경우, Redis는 다음 대기 명령을 계속 진행하고 이미 실행된 명령의 결과는 롤백하지 않습니다. 이렇게 단순화된 트랜잭션 형식은 성능을 유지하고 경합으로 인한 성능 문제를 방지하는 데 도움이 됩니다. 
 
-Redis does implement a form of optimistic locking to assist in maintaining consistency. For detailed information about transactions and locking with Redis, visit the [Transactions page](http://redis.io/topics/transactions) on the Redis website.
+Redis는 일관성을 유지하도록 도와주는 낙관적 잠금 형태를 구현합니다. Redis를 사용한 잠금 및 트랜잭션에 대한 자세한 내용은 Redis 웹 사이트의 [트랜잭션 페이지](http://redis.io/topics/transactions)에서 확인하십시오.
 
-Redis also supports non-transactional batching of requests. The Redis protocol that clients use to send commands to a Redis server enables a client to send a series of operations as part of the same request. This can help to reduce packet fragmentation on the network. When the batch is processed, each command is performed. If any of these commands are malformed, they will be rejected (which doesn't happen with a transaction), but the remaining commands will be performed. There is also no guarantee about the order in which the commands in the batch will be processed.
+Redis는 요청의 비트랜잭션 일괄 처리도 지원합니다. 클라이언트가 Redis 서버로 명령을 보내는 데 사용하는 Redis 프로토콜을 통해 클라이언트는 동일한 요청의 일부로서 일련의 작업을 보낼 수 있습니다. 이렇게 하면 네트워크의 패킷 조각화를 줄이는 데 도움이 됩니다. 일괄 작업이 처리되면 각 명령이 수행됩니다. 이러한 명령 중 하나라도 형식이 잘못되면 거부됩니다(트랜잭션이 발생하지 않음). 그러나 나머지 명령은 수행됩니다. 또한 일괄 작업에서 명령이 처리되는 순서에 대한 보증은 없습니다.
 
-### Redis security
-Redis is focused purely on providing fast access to data, and is designed to run inside a trusted environment that can be accessed only by trusted clients. Redis supports a limited security model based on password authentication. (It is possible to remove authentication completely, although we don't recommend this.)
+### Redis 보안
+Redis는 데이터에 대한 빠른 액세스를 제공하는 데 전적으로 초점을 맞추고 있으며, 신뢰할 수 있는 클라이언트만 액세스 가능한 신뢰할 수 있는 환경 내에서 실행되도록 설계되어 있습니다. Redis는 암호 인증을 기반으로 하는 제한된 보안 모델을 지원합니다. (인증을 완전히 제거할 수는 있지만, 이 방법은 권장되지 않음) 
 
-All authenticated clients share the same global password and have access to the same resources. If you need more comprehensive sign-in security, you must implement your own security layer in front of the Redis server, and all client requests should pass through this additional layer. Redis should not be directly exposed to untrusted or unauthenticated clients.
+인증된 모든 클라이언트는 동일한 전역 암호를 공유하고 동일한 리소스에 액세스할 수 있습니다. 보다 포괄적인 로그인 보안이 필요한 경우, 사용자는 Redis 서버 앞에 고유의 보안 계층을 구현해야 하며 모든 클라이언트 요청은 이 추가 계층을 통과해야 합니다. Redis는 신뢰할 수 없거나 인증되지 않은 클라이언트에 직접 노출되면 안 됩니다. 
 
-You can restrict access to commands by disabling them or renaming them (and by providing only privileged clients with the new names).
+사용자는 명령을 비활성화하거나 이름을 변경하는 방식으로(그리고 권한 있는 클라이언트에게만 새 이름을 제공하여) 명령에 대한 액세스를 제한할 수 있습니다. 
 
-Redis does not directly support any form of data encryption, so all encoding must be performed by client applications. Additionally, Redis does not provide any form of transport security. If you need to protect data as it flows across the network, we recommend implementing an SSL proxy.
+Redis는 어떠한 형식의 데이터 암호화도 직접 지원하지 않으므로 모든 인코딩은 클라이언트 응용 프로그램에 의해 수행되어야 합니다. 또한 Redis는 어떠한 형태의 전송 보안도 제공하지 않습니다. 데이터가 네트워크를 통해 이동할 때 이러한 데이터를 보호해야 하는 경우에는 SSL 프록시를 구현하는 것이 좋습니다. 
 
-For more information, visit the [Redis security](http://redis.io/topics/security) page on the Redis website.
+자세한 내용은 Redis 웹 사이트의 [Redis 보안](http://redis.io/topics/security) 페이지에서 확인하십시오. 
 
-> [!NOTE]
-> Azure Redis Cache provides its own security layer through which clients connect. The underlying Redis
-> servers are not exposed to the public network.
+> [!참고]
+> Azure Redis Cache는 클라이언트가 연결하는 고유의 보안 계층을 제공합니다. 기본 Redis 서버는 공용 네트워크에 노출되지 않습니다. 
 > 
 > 
 
-### Using the Azure Redis cache
-The Azure Redis Cache provides access to Redis servers running on servers hosted at an Azure datacenter; it acts as a façade that provides access control and security. You can provision a cache by using the Azure Management portal. The portal provides a number of predefined configurations, ranging from a 53GB cache running as a dedicated service that supports SSL communications (for privacy) and master/subordinate replication with an SLA of 99.9% availability, down to a 250MB cache without replication (no availability guarantees) running on shared hardware.
+### Azure Redis Cache 사용
+Azure Redis Cache는 Azure 데이터센터에 호스팅되는 서버에서 실행되는 Redis 서버에 대한 액세스를 제공합니다. 이는 액세스 제어 및 보안 기능을 제공하는 외관의 역할을 합니다. 사용자는 Azure 관리 포털을 사용하여 캐시를 프로비저닝할 수 있습니다. 이 포털은 99.9% 가용성을 갖춘 SLA로 마스터/하위 복제 및 SSL 통신(개인 정보 보호용)을 지원하는 전용 서비스로 실행되는 53GB 캐시부터 공유 하드웨어에서 실행되는 복제 없는(가용성 보장 없음) 250MB 캐시까지, 사전 정의된 다양한 구성을 제공합니다. 
 
-Using the Azure Management portal, you can also configure the eviction policy of the cache, and control access to the cache by adding users to the roles provided; Owner, Contributor, Reader. These roles define the operations that members can perform. For example, members of the Owner role have complete control over the cache (including security) and its contents, members of the Contributor role can read and write information in the cache, and members of the Reader role can only retrieve data from the cache.
+Azure 관리 포털을 이용하면 캐시의 제거 정책을 구성할 수도 있고, 제공된 역할, 즉 소유자(Owner), 참가자(Contributor), 독자(Reader)에 사용자를 추가하여 캐시에 대한 액세스를 제어할 수도 있습니다. 이 역할은 구성원이 수행할 수 있는 작업을 정의합니다. 예를 들어, 소유자 역할의 구성원은 캐시(보안 포함) 및 그 내용을 완벽하게 제어할 수 있고, 참가자 역할의 구성원은 캐시에서 정보를 읽고 쓸 수 있으며, 독자 역할의 구성원은 캐시의 데이터 검색만 할 수 있습니다. 
 
-Most administrative tasks are performed through the Azure Management portal, and for this reason many of the administrative commands available in the standard version of Redis are not available, including the ability to modify the configuration programmatically, shutdown the Redis server, configure additional slaves, or forcibly save data to disk.
+대부분의 관리 작업은 Azure 관리 포털을 통해 이루어지기 때문에 표준 버전의 Redis에서 사용할 수 있는 많은 관리 명령(예: 프로그래밍 방식으로 구성을 수정하거나 Redis 서버를 종료하거나 추가 슬레이브를 구성하거나 데이터를 강제로 디스크에 저장하는 기능)을 사용할 수 없게 됩니다. 
 
-The Azure management portal includes a convenient graphical display that enables you to monitor the performance of the cache. For example, you can view the number of connections being made, the number of requests performed, the volume of reads and writes, and the number of cache hits versus cache misses. Using this information, you can determine the effectiveness of the cache and if necessary switch to a different configuration or change the eviction policy. Additionally, you can create alerts that send email messages to an administrator if one or more critical metrics fall outside of an expected range. For example, if the number of cache misses exceeds a specified value in the last hour, an administrator could be alerted as the cache may be too small or data may be being evicted too quickly.
+Azure 관리 포털에는 사용자가 캐시 성능을 모니터링할 수 있게 해주는 편리한 그래픽 디스플레이가 포함되어 있습니다. 예를 들어, 사용자는 현재 연결 수, 수행된 요청 수, 읽기 및 쓰기의 양, 캐시 적중 수와 캐시 누락 수의 비교 등을 볼 수 있습니다. 이 정보를 사용하여, 사용자는 캐시의 효율성을 확인할 수 있고 필요시 다른 구성으로 전환하거나 제거 정책을 변경할 수 있습니다. 또한, 하나 이상의 중요 메트릭이 예상 범위를 벗어나는 경우 관리자에게 전자 메일 메시지를 보내는 경고를 생성할 수 있습니다. 예를 들어, 지난 1시간 동안 캐시 누락 수가 지정된 값을 초과하면 캐시가 너무 작아지거나 데이터가 너무 빨리 제거될 수 있으므로 관리자에게 알림을 보낼 수 있습니다. 
 
-You can also monitor CPU, memory, and network usage for the cache.
+또한 사용자는 캐시의 CPU, 메모리 및 네트워크 사용량을 모니터링할 수 있습니다. 
 
-For further information and examples showing how to create and configure an Azure Redis Cache, visit the page [Lap around Azure Redis Cache](https://azure.microsoft.com/blog/2014/06/04/lap-around-azure-redis-cache-preview/) on the Azure blog.
+Azure Redis Cache를 만들고 구성하는 방법에 대한 자세한 내용과 예제는 Azure 블로그의 [Azure Redis Cache 주변의 랩](https://azure.microsoft.com/blog/2014/06/04/lap-around-azure-redis-cache-preview/) 페이지에서 확인하십시오. 
 
-## Caching session state and HTML output
-If you building ASP.NET web applications that run by using Azure web roles, you can save session state information and HTML output in an Azure Redis Cache. The Session State Provider for Azure Redis Cache enables you to share session information between different instances of an ASP.NET web application, and is very useful in web farm situations where client-server affinity is not available and caching session data in-memory would not be appropriate.
+## 세션 상태 및 HTML 출력 캐싱
+Azure 웹 역할을 사용하여 실행되는 ASP.NET 웹 응용 프로그램을 구축하는 경우, Azure Redis Cache에 세션 상태 정보와 HTML 출력을 저장할 수 있습니다. Azure Redis Cache에 대한 세션 상태 공급자는 사용자가 ASP.NET 웹 응용 프로그램의 여러 인스턴스 간에 세션 정보를 공유할 수 있게 해주며, 이는 클라이언트-서버 선호도를 사용할 수 없고 인메모리 세션 데이터 캐싱이 적절하지 않은 웹 팜 상황에서 매우 유용합니다. 
 
-Using the Session State Provider with Azure Redis Cache delivers several benefits, including:
+Azure Redis Cache에서 세션 상태 공급자를 사용하면 다음과 같은 여러 가지 이점이 있습니다. 
 
-* It can share session state amongst a large number of instances of an ASP.NET web application, providing improved scalability,
-* It supports controlled, concurrent access to the same session state data for multiple readers and a single writer, and
-* It can use compression to save memory and improve network performance.
+•	ASP.NET 웹 응용 프로그램에 있는 많은 수의 인스턴스 사이에서 세션 상태를 공유할 수 있어 확장성이 향상됩니다.
+•	여러 독자와 단일 저자를 위해 동일한 세션 상태 데이터에 대한 제어된 동시 액세스를 지원합니다.
+•	압축을 사용하여 메모리를 절약하고 네트워크 성능을 향상시킬 수 있습니다.
 
-For more information visit the [ASP.NET Session State Provider for Azure Redis Cache](/azure/redis-cache/cache-aspnet-session-state-provider/) page on the Microsoft website.
+자세한 내용은 Microsoft 웹 사이트의 [Azure Redis Cache에 대한 ASP.NET 세션 상태 공급자](/azure/redis-cache/cache-aspnet-session-state-provider/) 페이지에서 확인하십시오. 
 
-> [!NOTE]
-> Do not use the Session State Provider for Azure Redis Cache for ASP.NET applications that run outside of the Azure environment. The latency of accessing the cache from outside of Azure can eliminate the performance benefits of caching data.
+> [!참고]
+> Azure 환경 외부에서 실행되는 ASP.NET 응용 프로그램에 Azure Redis Cache에 대한 세션 상태 공급자를 사용하지 마십시오. Azure 외부의 캐시에 액세스하기 위한 대기 시간 때문에 데이터 캐싱의 성능 이점이 없어질 수 있습니다. 
 > 
 > 
 
-Similarly, the Output Cache Provider for Azure Redis Cache enables you to save the HTTP responses generated by an ASP.NET web application. Using the Output Cache Provider with Azure Redis Cache can improve the response times of applications that render complex HTML output; application instances generating similar responses can make use of the shared output fragments in the cache rather than generating this HTML output afresh.  For more information visit the [ASP.NET Output Cache Provider for Azure Redis Cache](/azure/redis-cache/cache-aspnet-output-cache-provider/) page on the Microsoft website.
+마찬가지로, Azure Redis Cache에 대한 출력 캐시 공급자는 사용자가 ASP.NET 웹 응용 프로그램에 의해 생성된 HTTP 응답을 저장할 수 있게 해줍니다. Azure Redis Cache에 대한 출력 캐시 공급자를 사용하면 복잡한 HTML 출력을 렌더링하는 응용 프로그램의 응답 시간을 개선할 수 있습니다. 유사한 응답을 생성하는 응용 프로그램 인스턴스는 이 HTML 출력을 새로 생성하는 대신에 캐시에 있는 공유 출력 조각을 사용할 수 있습니다. 자세한 내용은 Microsoft 웹 사이트의 [Azure Redis Cache에 대한 ASP.NET 출력 캐시 공급자](/azure/redis-cache/cache-aspnet-output-cache-provider/) 페이지에서 확인하십시오. 
 
 ### Azure Redis cache
-Azure Redis Cache provides access to Redis servers that are hosted at an Azure datacenter. It acts as a façade that provides access control and security. You can provision a cache by using the Azure  portal.
+Azure Redis Cache는 Azure 데이터센터에 호스팅되는 Redis 서버에 대한 액세스를 제공합니다. 이는 액세스 제어 및 보안 기능을 제공하는 외관의 역할을 합니다. 사용자는 Azure 포털을 사용하여 캐시를 프로비저닝할 수 있습니다. 
 
-The portal provides a number of predefined configurations. These range from a 53 GB cache running as a dedicated service that supports SSL communications (for privacy) and master/subordinate replication with an SLA of 99.9% availability, down to a 25 0MB cache without replication (no availability guarantees) running on shared hardware.
+이 포털은 사전 정의된 많은 구성을 제공합니다. 그 범위는 99.9% 가용성의 SLA로 마스터/하위 복제 및 SSL 통신(개인 정보 보호용)을 지원하는 전용 서비스로 실행되는 53GB 캐시부터 공유 하드웨어에서 실행되는 복제 없는(가용성 보장 없음) 250MB 캐시까지 다양합니다. 
 
-Using the Azure portal, you can also configure the eviction policy of the cache, and control access to the cache by adding users to the roles provided.  These roles, which  define the operations that members can perform, include Owner, Contributor, and Reader. For example, members of the Owner role have complete control over the cache (including security) and its contents, members of the Contributor role can read and write information in the cache, and members of the Reader role can only retrieve data from the cache.
+Azure 포털을 사용하면 캐시의 제거 정책을 구성할 수도 있고, 제공된 역할에 사용자를 추가하여 캐시에 대한 액세스를 제어할 수도 있습니다. 구성원이 수행할 수 있는 작업을 정의하는 이 역할에는 소유자(Owner), 참가자(Contributor) 및 독자(Reader)가 있습니다. 예를 들어, 소유자 역할의 구성원은 캐시(보안 포함) 및 그 내용을 완벽하게 제어할 수 있고, 참가자 역할의 구성원은 캐시에서 정보를 읽고 쓸 수 있으며, 독자 역할의 구성원은 캐시의 데이터 검색만 할 수 있습니다. 
 
-Most administrative tasks are performed through the Azure portal. For this reason, many of the administrative commands that are available in the standard version of Redis are not available, including the ability to modify the configuration programmatically, shut down the Redis server, configure additional subordinates, or forcibly save data to disk.
+대부분의 관리 작업은 Azure 포털을 통해 수행됩니다. 이러한 이유로, 표준 버전의 Redis에서 사용할 수 있는 많은 관리 명령(예: 프로그래밍 방식으로 구성을 수정하거나 Redis 서버를 종료하거나 추가 하위를 구성하거나 데이터를 강제로 디스크에 저장하는 기능)을 사용할 수 없게 됩니다. 
 
-The Azure portal includes a convenient graphical display that enables you to monitor the performance of the cache. For example, you can view the number of connections being made, the number of requests being performed, the volume of reads and writes, and the number of cache hits versus cache misses. Using this information, you can determine the effectiveness of the cache and if necessary, switch to a different configuration or change the eviction policy.
+Azure 포털에는 사용자가 캐시 성능을 모니터링할 수 있게 해주는 편리한 그래픽 디스플레이가 포함되어 있습니다. 예를 들어, 사용자는 현재 연결 수, 수행된 요청 수, 읽기 및 쓰기의 양, 캐시 적중 수와 캐시 누락 수의 비교 등을 볼 수 있습니다. 이 정보를 사용하여, 사용자는 캐시의 효율성을 확인할 수 있고 필요시 다른 구성으로 전환하거나 제거 정책을 변경할 수 있습니다. 
 
-Additionally, you can create alerts that send email messages to an administrator if one or more critical metrics fall outside of an expected range. For example, you might want to alert an administrator if the number of cache misses exceeds a specified value in the last hour, because it means the cache might be too small or data might be being evicted too quickly.
+또한, 하나 이상의 중요 메트릭이 예상 범위를 벗어나는 경우 관리자에게 전자 메일 메시지를 보내는 경고를 생성할 수 있습니다. 예를 들어, 지난 1시간 동안 캐시 누락 수가 지정된 값을 초과하면 이는 캐시가 너무 작아지거나 데이터가 너무 빨리 제거될 수 있다는 의미이므로 사용자는 관리자에게 알림을 보낼 수 있습니다. 
 
-You can also monitor the CPU, memory, and network usage for the cache.
+또한 사용자는 캐시의 CPU, 메모리 및 네트워크 사용량을 모니터링할 수 있습니다. 
 
-For further information and examples showing how to create and configure an Azure Redis Cache, visit the page [Lap around Azure Redis Cache](https://azure.microsoft.com/blog/2014/06/04/lap-around-azure-redis-cache-preview/) on the Azure blog.
+Azure Redis Cache를 만들고 구성하는 방법에 대한 자세한 내용과 예제는 Azure 블로그의 [Azure Redis Cache 주변의 랩](https://azure.microsoft.com/blog/2014/06/04/lap-around-azure-redis-cache-preview/) 페이지에서 확인하십시오. 
 
-## Caching session state and HTML output
-If you're building ASP.NET web applications that run by using Azure web roles, you can save session state information and HTML output in an Azure Redis Cache. The session state provider for Azure Redis Cache enables you to share session information between different instances of an ASP.NET web application, and is very useful in web farm situations where client-server affinity is not available and caching session data in-memory would not be appropriate.
+## 세션 상태 및 HTML 출력 캐싱
+Azure 웹 역할을 사용하여 실행되는 ASP.NET 웹 응용 프로그램을 구축하는 경우, Azure Redis Cache에 세션 상태 정보와 HTML 출력을 저장할 수 있습니다. Azure Redis Cache에 대한 세션 상태 공급자는 사용자가 ASP.NET 웹 응용 프로그램의 여러 인스턴스 간에 세션 정보를 공유할 수 있게 해주며, 이는 클라이언트-서버 선호도를 사용할 수 없고 인메모리 세션 데이터 캐싱이 적절하지 않은 웹 팜 상황에서 매우 유용합니다. 
 
-Using the session state provider with Azure Redis Cache delivers several benefits, including:
+Azure Redis Cache에서 세션 상태 공급자를 사용하면 다음과 같은 여러 가지 이점이 있습니다. 
 
-* Sharing session state with a large number of instances of ASP.NET web applications.
-* Providing improved scalability.
-* Supporting controlled, concurrent access to the same session state data for multiple readers and a single writer.
-* Using compression to save memory and improve network performance.
+•	많은 수의 ASP.NET 웹 응용 프로그램 인스턴스와 세션 상태 공유.
+•	향상된 확장성 제공.
+•	여러 독자와 단일 저자를 위해 동일한 세션 상태 데이터에 대한 제어된 동시 액세스 지원.
+•	압축을 사용하여 메모리를 절약하고 네트워크 성능 향상.
 
-For more information, visit the [ASP.NET session state provider for Azure Redis Cache](/azure/redis-cache/cache-aspnet-session-state-provider/) page on the Microsoft website.
 
-> [!NOTE]
-> Do not use the session state provider for Azure Redis Cache with ASP.NET applications that run outside of the Azure environment. The latency of accessing the cache from outside of Azure can eliminate the performance benefits of caching data.
+자세한 내용은 Microsoft 웹 사이트의 [Azure Redis Cache에 대한 ASP.NET 세션 상태 공급자](/azure/redis-cache/cache-aspnet-session-state-provider/) 페이지에서 확인하십시오. 
+
+> [!참고]
+Azure 환경 외부에서 실행되는 ASP.NET 응용 프로그램에 Azure Redis Cache에 대한 세션 상태 공급자를 사용하지 마십시오. Azure 외부의 캐시에 액세스하기 위한 대기 시간 때문에 데이터 캐싱의 성능 이점이 사라질 수 있습니다. 
 > 
-> 
 
-Similarly, the output cache provider for Azure Redis Cache enables you to save the HTTP responses generated by an ASP.NET web application. Using the output cache provider with Azure Redis Cache can improve the response times of applications that render complex HTML output. Application instances that generate similar responses can make use of the shared output fragments in the cache rather than generating this HTML output afresh. For more information, visit the [ASP.NET output cache provider for Azure Redis Cache](/azure/redis-cache/cache-aspnet-output-cache-provider/) page on the Microsoft website.
+마찬가지로, Azure Redis Cache에 대한 출력 캐시 공급자는 사용자가 ASP.NET 웹 응용 프로그램에 의해 생성된 HTTP 응답을 저장할 수 있게 해줍니다. Azure Redis Cache에 대한 출력 캐시 공급자를 사용하면 복잡한 HTML 출력을 렌더링하는 응용 프로그램의 응답 시간을 개선할 수 있습니다. 유사한 응답을 생성하는 응용 프로그램 인스턴스는 이 HTML 출력을 새로 생성하는 대신에 캐시에 있는 공유 출력 조각을 사용할 수 있습니다. 자세한 내용은 Microsoft 웹 사이트의 [Azure Redis Cache에 대한 ASP.NET 출력 캐시 공급자](/azure/redis-cache/cache-aspnet-output-cache-provider/) 페이지에서 확인하십시오. 
 
-## Building a custom Redis cache
-Azure Redis Cache acts as a façade to the underlying Redis servers. Currently it supports a fixed set of configurations but does not provide for Redis clustering. If you require an advanced configuration that is not covered by the Azure Redis cache (such as a cache bigger than 53 GB) you can build and host your own Redis servers by using Azure virtual machines.
+## 사용자 지정 Redis 캐시 구축
+Azure Redis Cache는 기본 Redis 서버에 대한 외관의 역할을 합니다. 현재 고정된 구성 설정을 지원하지만 Redis 클러스터링에 대해서는 제공하지 않습니다. Azure Redis Cache에서 다루지 않는 고급 구성이 필요한 경우(예: 53GB보다 큰 캐시), 사용자는 Azure 가상 머신을 사용하여 고유의 Redis 서버를 구축 및 호스팅할 수 있습니다. 
 
-This is a potentially complex process because you might need to create several VMs to act as master and subordinate nodes if you want to implement replication. Furthermore, if you wish to create a cluster, then you need multiple masters and subordinate servers. A minimal clustered replication topology that provides a high degree of availability and scalability comprises at least six VMs organized as three pairs of master/subordinate servers (a cluster must contain at least three master nodes).
+복제를 구현하려는 경우에는 마스터 및 하위 노드의 역할을 하도록 여러 VM을 만들어야 할 수 있기 때문에 이 작업은 잠재적으로 복잡한 프로세스입니다. 또한, 클러스터를 생성하려고 하면 여러 마스터와 하위 서버가 필요합니다. 높은 수준의 가용성과 확장성을 제공하는 최소 클러스터된 복제 토폴로지는 세 쌍의 마스터/하위 서버(클러스터에 최소 3개 이상의 마스터 노드가 포함되어야 함)로 구성된 6개 이상의 VM으로 이루어져 있습니다. 
 
-Each master/subordinate pair should be located close together to minimize latency. However, each set of pairs can be running in different Azure datacenters located in different regions, if you wish to locate cached data close to the applications that are most likely to use it. The page [Running Redis on a CentOS Linux VM in Azure](http://blogs.msdn.com/b/tconte/archive/2012/06/08/running-redis-on-a-centos-linux-vm-in-windows-azure.aspx) on the Microsoft website walks through an example that shows how to build and configure a Redis node running as an Azure VM.
+대기 시간을 최소화하려면 각 마스터/하위 쌍은 서로 가까이 위치해야 합니다. 그러나, 캐시된 데이터를 사용할 가능성이 가장 높은 응용 프로그램 가까이에 위치시키고자 할 경우, 서로 다른 영역에 위치한 서로 다른 Azure 데이터센터에서 각 쌍의 집합을 실행할 수 있습니다. Microsoft 웹 사이트에 [Azure의 CentOS Linux VM에서 Redis 실행](http://blogs.msdn.com/b/tconte/archive/2012/06/08/running-redis-on-a-centos-linux-vm-in-windows-azure.aspx) 페이지에서는 Azure VM으로 실행되는 Redis 노드를 구축 및 구성하는 방법을 보여주는 예제를 자세히 설명합니다. 
 
-[AZURE.NOTE] Please note that if you implement your own Redis cache in this way, you are responsible for monitoring, managing, and securing the service.
+[AZURE.NOTE] 이 방법으로 사용자가 고유의 Redis 캐시를 구현하는 경우, 서비스 모니터링, 관리 및 보안에 대한 책임은 사용자에게 있음을 주의하십시오. 
 
-## Partitioning a Redis cache
-Partitioning the cache involves splitting the cache across multiple computers. This structure gives you several advantages over using a single cache server, including:
+## Redis 캐시 분할
+캐시 분할은 여러 컴퓨터에 캐시를 분할하는 것과 관련된 작업입니다. 이 구조는 단일 캐시 서버를 사용할 때와 비교하여 다음과 같은 몇 가지 이점을 제공합니다. 
 
-* Creating a cache that is much bigger than can be stored on a single server.
-* Distributing data across servers, improving availability. If one server fails or becomes inaccessible, the data that it holds is unavailable, but the data on the remaining servers can still be accessed. For a cache, this is not crucial because the cached data is only a transient copy of the data that's held in a database. Cached data on a server that becomes inaccessible can be cached on a different server instead.
-* Spreading the load across servers, thereby improving performance and scalability.
-* Geolocating data close to the users that access it, thus reducing latency.
+•	단일 서버에 저장할 수 있는 것보다 훨씬 큰 캐시 생성.
+•	서버 전반에 데이터를 분산하여 가용성 향상. 한 서버에 장애가 발생하거나 액세스할 수 없게 되면 이 서버에 있는 데이터를 사용할 수 없지만 나머지 서버에 있는 데이터에는 여전히 액세스할 수 있습니다. 캐시의 경우, 캐시된 데이터는 데이터베이스에 있는 데이터의 임시 사본이기 때문에 중요하지 않습니다. 대신, 액세스할 수 없게 되는 서버에 있는 캐시된 데이터는 다른 서버에 캐시될 수 있습니다.
+•	서버 전반에 부하를 분산시켜 성능과 확장성 향상.
+•	데이터에 액세스하는 사용자 가까이에 데이터를 위치시켜 대기 시간 단축.
 
-For a cache, the most common form of partitioning is sharding. In this strategy, each partition (or shard) is a Redis cache in its own right. Data is directed to a specific partition by using sharding logic, which can use a variety of approaches to distribute the data. The [Sharding pattern](http://msdn.microsoft.com/library/dn589797.aspx) provides more information about implementing sharding.
 
-To implement partitioning in a Redis cache, you can take one of the following approaches:
+캐시의 경우, 가장 일반적인 분할 형식은 샤딩입니다. 이 전략에서 각 파티션(또는 조각)은 자체 권한을 가진 Redis 캐시입니다. 다양한 방법을 통해 데이터를 분산시킬 수 있는 샤딩 논리를 사용하여 데이터가 특정 파티션으로 전달됩니다. [샤딩 패턴](http://msdn.microsoft.com/library/dn589797.aspx)은 샤딩 구현에 대한 자세한 정보를 제공합니다.
 
-* *Server-side query routing.* In this technique, a client application sends a request to any of the
-  Redis servers that comprise the cache (probably the closest server). Each Redis server stores
-  metadata that describes the partition that it holds, and also contains information about which
-  partitions are located on other servers. The Redis server examines the client request. If it
-  can be resolved locally, it will perform the requested operation. Otherwise it will forward the
-  request on to the appropriate server. This model is implemented by Redis clustering, and is
-  described in more detail on the [Redis cluster tutorial](http://redis.io/topics/cluster-tutorial) page on the Redis website. Redis clustering
-  is transparent to client applications, and additional Redis servers can be added to the cluster
-  (and the data re-partitioned) without requiring that you reconfigure the clients.
-* *Client-side partitioning.* In this model, the client application contains logic (possibly in
-  the form of a library) that routes requests to the appropriate Redis server. This approach
-  can be used with Azure Redis Cache. Create multiple Azure Redis Caches (one for each data
-  partition) and implement the client-side logic that routes the requests to the correct
-  cache. If the partitioning scheme changes (if additional Azure Redis Caches are created,
-  for example), client applications might need to be reconfigured.
-* *Proxy-assisted partitioning.* In this scheme, client applications send requests to an
-  intermediary proxy service which understands how the data is partitioned and then routes
-  the request to the appropriate Redis server. This approach can also be used with Azure
-  Redis Cache; the proxy service can be implemented as an Azure cloud service. This
-  approach requires an additional level of complexity to implement the service, and
-  requests might take longer to perform than using client-side partitioning.
+Redis 캐시에서 분할을 수행하려면 다음 방법 중 하나를 선택하면 됩니다. 
 
-The page [Partitioning: how to split data among multiple Redis instances](http://redis.io/topics/partitioning)
-on the Redis website provides further information about implementing partitioning with Redis.
+* *서버 쪽 쿼리 라우팅.* 이 기술에서, 클라이언트 응용 프로그램은 캐시를 구성하는 모든 Redis 서버(아마도 가장 가까운 서버)에 요청을 보냅니다. 각 Redis 서버는 자체 파티션을 설명하는 메타데이터를 저장하고, 다른 서버에 있는 파티션에 대한 정보도 포함하고 있습니다. Redis 서버는 클라이언트 요청을 검사합니다. 그리고 로컬에서 요청을 해결할 수 있으면 요청된 작업을 수행합니다. 그렇지 않으면 요청을 해당 서버로 전달합니다. 이 모델은 Redis 클러스터링에 의해 구현되며, Redis 웹 사이트의 [Redis 클러스터 자습서](http://redis.io/topics/cluster-tutorial) 페이지에 자세히 설명되어 있습니다. Redis 클러스터링은 클라이언트 응용 프로그램에 대해 투명하며, 사용자가 클라이언트를 재구성하지 않고도 추가 Redis 서버를 클러스터(그리고 다시 분할된 데이터)에 추가할 수 있습니다.
+* *클라이언트 쪽 분할.* 이 모델에서, 클라이언트 응용 프로그램에는 적절한 Redis 서버로 요청을 라우팅하는 로직(라이브러리 형식으로 가능함)이 포함되어 있습니다. 이 방법은 Azure Redis Cache와 함께 사용할 수 있습니다. 여러 Azure Redis Cache(각 데이터 파티션에 하나씩)를 생성하고 올바른 캐시로 요청을 라우팅하는 클라이언트 쪽 로직을 구현하십시오. 파티션 구성표가 변경되면(예: 추가 Azure Redis Cache가 생성될 경우) 클라이언트 응용 프로그램을 재구성해야 할 수 있습니다.
+* *프록시 지원 분할.* 이 구성표에서 클라이언트 응용 프로그램은 데이터가 분할되는 방법을 이해하는 중간 프록시 서비스에 요청을 보낸 후, 해당 요청을 적절한 Redis 서버로 라우팅합니다. 이 방법은 Azure Redis Cache에서도 사용할 수 있습니다. 즉, 프록시 서비스는 Azure 클라우드 서비스로 구현될 수 있습니다. 이 방법은 서비스를 구현하기 위해 추가적인 레벨의 복잡성이 필요하며 클라이언트 쪽 분할을 사용하는 것보다 요청이 오래 걸릴 수 있습니다.
+
+Redis 웹 사이트의 [분할: 여러 Redis 인스턴스 간에 데이터를 분할하는 방법](http://redis.io/topics/partitioning) 페이지에 Redis로 분할하는 방법이 자세히 나와 있습니다. 
 
 ### Implement Redis cache client applications
 Redis supports client applications written in numerous programming languages. If you are building new applications by using the .NET Framework, the recommended approach is to use the StackExchange.Redis client library. This library provides a .NET Framework object model that abstracts the details for connecting to a Redis server, sending commands, and receiving responses. It is available in Visual Studio as a NuGet package. You can use this same library to connect to an Azure Redis Cache, or a custom Redis cache hosted on a VM.
 
-To connect to a Redis server you use the static `Connect` method of the `ConnectionMultiplexer` class. The connection that this method creates is designed to be used throughout the lifetime of the client application, and the same connection can be used by multiple concurrent threads. Do not reconnect and disconnect each time you perform a Redis operation because this can degrade performance.
+Redis 서버에 연결하려면 `ConnectionMultiplexer` 클래스의 정적 `연결` 메서드를 사용하십시오. 이 메서드로 생성하는 연결은 클라이언트 응용 프로그램의 수명 내내 사용되도록 설계되어 있으며, 동일한 연결을 여러 개의 동시 스레드에서 사용할 수 있습니다. Redis 작업을 수행할 때마다 다시 연결하고 연결을 끊고 하는 작업을 반복하지 마십시오. 성능이 저하될 수 있기 때문입니다. 
 
-You can specify the connection parameters, such as the address of the Redis host and the password. If you are using Azure Redis Cache, the password  is either the primary or secondary key that is generated for Azure Redis Cache by using the Azure Management portal.
+사용자는 Redis 호스트의 주소와 암호 등의 연결 매개 변수를 지정할 수 있습니다. Azure Redis Cache를 사용하는 경우, 암호는 Azure 관리 포털을 사용하여 Azure Redis Cache에 대해 생성되는 기본 키 또는 보조 키입니다. 
 
-After you have connected to the Redis server, you can obtain a handle on the Redis database that acts as the cache. The Redis connection provides the `GetDatabase` method to do this. You can then retrieve items from the cache and store data in the cache by using the `StringGet` and `StringSet` methods. These methods expect a key as a parameter, and return the item either in the cache that has a matching value (`StringGet`) or add the item to the cache with this key (`StringSet`).
+Redis 서버에 연결한 후, 사용자는 캐시 역할을 하는 Redis 데이터베이스에서 핸들을 얻을 수 있습니다. Redis 연결은 이를 수행하기 위해 `GetDatabase` 메서드를 제공합니다. 그런 다음 `StringGet` 및 `StringSet` 메서드를 사용하여 캐시에서 항목을 검색하고 캐시에 데이터를 저장할 수 있습니다. 이러한 메서드는 매개 변수로 키가 필요하며, 일치하는 값(`StringGet`)이 있는 캐시에서 항목을 반환하거나 이 키(`StringSet`)를 사용하여 캐시에 항목을 추가합니다. 
 
-Depending on the location of the Redis server, many operations might incur some latency while a request is transmitted to the server and a response is returned to the client. The StackExchange library provides asynchronous versions of many of the methods that it exposes to help client applications remain responsive. These methods support the [Task-based Asynchronous Pattern](http://msdn.microsoft.com/library/hh873175.aspx) in the .NET Framework.
+Redis 서버의 위치에 따라, 요청이 서버로 전송되고 응답이 클라이언트로 반환되는 동안 많은 작업에서 약간의 대기 시간이 발생할 수 있습니다. StackExchange 라이브러리는 클라이언트 응용 프로그램이 신속하게 응답하도록 돕기 위해 많은 메서드의 비동기 버전을 제공합니다. 이러한 메서드는 .NET Framework의 [작업 기반 비동기 패턴](http://msdn.microsoft.com/library/hh873175.aspx)을 지원합니다.
 
-The following code snippet shows a method named `RetrieveItem`. It illustrates an implementation of the cache-aside pattern based on Redis and the StackExchange library. The method takes a string key value and attempts to retrieve the corresponding item from the Redis cache by calling the `StringGetAsync` method (the asynchronous version of `StringGet`).
+다음 코드 조각은 `RetrieveItem`이라는 메서드를 보여줍니다. 이 조각은 Redis와 StackExchange 라이브러리에 기반한 캐시 배제 패턴을 구현하는 방법을 설명합니다. 이 메서드는 문자열 키 값을 가져온 후, `StringGetAsync` 메서드(`StringGet`의 비동기 버전)를 호출하여 Redis 캐시에서 해당 항목을 검색하려고 시도합니다. 
 
-If the item is not found, it is fetched from the underlying data source using the `GetItemFromDataSourceAsync` method (which is a local method and not part of the StackExchange library). It's then added to the cache by using the `StringSetAsync` method so it can be retrieved more quickly next time.
+항목을 찾을 수 없으면 `GetItemFromDataSourceAsync` 메서드(로컬 메서드이며 StackExchange 라이브러리의 일부가 아님)를 사용하여 기본 데이터 원본에서 항목을 가져옵니다. 그런 다음, `StringSetAsync` 메서드를 사용하여 캐시를 추가합니다. 이렇게 하면 다음 번에 더 빨리 검색할 수 있습니다. 
+
 
 ```csharp
 // Connect to the Azure Redis cache
@@ -691,9 +393,9 @@ private async Task<string> RetrieveItem(string itemKey)
 }
 ```
 
-The `StringGet` and `StringSet` methods are not restricted to retrieving or storing string values. They can take any item that is serialized as an array of bytes. If you need to save a .NET object, you can serialize it as a byte stream and use the `StringSet` method to write it to the cache.
+`StringGet` 및 `StringSet` 메서드는 문자열 값을 검색하거나 저장하는 것에만 한정되지는 않습니다. 이러한 메서드들은 모든 직렬화된 항목을 바이트의 배열로 사용할 수 있습니다. .NET 개체를 저장해야 하는 경우, 사용자는 이것을 바이트 스트림으로 직렬화하고 `StringSet` 메서드를 사용하여 캐시에 기록할 수 있습니다. 
 
-Similarly, you can read an object from the cache by using the `StringGet` method and deserializing it as a .NET object. The following code shows a set of extension methods for the IDatabase interface (the `GetDatabase` method of a Redis connection returns an `IDatabase` object),  and some sample code that uses these methods to read and write a `BlogPost` object to the cache:
+마찬가지로 `StringGet` 메서드를 사용하고 .NET 개체를 역직렬화하여 캐시에서 개체를 읽을 수 있습니다. 다음 코드는 IDatabase 인터페이스(Redis 연결의 `GetDatabase` 메서드가 `IDatabase` 개체를 반환), 그리고 이러한 메서드를 사용하여 `BlogPost` 개체를 읽고 캐시에 쓰는 몇 가지 샘플 코드에 대한 확장 메서드의 집합을 보여줍니다. 
 
 ```csharp
 public static class RedisCacheExtensions
@@ -748,7 +450,8 @@ public static class RedisCacheExtensions
 }
 ```
 
-The following code illustrates a method named `RetrieveBlogPost` that uses these extension methods to read and write a serializable `BlogPost` object to the cache following the cache-aside pattern:
+다음 코드는 캐시 배제 패턴에 따라 직렬화 가능한 `BlogPost`개체를 읽고 캐시에 쓰기 위해 이러한 확장 메서드를 사용하는 
+`RetrieveBlogPost`라는 메서드를 보여줍니다. 
 
 ```csharp
 // The BlogPost type
@@ -784,9 +487,9 @@ private async Task<BlogPost> RetrieveBlogPost(string blogPostKey)
 }
 ```
 
-Redis supports command pipelining if a client application sends multiple asynchronous requests. Redis can multiplex the requests using the same connection rather than receiving and responding to commands in a strict sequence.
+Redis는 클라이언트 응용 프로그램이 여러 비동기 요청을 보내는 경우에 명령 파이프라인을 지원합니다. Redis는 엄격한 순서로 명령 수신 및 명령 응답을 하지 않고, 동일한 연결을 사용하여 요청을 다양화할 수 있습니다. 
 
-This approach helps to reduce latency by making more efficient use of the network. The following code snippet shows an example that retrieves the details of two customers concurrently. The code submits two requests and then performs some other processing (not shown) before waiting to receive the results. The `Wait` method of the cache object is similar to the .NET Framework `Task.Wait` method:
+이 방법은 네트워크를 보다 효율적으로 사용하여 대기 시간을 줄일 수 있습니다. 다음 코드 조각은 두 고객의 세부사항을 동시에 검색하는 예제를 보여줍니다. 이 코드는 두 요청을 제출한 후, 몇 가지 다른 처리(예: 표시되지 않음)를 수행한 후 결과 수신을 기다립니다. 캐시 개체의 `Wait` 메서드는 .NET Framework `Task.Wait` 메서드와 비슷합니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -799,29 +502,25 @@ var customer1 = cache.Wait(task1);
 var customer2 = cache.Wait(task2);
 ```
 
-The page [Azure Redis Cache documentation](https://azure.microsoft.com/documentation/services/cache/) on the Microsoft website provides more information about how to write client applications that can use the Azure Redis Cache. Additional information is available on the [Basic usage page](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Basics.md) on the StackExchange.Redis website.
+Microsoft 웹 사이트의 [Azure Redis Cache 문서](https://azure.microsoft.com/documentation/services/cache/) 페이지에는 Azure Redis Cache를 사용할 수 있는 클라이언트 응용 프로그램을 작성하는 방법에 대한 자세한 내용이 나와 있습니다. 추가 정보는 StackExchange.Redis 웹 사이트의 [기본 사용 페이지](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Basics.md)에서 볼 수 있습니다. 
 
-The page [Pipelines and multiplexers](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/PipelinesMultiplexers.md) on the same website provides more information about asynchronous operations and pipelining with Redis and the StackExchange library.  The next section in this article, Using  Redis Caching, provides examples of some of the more advanced techniques that you can apply to data that's held in a Redis cache.
+동일한 웹 사이트의 [파이프라인 및 멀티플렉서](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/PipelinesMultiplexers.md) 페이지에는 Redis 및 StackExchange 라이브러리를 사용한 비동기 작업 및 파이프라인에 대한 자세한 내용이 나와 있습니다. 본 문서의 다음 섹션인 'Redis 캐싱 사용'에는 Redis 캐시에 있는 데이터에 적용할 수 있는 보다 고급 단계의 기술 예제 몇 가지가 소개되어 있습니다. 
 
-## Using Redis caching
-The simplest use of Redis for caching concerns is key-value pairs where the value is an uninterpreted string of arbitrary length that can contain any binary data. (It is essentially  an array of bytes that can be treated as a string). This scenario was illustrated in the section Implement Redis Cache client applications earlier in this article.
+## Redis 캐싱 사용
+Redis를 캐싱에 사용하는 가장 간단한 방법은 키-값 쌍입니다. 여기서 값은 이진 데이터를 포함할 수 있는 임의 길이의 해석되지 않은 문자열입니다. (기본적으로 이것은 문자열로 처리할 수 있는 바이트의 배열) 이 시나리오는 본 문서의 앞부분에 나온 Redis 캐시 클라이언트 응용 프로그램 구현 섹션에 설명되어 있습니다. 
 
-Note that keys also contain uninterpreted data, so you can use any binary information as the key. The longer the key is, however, the more space it will take to store, and the longer it will take to perform lookup operations. For usability and ease of maintenance, design your keyspace carefully and use meaningful (but not verbose) keys.
+또한 키에는 해석되지 않은 데이터도 포함되어 있으므로 사용자는 모든 이진 정보를 키로 사용할 수 있습니다. 그러나 키가 길수록 저장할 공간이 더 많이 필요하고 조회 작업을 수행하는 시간이 더 오래 걸립니다. 편하고 쉽게 사용하고 유지관리할 수 있도록키스페이스를 신중하게 설계하고 의미 있는(그러나 자세한 정보를 표시하지 않음) 키를 사용하십시오. 
 
-For example, use structured keys such as "customer:100" to represent the key for the customer with ID 100 rather than simply "100". This scheme enables you to easily distinguish between values that store different data types. For example, you could also use the key "orders:100" to represent the key for the order with ID 100.
+예를 들어, "customer:100" 등의 구조화된 키를 사용하여 단순히 "100"이 아닌 ID 100인 고객에 대한 키를 나타낼 수 있습니다. 이 체계를 사용하면 다른 데이터 형식을 저장하는 값 사이에서 쉽게 구별할 수 있습니다. 예를 들어, "orders:100" 키를 사용하여 ID 100인 주문에 대한 키를 나타낼 수도 있습니다. 
 
-Apart from one-dimensional binary strings, a value in a Redis key-value pair can also hold more structured information, including lists, sets (sorted and unsorted), and hashes. Redis provides a comprehensive command set that can manipulate these types, and many of these commands are available to .NET Framework applications through a client library such as StackExchange. The page [An introduction to Redis data types and abstractions](http://redis.io/topics/data-types-intro) on the Redis website provides a more detailed overview of these types and the commands that you can use to manipulate them.
+1차원 바이너리 문자열 외에도, Redis 키-값 쌍의 값은 목록, 집합(정렬 및 정렬 안 함), 해시 등의 보다 구조화된 정보를 가질 수 있습니다. Redis는 이러한 형식을 조작할 수 있는 포괄적인 명령 집합을 제공하며, 이러한 명령 중 많은 것을 StackExchange 등의 클라이언트 라이브러리를 통해 .NET Framework 응용 프로그램에서 사용할 수 있습니다. Redis 웹 사이트의 [Redis 데이터 형식 및 추상화 소개](http://redis.io/topics/data-types-intro) 페이지에서는 이러한 형식에 대한 개요와 사용자가 이러한 형식을 조작하는 데 사용할 수 있는 명령에 대해 보다 자세히 다루고 있습니다. 
 
-This section summarizes some common use cases for these data types and commands.
+이 섹션에서는 이러한 데이터 형식과 명령에 대한 일반적인 사용 사례를 요약합니다. 
 
-### Perform atomic and batch operations
-Redis supports a series of atomic get-and-set operations on string values. These operations remove the possible race hazards that might occur when using separate `GET` and `SET` commands. The operations that are available include:
+### 원자성 및 일괄 처리 작업 수행
+Redis는 문자열 값에 대한 일련의 원자성 get-and-set 작업을 지원합니다. 이러한 작업은 별도의 `GET` 및 `SET` 명령을 사용할 때 발생할 수 있는 경합 위험을 제거합니다. 사용할 수 있는 작업은 다음과 같습니다. 
 
-* `INCR`, `INCRBY`, `DECR`, and `DECRBY`, which perform atomic increment and decrement operations on
-  integer numeric data values. The StackExchange library provides overloaded versions of the
-  `IDatabase.StringIncrementAsync` and `IDatabase.StringDecrementAsync` methods to perform
-  these operations and return the resulting value that is stored in the cache. The following code
-  snippet illustrates how to use these methods:
+•	INCR, INCRBY, DECR, DECRBY – 정수 숫자 데이터 값에 대해 원자성 증가 및 감소 작업을 수행합니다. StackExchange 라이브러리는 이러한 작업을 수행하고 캐시에 저장된 결과 값을 반환하기 위해 IDatabase.StringIncrementAsync 및 IDatabase.StringDecrementAsync 메서드의 오버로드된 버전을 제공합니다. 다음 코드 조각은 이러한 메서드를 사용하는 방법을 보여줍니다.
   
   ```csharp
   ConnectionMultiplexer redisHostConnection = ...;
@@ -837,11 +536,7 @@ Redis supports a series of atomic get-and-set operations on string values. These
   // Decrement by 50
   // newValue should be 50
   ```
-* `GETSET`, which retrieves the value that's associated with a key and changes it to a new value. The
-  StackExchange library makes this operation available through the `IDatabase.StringGetSetAsync`
-  method. The code snippet below shows an example of this method. This code returns the current
-  value that's associated with the key "data:counter" from the previous example. Then it resets the value
-  for this key back to zero, all as part of the same operation:
+•	GETSET – 키와 관련된 값을 검색하여 새로운 값으로 변경합니다. StackExchange 라이브러리는 IDatabase.StringGetSetAsync 메서드를 통해 이 작업을 사용할 수 있게 해줍니다. 아래의 코드 조각은 이러한 메서드의 예를 보여줍니다. 이 코드는 앞의 예제에서 "data:counter" 키와 관련된 현재 값을 반환합니다. 그런 다음, 동일한 작업의 일부로 이 키에 대한 값을 다시 0으로 재설정합니다.
   
   ```csharp
   ConnectionMultiplexer redisHostConnection = ...;
@@ -849,9 +544,7 @@ Redis supports a series of atomic get-and-set operations on string values. These
   ...
   string oldValue = await cache.StringGetSetAsync("data:counter", 0);
   ```
-* `MGET` and `MSET`, which can return or change a set of string values as a single operation. The
-  `IDatabase.StringGetAsync` and `IDatabase.StringSetAsync` methods are overloaded to support
-  this functionality, as shown in the following example:
+•	MGET 및 MSET – 문자열 값의 집합을 단일 작업으로 반환하거나 변경할 수 있습니다. IDatabase.StringGetAsync 및 IDatabase.StringSetAsync 메서드는 다음 예제에 나타난 바와 같이 이 기능을 지원하도록 오버로드됩니다.
   
   ```csharp
   ConnectionMultiplexer redisHostConnection = ...;
@@ -876,13 +569,13 @@ Redis supports a series of atomic get-and-set operations on string values. These
   // values should contain { "value1", "value2", "value3" }
   ```
 
-You can also combine multiple operations into a single Redis transaction as described in the Redis transactions and batches section earlier in this article. The StackExchange library provides support for transactions through the `ITransaction` interface.
+또한 본 문서의 앞부분에 나온 Redis 트랜잭션 및 일괄 처리 섹션에서 설명된 대로 사용자는 여러 작업을 단일 Redis 트랜잭션으로 결합할 수도 있습니다. StackExchange 라이브러리는 `ITransaction` 인터페이스를 통해 트랜잭션을 지원합니다. 
 
-You create an `ITransaction` object by using the `IDatabase.CreateTransaction` method. You invoke commands to the transaction by using the methods provided by the `ITransaction` object.
+사용자는 IDatabase.CreateTransaction 메서드를 사용하여 `ITransaction` 개체를 생성합니다. 사용자는 `ITransaction` 개체에서 제공하는 메서드를 사용하여 트랜잭션에 명령을 호출합니다. 
 
-The `ITransaction` interface provides access to a set of methods that's similar to those accessed by the `IDatabase` interface, except that all the methods are asynchronous. This means that they are only performed when the `ITransaction.Execute` method is invoked. The value that's returned by the `ITransaction.Execute` method indicates whether the transaction was created successfully (true) or if it failed (false).
+`ITransaction` 인터페이스는 메서드 집합에 대한 액세스를 제공합니다. 모든 메서드가 비동기라는 점만 제외하면, 이것은 `IDatabase` 인터페이스에 의해 액세스되는 것과 유사합니다. 즉, 이들은 `ITransaction.Execute` 메서드가 호출될 때만 수행됩니다. `ITransaction.Execute` 메서드에 의해 반환된 값은 트랜잭션이 성공적으로 생성되었는지(true), 실패했는지(false)를 나타냅니다. 
 
-The following code snippet shows an example that increments and decrements two counters as part of the same transaction:
+다음 코드 조각은 동일한 트랜잭션의 일부로 두 카운터를 증가시키고 감소시키는 예제를 보여줍니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -897,15 +590,16 @@ Console.WriteLine("Result of increment: {0}", tx1.Result);
 Console.WriteLine("Result of decrement: {0}", tx2.Result);
 ```
 
-Remember that Redis transactions are unlike transactions in relational databases. The `Execute` method simply queues all the commands that comprise the transaction to be run, and if any of them is malformed then the transaction is stopped. If all the commands have been queued successfully, each command runs asynchronously.
+Redis 트랜잭션은 관계형 데이터베이스의 트랜잭션과는 다르다는 점을 기억하십시오. Execute 메서드는 실행될 트랜잭션을 구성하는 모든 명령을 단순히 대기열에 넣고 그중 하나라도 형식이 잘못되면 트랜잭션을 중지합니다. 모든 명령이 성공적으로 대기열에 저장되면 각 명령이 비동기적으로 실행됩니다. 
 
-If any command fails, the others still continue processing. If you need to verify that a command has completed successfully, you must fetch the results of the command by using the **Result** property of the corresponding task, as shown in the example above. Reading the **Result** property will block the calling thread until the task has completed.
+명령이 실패하더라도 다른 명령은 처리를 계속합니다. 명령이 성공적으로 완료되었는지 확인해야 하는 경우, 위의 예제에 나타난 바와 같이 해당 작업의 **Result** 속성을 사용하여 명령의 결과를 가져와야 합니다. **Result** 속성을 읽으면 작업이 완료될 때까지 호출 스레드가 차단됩니다. 
 
-For more information, see the [Transactions in Redis](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Transactions.md) page on the StackExchange.Redis website.
 
-When performing batch operations, you can use the `IBatch` interface of the StackExchange library. This interface provides access to a set of methods similar to those accessed by the `IDatabase` interface, except that all the methods are asynchronous.
+자세한 내용은 StackExchange.Redis 웹 사이트의 [Redis의 트랜잭션](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Transactions.md) 페이지를 참조하십시오. 
 
-You create an `IBatch` object by using the `IDatabase.CreateBatch` method, and then run the batch by using the `IBatch.Execute` method, as shown in the following example. This code simply sets a string value, increments and decrements the same counters used in the previous example, and displays the results:
+일괄 처리 작업을 수행할 때 StackExchange 라이브러리의 `IBatch` 인터페이스를 사용할 수 있습니다. 이 인터페이스는 메서드 집합에 대한 액세스를 제공합니다. 모든 메서드가 비동기라는 점만 제외하면, 이것은 `IDatabase` 인터페이스에 의해 액세스되는 것과 비슷합니다. 
+
+사용자는 `IDatabase.CreateBatch` 메서드를 사용하여 `IBatch` 개체를 생성한 후, 다음 예제에 나타난 바와 같이 `IBatch.Execute` 메서드를 사용하여 일괄 처리를 실행합니다. 이 코드는 단순히 문자열 값을 설정하고 앞의 예제에서 사용된 것과 동일한 카운터를 증가 및 감소시키고 결과를 표시합니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -920,10 +614,10 @@ Console.WriteLine("{0}", t1.Result);
 Console.WriteLine("{0}", t2.Result);
 ```
 
-It is important to understand that unlike a transaction, if a command in a batch fails because it is malformed, the other commands might still run. The `IBatch.Execute` method does not return any indication of success or failure.
+트랜잭션과 달리, 일괄 처리의 명령 형식이 잘못되어 일괄 처리의 명령이 실패해도 다른 명령은 계속 실행할 수 있다는 점을 이해해야 합니다. `IBatch.Execute` 메서드는 성공 또는 실패 표시를 반환하지 않습니다. 
 
-### Perform fire and forget cache operations
-Redis supports fire and forget operations by using command flags. In this situation, the client simply initiates an operation but has no interest in the result and does not wait for the command to be completed. The example below shows how to perform the INCR command as a fire and forget operation:
+### 파이어 앤드 포겟(fire and forget) 캐시 작업 수행
+Redis는 명령 플래그를 사용하여 파이어 앤드 포겟(fire and forget) 작업을 지원합니다. 이 상황에서, 클라이언트는 단순히 작업을 시작하기는 하지만 결과에는 관심이 없으며 명령이 완료될 때까지 기다리지 않습니다. 아래의 예제는 INCR 명령을 파이어 앤드 포겟(fire and forget) 작업으로 수행하는 방법을 보여줍니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -934,10 +628,10 @@ await cache.StringSetAsync("data:key1", 99);
 cache.StringIncrement("data:key1", flags: CommandFlags.FireAndForget);
 ```
 
-### Specify automatically expiring keys
-When you store an item in a Redis cache, you can specify a timeout after which the item will be automatically removed from the cache. You can also query how much more time a key has before it expires by using the `TTL` command. This command is available to StackExchange applications by using the `IDatabase.KeyTimeToLive` method.
+### 자동 만료 키 지정
+Redis 캐시에 항목을 저장할 때 사용자는 항목이 캐시에서 자동으로 제거되는 시간 제한을 지정할 수 있습니다. 또한 `TTL` 명령을 사용하여 키가 만료되기까지 시간이 얼마나 있는지를 쿼리할 수 있습니다. 이 명령은 `IDatabase.KeyTimeToLive` 메서드를 사용하여 StackExchange 응용 프로그램에서 사용할 수 있습니다. 
 
-The following code snippet shows how to set an expiration time of 20 seconds on a key, and query the remaining lifetime of the key:
+다음 코드 조각은 키에 20초의 만료 시간을 설정하고 키의 남은 수명을 쿼리하는 방법을 보여줍니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -951,7 +645,7 @@ await cache.StringSetAsync("data:key1", 99, TimeSpan.FromSeconds(20));
 TimeSpan? expiry = cache.KeyTimeToLive("data:key1");
 ```
 
-You can also set the expiration time to a specific date and time by using the EXPIRE command, which is available in the StackExchange library as the `KeyExpireAsync` method:
+StackExchange 라이브러리에서 `KeyExpireAsync` 메서드로 사용할 수 있는 EXPIRE 명령을 사용하여 만료 시간을 특정 날짜와 시간으로 설정할 수도 있습니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -964,19 +658,18 @@ await cache.KeyExpireAsync("data:key1",
 ...
 ```
 
-> *Tip:* You can manually remove an item from the cache by using the DEL command, which is available through the StackExchange library as the `IDatabase.KeyDeleteAsync` method.
+> *팁:* StackExchange 라이브러리를 통해 `IDatabase.KeyDeleteAsync` 메서드로 사용할 수 있는 DEL 명령을 사용하여 캐시에서 항목을 수동으로 제거할 수 있습니다. 
 > 
 > 
 
-### Use tags to cross-correlate cached items
-A Redis set is a collection of multiple items that share a single key. You can create a set by using the SADD command. You can retrieve the items in a set by using the SMEMBERS command. The StackExchange library implements the SADD command with the `IDatabase.SetAddAsync` method, and the SMEMBERS command with the `IDatabase.SetMembersAsync` method.
+### 태그를 사용하여 캐시된 항목의 상관 관계 지정
+Redis 집합은 단일 키를 공유하는 여러 항목의 컬렉션입니다. 사용자는 SADD 명령을 사용하여 집합을 생성할 수 있습니다. SMEMBERS 명령을 사용하여 집합의 항목을 검색할 수 있습니다. StackExchange 라이브러리는 `IDatabase.SetAddAsync` 메서드를 사용하여 SADD 명령을 구현하고, `IDatabase.SetMembersAsync` 메서드를 사용하여 SMEMBERS 명령을 구현합니다. 
 
-You can also combine existing sets to create new sets by using the SDIFF (set difference), SINTER (set intersection), and SUNION (set union) commands. The StackExchange library unifies these operations in the `IDatabase.SetCombineAsync` method. The first parameter to this method specifies the set operation to perform.
+또한 SDIFF(차집합), SINTER(교집합) 및 SUNION(합집합) 명령을 사용하여 새 집합을 생성하기 위해 기존 집합을 결합할 수도 있습니다. StackExchange 라이브러리는 `IDatabase.SetCombineAsync` 메서드에서 이러한 작업을 통합합니다. 이 메서드의 첫 번째 매개 변수는 수행할 집합 작업을 지정합니다. 
 
-The following code snippets show how sets can be useful for quickly storing and retrieving collections of related items. This code uses the `BlogPost` type that was described in the section Implement Redis Cache Client Applications earlier in this article.
+다음 코드 조각은 집합이 관련 항목의 컬렉션을 빠르게 저장하고 검색하는 데 얼마나 도움이 될 수 있는지를 보여줍니다. 이 코드는 본 문서의 앞부분에 나온 Redis 캐시 클라이언트 응용 프로그램 구현 섹션에 설명된 `BlogPost` 형식을 사용합니다. 
 
-A `BlogPost` object contains four fields—an ID, a title, a ranking score, and a collection of tags. The first code snippet below shows the sample data that's used for populating a C# list of `BlogPost` objects:
-
+`BlogPost` 개체에는 4가지 필드(ID, 제목, 순위 점수, 태그 컬렉션)가 포함되어 있습니다. 아래의 첫 번째 코드 조각은 `BlogPost` 개체의 C# 목록을 채우는 데 사용되는 샘플 데이터를 보여줍니다. 
 ```csharp
 List<string[]> tags = new List<string[]>()
 {
@@ -1010,7 +703,7 @@ for (int i = 0; i < numberOfPosts; i++)
 }
 ```
 
-You can store the tags for each `BlogPost` object as a set in a Redis cache and associate each set with the ID of the `BlogPost`. This enables an application to quickly find all the tags that belong to a specific blog post. To enable searching in the opposite direction and find all blog posts that share a specific tag, you can create another set that holds the blog posts referencing the tag ID in the key:
+각 `BlogPost` 개체의 태그를 Redis 캐시에 집합으로 저장하고 각 집합을 `BlogPost`의 ID와 연결할 수 있습니다. 이렇게 하면 응용 프로그램은 특정 블로그 게시물에 속한 모든 태그를 신속하게 찾을 수 있습니다. 반대 방향으로 검색하여 특정 태그를 공유하는 모든 블로그 게시물을 찾기 위해 키의 태그 ID를 참조하는 블로그 게시물을 가진 다른 집합을 생성할 수 있습니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -1034,7 +727,7 @@ foreach (BlogPost post in posts)
 }
 ```
 
-These structures enable you to perform many common queries very efficiently. For example, you can find and display all of the tags for blog post 1 like this:
+이러한 구조를 통해 매우 효율적으로 많은 일반 쿼리를 수행할 수 있습니다. 예를 들어, 사용자는 다음과 같이 블로그 게시물 1에 대한 모든 태그를 찾아 표시할 수 있습니다. 
 
 ```csharp
 // Show the tags for blog post #1
@@ -1044,7 +737,7 @@ foreach (var value in await cache.SetMembersAsync("blog:posts:1:tags"))
 }
 ```
 
-You can find all tags that are common to blog post 1 and blog post 2 by performing a set intersection operation, as follows:
+다음과 같이 교집합 작업을 수행하여 블로그 게시물 1과 블로그 게시물 2에 공통된 모든 태그를 찾을 수 있습니다. 
 
 ```csharp
 // Show the tags in common for blog posts #1 and #2
@@ -1055,7 +748,7 @@ foreach (var value in await cache.SetCombineAsync(SetOperation.Intersect, new Re
 }
 ```
 
-And you can find all blog posts that contain a specific tag:
+그리고 특정 태그가 포함된 모든 블로그 게시물을 찾을 수 있습니다. 
 
 ```csharp
 // Show the ids of the blog posts that have the tag "iot".
@@ -1065,12 +758,12 @@ foreach (var value in await cache.SetMembersAsync("tag:iot:blog:posts"))
 }
 ```
 
-### Find recently accessed items
-A common task required of many applications is to find the most recently accessed items. For example, a blogging site might want to display information about the most recently read blog posts.
+### 최근에 액세스한 항목 찾기
+많은 응용 프로그램에 필요한 공통 작업은 가장 최근에 액세스한 항목을 찾는 것입니다. 예를 들어, 블로그 사이트가 가장 최근에 읽은 블로그 게시물에 대한 정보를 표시하려고 할 수 있습니다. 
 
-You can implement this functionality by using a Redis list. A Redis list contains multiple items that share the same key. The list acts as a double-ended queue. You can push items to either end of the list by using the LPUSH (left push) and RPUSH (right push) commands. You can retrieve items from either end of the list by using the LPOP and RPOP commands. You can also return a set of elements by using the LRANGE and RRANGE commands.
+그러면 사용자는 Redis 목록을 사용하여 이 기능을 구현할 수 있습니다. Redis 목록에는 동일한 키를 공유하는 여러 항목이 들어 있습니다. 이 목록은 데크(Deque: double-ended queue)의 역할을 합니다. 사용자는 LPUSH(왼쪽 푸시) 및 RPUSH(오른쪽 푸시) 명령을 사용하여 항목을 목록의 한쪽 끝으로 푸시할 수 있습니다. LPOP 및 RPOP 명령을 사용하여 목록의 한쪽 끝에서 항목을 검색할 수 있습니다. LRANGE 및 RRANGE 명령을 사용하여 요소의 집합을 반환할 수도 있습니다. 
 
-The code snippets below show how you can perform these operations by using the StackExchange library. This code uses the `BlogPost` type from the previous examples. As a blog post is read by a user, the `IDatabase.ListLeftPushAsync` method pushes the title of the blog post onto a list that's associated with the key "blog:recent_posts" in the Redis cache.
+아래의 코드 조각은 StackExchange 라이브러리를 사용하여 이러한 작업을 수행하는 방법을 보여줍니다. 이 코드는 앞의 예제에 나온 `BlogPost` 형식을 사용합니다. 사용자가 블로그 게시물을 읽으면 `IDatabase.ListLeftPushAsync` 메서드가 블로그 게시물의 제목을 Redis 캐시의 "blog:recent_posts" 키와 관련된 목록으로 푸시합니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -1082,9 +775,9 @@ await cache.ListLeftPushAsync(
     redisKey, blogPost.Title); // Push the blog post onto the list
 ```
 
-As more blog posts are read, their titles are pushed onto the same list. The list is ordered by the sequence in which the titles have been added. The most recently read blog posts are towards the left end of the list. (If the same blog post is read more than once, it will have multiple entries in the list.)
+더 많은 블로그 게시물을 읽으면 게시물 제목이 동일한 목록으로 푸시됩니다. 제목이 추가된 순서에 따라 목록이 정렬됩니다. 가장 최근에 읽은 블로그 게시물이 목록의 왼쪽 끝으로 갑니다. (동일한 블로그 게시물을 한 번 이상 읽으면 목록에 여러 항목이 존재하게 됨) 
 
-You can display the titles of the most recently read posts by using the `IDatabase.ListRange` method. This method takes the key that contains the list, a starting point, and an ending point. The following code retrieves the titles of the 10 blog posts (items from 0 to 9) at the left-most end of the list:
+`IDatabase.ListRange` 메서드를 사용하여 가장 최근에 읽은 게시물의 제목을 표시할 수 있습니다. 이 메서드는 목록, 시작 지점 및 종료 지점이 포함된 키를 사용합니다. 다음 코드는 목록의 가장 왼쪽에 있는 블로그 게시물 10개(0~9의 항목)의 제목을 검색합니다.
 
 ```csharp
 // Show latest ten posts
@@ -1094,18 +787,18 @@ foreach (string postTitle in await cache.ListRangeAsync(redisKey, 0, 9))
 }
 ```
 
-Note that the `ListRangeAsync` method does not remove items from the list. To do this, you can use the `IDatabase.ListLeftPopAsync` and `IDatabase.ListRightPopAsync` methods.
+`ListRangeAsync` 메서드는 목록에서 항목을 제거하지 않는다는 것을 명심하십시오. 이렇게 하기 위해 `IDatabase.ListLeftPopAsync` 및 `IDatabase.ListRightPopAsync` 메서드를 사용할 수 있습니다. 
 
-To prevent the list from growing indefinitely, you can periodically cull items by trimming the list. The code snippet below shows you how to remove all but the five left-most items from the list:
+목록이 무한정으로 증가하는 것을 방지하기 위해 목록을 트리밍하여 주기적으로 항목을 추려낼 수 있습니다. 아래의 코드 조각은 목록에서 가장 왼쪽에 있는 항목 5개를 제외한 모든 항목을 제거하는 방법을 보여줍니다. 
 
 ```csharp
 await cache.ListTrimAsync(redisKey, 0, 5);
 ```
 
-### Implement a leader board
-By default, the items in a set are not held in any specific order. You can create an ordered set by using the ZADD command (the `IDatabase.SortedSetAdd` method in the StackExchange library). The items are ordered by using a numeric value called a score, which is provided as a parameter to the command.
+### 리더 보드 구현
+기본적으로, 집합의 항목은 특정 순서로 들어 있지 않습니다. ZADD 명령을 사용하여 정렬된 집합을 생성할 수 있습니다(StackExchange 라이브러리의 `IDatabase.SortedSetAdd` 메서드). 그러면 명령에 대한 매개 변수로 제공되는 score(점수)라는 숫자 값을 사용하여 항목이 정렬됩니다. 
 
-The following code snippet adds the title of a blog post to an ordered list. In this example, each blog post also has a score field that contains the ranking of the blog post.
+다음 코드 조각은 블로그 게시물의 제목을 정렬된 목록에 추가합니다. 이 예제에서, 각 블로그 게시물에는 블로그 게시물의 순위가 포함된 점수 필드도 있습니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -1116,7 +809,7 @@ BlogPost blogPost = ...; // Reference to a blog post that has just been rated
 await cache.SortedSetAddAsync(redisKey, blogPost.Title, blogpost.Score);
 ```
 
-You can retrieve the blog post titles and scores in ascending score order by using the `IDatabase.SortedSetRangeByRankWithScores` method:
+사용자는 `IDatabase.SortedSetRangeByRankWithScores` 메서드를 사용하여 블로그 게시물 제목과 점수를 점수의 오름차순으로 검색할 수 있습니다. 
 
 ```csharp
 foreach (var post in await cache.SortedSetRangeByRankWithScoresAsync(redisKey))
@@ -1125,12 +818,11 @@ foreach (var post in await cache.SortedSetRangeByRankWithScoresAsync(redisKey))
 }
 ```
 
-> [!NOTE]
-> The StackExchange library also provides the `IDatabase.SortedSetRangeByRankAsync` method, which returns the data in score order, but does not return the scores.
-> 
+> [!참고]
+> StackExchange 라이브러리는 `IDatabase.SortedSetRangeByRankAsync` 메서드도 제공합니다. 이 메서드는 데이터를 점수 순서로 반환하지만 점수는 반환하지 않습니다. 
 > 
 
-You can also retrieve items in descending order of scores, and limit the number of items that are returned by providing additional parameters to the `IDatabase.SortedSetRangeByRankWithScoresAsync` method. The next example displays the titles and scores of the top 10 ranked blog posts:
+항목을 점수의 내림차순으로 검색할 수도 있고 `IDatabase.SortedSetRangeByRankWithScoresAsync` 메서드에 추가 매개 변수를 제공하여 반환되는 항목 수를 제한할 수도 있습니다. 다음 예제는 블로그 게시물 상위 10위의 제목과 점수를 표시합니다. 
 
 ```csharp
 foreach (var post in await cache.SortedSetRangeByRankWithScoresAsync(
@@ -1140,7 +832,7 @@ foreach (var post in await cache.SortedSetRangeByRankWithScoresAsync(
 }
 ```
 
-The next example uses the `IDatabase.SortedSetRangeByScoreWithScoresAsync` method, which you can use to limit the items that are returned to those that fall within a given score range:
+다음 예제는 `IDatabase.SortedSetRangeByScoreWithScoresAsync` 메서드를 사용합니다. 이 메서드를 사용하면 지정된 점수 범위 내에 있는 항목으로 반환되는 항목을 제한할 수 있습니다. 
 
 ```csharp
 // Blog posts with scores between 5000 and 100000
@@ -1151,12 +843,12 @@ foreach (var post in await cache.SortedSetRangeByScoreWithScoresAsync(
 }
 ```
 
-### Message by using channels
-Apart from acting as a data cache, a Redis server provides messaging through a high-performance publisher/subscriber mechanism. Client applications can subscribe to a channel, and other applications or services can publish messages to the channel. Subscribing applications will then receive these messages and can process them.
+### 채널을 사용한 메시지
+데이터 캐시의 역할을 하는 것 외에도, Redis 서버는 고성능 게시자/구독자 메커니즘을 통해 메시징을 제공합니다. 클라이언트 응용 프로그램은 채널을 구독할 수 있으며 기타 응용 프로그램 또는 서비스는 채널에 메시지를 게시할 수 있습니다. 그러면 구독하는 응용 프로그램이 이러한 메시지를 수신하여 처리할 수 있습니다. 
 
-Redis provides the SUBSCRIBE command for client applications to use to subscribe to channels. This command expects the name of one or more channels on which the application will accept messages. The StackExchange library includes the `ISubscription` interface, which enables a .NET Framework application to subscribe and publish to channels.
+Redis는 클라이언트 응용 프로그램이 채널을 구독하는 데 사용할 SUBSCRIBE 명령을 제공합니다. 이 명령에는 응용 프로그램이 메시지를 수락할 하나 이상의 채널 이름이 필요합니다. StackExchange 라이브러리에는 `ISubscription` 인터페이스가 포함되어 있습니다. 이 인터페이스를 통해 .NET Framework 응용 프로그램이 채널을 구독하고 게시할 수 있습니다. 
 
-You create an `ISubscription` object by using the `GetSubscriber` method of the connection to the Redis server. Then you listen for messages on a channel by using the `SubscribeAsync` method of this object. The following code example shows how to subscribe to a channel named "messages:blogPosts":
+사용자는 Redis 서버에 연결하는 `GetSubscriber` 메서드를 사용하여 `ISubscription` 개체를 생성할 수 있습니다. 그런 다음, 이 개체의 `SubscribeAsync` 메서드를 사용하여 채널의 메시지를 수신합니다. 다음 코드 예제는 "messages:blogPosts"라는 채널을 구독하는 방법을 보여줍니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -1168,13 +860,13 @@ await subscriber.SubscribeAsync("messages:blogPosts", (channel, message) =>
 });
 ```
 
-The first parameter to the `Subscribe` method is the name of the channel. This name follows the same conventions that are used by keys in the cache. The name can contain any binary data, although it is advisable to use relatively short, meaningful strings to help ensure good performance and maintainability.
+`Subscribe` 메서드에 대한 첫 번째 매개 변수는 채널 이름입니다. 이 이름은 캐시에서 키가 사용하는 것과 동일한 규칙을 따릅니다. 이름에는 모든 이진 데이터가 포함될 수 있지만, 성능을 유지하고 유지관리를 용이하게 할 수 있도록 상대적으로 짧고 의미 있는 문자열을 사용하는 것이 좋습니다.
 
-Note also that the namespace used by channels is separate from that used by keys. This means you can have channels and keys that have the same name, although this may make your application code more difficult to maintain.
+채널에서 사용하는 네임스페이스는 키가 사용하는 네임스페이스와 구분되어 있다는 점도 유의하십시오. 즉, 채널과 키가 동일한 이름을 가질 수는 있지만 그렇게 되면 응용 프로그램 코드를 유지관리하기가 더 어려워질 수 있습니다. 
 
-The second parameter is an Action delegate. This delegate runs asynchronously whenever a new message appears on the channel. This example simply displays the message on the console (the message will contain the title of a blog post).
+두 번째 매개 변수는 작업 대리인입니다. 이 대리인은 새 메시지가 채널에 나타날 때마다 비동기적으로 실행됩니다. 이 예제는 단순히 콘솔에 메시지를 표시합니다(메시지에는 블로그 게시물의 제목이 포함됨). 
 
-To publish to a channel, an application can use the Redis PUBLISH command. The StackExchange library provides the `IServer.PublishAsync` method to perform this operation. The next code snippet shows how to publish a message to the "messages:blogPosts" channel:
+채널에 게시하기 위해 응용 프로그램에서 Redis PUBLISH 명령을 사용할 수 있습니다. StackExchange 라이브러리는 `IServer.PublishAsync` 메서드를 제공하여 이 작업을 수행합니다. 다음 코드 조각은 "messages:blogPosts" 채널에 메시지를 게시하는 방법을 보여줍니다. 
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -1184,15 +876,12 @@ BlogPost blogpost = ...;
 subscriber.PublishAsync("messages:blogPosts", blogPost.Title);
 ```
 
-There are several points you should understand about the publish/subscribe mechanism:
+다음은 사용자가 게시/구독 메커니즘에 대해 이해해야 할 몇 가지 사항입니다. 
 
-* Multiple subscribers can subscribe to the same channel, and they will all receive the messages that are published to that channel.
-* Subscribers only receive messages that have been published after they have subscribed. Channels are not buffered, and once a message is published, the Redis infrastructure pushes the message to each subscriber and then removes it.
-* By default, messages are received by subscribers in the order in which they are sent. In a highly active system with a large number
-  of messages and many subscribers and publishers, guaranteed sequential delivery of messages can slow performance of the system. If
-  each message is independent and the order is unimportant, you can enable concurrent processing by the Redis system, which can help to
-  improve responsiveness. You can achieve this in a StackExchange client by setting the PreserveAsyncOrder of the connection used by
-  the subscriber to false:
+•	여러 구독자가 동일한 채널을 구독할 수 있으며 모든 구독자는 해당 채널에 게시된 메시지를 수신합니다.
+•	구독자는 구독 후에 게시된 메시지만 수신합니다. 채널은 버퍼링되지 않으며, 일단 메시지가 게시되면 Redis 인프라가 각 구독자에게 메시지를 푸시한 후 메시지를 제거합니다.
+•	기본적으로, 메시지는 전송된 순서대로 구독자가 수신합니다. 많은 수의 메시지, 많은 구독자와 게시자가 있는 매우 활동적인 시스템에서는 메시지의 순차적 전달이 보장되는 기능 때문에 시스템 성능이 저하될 수 있습니다. 각 메시지가 독립적이고 순서가 중요하지 않은 경우에는 Redis 시스템에서 동시 처리하도록 할 수 있습니다. 이렇게 하면 응답성이 향상됩니다. 구독자가 사용하는 연결의 PreserveAsyncOrder를 false로 설정하여 StackExchange 클라이언트에서 이 작업을 수행할 수 있습니다.
+
 
 ```csharp
 ConnectionMultiplexer redisHostConnection = ...;
@@ -1200,32 +889,32 @@ redisHostConnection.PreserveAsyncOrder = false;
 ISubscriber subscriber = redisHostConnection.GetSubscriber();
 ```
 
-## Related patterns and guidance
-The following pattern might also be relevant to your scenario when you implement caching in your applications:
+## 관련 패턴과 지침
+다음 패턴은 응용 프로그램에서 캐싱을 구현할 때 사용자의 시나리오와 관련될 수도 있습니다. 
 
-* [Cache-aside pattern](http://msdn.microsoft.com/library/dn589799.aspx): This pattern describes how to load data on demand into a cache from a data store. This pattern also helps to maintain consistency between data that's held in the cache and the data in the original data store.
-* The [Sharding pattern](http://msdn.microsoft.com/library/dn589797.aspx) provides information about implementing horizontal partitioning to help improve scalability when storing and accessing large volumes of data.
+* [캐시 배제 패턴](http://msdn.microsoft.com/library/dn589799.aspx): 이 패턴은 요청 시 데이터를 데이터 저장소의 캐시에 로드하는 방법을 설명합니다. 또한 이 패턴은 캐시에 있는 데이터와 원래 데이터 저장소에 있는 데이터 간의 일관성을 유지하는 데도 도움이 됩니다.
+* [샤딩 패턴](http://msdn.microsoft.com/library/dn589797.aspx)은 대량의 데이터를 저장하고 그러한 데이터에 액세스할 때 확장을 용이하게 할 수 있도록 행 분할 구현에 대한 정보를 제공합니다.
 
-## More information
-* The [MemoryCache class](http://msdn.microsoft.com/library/system.runtime.caching.memorycache.aspx) page on the Microsoft website
-* The [Azure Redis Cache documentation](https://azure.microsoft.com/documentation/services/cache/) page on the Microsoft website
-* The [Azure Redis Cache FAQ](/azure/redis-cache/cache-faq/) page on the Microsoft website
-* The [Configuration model](http://msdn.microsoft.com/library/windowsazure/hh914149.aspx) page on the Microsoft website
-* The [Task-based Asynchronous Pattern](http://msdn.microsoft.com/library/hh873175.aspx) page on the Microsoft website
-* The [Pipelines and multiplexers](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/PipelinesMultiplexers.md) page on the StackExchange.Redis GitHub repo
-* The [Redis persistence](http://redis.io/topics/persistence) page on the Redis website
-* The [Replication page](http://redis.io/topics/replication) on the Redis website
-* The [Redis cluster tutorial](http://redis.io/topics/cluster-tutorial) page on the Redis website
-* The [Partitioning: how to split data among multiple Redis instances](http://redis.io/topics/partitioning) page on the Redis website
-* The [Using Redis as an LRU Cache](http://redis.io/topics/lru-cache) page on the Redis website
-* The [Transactions](http://redis.io/topics/transactions) page on the Redis website
-* The [Redis security](http://redis.io/topics/security) page on the Redis website
-* The [Lap around Azure Redis Cache](https://azure.microsoft.com/blog/2014/06/04/lap-around-azure-redis-cache-preview/) page on the Azure blog
-* The [Running Redis on a CentOS Linux VM in Azure](http://blogs.msdn.com/b/tconte/archive/2012/06/08/running-redis-on-a-centos-linux-vm-in-windows-azure.aspx) page on the Microsoft website
-* The [ASP.NET session state provider for Azure Redis Cache](/azure/redis-cache/cache-aspnet-session-state-provider/) page on the Microsoft website
-* The [ASP.NET output cache provider for Azure Redis Cache](/azure/redis-cache/cache-aspnet-output-cache-provider/) page on the Microsoft website
-* The [An Introduction to Redis data types and abstractions](http://redis.io/topics/data-types-intro) page on the Redis website
-* The [Basic usage](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Basics.md) page on the StackExchange.Redis website
-* The [Transactions in Redis](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Transactions.md) page on the StackExchange.Redis repo
-* The [Data partitioning guide](http://msdn.microsoft.com/library/dn589795.aspx) on the Microsoft website
+## 자세한 정보
+* Microsoft 웹 사이트의 [MemoryCache 클래스](http://msdn.microsoft.com/library/system.runtime.caching.memorycache.aspx) 페이지
+* Microsoft 웹 사이트의 [Azure Redis Cache 문서](https://azure.microsoft.com/documentation/services/cache/) 페이지
+* Microsoft 웹 사이트의 [Azure Redis Cache FAQ](/azure/redis-cache/cache-faq/) 페이지
+* Microsoft 웹 사이트의 [구성 모델](http://msdn.microsoft.com/library/windowsazure/hh914149.aspx) 페이지
+* Microsoft 웹 사이트의 [작업 기반 비동기 패턴](http://msdn.microsoft.com/library/hh873175.aspx) 페이지
+* StackExchange.Redis GitHub 리포지토리의 [파이프라인 및 멀티플렉서](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/PipelinesMultiplexers.md) 페이지
+* Redis 웹 사이트의 [Redis 지속성](http://redis.io/topics/persistence) 페이지
+* Redis 웹 사이트의 [복제 페이지](http://redis.io/topics/replication)
+* Redis 웹 사이트의 [Redis 클러스터 자습서](http://redis.io/topics/cluster-tutorial) 페이지
+* Redis 웹 사이트의 [분할: 여러 Redis 인스턴스 간에 데이터를 분할하는 방법](http://redis.io/topics/partitioning) 페이지
+* Redis 웹 사이트의 [Redis를 LRU Cache로 사용](http://redis.io/topics/lru-cache) 페이지
+* Redis 웹 사이트의 [트랜잭션](http://redis.io/topics/transactions) 페이지
+* Redis 웹 사이트의 [Redis 보안](http://redis.io/topics/security) 페이지
+* Azure 블로그의 [Azure Redis Cache 주변의 랩](https://azure.microsoft.com/blog/2014/06/04/lap-around-azure-redis-cache-preview/) 페이지
+* Microsoft 웹 사이트의 [Azure의 CentOS Linux VM에서 Redis 실행](http://blogs.msdn.com/b/tconte/archive/2012/06/08/running-redis-on-a-centos-linux-vm-in-windows-azure.aspx) 페이지
+* Microsoft 웹 사이트의 [Azure Redis Cache에 대한 ASP.NET 세션 상태 공급자](/azure/redis-cache/cache-aspnet-session-state-provider/) 페이지
+* Microsoft 웹 사이트의 [Azure Redis Cache에 대한 ASP.NET 출력 캐시 공급자](/azure/redis-cache/cache-aspnet-output-cache-provider/) 페이지
+* Redis 웹 사이트의 [Redis 데이터 형식 및 추상화 소개](http://redis.io/topics/data-types-intro) 페이지
+* StackExchange.Redis 웹 사이트의 [기본 사용](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Basics.md) 페이지
+* StackExchange.Redis 리포지토리의 [Redis 트랜잭션](https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Transactions.md) 페이지
+* Microsoft 웹 사이트의 [데이터 분할 가이드](http://msdn.microsoft.com/library/dn589795.aspx)
 
