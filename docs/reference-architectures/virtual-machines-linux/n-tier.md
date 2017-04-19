@@ -124,9 +124,11 @@ DB 계층에서는 VM 수가 많다고 무조건 고가용성 DB가 되는 것�
 
 1. 아래 단추를 우클릭하여 "새 탭에서 열기" 또는 "새 창에서 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fvirtual-machines%2Fn-tier-linux%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 2. Azure 포털에서 링크가 열리면 아래의 설정값을 입력합니다. 
-   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-ntier-cassandra-rg`를 입력하세요.
+   
+   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-ntier-cassandra-rg`를 입력하세요.
    * **위치** 드롭다운 상자에서 지역을 선택하세요.
-   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
+   
+   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
    * 사용약관을 검토한 후 **위에 명시된 사용약관에 동의함** 확인란을 클릭합니다.
    * **구입** 단추를 클릭합니다.
 3. Azure 포털 알림에서 배포 완료 메시지를 확인합니다.
