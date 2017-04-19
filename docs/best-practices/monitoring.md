@@ -9,694 +9,815 @@ ms.author: pnp
 
 pnp.series.title: Best Practices
 ---
-# Monitoring and diagnostics
+# 모니터링 및 진단
 [!INCLUDE [header](../_includes/header.md)]
 
-Distributed applications and services running in the cloud are, by their nature, complex pieces of software that comprise many moving parts. In a production environment, it's important to be able to track the way in which users utilize your system, trace resource utilization, and generally monitor the health and performance of your system. You can use this information as a diagnostic aid to detect and correct issues, and also to help spot potential problems and prevent them from occurring.
+클라우드에서 실행되는 분산 응용 프로그램 및 서비스는 본질적으로 많은 이동 파트로 구성된 복잡한 소프트웨어 조각들입니다. 프로덕션 환경에서는 사용자가 시스템을 활용하고 리소스 사용률을 추적하며 일반적으로 시스템의 상태 및 성능을 모니터링하는 방식을 추적할 수 있어야 합니다. 이 정보를 진단 도구로 사용하여 문제를 발견하고 해결할 수 있으며 잠재적인 문제를 찾아내고 문제가 발생하는 것을 방지할 수 있습니다. 
 
-## Monitoring and diagnostics scenarios
-You can use monitoring to gain an insight into how well a system is functioning. Monitoring is a crucial part of maintaining quality-of-service targets. Common scenarios for collecting monitoring data include:
+## 모니터링 및 진단 시나리오
+모니터링을 사용하여 시스템이 얼마나 잘 작동하는지에 대한 통찰력을 얻을 수 있습니다. 모니터링은 서비스 품질 목표를 유지하는 데 중요한 부분입니다. 모니터링 데이터를 수집하는 일반적인 시나리오는 다음과 같습니다. 
 
-* Ensuring that the system remains healthy.
-* Tracking the availability of the system and its component elements.
-* Maintaining performance to ensure that the throughput of the system does not degrade unexpectedly as the volume of work increases.
-* Guaranteeing that the system meets any service-level agreements (SLAs) established with customers.
-* Protecting the privacy and security of the system, users, and their data.
-* Tracking the operations that are performed for auditing or regulatory purposes.
-* Monitoring the day-to-day usage of the system and spotting trends that might lead to problems if they're not addressed.
-* Tracking issues that occur, from initial report through to analysis of possible causes, rectification, consequent software updates, and deployment.
-* Tracing operations and debugging software releases.
+•	시스템이 정상 상태를 유지하도록 보장
 
-> [!NOTE]
-> This list is not intended to be comprehensive. This document focuses on these scenarios as the most common situations for performing monitoring. There might be others that are less common or are specific to your environment.
+•	시스템 및 해당 구성 요소의 가용성 추적
+
+•	작업량이 증가함에 따라 시스템 처리량이 예기치 않게 저하되지 않도록 성능을 유지
+
+•	시스템이 고객과의 SLA(서비스 수준 계약)를 충족하도록 보장
+
+•	시스템, 사용자 및 데이터의 개인정보 보호 및 보안 유지
+
+•	감사 또는 규제 목적으로 수행되는 작업 추적
+
+•	시스템의 일상적인 사용을 모니터링하고 문제가 해결되지 않을 경우 문제를 유발할 수 있는 추세 파악
+
+•	초기 보고부터 가능한 원인 분석, 수정, 결과적인 소프트웨어 업데이트 및 배포에 이르기까지 발생하는 문제 추적
+
+•	작업 추적 및 소프트웨어 릴리스 디버깅
+
+> [!참고]
+> 이 목록은 전체를 포괄하려는 의도가 아닙니다. 이 문서는 모니터링을 수행하는 가장 일반적인 상황으로서 이러한 시나리오에 중점을 둡니다. 좀 더 특수하거나 사용자 환경에 특화된 다른 시나리오도 있을 수 있습니다. 
+
 > 
 > 
+다음 섹션에서는 이러한 시나리오에 대해 자세히 설명합니다. 각 시나리오에 대한 정보는 다음 형식으로 설명합니다. 
 
-The following sections describe these scenarios in more detail. The information for each scenario is discussed in the following format:
+1.	시나리오에 대한 간략한 개요
+2.	이 시나리오의 일반적인 요구 사항
+3.	시나리오를 지원하는 데 필요한 원시 계측 데이터 및 이 정보의 가능한 출처
+4.	이 원시 데이터를 분석 및 결합하여 의미 있는 진단 정보를 생성하는 방법
+ 
 
-1. A brief overview of the scenario
-2. The typical requirements of this scenario
-3. The raw instrumentation data that's required to support the scenario, and possible sources of this information
-4. How this raw data can be analyzed and combined to generate meaningful diagnostic information
+## 상태 모니터링
+시스템이 실행 중이고 요청을 처리할 수있으면 시스템이 정상적인 상태입니다. 상태 모니터링의 목적은 시스템의 현재 상태에 대한 스냅샷을 생성하여 시스템의 모든 구성 요소가 예상대로 작동하는지 확인할 수 있도록 하는 것입니다. 
 
-## Health monitoring
-A system is healthy if it is running and capable of processing requests. The purpose of health monitoring is to generate a snapshot of the current health of the system so that you can verify that all components of the system are functioning as expected.
+### 상태 모니터링 요구 사항
+시스템의 일부가 정상적이지 않은 것으로 판단되면 운영자는 신속하게(몇 초 내에) 경고를 받아야 합니다. 운영자는 시스템의 어느 부분이 정상적으로 작동하고 어떤 부분에 문제가 있는지 확인할 수 있어야 합니다. 신호등 시스템을 통해 시스템 상태를 강조 표시할 수 있습니다. 
 
-### Requirements for health monitoring
-An operator should be alerted quickly (within a matter of seconds) if any part of the system is deemed to be unhealthy. The operator should be able to ascertain which parts of the system are functioning normally, and which parts are experiencing problems. System health can be highlighted through a traffic-light system:
+•	상태가 좋지 않은 경우 빨간색(시스템이 중단됨)
 
-* Red for unhealthy (the system has stopped)
-* Yellow for partially healthy (the system is running with reduced functionality)
-* Green for completely healthy
+•	부분적으로 정상적인 경우 노란색(기능이 저하된 상태로 시스템이 실행 중)
 
-A comprehensive health-monitoring system enables an operator to drill down through the system to view the health status of subsystems and components. For example, if the overall system is depicted as partially healthy, the operator should be able to zoom in and determine which functionality is currently unavailable.
+•	완전히 정상이면 녹색
 
-### Data sources, instrumentation, and data-collection requirements
-The raw data that's required to support health monitoring can be generated as a result of:
 
-* Tracing execution of user requests. This information can be used to determine which requests have succeeded, which have failed, and how long each request takes.
-* Synthetic user monitoring. This process simulates the steps performed by a user and follows a predefined series of steps. The results of each step should be captured.
-* Logging exceptions, faults, and warnings. This information can be captured as a result of trace statements embedded into the application code, as well as retrieving information from the event logs of any services that the system references.
-* Monitoring the health of any third-party services that the system uses. This monitoring might require retrieving and parsing health data that these services supply. This information might take a variety of formats.
-* Endpoint monitoring. This mechanism is described in more detail in the "Availability monitoring" section.
-* Collecting ambient performance information, such as background CPU utilization or I/O (including network) activity.
+포괄적인 상태 모니터링 시스템을 사용하면 운영자가 시스템을 드릴다운하여 하위 시스템 및 구성 요소의 상태를 확인할 수 있습니다. 예를 들어 전반적인 시스템이 부분적 정상 상태로 표시된 경우 운영자는 심층적으로 현재 사용할 수 없는 기능을 판단할 수 있어야 합니다. 
 
-### Analyzing health data
-The primary focus of health monitoring is to quickly indicate whether the system is running. Hot analysis of the immediate data can trigger an alert if a critical component is detected as unhealthy. (It fails to respond to a consecutive series of pings, for example.) The operator can then take the appropriate corrective action.
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+상태 모니터링을 지원하는 데 필요한 원시 데이터는 다음과 같은 결과로 생성될 수 있습니다. 
 
-A more advanced system might include a predictive element that performs a cold analysis over recent and current workloads. A cold analysis can spot trends and determine whether the system is likely to remain healthy or whether the system will need additional resources. This predictive element should be based on critical performance metrics, such as:
+•	사용자 요청 실행 추적. 어떤 요청이 성공했는지, 실패했는지, 그리고 각 요청이 얼마나 오래 소요되는지를 결정하는 데 이 정보를 사용할 수 있습니다.
 
-* The rate of requests directed at each service or subsystem.
-* The response times of these requests.
-* The volume of data flowing into and out of each service.
+•	가상 사용자 모니터링. 이 프로세스는 사용자가 수행한 단계를 시뮬레이트하고 사전 정의된 일련의 단계를 따릅니다. 각 단계의 결과를 캡처해야 합니다.
 
-If the value of any metric exceeds a defined threshold, the system can raise an alert to enable an operator or autoscaling (if available) to take the preventative actions necessary to maintain system health. These actions might involve adding resources, restarting one or more services that are failing, or applying throttling to lower-priority requests.
+•	예외, 오류 및 경고 로깅. 이 정보는 응용 프로그램 코드에 내장된 추적 문과 시스템이 참조하는 모든 서비스의 이벤트 로그에서 정보를 검색하여 캡처할 수 있습니다.
 
-## Availability monitoring
-A truly healthy system requires that the components and subsystems that compose the system are available. Availability monitoring is closely related to health monitoring. But whereas health monitoring provides an immediate view of the current health of the system, availability monitoring is concerned with tracking the availability of the system and its components to generate statistics about the uptime of the system.
+•	시스템에서 사용하는 타사 서비스의 상태 모니터링. 이 모니터링을 수행하기 위해서는 이러한 서비스가 제공하는 상태 데이터를 검색하고 구문 분석해야 할 수 있습니다. 이 정보는 다양한 형식일 수 있습니다.
 
-In many systems, some components (such as a database) are configured with built-in redundancy to permit rapid failover in the event of a serious fault or loss of connectivity. Ideally, users should not be aware that such a failure has occurred. But from an availability monitoring perspective, it's necessary to gather as much information as possible about such failures to determine the cause and take corrective actions to prevent them from recurring.
+•	끝점 모니터링. 이 메커니즘은 "가용성 모니터링" 섹션에 보다 자세히 설명되어 있습니다.
 
-The data that's required to track availability might depend on a number of lower-level factors. Many of these factors might be specific to the application, system, and environment. An effective monitoring system captures the availability data that corresponds to these low-level factors and then aggregates them to give an overall picture of the system. For example, in an e-commerce system, the business functionality that enables a customer to place orders might depend on the repository where order details are stored and the payment system that handles the monetary transactions for paying for these orders. The availability of the order-placement part of the system is therefore a function of the availability of the repository and the payment subsystem.
+•	백그라운드 CPU 사용률 또는 I/O(네트워크 포함) 활동과 같은 주변 성능 정보 수집.
 
-### Requirements for availability monitoring
-An operator should also be able to view the historical availability of each system and subsystem, and use this information to spot any trends that might cause one or more subsystems to periodically fail. (Do services start to fail at a particular time of day that corresponds to peak processing hours?)
 
-A monitoring solution should provide an immediate and historical view of the availability or unavailability of each subsystem. It should also be capable of quickly alerting an operator when one or more services fail or when users can't connect to services. This is a matter of not only monitoring each service, but also examining the actions that each user performs if these actions fail when they attempt to communicate with a service. To some extent, a degree of connectivity failure is normal and might be due to transient errors. But it might be useful to allow the system to raise an alert for the number of connectivity failures to a specified subsystem that occur during a specific period.
+### 상태 데이터 분석
+상태 모니터링의 주요 초점은 시스템이 실행 중인지 여부를 신속하게 표시하는 것입니다. 중요한 구성 요소가 비정상으로 감지되면 즉각적인 데이터를 즉시 분석하여 경고를 발생시킬 수 있습니다. (연속된 일련의 ping에 응답하지 않는 경우가 바로 이러한 예입니다.) 그런 다음 운영자는 적절한 시정 조치를 취할 수 있습니다. 
 
-### Data sources, instrumentation, and data-collection requirements
-As with health monitoring, the raw data that's required to support availability monitoring can be generated as a result of synthetic user monitoring and logging any exceptions, faults, and warnings that might occur. In addition, availability data can be obtained from performing endpoint monitoring. The application can expose one or more health endpoints, each testing access to a functional area within the system. The monitoring system can ping each endpoint by following a defined schedule and collect the results (success or fail).
+보다 첨단화된 시스템에는 최근 및 현재 작업 부하에 대한 콜드 분석을 수행하는 예측 요소가 포함될 수 있습니다. 콜드 분석을 통해 추세를 파악하고 시스템이 정상적으로 유지될지 또는 시스템에 추가 리소스가 필요한지 여부를 결정할 수 있습니다. 이 예측 요소는 다음과 같은 중요한 성능 메트릭을 기반으로 해야 합니다. 
 
-All timeouts, network connectivity failures, and connection retry attempts must be recorded. All data should be time-stamped.
+•	각 서비스 또는 하위 시스템으로 보내지는 요청 비율.
+
+•	이러한 요청의 응답 시간.
+
+•	각 서비스에서 들어오고 나가는 데이터의 양.
+
+
+임의의 메트릭 값이 정의된 임계값을 초과하면 시스템이 경보를 발생시켜 운영자 또는 자동 조정(있는 경우)이 시스템 상태를 유지하는 데 필요한 예방 조치를 취할 수 있도록 합니다. 이러한 작업에는 리소스 추가, 실패한 하나 이상의 서비스 다시 시작 또는 우선 순위가 낮은 요청에 대한 제한 적용이 포함될 수 있습니다. 
+
+## 가용성 모니터링
+확실하게 정상 상태인 시스템을 실행하려면 시스템을 구성하는 구성 요소와 하위 시스템을 사용할 수 있어야 합니다. 가용성 모니터링은 상태 모니터링과 밀접하게 관련됩니다. 그러나 상태 모니터링은 시스템의 현재 상태를 즉각적으로 보여 주지만 가용성 모니터링은 시스템의 가동 시간에 대한 통계를 생성하기 위해 시스템과 그 구성 요소의 가용성을 추적하는 것과 관련이 있습니다. 
+
+많은 시스템에서 일부 구성 요소(예: 데이터베이스)는 심각한 오류 또는 연결이 끊어진 경우 빠른 장애 조치를 허용하는 기본적인 중복 구조로 구성됩니다. 이상적으로, 사용자는 이러한 오류가 발생했음을 알지 못합니다. 그러나 가용성 모니터링 관점에서 볼 때 원인을 파악하고 반복되는 것을 방지하기 위한 시정 조치를 취하기 위해 이러한 오류에 관한 정보를 최대한 많이 수집해야 합니다. 
+
+가용성을 추적하는 데 필요한 데이터는 여러 가지 하위 수준 요인에 따라 달라질 수 있습니다. 이러한 요인은 응용 프로그램, 시스템 및 환경에 따라 다를 수 있습니다. 효과적인 모니터링 시스템은 이러한 저수준 요인에 해당하는 가용성 데이터를 캡처한 다음 시스템의 전반적인 그림을 제공하기 위해 이를 집계합니다. 예를 들어, 전자 상거래 시스템에서 고객의 주문을 지원하는 비즈니스 기능은 주문 정보가 저장되는 리포지토리 및 이러한 주문을 결제하기 위해 금전 거래를 처리하는 결제 시스템에 따라 달라질 수 있습니다. 따라서 시스템의 주문 부분에 대한 가용성은 리포지토리 및 결제 하위 시스템의 가용성 함수로서 취급됩니다. 
+
+### 가용성 모니터링을 위한 요구 사항
+또한 운영자는 각 시스템과 하위 시스템의 가용성 이력을 확인하고 이 정보를 사용하여 하나 이상의 하위 시스템을 주기적으로 실패하도록 만드는 추세를 파악할 수 있어야 합니다. (피크 처리 시간에 해당하는 특정 시간대에 서비스가 시작되지 않습니까?) 
+
+모니터링 솔루션은 각 하위 시스템의 가용 여부에 대한 현재 및 이력적 보기를 제공해야 합니다. 또한 하나 이상의 서비스가 실패하거나 사용자가 서비스에 연결할 수 없을 때 운영자에게 신속하게 경고를 전달할 수 있어야 합니다. 여기에는 각 서비스를 모니터링할 뿐만 아니라 서비스와 통신하려고 할 때 이러한 작업이 실패할 경우 각 사용자가 수행하는 작업을 검사하는 문제도 관련됩니다. 어느 정도까지는 연결 장애가 정상이며 일시적인 오류가 원인이 되기도 합니다. 그러나 특정 기간 동안 발생하는 특정 하위 시스템에 대한 연결 실패 횟수에 대한 경고를 시스템에 발생시키는 것이 유용할 수 있습니다. 
+
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+상태 모니터링과 마찬가지로 가용성 모니터링을 지원하는 데 필요한 원시 데이터는 가상 사용자 모니터링뿐만 아니라 발생할 수 있는 예외, 오류 및 경고를 기록한 결과로서 생성될 수 있습니다. 또한 끝점 모니터링을 수행하여 가용성 데이터를 얻을 수 있습니다. 응용 프로그램은 하나 이상의 상태 끝점을 노출할 수 있으며 각 끝점은 시스템 내의 기능 영역에 대한 액세스를 테스트합니다. 모니터링 시스템은 정의된 스케줄에 따라 각 끝점에 ping을 수행하고 결과(성공 또는 실패)를 수집할 수 있습니다. 
+
+모든 시간 초과, 네트워크 연결 실패 및 연결 재시도를 기록해야 합니다. 모든 데이터는 타임스탬프 처리해야 합니다. 
 
 <a name="analyzing-availability-data"></a>
 
-### Analyzing availability data
-The instrumentation data must be aggregated and correlated to support the following types of analysis:
+### 가용성 데이터 분석
+계측 데이터는 다음 유형의 분석을 지원하기 위해 집계 및 상호 연관되어야 합니다. 
 
-* The immediate availability of the system and subsystems.
-* The availability failure rates of the system and subsystems. Ideally, an operator should be able to correlate failures with specific activities: what was happening when the system failed?
-* A historical view of failure rates of the system or any subsystems across any specified period, and the load on the system (number of user requests, for example) when a failure occurred.
-* The reasons for unavailability of the system or any subsystems. For example, the reasons might be service not running, connectivity lost, connected but timing out, and connected but returning errors.
+•	시스템 및 하위 시스템의 즉각적인 가용성.
 
-You can calculate the percentage availability of a service over a period of time by using the following formula:
+•	시스템 및 하위 시스템의 가용성 실패율. 이상적으로 운영자는 특정 활동과 실패를 연관시킬 수 있어야 합니다(예: 시스템에 장애가 생겼을 때 어떤 일이 발생했습니까?).
+
+•	특정 기간의 시스템 또는 모든 하위 시스템의 오류 비율 및 장애 발생시의 시스템 부하(예: 사용자 요청 수)에 대한 이력 보기.
+
+•	시스템 또는 하위 시스템을 사용할 수 없는 이유. 예를 들어 서비스가 실행 중이 아니거나 연결이 끊어져 있거나 연결 상태이지만 시간이 초과되었거나 연결 상태이지만 오류를 반환하는 이유가 있을 수 있습니다.
+
+다음 공식을 사용하여 일정 기간 동안 서비스의 가용성 백분율을 계산할 수 있습니다. 
 
 ```
 %Availability =  ((Total Time – Total Downtime) / Total Time ) * 100
 ```
 
-This is useful for SLA purposes. ([SLA monitoring](#SLA-monitoring) is described in more detail later in this guidance.) The definition of *downtime* depends on the service. For example, Visual Studio Team Services Build Service defines downtime as the period (total accumulated minutes) during which Build Service is unavailable. A minute is considered unavailable if all continuous HTTP requests to Build Service to perform customer-initiated operations throughout the minute either result in an error code or do not return a response.
+이는 SLA 목적에 유용합니다. ([SLA 모니터링](#SLA-monitoring) 에 대해서는 이 안내서의 뒷부분에서 자세히 설명되어 있습니다.) *중단 시간* 의 정의는 서비스에 따라 다릅니다. 예를 들어 Visual Studio Team Services Build Service는 빌드 서비스를 사용할 수 없는 기간(누적된 총 시간)으로 가동 중지 시간을 정의합니다. 1분 동안 고객이 시작한 작업을 수행하기 위해 Build Service로 보내진 모든 연속적 HTTP 요청이 결과적으로 오류 코드를 발생시키거나 응답을 반환하지 않으면 1분을 사용할 수 없는 것으로 간주됩니다.
 
-## Performance monitoring
-As the system is placed under more and more stress (by increasing the volume of users), the size of the datasets that these users access grows and the possibility of failure of one or more components becomes more likely. Frequently, component failure is preceded by a decrease in performance. If you're able detect such a decrease, you can take proactive steps to remedy the situation.
+## 성능 모니터링
+시스템이 점점 더 많은 스트레스를 받으면(사용자의 볼륨 증가), 이러한 사용자가 액세스하는 데이터 세트의 크기가 커지고 하나 이상의 구성 요소가 실패할 가능성이 높아집니다. 종종 구성 요소 오류가 발생하기 전에 성능이 저하됩니다. 이러한 감소를 감지할 수 있다면 상황을 개선하기 위한 사전 조치를 취하는 것이 가능합니다. 
 
-System performance depends on a number of factors. Each factor is typically measured through key performance indicators (KPIs), such as the number of database transactions per second or the volume of network requests that are successfully serviced in a specified time frame. Some of these KPIs might be available as specific performance measures, whereas others might be derived from a combination of metrics.
+시스템 성능은 여러 요소에 따라 달라집니다. 각 요소는 일반적으로 초당 데이터베이스 트랜잭션 수 또는 지정된 시간 프레임 동안 성공적으로 서비스된 네트워크 요청의 양과 같은 KPI(핵심 성과 지표)를 통해 측정됩니다. 이러한 KPI 중 일부는 특정 성능 측정 값으로 사용할 수 있지만 다른 일부는 메트릭을 조합하여 파생될 수 있습니다. 
 
-> [!NOTE]
-> Determining poor or good performance requires that you understand the level of performance at which the system should be capable of running. This requires observing the system while it's functioning under a typical load and capturing the data for each KPI over a period of time. This might involve running the system under a simulated load in a test environment and gathering the appropriate data before deploying the system to a production environment.
+> [!참고]
+> 우수하지 못한 성능이나 우수한 성능을 결정하려면 시스템을 실행할 수 있어야 하는 성능 수준을 이해해야 합니다. 이를 위해서는 시스템이 일반적인 부하 상태에서 작동하고 일정 기간 동안 각 KPI의 데이터를 캡처하는 동안 시스템을 관찰해야 합니다. 여기에는 테스트 환경에서 시뮬레이트된 부하 상태에서 시스템을 실행하고 프로덕션 환경에 시스템을 배치하기 전에 적절한 데이터를 수집하는 것이 포함될 수 있습니다. 
 > 
-> You should also ensure that monitoring for performance purposes does not become a burden on the system. You might be able to dynamically adjust the level of detail for the data that the performance monitoring process gathers.
+>성능 목표를 위한 모니터링이 시스템에 부담이 되지 않도록 주의해야 합니다. 성능 모니터링 프로세스에 의해 수집되는 데이터의 세부 수준을 동적으로 조정할 수 있습니다. 
 > 
-> 
 
-### Requirements for performance monitoring
-To examine system performance, an operator typically needs to see information that includes:
+### 성능 모니터링을 위한 요구 사항
+시스템 성능을 검사하기 위해 일반적으로 운영자는 다음을 포함하는 정보를 확인해야 합니다. 
 
-* The response rates for user requests.
-* The number of concurrent user requests.
-* The volume of network traffic.
-* The rates at which business transactions are being completed.
-* The average processing time for requests.
+•	사용자 요청에 대한 응답 속도.
 
-It can also be helpful to provide tools that enable an operator to help spot correlations, such as:
+•	동시 사용자 요청 수.
 
-* The number of concurrent users versus request latency times (how long it takes to start processing a request after the user has sent it).
-* The number of concurrent users versus the average response time (how long it takes to complete a request after it has started processing).
-* The volume of requests versus the number of processing errors.
+•	네트워크 트래픽의 양.
 
-Along with this high-level functional information, an operator should be able to obtain a detailed view of the performance for each component in the system. This data is typically provided through low-level performance counters that track information such as:
+•	비즈니스 트랜잭션이 완료되는 속도.
 
-* Memory utilization.
-* Number of threads.
-* CPU processing time.
-* Request queue length.
-* Disk or network I/O rates and errors.
-* Number of bytes written or read.
-* Middleware indicators, such as queue length.
+•	요청의 평균 처리 시간.
 
-All visualizations should allow an operator to specify a time period. The displayed data might be a snapshot of the current situation and/or a historical view of the performance.
+또한 운영자가 다음과 같은 상관 관계를 확인하는 데 사용할 수 있는 도구를 제공하는 것이 유용할 수 있습니다. 
 
-An operator should be able to raise an alert based on any performance measure for any specified value during any specified time interval.
+•	동시 사용자 수와 요청 대기 시간(사용자가 요청을 보낸 후 이 요청을 처리하는 데 걸리는 시간).
 
-### Data sources, instrumentation, and data-collection requirements
-You can gather high-level performance data (throughput, number of concurrent users, number of business transactions, error rates, and so on) by monitoring the progress of users' requests as they arrive and pass through the system. This involves incorporating tracing statements at key points in the application code, together with timing information. All faults, exceptions, and warnings should be captured with sufficient data for correlating them with the requests that caused them. The Internet Information Services (IIS) log is another useful source.
+•	동시 사용자 수 대 평균 응답 시간(처리를 시작한 후 요청을 완료하는 데 걸리는 시간).
 
-If possible, you should also capture performance data for any external systems that the application uses. These external systems might provide their own performance counters or other features for requesting performance data. If this is not possible, record information such as the start time and end time of each request made to an external system, together with the status (success, fail, or warning) of the operation. For example, you can use a stopwatch approach to time requests: start a timer when the request starts and then stop the timer when the request finishes.
+•	요청의 양 대 처리 오류의 수.
 
-Low-level performance data for individual components in a system might be available through features and services such as Windows performance counters and Azure Diagnostics.
+이 고급 기능 정보와 함께 운영자는 시스템의 각 구성 요소에 대한 세부 성능 보기를 얻을 수 있어야 합니다. 이 데이터는 일반적으로 다음과 같은 정보를 추적하는 하위 수준 성능 카운터를 통해 제공됩니다. 
 
-### Analyzing performance data
-Much of the analysis work consists of aggregating performance data by user request type and/or the subsystem or service to which each request is sent. An example of a user request is adding an item to a shopping cart or performing the checkout process in an e-commerce system.
+•	메모리 사용.
 
-Another common requirement is summarizing performance data in selected percentiles. For example, an operator might determine the response times for 99 percent of requests, 95 percent of requests, and 70 percent of requests. There might be SLA targets or other goals set for each percentile. The ongoing results should be reported in near real time to help detect immediate issues. The results should also be aggregated over the longer time for statistical purposes.
+•	스레드 수.
 
-In the case of latency issues affecting performance, an operator should be able to quickly identify the cause of the bottleneck by examining the latency of each step that each request performs. The performance data must therefore provide a means of correlating performance measures for each step to tie them to a specific request.
+•	CPU 처리 시간.
 
-Depending on the visualization requirements, it might be useful to generate and store a data cube that contains views of the raw data. This data cube can allow complex ad hoc querying and analysis of the performance information.
+•	요청 큐 길이.
 
-## Security monitoring
-All commercial systems that include sensitive data must implement a security structure. The complexity of the security mechanism is usually a function of the sensitivity of the data. In a system that requires users to be authenticated, you should record:
+•	디스크 또는 네트워크 I/O 속도 및 오류.
 
-* All sign-in attempts, whether they fail or succeed.
-* All operations performed by--and the details of all resources accessed by--an authenticated user.
-* When a user ends a session and signs out.
+•	쓰거나 읽은 바이트 수.
 
-Monitoring might be able to help detect attacks on the system. For example, a large number of failed sign-in attempts might indicate a brute-force attack. An unexpected surge in requests might be the result of a distributed denial-of-service (DDoS) attack. You must be prepared to monitor all requests to all resources regardless of the source of these requests. A system that has a sign-in vulnerability might accidentally expose resources to the outside world without requiring a user to actually sign in.
+•	미들웨어 표시기(데이터 길이 등).
 
-### Requirements for security monitoring
-The most critical aspects of security monitoring should enable an operator to quickly:
 
-* Detect attempted intrusions by an unauthenticated entity.
-* Identify attempts by entities to perform operations on data for which they have not been granted access.
-* Determine whether the system, or some part of the system, is under attack from outside or inside. (For example, a malicious authenticated user might be attempting to bring the system down.)
+모든 시각화에서 운영자가 시간주기를 지정할 수 있어야 합니다. 표시된 데이터는 현재 상황의 스냅샷 및/또는 성능의 이력 보기일 수 있습니다. 
 
-To support these requirements, an operator should be notified:
+운영자는 지정된 시간 간격 동안 지정된 값에 대한 성능 측정 값을 기반으로 경보를 발생시킬 수 있어야 합니다. 
 
-* If one account makes repeated failed sign-in attempts within a specified period.
-* If one authenticated account repeatedly tries to access a prohibited resource during a specified period.
-* If a large number of unauthenticated or unauthorized requests occur during a specified period.
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+사용자의 요청이 시스템을 통과하여 전달되는 과정을 모니터링함으로써 높은 수준의 성능 데이터(처리량, 동시 사용자 수, 비즈니스 트랜잭션 수, 오류율 등)를 수집할 수 있습니다. 여기에는 타이밍 정보와 함께 응용 프로그램 코드의 주요 지점에 추적 문을 통합하는 작업이 포함됩니다. 모든 오류, 예외 및 경고는 이를 일으킨 요청과 상호 관련시키는 데 충분한 데이터로 캡처해야 합니다. 인터넷 정보 서비스(IIS) 로그도 유용한 소스입니다. 
 
-The information that's provided to an operator should include the host address of the source for each request. If security violations regularly arise from a particular range of addresses, these hosts might be blocked.
+가능한 경우 응용 프로그램에서 사용하는 외부 시스템의 성능 데이터도 캡처해야 합니다. 이러한 외부 시스템은 자체 성능 카운터 또는 성능 데이터 요청을 위한 기능을 제공할 수 있습니다. 이것이 불가능할 경우 외부 시스템에 대한 각 요청의 시작 시간 및 종료 시간과 작업의 상태(성공, 실패 또는 경고)와 같은 정보를 기록하십시오. 예를 들어, 요청을 시작할 때 타이머를 시작한 다음 요청이 완료되면 타이머를 중지하는 등 요청의 시간을 측정하기 위한 스톱워치를 사용할 수 있습니다. 
 
-A key part in maintaining the security of a system is being able to quickly detect actions that deviate from the usual pattern. Information such as the number of failed and/or successful sign-in requests can be displayed visually to help detect whether there is a spike in activity at an unusual time. (An example of this activity is users signing in at 3:00 AM and performing a large number of operations when their working day starts at 9:00 AM). This information can also be used to help configure time-based autoscaling. For example, if an operator observes that a large number of users regularly sign in at a particular time of day, the operator can arrange to start additional authentication services to handle the volume of work, and then shut down these additional services when the peak has passed.
+Windows 성능 카운터 및 Azure Diagnostics 등의 기능 및 서비스를 통해 시스템의 개별 구성 요소에 대한 저수준 성능 데이터를 얻을 수 있습니다. 
 
-### Data sources, instrumentation, and data-collection requirements
-Security is an all-encompassing aspect of most distributed systems. The pertinent data is likely to be generated at multiple points throughout a system. You should consider adopting a Security Information and Event Management (SIEM) approach to gather the security-related information that results from events raised by the application, network equipment, servers, firewalls, antivirus software, and other intrusion-prevention elements.
+### 성능 데이터 분석
+대부분의 분석 작업에서는 사용자 요청 유형 및/또는 각 요청이 전송되는 하위 시스템 또는 서비스별로 성능 데이터를 집계합니다. 장바구니에 품목을 추가하거나 전자 상거래 시스템에서 계산 프로세스를 수행하는 경우를 사용자 요청의 예로 들 수 있습니다. 
 
-Security monitoring can incorporate data from tools that are not part of your application. These tools can include utilities that identify port-scanning activities by external agencies, or network filters that detect attempts to gain unauthenticated access to your application and data.
+또 다른 일반적 요구 사항은 선택된 백분위수에 성능 데이터를 요약하는 것입니다. 예를 들어 운영자는 요청의 99%, 요청의 95% 및 요청의 70%에 대한 응답 시간을 결정할 수 있습니다. 각 백분위수에 대해 설정된 SLA 목표치 또는 기타 목표가 있을 수 있습니다. 진행중인 결과는 즉각적인 문제를 발견하는 데 도움이 되도록 거의 실시간으로 보고해야 합니다. 또한 통계 목적을 위해 결과를 더 긴 시간에 걸쳐 집계해야 합니다. 
 
-In all cases, the gathered data must enable an administrator to determine the nature of any attack and take the appropriate countermeasures.
+성능에 영향을 미치는 대기 시간 문제의 경우 운영자는 각 요청이 수행하는 각 단계의 대기 시간을 검토하여 병목 현상의 원인을 신속하게 확인할 수 있어야 합니다. 따라서 성능 데이터는 각 단계에 대한 성능 측정 값을 서로 연관시켜 특정 요청에 연결하는 수단을 제공해야 합니다. 
 
-### Analyzing security data
-A feature of security monitoring is the variety of sources from which the data arises. The different formats and level of detail often require complex analysis of the captured data to tie it together into a coherent thread of information. Apart from the simplest of cases (such as detecting a large number of failed sign-ins, or repeated attempts to gain unauthorized access to critical resources), it might not be possible to perform any complex automated processing of security data. Instead, it might be preferable to write this data, time-stamped but otherwise in its original form, to a secure repository to allow for expert manual analysis.
+시각화 요구 사항에 따라 원시 데이터 보기를 포함하는 데이터 큐브를 생성하고 저장하는 것이 유용할 수 있습니다. 이 데이터 큐브를 통해 복잡한 임시 쿼리 및 성능 정보 분석을 수행할 수 있습니다. 
+
+## 보안 모니터링
+민감한 데이터를 포함하는 모든 상용 시스템은 보안 구조를 구현해야 합니다. 보안 메커니즘의 복잡성은 일반적으로 데이터 민감도의 함수입니다. 사용자 인증이 필요한 시스템에서는 다음을 기록해야 합니다. 
+
+•	실패 또는 성공 여부에 관계없이 모든 로그인 시도
+
+•	인증된 사용자가 수행한 모든 작업 및 모든 리소스의 세부 정보
+
+•	사용자가 세션을 끝내고 로그아웃한 시기
+
+
+모니터링은 시스템의 공격을 탐지하는 데 도움이 될 수 있습니다. 예를 들어 실패한 로그인 시도 횟수가 많으면 무차별 공격을 의미할 수 있습니다. 예기치 않은 요청의 급증은 분산된 서비스 거부(DDoS) 공격의 결과일 수 있습니다. 이러한 요청의 출처와 관계없이 모든 리소스에 대한 모든 요청을 모니터링할 준비가 되어 있어야 합니다. 로그인이 취약한 시스템은 사용자에게 실제로 로그인을 요구하지 않고도 실수로 외부 세계에 리소스를 노출할 수 있습니다. 
+
+### 보안 모니터링을 위한 요구 사항
+보안 모니터링의 가장 중요한 측면을 통해 운영자가 다음을 신속하게 수행할 수 있어야 합니다. 
+
+•	인증되지 않은 엔터티에 의해 시도된 침입을 탐지합니다.
+
+•	액세스 권한이 부여되지 않은 데이터에 대해 엔터티가 작업을 수행하려는 시도를 식별합니다.
+
+•	시스템 또는 시스템의 일부가 외부 또는 내부의 공격을 받고 있는지 확인합니다. (예를 들어 악의적 사용자가 시스템을 중단하려고 시도할 수 있습니다.)
+
+
+이러한 요구 사항을 지원하려면 운영자에게 다음 사항을 통보해야 합니다. 
+
+•	한 계정이 지정된 기간 내에 로그인 시도에 반복 실패하는 경우.
+
+•	인증된 계정 하나가 지정된 기간 동안 금지된 리소스에 반복적으로 액세스하려고 하는 경우.
+
+•	지정된 기간 동안 많은 수의 인증되지 않거나 권한이 없는 요청이 발생하는 경우.
+
+운영자에게 제공되는 정보에는 각 요청에 대한 출처의 호스트 주소가 포함되어야 합니다. 특정 범위의 주소에서 정기적으로 보안 위반이 발생하면 이러한 호스트가 차단될 수 있습니다. 
+
+시스템의 보안을 유지하는 핵심은 일반적인 패턴에서 벗어나는 작업을 신속하게 탐지할 수 있어야 한다는 것입니다. 이례적인 시간에 활동이 급증했는지 여부를 감지하는 데 도움이 되도록 실패한 로그인 요청 및/또는 성공적인 로그인 요청 수와 같은 정보를 시각적으로 표시할 수 있습니다. (오전 3시에 로그인하고 오전 9시에 업무 시간이 시작될 때 많은 수의 작업을 수행하는 사용자를 이 활동의예로 들 수 있습니다.) 이 정보는 시간 기반 자동 조정을 구성하는 데 도움이 될 수도 있습니다. 예를 들어 많은 수의 사용자가 특정 시간대에 정기적으로 로그인하는 것을 관찰한 운영자는 작업량을 처리하기 위해 추가 인증 서비스를 시작하고 피크 시간대가 지나면 이러한 추가 서비스를 종료할 수 있습니다. 
+
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+보안은 대부분의 분산 시스템에서 모든 부분을 포괄하는 측면입니다. 관련 데이터는 시스템 전체의 여러 지점에서 생성될 수 있습니다. 응용 프로그램, 네트워크 장비, 서버, 방화벽, 바이러스 백신 소프트웨어 및 기타 침입 방지 요소로 인해 발생하는 이벤트로부터 보안 관련 정보를 수집하려면 보안 정보 및 이벤트 관리(SIEM) 접근 방식을 채택하는 것이 좋습니다. 
+
+보안 모니터링은 응용 프로그램에 포함되지 않은 도구로부터의 데이터를 통합할 수 있습니다. 이러한 도구에는 외부 대행사의 포트 검색 활동을 식별하는 유틸리티 또는 응용 프로그램 및 데이터에 대한 인증되지 않은 액세스 시도를 탐지하는 네트워크 필터가 포함될 수 있습니다. 
+
+모든 경우에 수집된 데이터로부터 관리자가 공격의 본질을 결정하고 적절한 대책을 세울 수 있어야 합니다. 
+
+### 보안 데이터 분석
+보안 모니터링 기능은 데이터가 발생하는 다양한 출처입니다. 다양한 형식과 정보 수준으로 인해 캡처된 데이터를 복잡하게 분석하여 일관된 정보 스레드로 묶어야 하는 경우도 있습니다. 가장 간단한 경우(예: 많은 수의 실패한 로그인 감지 또는 중요한 리소스에 대한 반복적 무단 액세스 시도)를 제외하고 보안 데이터를 복잡하게 자동 처리하는 작업은 불가능할 수 있습니다. 대신, 타임스탬프가 있다는 것 외에 원래의 형태를 유지하여 이 데이터를 안전한 리포지토리에 작성한 다음 전문적인 수동 분석을 수행하는 것이 바람직할 수 있습니다. 
 
 <a name="SLA-monitoring"></a>
 
-## SLA monitoring
-Many commercial systems that support paying customers make guarantees about the performance of the system in the form of SLAs. Essentially, SLAs state that the system can handle a defined volume of work within an agreed time frame and without losing critical information. SLA monitoring is concerned with ensuring that the system can meet measurable SLAs.
+## SLA 모니터링
+유료 고객을 지원하는 많은 상용 시스템은 SLA의 형태로 시스템의 성능을 보장합니다. 기본적으로 SLA는 시스템이 합의된 시간 내에 중요한 정보를 잃지 않고 정의된 작업량을 처리할 수있다고 명시합니다. SLA 모니터링은 시스템이 측정 가능한 SLA를 충족시킬 수 있는지 확인하는 것과 관련이 있습니다. 
 
-> [!NOTE]
-> SLA monitoring is closely related to performance monitoring. But whereas performance monitoring is concerned with ensuring that the system functions *optimally*, SLA monitoring is governed by a contractual obligation that defines what *optimally* actually means.
+> [!참고]
+> SLA 모니터링은 성능 모니터링과 밀접한 관련이 있습니다. 그러나 성능 모니터링은 시스템이 최적의 기능을 수행하도록 하는 것과 관련되지만 SLA 모니터링은 최적의 의미를 정의하는 계약상의 의무에 의해 결정됩니다. 
+> 
+> 
+SLA는 종종 다음과 같은 측면에서 정의됩니다. 
+
+•	전체 시스템 가용성. 예를 들어 조직에서는 99.9%의 시간 동안 시스템을 사용할 수 있다고 보장할 수 있습니다. 이것은 1년에 약 9시간의 중단 시간 또는 일주일에 약 10분에 해당합니다.
+
+•	운영 처리량. 이 측면은 시스템이 최대 100,000명의 동시 사용자 요청을 지원하거나 10,000개의 동시 비즈니스 트랜잭션을 처리할 수있음을 보증하는 것과 같이 하나 이상의 최대 수준으로 표현되는 경우가 많습니다.
+
+•	작동 가능한 응답 시간. 시스템은 요청이 처리되는 속도를 보장할 수도 있습니다. 예를 들어, 모든 비즈니스 트랜잭션의 99%가 2초 이내에 완료되고 단일 트랜잭션이 10초보다 오래 걸리지 않는다는 식입니다.
+
+
+> [!참고]
+> 상업용 시스템의 일부 계약에는 고객 지원을 위한 SLA가 포함될 수도 있습니다. 예를 들어, 모든 헬프 데스크 요청에 5분 내로 응답하고 모든 문제의 99%를 1근무일 이내에 완전히 해결한다는 계약 내용이 있을 수 있습니다. 효과적인 [문제 추적](#issue-tracking) (이 섹션의 뒷부분에서 설명함)은 이와 같은 SLA를 충족시키는 데 중요합니다. 
+> 
+
+### SLA 모니터링 요구 사항
+가장 높은 수준에서 운영자는 시스템이 합의된 SLA를 충족시키는지 여부를 한 눈에 파악할 수 있어야 합니다. 그렇지 않은 경우 운영자는 드릴다운을 통해 근본적인 요인을 검토하여 기준 미달의 성능이 나타난 원인을 파악할 수 있어야 합니다. 
+
+시각적으로 나타낼 수 있는 일반적인 고급 지표에는 다음이 포함됩니다. 
+
+•	서비스 가동 시간의 백분율.
+
+•	응용 프로그램 처리량(성공적인 트랜잭션 및/또는 초당 작업 측면에서 측정).
+
+•	성공/실패한 응용 프로그램 요청의 수.
+
+•	응용 프로그램 및 시스템 오류, 예외 및 경고의 수.
+
+이러한 지표는 모두 지정된 기간까지 필터링할 수 있어야 합니다. 
+
+클라우드 응용 프로그램은 다수의 하위 시스템과 구성 요소로 구성됩니다. 운영자는 고차원적 표시기를 선택하고 기본 요소의 상태로부터 이것이 어떻게 구성되는지 알 수 있어야 합니다. 예를 들어 전체 시스템의 가동 시간이 수용 가능한 값 아래로 떨어지면 운영자는 심층적으로 이 장애를 유발하는 요소가 어떤 것인지 판단할 수 있어야 합니다. 
+
+> [!참고]
+> 시스템 가동 시간을 신중하게 정의해야 합니다. 최대 가용성을 보장하기 위해 중복 구조를 사용하는 시스템에서는 요소의 개별 인스턴스가 실패하지만 시스템은 계속 작동할 수 있습니다. 상태 모니터링이 제공하는 시스템 가동 시간은 각 요소의 총 가동 시간을 나타내야 하며 시스템이 실제로 정지했는지 여부를 반드시 나타낼 필요는 없습니다. 또한 오류가 격리될 수 있습니다. 따라서 특정 시스템을 사용할 수 없는 경우, 기능이 저하 되더라도 나머지 시스템은 사용 가능한 상태로 유지될 수 있습니다. (전자 상거래 시스템에서 시스템 고장으로 인해 고객이 주문할 수 없더라도 여전히제품 카탈로그를 둘러보는 것은 가능할 수 있습니다.) 
 > 
 > 
 
-SLAs are often defined in terms of:
+경고 목적으로, 시스템은 고차원적 표시기 중 하나가 지정된 임계값을 초과하는 경우 이벤트를 발생시킬 수 있어야 합니다. 고차원적 표시기를 구성하는 다양한 요소의 세부 정보는 상황별 데이터로 경고 시스템에 제공되어야 합니다. 
 
-* Overall system availability. For example, an organization might guarantee that the system will be available for 99.9 percent of the time. This equates to no more than 9 hours of downtime per year, or approximately 10 minutes a week.
-* Operational throughput. This aspect is often expressed as one or more high-water marks, such as guaranteeing that the system can support up to 100,000 concurrent user requests or handle 10,000 concurrent business transactions.
-* Operational response time. The system might also make guarantees for the rate at which requests are processed. An example is that 99 percent of all business transactions will finish within 2 seconds, and no single transaction will take longer than 10 seconds.
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+SLA 모니터링을 지원하는 데 필요한 원시 데이터는 성능 모니터링에 필요한 원시 데이터와 상태 및 가용성 모니터링의 일부 측면을 포함해 유사성을 가지고 있습니다. (자세한 내용은 해당 섹션을 참조하십시오.) 다음을 통해 이 데이터를 캡처할 수 있습니다. 
 
-> [!NOTE]
-> Some contracts for commercial systems might also include SLAs for customer support. An example is that all help-desk requests will elicit a response within 5 minutes, and that 99 percent of all problems will be fully addressed within 1 working day. Effective [issue tracking](#issue-tracking) (described later in this section) is key to meeting SLAs such as these.
-> 
-> 
+•	끝점 모니터링 수행.
 
-### Requirements for SLA monitoring
-At the highest level, an operator should be able to determine at a glance whether the system is meeting the agreed SLAs or not. And if not, the operator should be able to drill down and examine the underlying factors to determine the reasons for substandard performance.
+•	예외, 오류 및 경고 로깅.
 
-Typical high-level indicators that can be depicted visually include:
+•	사용자 요청 실행 추적.
 
-* The percentage of service uptime.
-* The application throughput (measured in terms of successful transactions and/or operations per second).
-* The number of successful/failing application requests.
-* The number of application and system faults, exceptions, and warnings.
+•	시스템에서 사용하는 타사 서비스의 가용성 모니터링.
 
-All of these indicators should be capable of being filtered by a specified period of time.
+•	성능 메트릭 및 카운터 사용.
 
-A cloud application will likely comprise a number of subsystems and components. An operator should be able to select a high-level indicator and see how it's composed from the health of the underlying elements. For example, if the uptime of the overall system falls below an acceptable value, an operator should be able to zoom in and determine which elements are contributing to this failure.
 
-> [!NOTE]
-> System uptime needs to be defined carefully. In a system that uses redundancy to ensure maximum availability, individual instances of elements might fail, but the system can remain functional. System uptime as presented by health monitoring should indicate the aggregate uptime of each element and not necessarily whether the system has actually halted. Additionally, failures might be isolated. So even if a specific system is unavailable, the remainder of the system might remain available, although with decreased functionality. (In an e-commerce system, a failure in the system might prevent a customer from placing orders, but the customer might still be able to browse the product catalog.)
-> 
-> 
+모든 데이터는 시간을 기록하고 타임스탬프 처리해야 합니다. 
 
-For alerting purposes, the system should be able to raise an event if any of the high-level indicators exceed a specified threshold. The lower-level details of the various factors that compose the high-level indicator should be available as contextual data to the alerting system.
+### SLA 데이터 분석
+시스템의 전반적인 성능을 나타내는 그림을 생성하기 위해 계측 데이터를 집계해야 합니다. 또한 집계된 데이터는 기본 하위 시스템의 성능을 조사할 수 있도록 드릴다운을 지원해야 합니다. 예를 들어, 다음을 수행할 수 있어야 합니다. 
 
-### Data sources, instrumentation, and data-collection requirements
-The raw data that's required to support SLA monitoring is similar to the raw data that's required for performance monitoring, together with some aspects of health and availability monitoring. (See those sections for more details.) You can capture this data by:
+•	지정된 기간 동안 총 사용자 요청 수를 계산하고 이러한 요청의 성공 및 실패 비율을 결정합니다.
 
-* Performing endpoint monitoring.
-* Logging exceptions, faults, and warnings.
-* Tracing the execution of user requests.
-* Monitoring the availability of any third-party services that the system uses.
-* Using performance metrics and counters.
+•	사용자 요청의 응답 시간을 결합하여 시스템 응답 시간의 전체 보기를 생성합니다.
 
-All data must be timed and time-stamped.
+•	사용자 요청의 진행 상황을 분석하여 요청의 전체 응답 시간을 해당 요청의 개별 작업 항목의 응답 시간으로 세분합니다. 
 
-### Analyzing SLA data
-The instrumentation data must be aggregated to generate a picture of the overall performance of the system. Aggregated data must also support drill-down to enable examination of the performance of the underlying subsystems. For example, you should be able to:
+•	특정 기간의 가동 시간 백분율로 시스템의 전체 가용성을 결정합니다.
 
-* Calculate the total number of user requests during a specified period and determine the success and failure rate of these requests.
-* Combine the response times of user requests to generate an overall view of system response times.
-* Analyze the progress of user requests to break down the overall response time of a request into the response times of the individual work items in that request.  
-* Determine the overall availability of the system as a percentage of uptime for any specific period.
-* Analyze the percentage time availability of the individual components and services in the system. This might involve parsing logs that third-party services have generated.
+•	시스템에서 개별 구성 요소 및 서비스의 시간 가용성 백분율을 분석합니다. 여기에는 타사 서비스에서 생성된 로그를 구문 분석하는 과정이 포함될 수 있습니다.
 
-Many commercial systems are required to report real performance figures against agreed SLAs for a specified period, typically a month. This information can be used to calculate credits or other forms of repayments for customers if the SLAs are not met during that period. You can calculate availability for a service by using the technique described in the section [Analyzing availability data](#analyzing-availability-data).
 
-For internal purposes, an organization might also track the number and nature of incidents that caused services to fail. Learning how to resolve these issues quickly, or eliminate them completely, will help to reduce downtime and meet SLAs.
+대부분의 상용 시스템은 합의된 SLA를 기준으로 특정 기간, 일반적으로 한 달 동안 실제 성능 수치를 보고해야 합니다. 이 기간 동안 SLA가 충족되지 않으면 이 정보는 고객에 대한 크레딧 또는 기타 상환 형태를 계산하는 데 사용될 수 있습니다. [가용성 데이터 분석](#analyzing-availability-data) 섹션에서 설명한 기술을 사용하여 서비스의 가용성을 계산할 수 있습니다. 
 
-## Auditing
-Depending on the nature of the application, there might be statutory or other legal regulations that specify requirements for auditing users' operations and recording all data access. Auditing can provide evidence that links customers to specific requests. Non-repudiation is an important factor in many e-business systems to help maintain trust be between a customer and the organization that's responsible for the application or service.
+내부적인 목적에 따라 조직은 서비스 실패에 이른 사건의 수와 성격을 추적할 수도 있습니다. 이러한 문제를 신속하게 해결하거나 완전히 제거하는 방법을 파악하면 중단 시간을 줄이고 SLA를 충족하는 데 도움이 됩니다. 
 
-### Requirements for auditing
-An analyst must be able to trace the sequence of business operations that users are performing so that you can reconstruct users' actions. This might be necessary simply as a matter of record, or as part of a forensic investigation.
+## 감사
+응용 프로그램의 특성에 따라 사용자의 작업을 감사하고 모든 데이터 액세스를 기록하기 위한 요구 사항을 지정하는 규제나 기타 법적 규정이 있을 수 있습니다. 감사는 고객을 특정 요청에 연결하는 증거를 제공할 수 있습니다. 거부 없음은 많은 e-비즈니스 시스템에서 고객과 응용 프로그램 또는 서비스를 담당하는 조직간에 신뢰를 유지하는 데 기여하는 중요한 요소입니다. 
 
-Audit information is highly sensitive. It will likely include data that identifies the users of the system, together with the tasks that they're performing. For this reason, audit information will most likely take the form of reports that are available only to trusted analysts rather than as an interactive system that supports drill-down of graphical operations. An analyst should be able to generate a range of reports. For example, reports might list all users' activities occurring during a specified time frame, detail the chronology of activity for a single user, or list the sequence of operations performed against one or more resources.
+### 감사 요구 사항
+분석가는 사용자의 작업을 재구성할 수 있도록 사용자가 수행중인 비즈니스 작업 순서를 추적할 수 있어야 합니다. 이것은 단순히 기록의 문제이거나, 법의학 수사의 일부로 필요할 수 있습니다. 
 
-### Data sources, instrumentation, and data-collection requirements
-The primary sources of information for auditing can include:
+감사 정보는 매우 민감합니다. 여기에는 시스템 사용자와 수행중인 작업을 식별하는 데이터가 포함됩니다. 그렇기 때문에 감사 정보는 그래픽 작업의 드릴다운을 지원하는 대화형 시스템이 아닌 신뢰할 수 있는 분석가에게만 제공되는 보고서의 형태를 취할 가능성이 큽니다. 분석가는 다양한 보고서를 생성할 수 있어야 합니다. 예를 들어, 보고서는 지정된 시간 프레임 동안 발생하는 모든 사용자 활동을 나열하거나, 단일 사용자에 대한 활동을시기순으로 설명하거나, 하나 이상의 리소스에 대해 수행된 작업의 순서를 나열할 수 있습니다. 
 
-* The security system that manages user authentication.
-* Trace logs that record user activity.
-* Security logs that track all identifiable and unidentifiable network requests.
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+감사를 위한 주요 정보 소스에는 다음이 포함될 수 있습니다. 
 
-The format of the audit data and the way in which it's stored might be driven by regulatory requirements. For example, it might not be possible to clean the data in any way. (It must be recorded in its original format.) Access to the repository where it's held must be protected to prevent tampering.
+•	사용자 인증을 관리하는 보안 시스템.
 
-### Analyzing audit data
-An analyst must be able to access the raw data in its entirety, in its original form. Aside from the requirement to generate common audit reports, the tools for analyzing this data are likely to be specialized and kept external to the system.
+•	사용자 활동을 기록하는 추적 로그.
 
-## Usage monitoring
-Usage monitoring tracks how the features and components of an application are used. An operator can use the gathered data to:
+•	식별 가능하고 식별 불가능한 모든 네트워크 요청을 추적하는 보안 로그.
 
-* Determine which features are heavily used and determine any potential hotspots in the system. High-traffic elements might benefit from functional partitioning or even replication to spread the load more evenly. An operator can also use this information to ascertain which features are infrequently used and are possible candidates for retirement or replacement in a future version of the system.
-* Obtain information about the operational events of the system under normal use. For example, in an e-commerce site, you can record the statistical information about the number of transactions and the volume of customers that are responsible for them. This information can be used for capacity planning as the number of customers grows.
-* Detect (possibly indirectly) user satisfaction with the performance or functionality of the system. For example, if a large number of customers in an e-commerce system regularly abandon their shopping carts, this might be due to a problem with the checkout functionality.
-* Generate billing information. A commercial application or multitenant service might charge customers for the resources that they use.
-* Enforce quotas. If a user in a multitenant system exceeds their paid quota of processing time or resource usage during a specified period, their access can be limited or processing can be throttled.
 
-### Requirements for usage monitoring
-To examine system usage, an operator typically needs to see information that includes:
+감사 데이터 형식과 이 데이터가 저장되는 방식은 규제 요구 사항에 따라 달라질 수 있습니다. 예를 들어 어떤 방식으로든 데이터를 삭제할 수 없는 경우가 있습니다. (원래 형식으로 기록해야 합니다.) 데이터가 들어 있는 리포지토리에 대한 액세스는 변경을 방지하도록 보호되어야 합니다. 
 
-* The number of requests that are processed by each subsystem and directed to each resource.
-* The work that each user is performing.
-* The volume of data storage that each user occupies.
-* The resources that each user is accessing.
+### 감사 데이터 분석
+분석가는 원래 형식으로 원시 데이터에 완전하게 액세스할 수 있어야 합니다. 공통 감사 보고서를 생성해야 한다는 요구 사항 외에도 이 데이터를 분석하기 위한 도구는 특수화되어 시스템 외부에서 유지되는 경우가 많습니다. 
 
-An operator should also be able to generate graphs. For example, a graph might display the most resource-hungry users, or the most frequently accessed resources or system features.
+## 사용 현황 모니터링
+사용 현황 모니터링은 응용 프로그램의 기능 및 구성 요소가 사용되는 방식을 추적합니다. 운영자는 수집된 데이터를 사용하여 다음을 수행할 수 있습니다. 
 
-### Data sources, instrumentation, and data-collection requirements
-Usage tracking can be performed at a relatively high level. It can note the start and end times of each request and the nature of the request (read, write, and so on, depending on the resource in question). You can obtain this information by:
+•	어떤 기능이 과도하게 사용되고 있는지 확인하고 시스템의 잠재적인 핫스팟을 결정합니다. 트래픽이 많은 요소는 기능적 파티셔닝 또는 복제를 통해 부하를 보다 균등하게 분산시킬 수 있습니다. 또한 운영자는 이 정보를 사용하여 자주 사용되지 않는 기능을 확인하고 향후 버전의 시스템에서 이 기능을 제외시킬 수 있습니다.
 
-* Tracing user activity.
-* Capturing performance counters that measure the utilization for each resource.
-* Monitoring the resource consumption by each user.
+•	정상적인 사용 상태에서 시스템의 작동 이벤트에 대한 정보를 얻습니다. 예를 들어, 전자 상거래 사이트에서는 트랜잭션 수 및 해당 트랜잭션을 일으키는 고객의 볼륨에 대한 통계 정보를 기록할 수 있습니다. 고객 수가 증가함에 따라 이 정보를 용량 계획에 사용할 수 있습니다.
 
-For metering purposes, you also need to be able to identify which users are responsible for performing which operations, and the resources that these operations utilize. The gathered information should be detailed enough to enable accurate billing.
+•	시스템의 성능 또는 기능에 대한 사용자 만족도를 (간접적으로) 감지합니다. 예를 들어 전자 상거래 시스템의 고객 상당수가 정기적으로 장바구니를 포기하면 결제 기능에 문제가 있을 수 있습니다.
+
+•	청구 정보를 생성하십시오. 상업용 응용 프로그램 또는 멀티 테넌트 서비스는 고객이 사용하는 리소스에 대해 요금을 청구할 수 있습니다.
+
+•	할당량을 적용합니다. 멀티 테넌트 시스템의 사용자가 지정된 기간 동안 처리 시간 또는 리소스 사용량의 유료 할당량을 초과하면 액세스가 제한되거나 처리가 제한될 수 있습니다.
+
+
+### 사용 현황 모니터링 요구 사항
+시스템 사용 현황을 검사하기 위해 일반적으로 운영자는 다음을 포함하는 정보를 확인해야 합니다. 
+
+•	각 하위 시스템이 처리하고 각 리소스로 보내지는 요청 수.
+
+•	각 사용자가 수행중인 작업.
+
+•	각 사용자가 차지하는 데이터 저장소의 볼륨.
+
+•	각 사용자가 액세스하는 리소스.
+
+운영자는 그래프를 생성할 수도 있어야 합니다. 예를 들어, 그래프는 가장 많은 리소스를 필요로 하는 사용자 또는 가장 자주 액세스하는 리소스나 시스템 기능을 표시할 수 있습니다. 
+
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+사용량 추적은 상대적으로 높은 수준에서 수행될 수 있습니다. 각 요청의 시작 및 종료 시간과 요청의 성격(문제의 리소스에 따라 읽기, 쓰기 등)을 기록할 수 있습니다. 다음과 같은 방식을 통해 이 정보를 얻을 수 있습니다. 
+
+•	사용자 활동 추적.
+
+•	각 리소스의 사용률을 측정하는 성능 카운터 캡처.
+
+•	각 사용자의 리소스 소비 모니터링.
+
+
+또한, 계량을 위해 어떤 사용자에게 어떤 작업을 수행할 책임이 있는지, 그리고 이러한 작업이 사용하는 리소스를 식별할 수 있어야 합니다. 수집된 정보는 정확한 청구가 이루어질 수 있도록 상세해야 합니다. 
 
 <a name="issue-tracking"></a>
 
-## Issue tracking
-Customers and other users might report issues if unexpected events or behavior occurs in the system. Issue tracking is concerned with managing these issues, associating them with efforts to resolve any underlying problems in the system, and informing customers of possible resolutions.
+## 문제 추적
+시스템에서 예상치 못한 이벤트나 동작이 발생하면 고객 및 다른 사용자가 문제를 보고할 수 있습니다. 문제 추적은 이러한 문제를 관리하고, 이를 시스템의 근본적인 문제를 해결하기 위한 노력과 연관시키며, 고객에게 가능한 해결책을 전달할 목적으로 수행됩니다. 
 
-### Requirements for issue tracking
-Operators often perform issue tracking by using a separate system that enables them to record and report the details of problems that users report. These details can include the tasks that the user was trying to perform, symptoms of the problem, the sequence of events, and any error or warning messages that were issued.
+### 문제 추적을 위한 요구 사항
+운영자는 종종 사용자가 보고하는 문제의 세부 사항을 기록하고 보고할 수 있는 별도의 시스템을 사용하여 문제 추적을 수행합니다. 이러한 세부 정보에는 사용자가 수행하려고 시도한 작업, 문제의 증상, 이벤트의 순서 및 발생한 오류 또는 경고 메시지가 포함될 수 있습니다. 
 
-### Data sources, instrumentation, and data-collection requirements
-The initial data source for issue-tracking data is the user who reported the issue in the first place. The user might be able to provide additional data such as:
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+문제 추적 데이터의 초기 데이터 소스는 처음에 문제를 보고한 사용자입니다. 사용자는 다음과 같은 추가 데이터를 제공할 수 있습니다. 
 
-* A crash dump (if the application includes a component that runs on the user's desktop).
-* A screen snapshot.
-* The date and time when the error occurred, together with any other environmental information such as the user's location.
+•	크래시 덤프(응용 프로그램에 사용자의 데스크톱에서 실행되는 구성 요소가 포함된 경우)
 
-This information can be used to help the debugging effort and help construct a backlog for future releases of the software.
+•	화면 스냅샷.
 
-### Analyzing issue-tracking data
-Different users might report the same problem. The issue-tracking system should associate common reports.
+•	오류가 발생한 날짜와 시간, 사용자의 위치 등 기타 환경 정보.
 
-The progress of the debugging effort should be recorded against each issue report. When the problem is resolved, the customer can be informed of the solution.
 
-If a user reports an issue that has a known solution in the issue-tracking system, the operator should be able to inform the user of the solution immediately.
+디버깅 작업을 돕고 소프트웨어의 향후 릴리스에 대한 백로그를 구성하는 데 이 정보를 사용할 수 있습니다. 
 
-## Tracing operations and debugging software releases
-When a user reports an issue, the user is often only aware of the immediate impact that it has on their operations. The user can only report the results of their own experience back to an operator who is responsible for maintaining the system. These experiences are usually just a visible symptom of one or more fundamental problems. In many cases, an analyst will need to dig through the chronology of the underlying operations to establish the root cause of the problem. This process is called *root cause analysis*.
+### 문제 추적 데이터 분석
+여러 사용자가 동일한 문제를 보고할 수 있습니다. 문제 추적 시스템은 공통 보고를 연관시켜야 합니다. 
 
-> [!NOTE]
-> Root cause analysis might uncover inefficiencies in the design of an application. In these situations, it might be possible to rework the affected elements and deploy them as part of a subsequent release. This process requires careful control, and the updated components should be monitored closely.
+각 문제 보고에 대해 디버깅 작업의 진행 상황을 기록해야 합니다. 문제가 해결되면 고객에게 솔루션에 대한 정보를 제공할 수 있습니다. 
+
+사용자가 문제 추적 시스템에 알려진 솔루션이 있는 문제를 보고하면 운영자는 사용자에게 솔루션을 즉시 통보할 수 있어야 합니다. 
+
+## 작업 추적 및 소프트웨어 릴리스 디버깅
+문제를 보고할 때 사용자는 종종 자신의 작업에 미칠 수 있는 즉각적인 영향만을 인식합니다. 사용자는 자신이 경험한 결과만을 시스템 유지보수를 담당하는 운영자에게 보고할 수 있습니다. 이러한 경험은 대개 하나 이상의 근본적인 문제의 피상적인 증상일 뿐입니다. 대부분의 경우 분석가는 문제의 근본 원인을 파악하기 위해 기본 작업의 시기적 순서를 파헤쳐야 합니다. 이 프로세스를 *근본 원인 분석*이라고 합니다. 
+
+> [!참고]
+> 근본 원인 분석을 통해 응용 프로그램 설계의 비효율성을 알아낼 수 있습니다. 이러한 상황에서는 해당 요소를 재작업하고 후속 릴리스의 일부로 배포할 수 있습니다. 이 프로세스는 신중한 제어가 필요하며 업데이트된 구성 요소를 면밀히 모니터링해야 합니다. 
 > 
 > 
 
-### Requirements for tracing and debugging
-For tracing unexpected events and other problems, it's vital that the monitoring data provides enough information to enable an analyst to trace back to the origins of these issues and reconstruct the sequence of events that occurred. This information must be sufficient to enable an analyst to diagnose the root cause of any problems. A developer can then make the necessary modifications to prevent them from recurring.
+### 추적 및 디버깅을 위한 요구 사항
+예기치 않은 이벤트 및 기타 문제를 추적하려면 모니터링 데이터로부터 분석가가 이러한 문제의 출처를 추적하고 발생한 이벤트의 시퀀스를 재구성할 수 있을 정도로 충분한 정보를 얻을 수 있어야 합니다. 이 정보는 분석가가 문제의 근본 원인을 진단할 수 있을 만큼 충분해야 합니다. 그리고 나서 개발자는 문제가 되풀이되지 않도록 필요한 수정 작업을 수행할 수 있습니다. 
 
-### Data sources, instrumentation, and data-collection requirements
-Troubleshooting can involve tracing all the methods (and their parameters) invoked as part of an operation to build up a tree that depicts the logical flow through the system when a customer makes a specific request. Exceptions and warnings that the system generates as a result of this flow need to be captured and logged.
+### 데이터 소스, 계측 및 데이터 수집 요구 사항
+문제 해결 과정에서 고객이 특정 요청을 할 때 시스템을 통한 논리적 흐름을 나타내는 트리를 작성하기 위해 작업의 일부로 호출되는 모든 메서드(및 해당 매개 변수)를 추적하는 작업이 포함될 수 있습니다. 이 흐름의 결과로 시스템이 생성하는 예외 및 경고를 캡처하고 로깅해야 합니다. 
 
-To support debugging, the system can provide hooks that enable an operator to capture state information at crucial points in the system. Or, the system can deliver detailed step-by-step information as selected operations progress. Capturing data at this level of detail can impose an additional load on the system and should be a temporary process. An operator uses this process mainly when a highly unusual series of events occurs and is difficult to replicate, or when a new release of one or more elements into a system requires careful monitoring to ensure that the elements function as expected.
+디버깅을 지원하기 위해 시스템은 운영자가 시스템의 중요 지점에서 상태 정보를 캡처할 수 있도록 후크를 제공할 수 있습니다. 또는 선택된 작업이 진행됨에 따라 세부적인 단계별 정보를 제공할 수 있습니다. 이 세부 수준에서 데이터를 캡처하면 시스템에 추가 부하가 발생할 수 있으며 임시 프로세스여야 합니다. 운영자는 주로 매우 비정상적인 일련의 이벤트가 발생하여 재현하기 어렵거나 시스템에 하나 이상의 요소를 새로 릴리스할 때 요소가 예상대로 작동하는지 주의 깊게 모니터링해야 하는 경우 이 프로세스를 사용합니다. 
 
-## The monitoring and diagnostics pipeline
-Monitoring a large-scale distributed system poses a significant challenge. Each of the scenarios described in the previous section should not necessarily be considered in isolation. There is likely to be a significant overlap in the monitoring and diagnostic data that's required for each situation, although this data might need to be processed and presented in different ways. For these reasons, you should take a holistic view of monitoring and diagnostics.
+## 모니터링 및 진단 파이프 라인
+대규모 분산 시스템을 모니터링하는 것은 쉽지 않습니다. 이전 섹션에서 설명한 각 시나리오는 개별적으로 분리시켜 고려할 필요가 없습니다. 이 데이터를 여러 가지 방법으로 처리하고 제시해야 할 수도 있지만 각 상황에 필요한 모니터링 및 진단 데이터에는 상당한 중복이 있기도 합니다. 이러한 이유로 모니터링 및 진단에 대한 전체적인 관점을 가져야 합니다. 
 
-You can envisage the entire monitoring and diagnostics process as a pipeline that comprises the stages shown in Figure 1.
+전체 모니터링 및 진단 프로세스를 그림 1에 나와 있는 단계로 구성된 파이프라인이라고 생각할 수 있습니다. 
 
 ![Stages in the monitoring and diagnostics pipeline](./images/monitoring/Pipeline.png)
 
-*Figure 1.
-The stages in the monitoring and diagnostics pipeline*
+*그림 1. 모니터링 및 진단 파이프라인의 단계*
 
-Figure 1 highlights how the data for monitoring and diagnostics can come from a variety of data sources. The instrumentation and collection stages are concerned with identifying the sources from where the data needs to be captured, determining which data to capture, how to capture it, and how to format this data so that it can be easily examined. The analysis/diagnosis stage takes the raw data and uses it to generate meaningful information that an operator can use to determine the state of the system. The operator can use this information to make decisions about possible actions to take, and then feed the results back into the instrumentation and collection stages. The visualization/alerting stage phase presents a consumable view of the system state. It can display information in near real time by using a series of dashboards. And it can generate reports, graphs, and charts to provide a historical view of the data that can help identify long-term trends. If information indicates that a KPI is likely to exceed acceptable bounds, this stage can also trigger an alert to an operator. In some cases, an alert can also be used to trigger an automated process that attempts to take corrective actions, such as autoscaling.
+그림 1은 다양한 데이터 소스에서 모니터링 및 진단을 위한 데이터를 얻을 수 있는 방법을 보여줍니다. 계측 및 수집 단계에서는 데이터를 캡처해야 하는 소스를 파악하고 캡처할 데이터를 결정하며 데이터를 캡처하는 방법과 이 데이터를 쉽게 검사할 수 있도록 형식을 지정하는 방법에 대해 설명합니다. 분석/진단 단계에서는 원시 데이터를 가져와서 운영자가 시스템의 상태를 결정하는 데 사용할 수 있는 의미 있는 정보를 생성하는 데 활용합니다. 운영자는 이 정보를 사용하여 취할 수 있는 조치에 대한 결정을 내린 다음 결과를 계측 및 수집 단계로 다시 제공할 수 있습니다. 시각화/경고 단계는 시스템 상태에 대한 소모적인 시각을 제공합니다. 일련의 대시보드를 사용하여 거의 실시간으로 정보를 표시할 수 있습니다. 보고서, 그래프 및 차트를 생성하여 장기 추세를 파악하는 데 도움이 되는 데이터의 이력 보기를 제공할 수 있습니다. KPI가 허용 범위를 초과할 것이라는 정보가 있으면 이 단계에서 운영자에게 경고를 트리거할 수도 있습니다. 경우에 따라 자동 조정과 같은 시정 조치를 시도하는 자동화된 프로세스를 트리거하는 데 경고를 사용할 수도 있습니다. 
 
-Note that these steps constitute a continuous-flow process where the stages are happening in parallel. Ideally, all the phases should be dynamically configurable. At some points, especially when a system has been newly deployed or is experiencing problems, it might be necessary to gather extended data on a more frequent basis. At other times, it should be possible to revert to capturing a base level of essential information to verify that the system is functioning properly.
+이 단계는 단계가 병렬로 진행되는 연속 흐름 프로세스를 구성합니다. 이상적으로, 모든 단계는 동적으로 구성 가능해야 합니다. 어떤 시점에서, 특히 시스템이 새로 배치되었거나 문제가 발생하는 경우 확장된 데이터를 보다 자주 수집해야 할 수도 있습니다. 다른 경우에는 시스템이 제대로 작동하는지 확인하기 위해 기본적 수준의 필수 정보를 캡처하는 것으로 되돌릴 수 있어야 합니다. 
 
-Additionally, the entire monitoring process should be considered a live, ongoing solution that's subject to fine-tuning and improvements as a result of feedback. For example, you might start with measuring many factors to determine system health. Analysis over time might lead to a refinement as you discard measures that aren't relevant, enabling you to more precisely focus on the data that you need while minimizing background noise.
+또한 전체 모니터링 프로세스를 피드백을 통해 미세 조정 및 개선해야 하는 지속적인 솔루션으로 간주해야 합니다. 예를 들어, 우선 여러 요인을 측정하여 시스템 상태를 확인할 수 있습니다. 시간 경과에 따른 분석을 수행하면 관련성이 없는 측정 값을 폐기하면서 미세 조정이 이루어질 수 있으므로 배경 소음을 최소화할 뿐만 아니라 필요한 데이터에 보다 정확하게 집중할 수 있습니다. 
 
-## Sources of monitoring and diagnostic data
-The information that the monitoring process uses can come from several sources, as illustrated in Figure 1. At the application level, information comes from trace logs incorporated into the code of the system. Developers should follow a standard approach for tracking the flow of control through their code. For example, an entry to a method can emit a trace message that specifies the name of the method, the current time, the value of each parameter, and any other pertinent information. Recording the entry and exit times can also prove useful.
+## 모니터링 및 진단 데이터의 소스
+모니터링 프로세스가 사용하는 정보는 그림 1에서와 같이 여러 소스로부터 나올 수 있습니다. 응용 프로그램 레벨에서 정보는 시스템 코드에 통합된 추적 로그로부터 가져옵니다. 개발자는 코드를 통해 제어 흐름을 추적하기 위한 표준 접근 방식을 따라야 합니다. 예를 들어 메서드에 대한 항목은 메서드의 이름, 현재 시간, 각 매개 변수의 값 및 기타 관련 정보를 지정하는 추적 메시지를 내보낼 수 있습니다. 출입 시간을 기록하는 것도 유용합니다. 
 
-You should log all exceptions and warnings, and ensure that you retain a full trace of any nested exceptions and warnings. Ideally, you should also capture information that identifies the user who is running the code, together with activity correlation information (to track requests as they pass through the system). And you should log attempts to access all resources such as message queues, databases, files, and other dependent services. This information can be used for metering and auditing purposes.
+모든 예외 및 경고를 기록하고 중첩된 예외 및 경고를 완전하게 추적해야 합니다. 이상적으로는 코드를 실행중인 사용자를 식별하는 정보와 활동 상관 관계 정보(시스템을 통과하는 요청을 추적)도 캡처해야 합니다. 또한 메시지 큐, 데이터베이스, 파일 및 기타 종속 서비스 등 모든 리소스에 액세스하려는 시도를 기록해야 합니다. 계량 및 감사 목적으로 이 정보를 사용할 수 있습니다. 
 
-Many applications make use of libraries and frameworks to perform common tasks such as accessing a data store or communicating over a network. These frameworks might be configurable to provide their own trace messages and raw diagnostic information, such as transaction rates and data transmission successes and failures.
+많은 응용 프로그램은 라이브러리 및 프레임워크를 사용하여 데이터 저장소에 액세스하거나 네트워크를 통해 통신하는 등의 일반적인 작업을 수행합니다. 이러한 프레임워크는 트랜잭션 속도, 데이터 전송 성공 및 실패와 같은 고유한 추적 메시지 및 원시 진단 정보를 제공하도록 구성 가능합니다. 
 
-> [!NOTE]
-> Many modern frameworks automatically publish performance and trace events. Capturing this information is simply a matter of providing a means to retrieve and store it where it can be processed and analyzed.
+> [!참고]
+> 많은 현대적 프레임워크는 자동으로 성능을 게시하고 이벤트를 추적합니다. 이 정보를 수집하는 것은 단순히 처리하고 분석할 수 있는 위치에서 정보를 검색하고 저장하는 수단을 제공하는 것으로 간단히 해결됩니다. 
 > 
 > 
+응용 프로그램이 실행되는 운영 체제는 I/O 속도, 메모리 사용률 및 CPU 사용량을 나타내는 성능 카운터 등 낮은 수준의 시스템 전체 정보 소스가 될 수 있습니다. 운영 체제 오류(예: 파일을 제대로 열지 못함)가 보고될 수도 있습니다. 
 
-The operating system where the application is running can be a source of low-level system-wide information, such as performance counters that indicate I/O rates, memory utilization, and CPU usage. Operating system errors (such as the failure to open a file correctly) might also be reported.
+또한 시스템이 실행되는 기본 인프라 및 구성 요소도 고려해야 합니다. 가상 컴퓨터, 가상 네트워크 및 저장소 서비스는 모두 중요한 인프라 수준의 성능 카운터 및 기타 진단 데이터의 소스가 될 수 있습니다. 
 
-You should also consider the underlying infrastructure and components on which your system runs. Virtual machines, virtual networks, and storage services can all be sources of important infrastructure-level performance counters and other diagnostic data.
+응용 프로그램이 웹 서버나 데이터베이스 관리 시스템 등 다른 외부 서비스를 사용하는 경우 이러한 서비스는 자체 추적 정보, 로그 및 성능 카운터를 게시할 수 있습니다. 이러한 예로는 SQL Server 데이터베이스에 대해 수행된 작업을 추적하기 위한 SQL Server Dynamic Management Views와 웹 서버에 이루어진 요청을 기록하기 위한 IIS 추적 로그가 있습니다. 
 
-If your application uses other external services, such as a web server or database management system, these services might publish their own trace information, logs, and performance counters. Examples include SQL Server Dynamic Management Views for tracking operations performed against a SQL Server database, and IIS trace logs for recording requests made to a web server.
+시스템의 구성 요소가 수정되고 새 버전이 배포되면 문제, 이벤트 및 메트릭을 각 버전에 적용할 수 있어야 합니다. 이 정보를 릴리스 파이프라인에 연결해야 특정 버전의 구성 요소에 대한 문제점을 신속하게 추적하고 수정할 수 있습니다. 
 
-As the components of a system are modified and new versions are deployed, it's important to be able to attribute issues, events, and metrics to each version. This information should be tied back to the release pipeline so that problems with a specific version of a component can be tracked quickly and rectified.
+보안 문제는 시스템의 어느 지점에서나 발생할 수 있습니다. 예를 들어, 사용자가 유효하지 않은 사용자 ID 또는 암호로 로그인을 시도할 수 있습니다. 인증된 사용자는 리소스에 대한 무단 액세스를 시도할 수 있습니다. 또는 사용자가 암호화된 정보에 액세스하기 위해 유효하지 않거나 오래된 키를 제공할 수 있습니다. 성공 및 실패한 요청에 대한 보안 관련 정보를 항상 기록해야 합니다. 
 
-Security issues might occur at any point in the system. For example, a user might attempt to sign in with an invalid user ID or password. An authenticated user might try to obtain unauthorized access to a resource. Or a user might provide an invalid or outdated key to access encrypted information. Security-related information for successful and failing requests should always be logged.
+[응용 프로그램 계측](#instrumenting-an-application) 섹션에는 캡처해야 하는 정보에 대한 자세한 지침이 설명되어 있습니다. 그러나 다양한 전략을 사용하여 이 정보를 수집할 수 있습니다. 
 
-The section [Instrumenting an application](#instrumenting-an-application) contains more guidance on the information that you should capture. But you can use a variety of strategies to gather this information:
-
-* **Application/system monitoring**. This strategy uses internal sources within the application, application frameworks, operating system, and infrastructure. The application code can generate its own monitoring data at notable points during the lifecycle of a client request. The application can include tracing statements that might be selectively enabled or disabled as circumstances dictate. It might also be possible to inject diagnostics dynamically by using a diagnostics framework. These frameworks typically provide plug-ins that can attach to various instrumentation points in your code and capture trace data at these points.
+* **응용 프로그램/시스템 모니터링**. 이 전략은 응용 프로그램, 응용 프로그램 프레임워크, 운영 체제 및 인프라 내에서 내부 소스를 사용합니다. 응용 프로그램 코드는 클라이언트 요청의 수명주기 동안 주목할 만한 지점에서 자체 모니터링 데이터를 생성할 수 있습니다. 응용 프로그램에는 상황에 따라 선택적으로 활성화 또는 비활성화될 수 있는 추적 문이 포함될 수 있습니다. 또한 진단 프레임워크를 사용하여 진단을 동적으로 주입할 수도 있습니다. 이러한 프레임워크는 일반적으로 코드의 다양한 계측 지점에 연결하고 이 지점에서 추적 데이터를 캡처할 수 있는 플러그인을 제공합니다.
   
-    Additionally, your code and/or the underlying infrastructure might raise events at critical points. Monitoring agents that are configured to listen for these events can record the event information.
-* **Real user monitoring**. This approach records the interactions between a user and the application and observes the flow of each request and response. This information can have a two-fold purpose: it can be used for metering usage by each user, and it can be used to determine whether users are receiving a suitable quality of service (for example, fast response times, low latency, and minimal errors). You can use the captured data to identify areas of concern where failures occur most often. You can also use the data to identify elements where the system slows down, possibly due to hotspots in the application or some other form of bottleneck. If you implement this approach carefully, it might be possible to reconstruct users' flows through the application for debugging and testing purposes.
+    또한 코드 및/또는 기본 인프라가 중요한 지점에서 이벤트를 발생시킬 수 있습니다. 이러한 이벤트를 수신 대기하도록 구성된 모니터링 에이전트는 이벤트 정보를 기록할 수 있습니다.
+* **실제 사용자 모니터링**. 이 접근법은 사용자와 응용 프로그램 간의 상호 작용을 기록하고 각 요청 및 응답의 흐름을 관찰합니다. 이 정보는 두 가지 목적을 가질 수 있습니다. 즉, 각 사용자의 미터링 사용에 사용될 수 있으며, 사용자가 적절한 서비스 품질(예: 빠른 응답 시간, 낮은 대기 시간, 최소한의 오류)을 수신하는지 여부를 결정하는 데 사용할 수 있습니다. 캡처된 데이터를 사용하여 오류가 가장 자주 발생하는 영역을 식별할 수 있습니다. 또한 이 데이터를 사용하여 응용 프로그램의 핫스팟 또는 기타 형태의 병목 현상으로 인해 시스템 속도가 느려지는 요소를 식별할 수 있습니다. 이 방법을 신중하게 구현하면 디버깅 및 테스트 목적으로 응용 프로그램을 통해 사용자의 흐름을 재구성할 수 있습니다.
   
-  > [!IMPORTANT]
-  > You should consider the data that's captured by monitoring real users to be highly sensitive because it might include confidential material. If you save captured data, store it securely. If you want to use the data for performance monitoring or debugging purposes, strip out all personally identifiable information first.
-  > 
-  > 
-* **Synthetic user monitoring**. In this approach, you write your own test client that simulates a user and performs a configurable but typical series of operations. You can track the performance of the test client to help determine the state of the system. You can also use multiple instances of the test client as part of a load-testing operation to establish how the system responds under stress, and what sort of monitoring output is generated under these conditions.
+  > [!중요]
+  > 실제 사용자를 모니터링하여 캡처한 데이터는 기밀 자료가 포함될 수 있으므로 매우 민감한 것으로 취급해야 합니다. 캡처된 데이터를 저장하는 경우 안전하게 저장하십시오. 성능 모니터링 또는 디버깅 목적으로 데이터를 사용하려면 먼저 모든 개인 식별 정보를 제거하십시오.
   
-  > [!NOTE]
-  > You can implement real and synthetic user monitoring by including code that traces and times the execution of method calls and other critical parts of an application.
+  > 
+* **가상 사용자 모니터링**. 이 접근 방식에서는 사용자를 시뮬레이트하고 구성 가능하지만 일반적인 일련의 작업을 수행하는 고유 테스트 클라이언트를 작성합니다. 테스트 클라이언트의 성능을 추적하여 시스템 상태를 확인할 수 있습니다. 또한 부하 테스트 작업의 일부로 테스트 클라이언트의 여러 인스턴스를 사용하여 시스템이 스트레스 하에서 반응하는 방식과 이러한 조건에서 생성되는 모니터링 출력의 종류를 확인할 수 있습니다.
+  
+  > [!참고]
+  > 메서드 호출의 실행 및 기타 응용 프로그램의 중요한 부분을 추적하고 시간을 측정하는 코드를 포함시켜 실제 및 가상 사용자 모니터링을 구현할 수 있습니다.
   > 
   > 
-* **Profiling**. This approach is primarily targeted at monitoring and improving application performance. Rather than operating at the functional level of real and synthetic user monitoring, it captures lower-level information as the application runs. You can implement profiling by using periodic sampling of the execution state of an application (determining which piece of code that the application is running at a given point in time). You can also use instrumentation that inserts probes into the code at important junctures (such as the start and end of a method call) and records which methods were invoked, at what time, and how long each call took. You can then analyze this data to determine which parts of the application might cause performance problems.
-* **Endpoint monitoring**. This technique uses one or more diagnostic endpoints that the application exposes specifically to enable monitoring. An endpoint provides a pathway into the application code and can return information about the health of the system. Different endpoints can focus on various aspects of the functionality. You can write your own diagnostics client that sends periodic requests to these endpoints and assimilate the responses. This approach is described more in [Health Endpoint Monitoring Pattern](https://msdn.microsoft.com/library/dn589789.aspx) on the Microsoft website.
+* **프로파일링**. 이 접근 방식은 주로 응용 프로그램 성능을 모니터링하고 향상시키는 것을 목표로 합니다. 실제 및 가상 사용자 모니터링의 기능 수준에서 작동하는 대신 응용 프로그램이 실행될 때 하위 수준의 정보를 캡처합니다. 응용 프로그램의 실행 상태를 주기적으로 샘플링하여(특정 시점에 응용 프로그램이 실행중인 코드를 결정) 프로파일링을 구현할 수 있습니다. 중요한 시점(예: 메서드 호출의 시작과 끝)에서 코드에 프로브를 삽입하는 도구를 사용하고 호출된 메서드, 호출 시간 및 호출에 걸린 시간을 기록할 수 있습니다. 그런 다음 이 데이터를 분석하여 응용 프로그램의 어느 부분이 성능 문제를 일으킬 수 있는지 판별할 수 있습니다.
+* **끝점 모니터링**. 이 기술은 응용 프로그램이 모니터링을 위해 특별히 제공하는 하나 이상의 진단 끝점을 사용합니다. 끝점은 응용 프로그램 코드에 경로를 제공하고 시스템의 상태에 대한 정보를 반환할 수 있습니다. 끝점에 따라 다양한 기능 측면에 집중할 수 있습니다. 이 끝점에 정기적인 요청을 보내고 응답을 동화하는 자체 진단 클라이언트를 작성할 수 있습니다. 이 접근법은 Microsoft 웹 사이트의 [상태 끝점 모니터링 패턴](https://msdn.microsoft.com/library/dn589789.aspx)에 자세히 설명되어 있습니다.
 
-For maximum coverage, you should use a combination of these techniques.
+적용 범위를 최대화하기 위해서는 이러한 기술을 조합하여 사용해야 합니다. 
 
 <a name="instrumenting-an-application"></a>
 
-## Instrumenting an application
-Instrumentation is a critical part of the monitoring process. You can make meaningful decisions about the performance and health of a system only if you first capture the data that enables you to make these decisions. The information that you gather by using instrumentation should be sufficient to enable you to assess performance, diagnose problems, and make decisions without requiring you to sign in to a remote production server to perform tracing (and debugging) manually. Instrumentation data typically comprises metrics and information that's written to trace logs.
+## 응용 프로그램 계측
+계측은 모니터링 프로세스의 중요한 부분입니다. 이러한 결정을 내릴 수 있도록 해주는 데이터를 우선적으로 캡처한 경우에만 시스템의 성능 및 상태에 대해 의미 있는 결정을 내릴 수 있습니다. 계측을 사용하여 수집하는 정보는 원격 프로덕션 서버에 로그인하여 수동으로 추적(및 디버깅)을 수행할 필요 없이 성능을 평가하고 문제를 진단하며 의사 결정을 내리기에 충분해야 합니다. 계측 데이터는 일반적으로 추적 로그에 작성되는 메트릭 및 정보로 구성됩니다. 
 
-The contents of a trace log can be the result of textual data that's written by the application or binary data that's created as the result of a trace event (if the application is using Event Tracing for Windows--ETW). They can also be generated from system logs that record events arising from parts of the infrastructure, such as a web server. Textual log messages are often designed to be human-readable, but they should also be written in a format that enables an automated system to parse them easily.
+추적 로그의 내용은 응용 프로그램에서 작성한 텍스트 데이터 또는 추적 이벤트의 결과로 작성된 이진 데이터(응용 프로그램이 Windows용 이벤트 추적(ETW)을 사용하는 경우)의 결과일 수 있습니다. 또한 웹 서버 등 인프라의 일부에서 발생하는 이벤트를 기록하는 시스템 로그에서 생성될 수도 있습니다. 텍스트 로그 메시지는 사람이 읽을 수 있도록 설계되는 경우가 많지만 자동화된 시스템에서 쉽게 구문 분석할 수 있는 형식으로 작성해야 합니다. 
 
-You should also categorize logs. Don't write all trace data to a single log, but use separate logs to record the trace output from different operational aspects of the system. You can then quickly filter log messages by reading from the appropriate log rather than having to process a single lengthy file. Never write information that has different security requirements (such as audit information and debugging data) to the same log.
+로그를 분류하는 작업도 필요합니다. 모든 추적 데이터를 단일 로그에 기록하지 말고 별도의 로그를 사용하여 시스템의 여러 가지 작동 측면에서 추적 출력을 기록하십시오. 그런 다음 하나의 긴 파일을 처리하지 않고 해당 로그에서 로그 메시지를 신속하게 필터링할 수 있습니다. 보안 요구 사항(예: 감사 정보 및 디버깅 데이터)이 서로 다른 정보를 같은 로그에 쓰지 마십시오. 
 
-> [!NOTE]
-> A log might be implemented as a file on the file system, or it might be held in some other format, such as a blob in blob storage. Log information might also be held in more structured storage, such as rows in a table.
+> [!참고]
+> 로그는 파일 시스템의 파일로 구현되거나 Blob 저장소의 Blob과 같은 다른 형식으로 보관될 수도 있습니다. 로그 정보는 테이블의 행과 같이 더 구조화된 저장소에 유지될 수도 있습니다. 
 > 
 > 
 
-Metrics will generally be a measure or count of some aspect or resource in the system at a specific time, with one or more associated tags or dimensions (sometimes called a *sample*). A single instance of a metric is usually not useful in isolation. Instead, metrics have to be captured over time. The key issue to consider is which metrics you should record and how frequently. Generating data for metrics too often can impose a significant additional load on the system, whereas capturing metrics infrequently might cause you to miss the circumstances that lead to a significant event. The considerations will vary from metric to metric. For example, CPU utilization on a server might vary significantly from second to second, but high utilization becomes an issue only if it's long-lived over a number of minutes.
+메트릭은 일반적으로 하나 이상의 관련 태그 또는 차원(*샘플*이라고도 함)을 사용하여 특정 시간에 시스템의 일부 측면 또는 리소스를 측정하거나 계수한 결과입니다. 메트릭의 단일 인스턴스는 일반적으로 단독으로는 유용하지 않습니다. 대신 메트릭을 시간 경과에 따라 캡처해야 합니다. 고려해야 할 핵심 사안은 기록해야 하는 메트릭과 그 빈도입니다. 메트릭에 대한 데이터를 너무 자주 생성하면 시스템에 상당한 추가 부하가 걸릴 수 있지만 메트릭을 자주 캡처하지 않으면 중대한 이벤트로 이어질 수 있는 상황을 놓칠 수 있습니다. 고려 사항은 메트릭마다 다를 수 있습니다. 예를 들어 서버의 CPU 사용률은 초 단위로 크게 달라질 수 있지만 높은 사용률은 수분에 걸쳐 장시간 동안 지속되는 경우에만 문제가 됩니다. 
 
 <a name="information-for-correlating-data"></a>
 
-### Information for correlating data
-You can easily monitor individual system-level performance counters, capture metrics for resources, and obtain application trace information from various log files. But some forms of monitoring require the analysis and diagnostics stage in the monitoring pipeline to correlate the data that's retrieved from several sources. This data might take several forms in the raw data, and the analysis process must be provided with sufficient instrumentation data to be able to map these different forms. For example, at the application framework level, a task might be identified by a thread ID. Within an application, the same work might be associated with the user ID for the user who is performing that task.
+### 데이터 상관 관계 정보
+개별 시스템 수준의 성능 카운터를 쉽게 모니터링하고 리소스에 대한 메트릭을 캡처하며 다양한 로그 파일에서 응용 프로그램 추적 정보를 얻을 수 있습니다. 그러나 일부 형태의 모니터링에는 여러 소스에서 검색된 데이터를 상호 연관시키기 위해 모니터링 파이프라인에서 분석과 진단 단계가 필요합니다. 이 데이터는 원시 데이터에서 여러 가지 형식을 취할 수 있으며 이처럼 다양한 양식을 매핑할 수 있는 충분한 계측 데이터가 분석 프로세스에 제공되어야 합니다. 예를 들어, 응용 프로그램 프레임워크 수준에서 작업은 스레드 ID로 식별 가능합니다. 응용 프로그램 내에서 동일한 작업이 해당 작업을 수행하는 사용자의 사용자 ID와 연관될 수 있습니다. 
 
-Also, there's unlikely to be a 1:1 mapping between threads and user requests, because asynchronous operations might reuse the same threads to perform operations on behalf of more than one user. To complicate matters further, a single request might be handled by more than one thread as execution flows through the system. If possible, associate each request with a unique activity ID that's propagated through the system as part of the request context. (The technique for generating and including activity IDs in trace information depends on the technology that's used to capture the trace data.)
+또한 비동기 작업은 둘 이상의 사용자를 대신하여 동일한 스레드를 재사용하여 작업을 수행할 수 있으므로 스레드와 사용자 요청간에 1:1 매핑이 발생하지는 않습니다. 문제를 더욱 복잡하게 만드는 것으로, 실행이 시스템을 통해 진행될 때 하나 이상의 스레드가 단일 요청을 처리할 수 있습니다. 가능한 경우 각 요청을 요청 컨텍스트의 일부로 시스템을 통해 전달되는 고유한 활동 ID와 연관 시키십시오. (추적 정보에서 활동 ID를 생성하고 포함시키는 기술은 추적 데이터를 캡처하는 데 사용되는 기술에 따라 다릅니다.) 
 
-All monitoring data should be time-stamped in the same way. For consistency, record all dates and times by using Coordinated Universal Time. This will help you more easily trace sequences of events.
+모든 모니터링 데이터에는 동일한 방식으로 타임스탬프를 지정해야 합니다. 일관성을 유지하기 위해 협정 세계시를 사용하여 모든 날짜와 시간을 기록합니다. 이렇게 하면 일련의 이벤트를 보다 쉽게 추적할 수 있습니다. 
 
-> [!NOTE]
-> Computers operating in different time zones and networks might not be synchronized. Don't depend on using time stamps alone for correlating instrumentation data that spans multiple machines.
+> [!참고]
+>다른 시간대 및 네트워크에서 작동하는 컴퓨터는 동기화되지 않을 수 있습니다. 여러 컴퓨터에 걸쳐 있는 계측 데이터를 상호 연관시키기 위해 타임스탬프 사용에만 의존하지 마십시오. 
 > 
 > 
 
-### Information to include in the instrumentation data
-Consider the following points when you're deciding which instrumentation data you need to collect:
+### 계측 데이터에 포함할 정보
+수집해야 하는 계측 데이터를 결정할 때 다음 사항을 고려하십시오. 
 
-* Make sure that information captured by trace events is machine and human readable. Adopt well-defined schemas for this information to facilitate automated processing of log data across systems, and to provide consistency to operations and engineering staff reading the logs. Include environmental information, such as the deployment environment, the machine on which the process is running, the details of the process, and the call stack.  
-* Enable profiling only when necessary because it can impose a significant overhead on the system. Profiling by using instrumentation records an event (such as a method call) every time it occurs, whereas sampling records only selected events. The selection can be time-based (once every *n* seconds), or frequency-based (once every *n* requests). If events occur very frequently, profiling by instrumentation might cause too much of a burden and itself affect overall performance. In this case, the sampling approach might be preferable. However, if the frequency of events is low, sampling might miss them. In this case, instrumentation might be the better approach.
-* Provide sufficient context to enable a developer or administrator to determine the source of each request. This might include some form of activity ID that identifies a specific instance of a request. It might also include information that can be used to correlate this activity with the computational work performed and the resources used. Note that this work might cross process and machine boundaries. For metering, the context should also include (either directly or indirectly via other correlated information) a reference to the customer who caused the request to be made. This context provides valuable information about the application state at the time that the monitoring data was captured.
-* Record all requests, and the locations or regions from which these requests are made. This information can assist in determining whether there are any location-specific hotspots. This information can also be useful in determining whether to repartition an application or the data that it uses.
-* Record and capture the details of exceptions carefully. Often, critical debug information is lost as a result of poor exception handling. Capture the full details of exceptions that the application throws, including any inner exceptions and other context information. Include the call stack if possible.
-* Be consistent in the data that the different elements of your application capture, because this can assist in analyzing events and correlating them with user requests. Consider using a comprehensive and configurable logging package to gather information, rather than depending on developers to adopt the same approach as they implement different parts of the system. Gather data from key performance counters, such as the volume of I/O being performed, network utilization, number of requests, memory use, and CPU utilization. Some infrastructure services might provide their own specific performance counters, such as the number of connections to a database, the rate at which transactions are being performed, and the number of transactions that succeed or fail. Applications might also define their own specific performance counters.
-* Log all calls made to external services, such as database systems, web services, or other system-level services that are part of the infrastructure. Record information about the time taken to perform each call, and the success or failure of the call. If possible, capture information about all retry attempts and failures for any transient errors that occur.
+•	추적 이벤트로 캡처한 정보가 기계 및 사람이 읽을 수 있도록 하십시오. 시스템 전반에 걸쳐 로그 데이터를 자동으로 처리하고 로그를 읽는 운영 및 엔지니어링 담당자에게 일관성을 제공할 수 있도록 이 정보에 대해 잘 정의된 스키마를 채택하십시오. 배포 환경, 프로세스가 실행중인 시스템, 프로세스 세부 사항 및 호출 스택과 같은 환경 정보를 포함시키십시오. 
 
-### Ensuring compatibility with telemetry systems
-In many cases, the information that instrumentation produces is generated as a series of events and passed to a separate telemetry system for processing and analysis. A telemetry system is typically independent of any specific application or technology, but it expects information to follow a specific format that's usually defined by a schema. The schema effectively specifies a contract that defines the data fields and types that the telemetry system can ingest. The schema should be generalized to allow for data arriving from a range of platforms and devices.
+•	시스템에 상당한 오버헤드가 발생할 수 있으므로 필요할 때만 프로파일링을 사용하십시오. 계측을 사용하여 프로파일링하면 이벤트(예: 메서드 호출)가 발생할 때마다 이것을 기록하는 한편, 샘플링은 선택한 이벤트만 기록합니다. 선택은 시간 기반(n초마다 한 번) 또는 빈도 기반(n회 요청마다 한 번)일 수 있습니다. 이벤트가 매우 자주 발생하면 계측으로 프로파일링할 때 너무 많은 부담을 초래할 수 있으며 전체 성능에 영향을 미칠 수 있습니다. 이 경우 샘플링 방식이 바람직할 수 있습니다. 그러나 이벤트 빈도가 낮으면 샘플링이 이를 놓칠 수 있습니다. 이 경우 계측이 더 나은 방법일 수 있습니다.
 
-A common schema should include fields that are common to all instrumentation events, such as the event name, the event time, the IP address of the sender, and the details that are required for correlating with other events (such as a user ID, a device ID, and an application ID). Remember that any number of devices might raise events, so the schema should not depend on the device type. Additionally, various devices might raise events for the same application; the application might support roaming or some other form of cross-device distribution.
+•	개발자 또는 관리자가 각 요청의 출처를 결정할 수 있도록 충분한 컨텍스트를 제공합니다. 여기에는 요청의 특정 인스턴스를 식별하는 활동 ID 양식이 포함될 수 있습니다. 또한 이 활동을 수행된 계산 작업 및 사용된 리소스와 상관시키는 데 활용할 수 있는 정보도 포함되기도 합니다. 이 작업은 프로세스 및 시스템 경계를 넘을 수 있습니다. 계량을 위해, 컨텍스트에는 요청이 이루어지게 한 고객에 대한 참조도 포함되어야 합니다(다른 상관 정보를 통해 직접 또는 간접적으로). 이 컨텍스트는 모니터링 데이터가 캡처된 시점의 응용 프로그램 상태에 대한 중요한 정보를 제공합니다.
 
-The schema might also include domain fields that are relevant to a particular scenario that's common across different applications. This might be information about exceptions, application start and end events, and success and/or failure of web service API calls. All applications that use the same set of domain fields should emit the same set of events, enabling a set of common reports and analytics to be built.
+•	모든 요청과 이러한 요청이 이루어진 위치 또는 지역을 기록합니다. 이 정보는 위치별 핫스팟이 있는지 여부를 판단하는 데 도움이 됩니다. 이 정보는 응용 프로그램이나 응용 프로그램이 사용하는 데이터를 재분할할지 여부를 결정할 때도 유용합니다.
 
-Finally, a schema might contain custom fields for capturing the details of application-specific events.
+•	예외 사항을 신중하게 기록하고 캡처합니다. 잘못된 예외 처리로 인해 중요한 디버그 정보가 손실되는 경우가 많습니다. 내부 예외 및 기타 컨텍스트 정보를 비롯하여 응용 프로그램이 발생시키는 예외의 전체 정보를 캡처합니다. 가능한 경우 호출 스택을 포함하십시오.
 
-### Best practices for instrumenting applications
-The following list summarizes best practices for instrumenting a distributed application running in the cloud.
+•	이벤트 분석을 수행할 뿐만 아니라 사용자 요청과 연관시키는 데 도움이 될 수 있도록 응용 프로그램의 다양한 요소가 캡처하는 데이터가 일관되도록 유지하십시오. 개발자가 시스템의 다른 부분을 구현할 때와 동일한 접근 방식을 채택하지 않는 대신, 포괄적이고 구성 가능한 로깅 패키지를 사용하여 정보를 수집하는 것이 좋습니다. 수행중인 I/O의 양, 네트워크 사용률, 요청 수, 메모리 사용량 및 CPU 사용률과 같은 주요 성능 카운터에서 데이터를 수집합니다. 일부 인프라 서비스는 데이터베이스에 대한 연결 수, 트랜잭션이 수행되는 속도, 성공 또는 실패한 트랜잭션 수 등 고유의 성능 카운터를 제공할 수 있습니다. 응용 프로그램은 고유한 특정 성능 카운터를 정의할 수도 있습니다.
 
-* Make logs easy to read and easy to parse. Use structured logging where possible. Be concise and descriptive in log messages.
-* In all logs, identify the source and provide context and timing information as each log record is written.
-* Use the same time zone and format for all time stamps. This will help to correlate events for operations that span hardware and services running in different geographic regions.
-* Categorize logs and write messages to the appropriate log file.
-* Do not disclose sensitive information about the system or personal information about users. Scrub this information before it's logged, but ensure that the relevant details are retained. For example, remove the ID and password from any database connection strings, but write the remaining information to the log so that an analyst can determine that the system is accessing the correct database. Log all critical exceptions, but enable the administrator to turn logging on and off for lower levels of exceptions and warnings. Also, capture and log all retry logic information. This data can be useful in monitoring the transient health of the system.
-* Trace out of process calls, such as requests to external web services or databases.
-* Don't mix log messages with different security requirements in the same log file. For example, don't write debug and audit information to the same log.
-* With the exception of auditing events, make sure that all logging calls are fire-and-forget operations that do not block the progress of business operations. Auditing events are exceptional because they are critical to the business and can be classified as a fundamental part of business operations.
-* Make sure that logging is extensible and does not have any direct dependencies on a concrete target. For example, rather than writing information by using *System.Diagnostics.Trace*, define an abstract interface (such as *ILogger*) that exposes logging methods and that can be implemented through any appropriate means.
-* Make sure that all logging is fail-safe and never triggers any cascading errors. Logging must not throw any exceptions.
-* Treat instrumentation as an ongoing iterative process and review logs regularly, not just when there is a problem.
+•	데이터베이스 시스템, 웹 서비스 또는 인프라의 일부인 다른 시스템 수준의 서비스 등 외부 서비스에 대한 모든 호출을 기록합니다. 각 호출을 수행하는 데 걸리는 시간과 호출의 성공 또는 실패에 대한 정보를 기록합니다. 가능한 경우 모든 재시도 및 발생하는 일시적 오류에 대한 장애 정보를 캡처합니다.
 
-## Collecting and storing data
-The collection stage of the monitoring process is concerned with retrieving the information that instrumentation generates, formatting this data to make it easier for the analysis/diagnosis stage to consume, and saving the transformed data in reliable storage. The instrumentation data that you gather from different parts of a distributed system can be held in a variety of locations and with varying formats. For example, your application code might generate trace log files and generate application event log data, whereas performance counters that monitor key aspects of the infrastructure that your application uses can be captured through other technologies. Any third-party components and services that your application uses might provide instrumentation information in different formats, by using separate trace files, blob storage, or even a custom data store.
 
-Data collection is often performed through a collection service that can run autonomously from the application that generates the instrumentation data. Figure 2 illustrates an example of this architecture, highlighting the instrumentation data-collection subsystem.
+### 원격 분석 시스템과의 호환성 확보
+대부분의 경우, 계측으로 생성되는 정보는 일련의 이벤트로 생성된 다음, 처리 및 분석을 위해 별도의 원격 분석 시스템으로 전달됩니다. 원격 분석 시스템은 일반적으로 특정 응용 프로그램 또는 기술과 독립적이지만 정보가 일반적으로 스키마에 의해 정의된 특정 형식을 따르기를 기대합니다. 스키마는 원격 분석 시스템이 수집할 수 있는 데이터 필드와 유형을 정의하는 계약을 효과적으로 지정합니다. 스키마는 다양한 플랫폼과 장치로부터 도달하는 데이터를 허용하도록 일반화되어야 합니다. 
+
+공통 스키마에는 이벤트 이름, 이벤트 시간, 발신자의 IP 주소 및 다른 이벤트와의 상관에 필요한 세부 사항(예: 사용자 ID, 장치 ID 및 응용 프로그램 ID) 등 모든 계측 이벤트에 공통적인 필드가 포함되어야 합니다. 많은 수의 장치가 이벤트를 발생시킬 수 있으므로 스키마는 장치 유형에 의존해서는 안됩니다. 또한 다양한 장치가 동일한 응용 프로그램에 대해 이벤트를 발생시킬 수 있습니다(응용 프로그램은 로밍 또는 다른 형태의 교차 장치 배포를 지원할 수 있음).
+
+스키마에는 여러 응용 프로그램에서 공통적인 특정 시나리오와 관련된 도메인 필드도 포함될 수 있습니다. 이는 예외, 응용 프로그램 시작 및 종료 이벤트, 웹 서비스 API 호출의 성공 및/또는 실패에 대한 정보일 수 있습니다. 동일한 도메인 필드 집합을 사용하는 모든 응용 프로그램은 동일한 이벤트 집합을 방출해야 하므로 일련의 공통 보고서 및 분석을 작성할 수 있습니다. 
+
+마지막으로, 스키마에는 응용 프로그램별 이벤트의 세부 사항을 캡처하기 위한 사용자 지정 필드가 포함될 수 있습니다. 
+
+### 응용 프로그램 계측 모범 사례
+다음 목록에는 클라우드에서 실행되는 분산 응용 프로그램을 계측하r기 위한 모범 사례가 요약되어 있습니다. 
+
+•	로그를 쉽게 읽고 분석하도록 만듭니다. 가능한 경우 구조화된 로깅을 사용합니다. 로그 메시지를 간결하면서도 상세히 작성합니다.
+
+•	모든 로그에서 소스를 식별하고 각 로그 레코드가 기록될 때 컨텍스트와 타이밍 정보를 제공합니다.
+
+•	모든 타임스탬프에 동일한 표준 시간대와 형식을 사용합니다. 이는 서로 다른 지역에서 실행되는 하드웨어와 서비스에 걸친 운영에 대한 이벤트를 서로 연관시키는 데 도움이 됩니다.
+
+•	로그를 분류하고 메시지를 해당 로그 파일에 씁니다.
+
+•	시스템 또는 사용자의 개인 정보에 대한 민감한 정보를 공개하지 마십시오. 기록하기 전에 이 정보를 삭제하되 관련 정보는 유지되도록 합니다. 예를 들어, 데이터베이스 연결 문자열에서 ID와 암호를 제거하지만 분석자가 시스템이 올바른 데이터베이스에 액세스하고 있는지 확인할 수 있도록 나머지 정보를 로그에 기록합니다. 모든 중요한 예외를 기록하되, 관리자가 낮은 수준의 예외 및 경고에 대해서는 기록을 설정 및 해제할 수 있도록 해야 합니다. 또한 모든 재시도 논리 정보를 캡처하고 로깅하십시오. 이 데이터는 시스템의 일시적인 상태를 모니터링하는 데 유용할 수 있습니다.
+
+•	외부 웹 서비스 또는 데이터베이스에 대한 요청 등의 프로세스 호출을 추적합니다.
+
+•	동일한 로그 파일에서 서로 다른 보안 요구 사항을 가진 로그 메시지를 혼합하지 마십시오. 예를 들어, 디버그 및 감사 정보를 동일한 로그에 기록해서는 안 됩니다.
+
+•	감사 이벤트를 제외하고 모든 로깅 호출이 비즈니스 운영의 진행을 차단하지 않는, 보내고 잊는(fire-and-forget) 방식의 작업인지 확인하십시오. 감사 이벤트는 비즈니스에 매우 중요하며 비즈니스 운영의 기본적인 부분으로 분류될 수 있기 때문에 예외적입니다.
+
+•	로깅이 확장 가능하고 구체적인 대상에 직접적인 종속성이 없는지 확인하십시오. 예를 들어 System.Diagnostics.Trace를 사용하여 정보를 작성하는 대신 로깅 메서드를 노출하고 적절한 방법을 통해 구현할 수 있는 추상적 인터페이스(예: ILogger)를 정의합니다.
+
+•	모든 로깅이 안전하다는 것을 확인하고 계단식 오류를 트리거하지 마십시오. 로깅은 어떤 예외도 발생시키지 않아야 합니다.
+
+•	계측을 지속적인 반복 프로세스로 처리하고 문제가 있을 때뿐만 아니라 정기적으로 로그를 검토하십시오.
+
+
+## 데이터 수집 및 저장
+모니터링 프로세스의 수집 단계에서는 계측이 생성하는 정보를 검색하고, 분석/진단 단계를 보다 쉽게수행할 수 있도록 이 데이터의 형식을 지정하고, 변환된 데이터를 신뢰할 수 있는 저장소에 저장하는 과정이 관련됩니다. 분산 시스템의 다른 부분에서 수집한 계측 데이터는 여러 위치에 다양한 형식으로 보관할 수 있습니다. 예를 들어 응용 프로그램 코드는 추적 로그 파일을 생성하고 응용 프로그램 이벤트 로그 데이터를 생성할 수 있지만 응용 프로그램에서 사용하는 인프라의 주요 측면을 모니터링하는 성능 카운터의 경우 다른 기술을 통해 캡처할 수 있습니다. 응용 프로그램에서 사용하는 타사 구성 요소 및 서비스는 별도의 추적 파일, Blob 저장소 또는 사용자 지정 데이터 저장소를 사용하여 다른 형식으로 계측 정보를 제공할 수 있습니다. 
+
+데이터 수집은 종종 계측 데이터를 생성하는 응용 프로그램에서 자율적으로 실행할 수 있는 수집 서비스를 통해 수행됩니다. 그림 2는 계측 데이터 수집 하위 시스템을 강조한 이 아키텍처의 예를 보여줍니다. 
 
 ![Example of collecting instrumentation data](./images/monitoring/TelemetryService.png)
 
-*Figure 2.
-Collecting instrumentation data*
+*그림 2. 계측 데이터 수집*
 
-Note that this is a simplified view. The collection service is not necessarily a single process and might comprise many constituent parts running on different machines, as described in the following sections. Additionally, if the analysis of some telemetry data must be performed quickly (hot analysis, as described in the section [Supporting hot, warm, and cold analysis](#supporting-hot-warm-and-cold-analysis) later in this document), local components that operate outside the collection service might perform the analysis tasks immediately. Figure 2 depicts this situation for selected events. After analytical processing, the results can be sent directly to the visualization and alerting subsystem. Data that's subjected to warm or cold analysis is held in storage while it awaits processing.
+이것은 단순화된 보기임에 유의하십시오. 수집 서비스는 반드시 단일 프로세스일 필요는 없으며 다음 섹션에서 설명하는 것처럼 여러 시스템에서 실행되는 많은 요소로 구성될 수 있습니다. 또한 일부 원격 분석 데이터의 분석을 신속하게 수행해야 하는 경우(이 문서 뒷부분의 [핫, 웜 및 콜드 분석 지원](#supporting-hot-warm-and-cold-analysis) 섹션에 설명된 대로 핫 분석) 수집 서비스 외부에서 작동하는 로컬 구성 요소가 즉시 분석 작업을 수행할 수 있습니다. 그림 2는 선택된 이벤트에 대한 이 상황을 보여줍니다. 분석 처리 후, 결과를 시각화 및 알림 하위 시스템으로 직접 보낼 수 있습니다. 웜 또는 콜드 분석 대상인 데이터는 처리를 기다리는 동안 저장소에 보관됩니다. 
 
-For Azure applications and services, Azure Diagnostics provides one possible solution for capturing data. Azure Diagnostics gathers data from the following sources for each compute node, aggregates it, and then uploads it to Azure Storage:
+Azure 응용 프로그램 및 서비스의 경우 Azure Diagnostics는 데이터 캡처를 위한 한 가지 가능한 솔루션을 제공합니다. Azure Diagnostics는 각 계산 노드에 대해 다음 소스에서 데이터를 수집하고 집계한 다음 Azure 저장소에 업로드합니다. 
 
-* IIS logs
-* IIS Failed Request logs
-* Windows event logs
-* Performance counters
-* Crash dumps
-* Azure Diagnostics infrastructure logs  
-* Custom error logs
-* .NET EventSource
-* Manifest-based ETW
+•	IIS 로그
 
-For more information, see the article [Azure: Telemetry Basics and Troubleshooting](http://social.technet.microsoft.com/wiki/contents/articles/18146.windows-azure-telemetry-basics-and-troubleshooting.aspx).
+•	IIS 실패한 요청 로그
 
-### Strategies for collecting instrumentation data
-Considering the elastic nature of the cloud, and to avoid the necessity of manually retrieving telemetry data from every node in the system, you should arrange for the data to be transferred to a central location and consolidated. In a system that spans multiple datacenters, it might be useful to first collect, consolidate, and store data on a region-by-region basis, and then aggregate the regional data into a single central system.
+•	Windows 이벤트 로그
 
-To optimize the use of bandwidth, you can elect to transfer less urgent data in chunks, as batches. However, the data must not be delayed indefinitely, especially if it contains time-sensitive information.
+•	성능 카운터
 
-#### *Pulling and pushing instrumentation data*
-The instrumentation data-collection subsystem can actively retrieve instrumentation data from the various logs and other sources for each instance of the application (the *pull model*). Or, it can act as a passive receiver that waits for the data to be sent from the components that constitute each instance of the application (the *push model*).
+•	크래시 덤프
 
-One approach to implementing the pull model is to use monitoring agents that run locally with each instance of the application. A monitoring agent is a separate process that periodically retrieves (pulls) telemetry data collected at the local node and writes this information directly to centralized storage that all instances of the application share. This is the mechanism that Azure Diagnostics implements. Each instance of an Azure web or worker role can be configured to capture diagnostic and other trace information that's stored locally. The monitoring agent that runs alongside each instance copies the specified data to Azure Storage. The article [Enabling Diagnostics in Azure Cloud Services and Virtual Machines](/azure/cloud-services/cloud-services-dotnet-diagnostics) provides more details on this process. Some elements, such as IIS logs, crash dumps, and custom error logs, are written to blob storage. Data from the Windows event log, ETW events, and performance counters is recorded in table storage. Figure 3 illustrates this mechanism.
+•	Azure Diagnostics 인프라 로그 
+
+•	사용자 지정 오류 로그
+
+•	.NET EventSource
+
+•	매니페스트 기반 ETW
+
+
+자세한 내용은 [Azure: 원격 분석 기본 사항 및 문제 해결](http://social.technet.microsoft.com/wiki/contents/articles/18146.windows-azure-telemetry-basics-and-troubleshooting.aspx) 문서를 참조하십시오. 
+
+### 계측 데이터 수집 전략
+클라우드의 탄력성을 고려하고 시스템의 모든 노드에서 원격 분석 데이터를 수동으로 검색할 필요성을 피하려면 데이터를 중앙 위치로 전송하고 통합해야 합니다. 여러 데이터 센터에 걸쳐진 시스템에서는 먼저 지역별 데이터를 수집, 통합 및 저장한 다음 지역 데이터를 단일 중앙 시스템으로 집계하는 것이 유용할 수 있습니다. 
+
+대역폭 사용을 최적화하기 위해 긴급하지 않은 데이터를 여러 개의 청크 단위로 전송할 수 있습니다. 그러나 특히 시간에 민감한 정보가 포함되어 있으면 데이터를 무기한으로 지연시켜서는 안됩니다. 
+
+#### *계측 데이터 끌어 오기 및 밀기*
+계측 데이터 수집 하위 시스템은 응용 프로그램의 각 인스턴스에 대한 다양한 로그 및 기타 소스에서 계측 데이터를 능동적으로 검색할 수 있습니다(*풀(pull)*모델).또는 응용 프로그램의 각 인스턴스를 구성하는 구성 요소에서 데이터가 전송될 때까지 대기하는 수동 수신기 역할을 할 수 있습니다(*푸시(push)* 모델). 
+
+풀 모델을 구현하는 한 가지 방법은 응용 프로그램의 각 인스턴스와 함께 로컬로 실행되는 모니터링 에이전트를 사용하는 것입니다. 모니터링 에이전트는 로컬 노드에서 수집된 원격 분석 데이터를 주기적으로 검색(풀)하는 별도의 프로세스로 이 정보를 응용 프로그램의 모든 인스턴스가 공유하는 중앙 집중식 저장소에 직접 씁니다. 이것은 Azure Diagnostics가 구현하는 메커니즘입니다. Azure 웹 또는 작업자 역할의 각 인스턴스는 로컬에 저장된 진단 및 기타 추적 정보를 캡처하도록 구성할 수 있습니다. 각 인스턴스와 함께 실행되는 모니터링 에이전트는 지정된 데이터를 Azure 저장소로 복사합니다. [Azure 클라우드 서비스 및 가상 컴퓨터에서 진단 도구 사용하기](/azure/cloud-services/cloud-services-dotnet-diagnostics) 문서에서 이 프로세스에 대해 자세히 설명합니다. IIS 로그, 크래시 덤프 및 사용자 지정 오류 로그와 같은 일부 요소는 Blob 저장소에 기록됩니다. Windows 이벤트 로그, ETW 이벤트 및 성능 카운터의 데이터는 테이블 저장소에 기록됩니다. 그림 3은 이 메커니즘을 보여줍니다.
 
 ![Illustration of using a monitoring agent to pull information and write to shared storage](./images/monitoring/PullModel.png)
 
-*Figure 3.
-Using a monitoring agent to pull information and write to shared storage*
+*그림 3. 모니터링 에이전트를 사용하여 정보를 가져와서 공유 저장소에 쓰기*
 
-> [!NOTE]
-> Using a monitoring agent is ideally suited to capturing instrumentation data that's naturally pulled from a data source. An example is information from SQL Server Dynamic Management Views or the length of an Azure Service Bus queue.
+> [!참고]
+> 모니터링 에이전트를 사용하면 자연스럽게 데이터 소스에서 가져온 계측 데이터를 캡처하는 데 이상적입니다. SQL Server Dynamic Management Views의 정보 또는 Azure Service Bus 큐의 길이를 예로 들 수 있습니다. 
 > 
 > 
 
-It's feasible to use the approach just described to store telemetry data for a small-scale application running on a limited number of nodes in a single location. However, a complex, highly scalable, global cloud application might generate huge volumes of data from hundreds of web and worker roles, database shards, and other services. This flood of data can easily overwhelm the I/O bandwidth available with a single, central location. Therefore, your telemetry solution must be scalable to prevent it from acting as a bottleneck as the system expands. Ideally, your solution should incorporate a degree of redundancy to reduce the risks of losing important monitoring information (such as auditing or billing data) if part of the system fails.
+방금 설명한 접근법을 사용하여 제한된 수의 노드에서 실행되는 소규모 응용 프로그램에 대한 원격 분석 데이터를 단일 위치에 저장하는 것이 가능합니다. 그러나 복잡하고 확장성이 뛰어난 글로벌 클라우드 응용 프로그램은 수백 가지 웹 및 작업자 역할, 분할된 데이터베이스 및 기타 서비스로부터 방대한 양의 데이터를 생성할 수 있습니다. 이러한 대량의 데이터는 단일 중앙 위치에서 사용 가능한 I/O 대역폭을 쉽게 압도할 수 있습니다. 따라서 원격 분석 솔루션은 시스템이 확장됨에 따라 병목 현상을 일으키지 않도록 확장 가능해야 합니다. 이상적으로는 시스템의 일부가 실패할 경우 중요한 모니터링 정보(예: 감사 또는 청구 데이터)를 유실할 위험을 줄이기 위해 솔루션에 중복성을 도입해야 합니다. 
 
-To address these issues, you can implement queuing, as shown in Figure 4. In this architecture, the local monitoring agent (if it can be configured appropriately) or custom data-collection service (if not) posts data to a queue. A separate process running asynchronously (the storage writing service in Figure 4) takes the data in this queue and writes it to shared storage. A message queue is suitable for this scenario because it provides "at least once" semantics that help ensure that queued data will not be lost after it's posted. You can implement the storage writing service by using a separate worker role.
+이러한 문제를 해결하기 위해 그림 4와 같이 큐를 구현할 수 있습니다. 이 아키텍처에서는 로컬 모니터링 에이전트(적절하게 구성할 수 있는 경우) 또는 사용자 지정 데이터 수집 서비스(그렇지 않은 경우)가 큐에 데이터를 게시합니다. 비동기적으로 실행되는 별도의 프로세스(그림 4의 저장소 쓰기 서비스)가 이 큐의 데이터를 가져와서 공유 저장소에 씁니다. 메시지 큐는은 큐에 저장된 데이터가 게시된 후에 손실되지 않도록 "적어도 한 번" 의미를 제공하므로 이 시나리오에 적합합니다. 별도의 작업자 역할을 사용하여 저장소 쓰기 서비스를 구현할 수 있습니다. 
 
 ![Illustration of using a queue to buffer instrumentation data](./images/monitoring/BufferedQueue.png)
 
-*Figure 4.
-Using a queue to buffer instrumentation data*
+*그림 4. 큐를 사용하여 계측 데이터를 버퍼링*
 
-The local data-collection service can add data to a queue immediately after it's received. The queue acts as a buffer, and the storage writing service can retrieve and write the data at its own pace. By default, a queue operates on a first-in, first-out basis. But you can prioritize messages to accelerate them through the queue if they contain data that must be handled more quickly. For more information, see the [Priority Queue](https://msdn.microsoft.com/library/dn589794.aspx) pattern. Alternatively, you can use different channels (such as Service Bus topics) to direct data to different destinations depending on the form of analytical processing that's required.
+로컬 데이터 수집 서비스는 데이터를 받은 직후 큐에 데이터를 추가할 수 있습니다. 큐는 버퍼 역할을 하며 저장소 쓰기 서비스는 고유한 속도로 데이터를 검색하고 쓸 수 있습니다. 기본적으로 큐는 선입선출 기준으로 작동합니다. 그러나 보다 신속하게 처리해야 하는 데이터가 포함되어 있으면 큐에서 메시지를 우선 처리할 수 있습니다. 자세한 내용은 [우선 순위 큐](https://msdn.microsoft.com/library/dn589794.aspx) 패턴을 참조하십시오. 또는 서비스 버스 항목 등의 다른 채널을 사용하여 필요한 분석 프로세스의 형태에 따라 데이터를 다른 대상으로 보낼 수 있습니다. 
 
-For scalability, you can run multiple instances of the storage writing service. If there is a high volume of events, you can use an event hub to dispatch the data to different compute resources for processing and storage.
+확장성을 위해 저장소 쓰기 서비스의 여러 인스턴스를 실행할 수 있습니다. 많은 양의 이벤트가 있는 경우 이벤트 허브를 사용하여 처리 및 저장을 위한 여러 컴퓨팅 리소스에 데이터를 디스패치할 수 있습니다. 
 
 <a name="consolidating-instrumentation-data"></a>
 
-#### *Consolidating instrumentation data*
-The instrumentation data that the data-collection service retrieves from a single instance of an application gives a localized view of the health and performance of that instance. To assess the overall health of the system, it's necessary to consolidate some aspects of the data in the local views. You can perform this after the data has been stored, but in some cases, you can also achieve it as the data is collected. Rather than being written directly to shared storage, the instrumentation data can pass through a separate data consolidation service that combines data and acts as a filter and cleanup process. For example, instrumentation data that includes the same correlation information such as an activity ID can be amalgamated. (It's possible that a user starts performing a business operation on one node and then gets transferred to another node in the event of node failure, or depending on how load balancing is configured.) This process can also detect and remove any duplicated data (always a possibility if the telemetry service uses message queues to push instrumentation data out to storage). Figure 5 illustrates an example of this structure.
+#### *계측 데이터 통합*
+데이터 수집 서비스가 응용 프로그램의 단일 인스턴스에서 검색하는 계측 데이터는 해당 인스턴스의 상태 및 성능에 대한 지역화된 보기를 제공합니다. 시스템의 전반적인 상태를 평가하려면 로컬 보기에서 데이터의 일부 측면을 통합해야 합니다. 데이터를 저장한 후에 이 작업을 수행할 수 있지만 경우에 따라 데이터를 수집할 때 수행할 수도 있습니다. 계측 데이터는 공유 저장소에 직접 쓰는 대신 데이터를 결합하고 필터 및 정리 프로세스의 역할을 하는 별도의 데이터 통합서비스를 통과할 수 있습니다. 예를 들어, 활동 ID 등의 동일한 상관 정보를 포함하는 계측 데이터를 병합할 수 있습니다. (사용자가 하나의 노드에서 비즈니스 작업을 수행하기 시작한 후에 노드 오류가 발생하는 경우, 또는 부하 균형 조정이 구성된 방식에 따라 다른 노드로 전송될 수 있습니다.) 또한 이 프로세스는 중복된 데이터를 감지하고 제거할 수 있습니다(원격 분석 서비스가 메시지 큐를 사용하여 계측 데이터를 저장소로 푸시하는 경우 항상 가능성이 있음). 그림 5는 이 구조의 예를 보여줍니다. 
 
 ![Example of using a service to consolidate instrumentation data](./images/monitoring/Consolidation.png)
 
-*Figure 5.
-Using a separate service to consolidate and clean up instrumentation data*
+*그림 5. 별도의 서비스를 사용하여 계측 데이터 통합및 정리*
 
-### Storing instrumentation data
-The previous discussions have depicted a rather simplistic view of the way in which instrumentation data is stored. In reality, it can make sense to store the different types of information by using technologies that are most appropriate to the way in which each type is likely to be used.
+### 계측 데이터 저장
+이전의 논의는 계측 데이터가 저장되는 방식에 대한 다소 단순한 견해를 나타냈습니다. 실제로는 각 유형이 사용되는 방식에 가장 적합한 기술을 사용하여 다양한 유형의 정보를 저장하는 것이 합리적입니다. 
 
-For example, Azure blob and table storage have some similarities in the way in which they're accessed. But they have limitations in the operations that you can perform by using them, and the granularity of the data that they hold is quite different. If you need to perform more analytical operations or require full-text search capabilities on the data, it might be more appropriate to use data storage that provides capabilities that are optimized for specific types of queries and data access. For example:
+예를 들어, Azure Blob과 테이블 저장소는 액세스되는 방식에 있어 몇 가지 유사점이 있습니다. 그러나 이들을 사용하여 수행할 수 있는 작업에는 제한이 있으며, 보유하고 있는 데이터의 세분성은 매우 다릅니다. 더 많은 분석 작업을 수행하거나 데이터에 대한 전문 검색 기능이 필요한 경우 특정 유형의 쿼리 및 데이터 액세스에 최적화된 기능을 제공하는 데이터 저장소를 사용하는 것이 더 적합할 수 있습니다. 예: 
 
-* Performance counter data can be stored in a SQL database to enable ad hoc analysis.
-* Trace logs might be better stored in Azure DocumentDB.
-* Security information can be written to HDFS.
-* Information that requires full-text search can be stored through Elasticsearch (which can also speed searches by using rich indexing).
+•	성능 카운터 데이터를 SQL 데이터베이스에 저장하여 임시 분석을 수행할 수 있습니다.
 
-You can implement an additional service that periodically retrieves the data from shared storage, partitions and filters the data according to its purpose, and then writes it to an appropriate set of data stores as shown in Figure 6. An alternative approach is to include this functionality in the consolidation and cleanup process and write the data directly to these stores as it's retrieved rather than saving it in an intermediate shared storage area. Each approach has its advantages and disadvantages. Implementing a separate partitioning service lessens the load on the consolidation and cleanup service, and it enables at least some of the partitioned data to be regenerated if necessary (depending on how much data is retained in shared storage). However, it consumes additional resources. Also, there might be a delay between the receipt of instrumentation data from each application instance and the conversion of this data into actionable information.
+•	추적 로그는 Azure DocumentDB에 저장하는 것이 더 적합할 수 있습니다.
+
+•	보안 정보는 HDFS에 기록될 수 있습니다.
+
+•	전문 검색이 필요한 정보는 Elasticsearch(풍부한 인덱싱을 사용하여 검색 속도를 높일 수 있음)를 통해 저장할 수 있습니다.
+
+
+주기적으로 공유 저장소에서 데이터를 검색하고 목적에 따라 데이터를 파티션 및 필터링한 다음 그림 6에 표시된 대로 적절한 데이터 저장소 세트에 기록하는 추가 서비스를 구현할 수 있습니다. 다른 방법으로는 통합 및 정리 프로세스에 이 기능을 포함하고 중간 공유 저장 영역에 저장하는 대신 가져온 데이터를 직접 이러한 저장소에 쓸 수 있습니다. 각각의 접근 방식에는 장점과 단점이 있습니다. 별도의 파티셔닝 서비스를 구현하면 통합 및 정리 서비스에 대한 부하가 줄어들고 필요에 따라(공유 저장소에 보존되는 데이터의 양에 따라) 분할된 데이터 중 적어도 일부를 다시 생성할 수 있습니다. 그러나 추가 리소스를 소비합니다. 또한 각 응용 프로그램 인스턴스의 계측 데이터를 수신하고 이 데이터를 실행 가능한 정보로 변환하는 사이에 지연이 발생할 수 있습니다. 
 
 ![Partitioning and storage of data](./images/monitoring/DataStorage.png)
 
-*Figure 6.
-Partitioning data according to analytical and storage requirements*
+*그림 6. 분석 및 저장소 요구 사항에 따라 데이터 파티셔닝*
 
-The same instrumentation data might be required for more than one purpose. For example, performance counters can be used to provide a historical view of system performance over time. This information might be combined with other usage data to generate customer billing information. In these situations, the same data might be sent to more than one destination, such as a document database that can act as a long-term store for holding billing information, and a multidimensional store for handling complex performance analytics.
+동일한 계측 데이터가 두 가지 이상의 목적을 충족하는 데 필요할 수 있습니다. 예를 들어, 성능 카운터를 사용하여 시간 경과에 따른 시스템 성능의 이력 보기를 제공할 수 있습니다. 이 정보는 다른 사용 데이터와 결합되어 고객 청구 정보를 생성할 수 있습니다. 이러한 상황에서 청구 정보를 보관하기 위한 장기 저장소 역할을 할 수 있는 문서 데이터베이스와 복잡한 성능 분석을 처리하는 다차원 저장소와 같은 두 개 이상의 대상으로 동일한 데이터가 전송될 수 있습니다. 
 
-You should also consider how urgently the data is required. Data that provides information for alerting must be accessed quickly, so it should be held in fast data storage and indexed or structured to optimize the queries that the alerting system performs. In some cases, it might be necessary for the telemetry service that gathers the data on each node to format and save data locally so that a local instance of the alerting system can quickly notify you of any issues. The same data can be dispatched to the storage writing service shown in the previous diagrams and stored centrally if it's also required for other purposes.
+또한 얼마나 긴급하게 데이터가 필요한지 고려해야 합니다. 경고를 위한 정보를 제공하는 데이터는 신속하게 액세스해야 하므로 경고 시스템이 수행하는 쿼리를 최적화하기 위해 빠른 데이터 저장소에 보관하고 인덱싱 또는 구조화시켜야 합니다. 경우에 따라 각 노드의 데이터를 수집하는 원격 분석 서비스가 데이터를 로컬로 포맷하고 저장하여 경고 시스템의 로컬 인스턴스가 모든 문제를 신속하게 알릴 수 있어야 합니다. 동일한 데이터는 이전 다이어그램에 표시된 저장소 쓰기 서비스에 디스패치할 수 있으며 다른 목적으로도 필요하면 중앙 집중식으로 저장할 수 있습니다.
 
-Information that's used for more considered analysis, for reporting, and for spotting historical trends is less urgent and can be stored in a manner that supports data mining and ad hoc queries. For more information, see the section [Supporting hot, warm, and cold analysis](#supporting-hot-warm-and-cold-analysis) later in this document.
+추가 분석, 보고 및 과거 추세 파악에 사용되는 정보는 덜 긴급하며 데이터 마이닝 및 특별 쿼리를 지원하는 방식으로 저장될 수 있습니다. 자세한 내용은 이 문서 뒷부분의 [핫, 웜 및 콜드 분석 지원](#supporting-hot-warm-and-cold-analysis) 섹션을 참조하십시오. 
 
-#### *Log rotation and data retention*
-Instrumentation can generate considerable volumes of data. This data can be held in several places, starting with the raw log files, trace files, and other information captured at each node to the consolidated, cleaned, and partitioned view of this data held in shared storage. In some cases, after the data has been processed and transferred, the original raw source data can be removed from each node. In other cases, it might be necessary or simply useful to save the raw information. For example, data that's generated for debugging purposes might be best left available in its raw form but can then be discarded quickly after any bugs have been rectified.
+#### *로그 순환 및 데이터 보존*
+계측은 상당한 양의 데이터를 생성할 수 있습니다. 이 데이터는 원시 로그 파일, 추적 파일 및 각 노드에서 수집된 기타 정보부터 시작해 공유 저장소에 보관된 이 데이터의 통합, 정리 및 분할된 보기까지 여러 위치에 보관될 수 있습니다. 경우에 따라 데이터가 처리되고 전송된 후 원래 원시 소스 데이터를 각 노드에서 제거할 수 있습니다. 또 다른 경우에는 원시 정보를 저장하는 것이 필요하거나 단순히 유용할 수도 있습니다. 예를 들어, 디버깅 목적으로 생성된 데이터는 원시 형식으로 사용 가능한 상태로 유지하는 것이 가장 좋지만 버그 수정 후 신속하게 폐기될 수 있습니다. 
 
-Performance data often has a longer life so that it can be used for spotting performance trends and for capacity planning. The consolidated view of this data is usually kept online for a finite period to enable fast access. After that, it can be archived or discarded. Data gathered for metering and billing customers might need to be saved indefinitely. Additionally, regulatory requirements might dictate that information collected for auditing and security purposes also needs to be archived and saved. This data is also sensitive and might need to be encrypted or otherwise protected to prevent tampering. You should never record users' passwords or other information that might be used to commit identity fraud. Such details should be scrubbed from the data before it's stored.
+성능 데이터는 수명이 길기 때문에 성능 추세 파악 및 용량 계획에 사용할 수 있습니다. 이 데이터의 통합된 보기는 일반적으로 빠른 액세스를 위해 유한한 기간 동안 온라인 상태로 유지됩니다. 그 후에는 보관하거나 폐기할 수 있습니다. 계량 및 청구 고객을 위해 수집된 데이터는 무기한으로 저장해야 할 수 있습니다. 또한 규정 요구 사항에 따라 감사 및 보안 목적으로 수집된 정보도 보관하고 저장해야 합니다. 이 데이터는 민감하므로 변조를 방지하기 위해 암호화하거나 다른 방식으로 보호해야 할 수도 있습니다. 신원 사기에 악용될 수 있는 사용자의 암호 또는 기타 정보를 절대로 기록해서는 안됩니다. 이러한 세부 정보는 저장되기 전에 데이터에서 삭제해야 합니다. 
 
-#### *Down-sampling*
-It's useful to store historical data so you can spot long-term trends. Rather than saving old data in its entirety, it might be possible to down-sample the data to reduce its resolution and save storage costs. As an example, rather than saving minute-by-minute performance indicators, you can consolidate data that's more than a month old to form an hour-by-hour view.
+#### *다운 샘플링*
+장기적인 경향을 파악할 수 있도록 기록 데이터를 저장하는 것이 유용합니다. 이전 데이터를 전체적으로 저장하는 대신 데이터를 다운 샘플링하여 해상도를 줄이고 저장 비용을 절약할 수 있습니다. 예를 들어, 분 단위 성능 지표를 저장하는 대신 한 달이 넘은 데이터를 통합하여 시간별 보기를 구성할 수 있습니다. 
 
-### Best practices for collecting and storing logging information
-The following list summarizes best practices for capturing and storing logging information:
+### 로깅 정보 수집 및 저장 모범 사례
+다음 목록에는 로깅 정보를 캡처하고 저장하는 모범 사례가 요약되어 있습니다.
 
-* The monitoring agent or data-collection service should run as an out-of-process service and should be simple to deploy.
-* All output from the monitoring agent or data-collection service should be an agnostic format that's independent of the machine, operating system, or network protocol. For example, emit information in a self-describing format such as JSON, MessagePack, or Protobuf rather than ETL/ETW. Using a standard format enables the system to construct processing pipelines; components that read, transform, and send data in the agreed format can be easily integrated.
-* The monitoring and data-collection process must be fail-safe and must not trigger any cascading error conditions.
-* In the event of a transient failure in sending information to a data sink, the monitoring agent or data-collection service should be prepared to reorder telemetry data so that the newest information is sent first. (The monitoring agent/data-collection service might elect to drop the older data, or save it locally and transmit it later to catch up, at its own discretion.)
+•	모니터링 에이전트 또는 데이터 수집 서비스는 Out-of-Process 서비스로 실행되어야 하며 배포가 간단해야 합니다.
 
-## Analyzing data and diagnosing issues
-An important part of the monitoring and diagnostics process is analyzing the gathered data to obtain a picture of the overall well-being of the system. You should have defined your own KPIs and performance metrics, and it's important to understand how you can structure the data that has been gathered to meet your analysis requirements. It's also important to understand how the data that's captured in different metrics and log files is correlated, because this information can be key to tracking a sequence of events and help diagnose problems that arise.
+•	모니터링 에이전트 또는 데이터 수집 서비스의 모든 출력은 시스템, 운영 체제 또는 네트워크 프로토콜과 독립적인 불가지 형식이어야 합니다. 예를 들어, ETL/ETW 보다는 JSON, MessagePack 또는 Protobuf와 같은 자체 설명 형식으로 정보를 내보낼 수 있습니다. 표준 형식을 사용하면 시스템이 처리 파이프라인을 구성할 수 있습니다. 그러면 동의된 형식으로 데이터를 읽고, 변환하고, 전송하는 구성 요소를 쉽게 통합할 수 있습니다.
 
-As described in the section [Consolidating instrumentation data](#consolidating-instrumentation-data), the data for each part of the system is typically captured locally, but it generally needs to be combined with data generated at other sites that participate in the system. This information requires careful correlation to ensure that data is combined accurately. For example, the usage data for an operation might span a node that hosts a website to which a user connects, a node that runs a separate service accessed as part of this operation, and data storage held on another node. This information needs to be tied together to provide an overall view of the resource and processing usage for the operation. Some pre-processing and filtering of data might occur on the node on which the data is captured, whereas aggregation and formatting are more likely to occur on a central node.
+•	모니터링 및 데이터 수집 프로세스는 오류에 안전해야 하며 계단식 오류 조건을 유발하지 않아야 합니다.
+
+•	데이터 싱크에 정보를 전송하는 데 일시적 오류가 발생하는 경우 모니터링 에이전트 또는 데이터 수집 서비스는 원격 분석 데이터를 재정렬하여 최신 정보가 먼저 전송되도록 조치해야 합니다. (모니터링 에이전트/데이터 수집 서비스는 자체 판단에 따라 이전 데이터를 삭제하거나 로컬로 저장하고 나중에 전송하는 방법을 선택할 수 있습니다.)
+
+
+## 데이터 분석 및 문제 진단
+모니터링 및 진단 프로세스의 중요한 부분은 수집된 데이터를 분석하여 시스템의 전반적인 상태를 파악하는 것입니다. 자체적인 KPI 및 성능 메트릭을 정의해야 하며 분석 요구 사항을 충족하기 위해 수집된 데이터를 구성하는 방법을 이해하는 것이 중요합니다. 이 정보는 일련의 이벤트를 추적하고 발생하는 문제를 진단하는 데 중요할 수 있기 때문에 다양한 메트릭 및 로그 파일에 캡처된 데이터의 상관 관계를 이해하는 것도 중요합니다.
+
+[계측 데이터 통합](#consolidating-instrumentation-data) 섹션에서 설명한 것처럼 시스템의 각 부분에 대한 데이터는 일반적으로 로컬로 캡처되지만 대개 시스템에 참여하는 다른 사이트에서 생성된 데이터와 결합해야 합니다. 이 정보는 데이터가 정확하게 결합되도록 주의 깊은 상관 관계가 필요합니다. 예를 들어, 작업에 대한 사용 데이터는 사용자가 연결하는 웹 사이트를 호스팅하는 노드, 이 작업의 일부로 액세스한 별도의 서비스를 실행하는 노드 및 다른 노드에 보관된 데이터 저장소로 확장될 수 있습니다. 이 정보는 리소스의 전반적인 보기와 작업의 처리 사용법을 제공하기 위해 함께 연관시켜야 합니다. 데이터가 캡처된 노드에서 데이터에 일부 전처리 및 필터링이 이루어질 수 있지만 집계 및 형식 지정은 중앙 노드에서 이루어질 가능성이 높습니다. 
 
 <a name="supporting-hot-warm-and-cold-analysis"></a>
 
-### Supporting hot, warm, and cold analysis
-Analyzing and reformatting data for visualization, reporting, and alerting purposes can be a complex process that consumes its own set of resources. Some forms of monitoring are time-critical and require immediate analysis of data to be effective. This is known as *hot analysis*. Examples include the analyses that are required for alerting and some aspects of security monitoring (such as detecting an attack on the system). Data that's required for these purposes must be quickly available and structured for efficient processing. In some cases, it might be necessary to move the analysis processing to the individual nodes where the data is held.
+### 핫, 웜 및 콜드 분석 지원
+시각화, 보고 및 경고 목적으로 데이터를 분석하고 다시 형식을 지정하면 자체 리소스를 사용하는 복잡한 프로세스가 전개될 수 있습니다. 일부 형태의 모니터링은 시간이 중요하며 효과적으로 구현될 수 있도록 데이터를 즉각 분석해야 합니다. 이를 핫 분석이라고 합니다. 경고 및 시스템의 공격 탐지와 같은 보안 모니터링의 일부 측면에 필요한 분석을 예로 들 수 있습니다. 이러한 목적에 필요한 데이터는 효율적인 처리를 위해 신속하게 사용 가능하고 구조화되어야 합니다. 경우에 따라 분석 프로세스를 데이터가 있는 개별 노드로 이동해야 할 수도 있습니다. 
 
-Other forms of analysis are less time-critical and might require some computation and aggregation after the raw data has been received. This is called *warm analysis*. Performance analysis often falls into this category. In this case, an isolated, single performance event is unlikely to be statistically significant. (It might be caused by a sudden spike or glitch.) The data from a series of events should provide a more reliable picture of system performance.
+다른 형태의 분석은 시간에 덜 민감하기 때문에 원시 데이터를 받은 후 계산 및 집계가 필요할 수 있습니다. 이를 웜 분석이라고 합니다. 성능 분석은 종종 이 범주에 속합니다. 이 경우 격리된 단일 성능 이벤트가 통계적으로 유의하지 않을 수 있습니다. (갑작스런 스파이크나 결함이 원인일 수 있습니다.) 일련의 이벤트 데이터는 시스템 성능에 대한 보다 안정적인 그림을 제공해야 합니다. 
 
-Warm analysis can also be used to help diagnose health issues. A health event is typically processed through hot analysis and can raise an alert immediately. An operator should be able to drill into the reasons for the health event by examining the data from the warm path. This data should contain information about the events leading up to the issue that caused the health event.
+웜 분석은 상태 문제를 진단하는 데도 사용될 수 있습니다. 상태 이벤트는 일반적으로 핫 분석을 통해 처리되며 즉시 경고를 제기할 수 있습니다. 운영자는 웜 경로에서 데이터를 검사하여 상태 이벤트의 원인을 드릴다운할 수 있어야 합니다. 이 데이터에는 상태 이벤트를 일으킨 문제에 이르는 이벤트 정보가 포함되어야 합니다. 
 
-Some types of monitoring generate more long-term data. This analysis can be performed at a later date, possibly according to a predefined schedule. In some cases, the analysis might need to perform complex filtering of large volumes of data captured over a period of time. This is called *cold analysis*. The key requirement is that the data is stored safely after it has been captured. For example, usage monitoring and auditing require an accurate picture of the state of the system at regular points in time, but this state information does not have to be available for processing immediately after it has been gathered.
+일부 유형의 모니터링은 보다 장기적인 데이터를 생성합니다. 이 분석은 나중에 미리 정의된 일정에 따라 수행될 수 있습니다. 경우에 따라 일정 기간 동안 수집한 많은 양의 데이터에 대해 복잡한 필터링을 수행해야 할 수도 있습니다. 이것을 *콜드 분석*이라고 합니다. 중요한 요구 사항은 데이터가 캡처된 후에 안전하게 저장되어야 한다는 것입니다. 예를 들어, 사용 모니터링 및 감사를 수행하려면 정기적인 시점에서 시스템 상태를 정확하게 파악해야 하지만 이 상태 정보를 수집한 직후 바로 처리할 필요는 없습니다.
 
-An operator can also use cold analysis to provide the data for predictive health analysis. The operator can gather historical information over a specified period and use it in conjunction with the current health data (retrieved from the hot path) to spot trends that might soon cause health issues. In these cases, it might be necessary to raise an alert so that corrective action can be taken.
+운영자는 콜드 분석을 사용하여 예측적 상태 분석을 위한 데이터를 제공할 수도 있습니다. 운영자는 지정된 기간에 대한 이력 정보를 수집하고 이를 최신 상태 데이터(핫 경로에서 검색)와 함께 사용하여 곧 상태 문제를 일으킬 가능성이 있는 추세를 파악할 수 있습니다. 이러한 경우, 시정 조치를 취할 수 있도록 경고를 제기해야 할 수도 있습니다. 
 
-### Correlating data
-The data that instrumentation captures can provide a snapshot of the system state, but the purpose of analysis is to make this data actionable. For example:
+### 데이터 상관 관계
+계측이 캡처한 데이터는 시스템 상태의 스냅샷을 제공할 수 있지만 분석의 목적은 이 데이터를 실행 가능하게 만드는 것입니다. 예: 
 
-* What has caused an intense I/O loading at the system level at a specific time?
-* Is it the result of a large number of database operations?
-* Is this reflected in the database response times, the number of transactions per second, and application response times at the same juncture?
+•	특정 시간에 시스템 수준에서 과도한 I/O 부하를 유발한 원인은 무엇입니까?
 
-If so, one remedial action that might reduce the load might be to shard the data over more servers. In addition, exceptions can arise as a result of a fault in any level of the system. An exception in one level often triggers another fault in the level above.
+•	많은 수의 데이터베이스 작업의 결과입니까?
 
-For these reasons, you need to be able to correlate the different types of monitoring data at each level to produce an overall view of the state of the system and the applications that are running on it. You can then use this information to make decisions about whether the system is functioning acceptably or not, and determine what can be done to improve the quality of the system.
+•	이것이 데이터베이스 응답 시간, 초당 트랜잭션 수 및 동일한 시점의 응용 프로그램 응답 시간에 반영됩니까?
 
-As described in the section [Information for correlating data](#information-for-correlating-data), you must ensure that the raw instrumentation data includes sufficient context and activity ID information to support the required aggregations for correlating events. Additionally, this data might be held in different formats, and it might be necessary to parse this information to convert it into a standardized format for analysis.
 
-### Troubleshooting and diagnosing issues
-Diagnosis requires the ability to determine the cause of faults or unexpected behavior, including performing root cause analysis. The information that's required typically includes:
+그렇다면 부하를 줄일 수 있는 하나의 시정 조치는 더 많은 서버에서 데이터를 분할하는 것일 수 있습니다. 또한 시스템의 모든 수준에서 오류로 인해 예외가 발생할 수 있습니다. 한 수준의 예외는 종종 상위 수준에서 다른 오류를 유발합니다.
 
-* Detailed information from event logs and traces, either for the entire system or for a specified subsystem during a specified time window.
-* Complete stack traces resulting from exceptions and faults of any specified level that occur within the system or a specified subsystem during a specified period.
-* Crash dumps for any failed processes either anywhere in the system or for a specified subsystem during a specified time window.
-* Activity logs recording the operations that are performed either by all users or for selected users during a specified period.
+이러한 이유로 각 레벨에서 서로 다른 유형의 모니터링 데이터를 상호 연관시켜 시스템의 상태 및 시스템에서 실행중인 응용 프로그램의 전체 보기를 생성할 수 있어야 합니다. 그런 다음 이 정보를 사용하여 시스템이 정상적으로 작동하는지 여부를 결정하고 시스템의 품질을 향상시키기 위해 수행할 수 있는 작업을 결정할 수 있습니다. 
 
-Analyzing data for troubleshooting purposes often requires a deep technical understanding of the system architecture and the various components that compose the solution. As a result, a large degree of manual intervention is often required to interpret the data, establish the cause of problems, and recommend an appropriate strategy to correct them. It might be appropriate simply to store a copy of this information in its original format and make it available for cold analysis by an expert.
+[데이터 상관 관계](#information-for-correlating-data) 정보 섹션에서 설명했듯이 원시 계측 데이터에는 이벤트를 상호 관련시키는 데 필요한 집계를 지원하기에 충분한 컨텍스트 및 활동 ID 정보가 포함되어 있어야 합니다. 또한 이 데이터는 다양한 형식으로 보관될 수 있으며 분석 목적으로 이를 표준 형식으로 변환하기 위해 이 정보를 구문 분석해야 할 수도 있습니다. 
 
-## Visualizing data and raising alerts
-An important aspect of any monitoring system is the ability to present the data in such a way that an operator can quickly spot any trends or problems. Also important is the ability to quickly inform an operator if a significant event has occurred that might require attention.
+### 문제 해결 및 진단
+진단에는 근본 원인 분석 수행을 비롯하여 예기치 않은 동작이나 오류의 원인을 파악할 수 있는 기능이 필요합니다. 필요한 정보는 일반적으로 다음과 같습니다. 
 
-Data presentation can take several forms, including visualization by using dashboards, alerting, and reporting.
+•	지정된 시간 창 동안 전체 시스템 또는 지정된 하위 시스템에 대한 이벤트 로그 및 추적의 자세한 정보.
 
-### Visualization by using dashboards
-The most common way to visualize data is to use dashboards that can display information as a series of charts, graphs, or some other illustration. These items can be parameterized, and an analyst should be able to select the important parameters (such as the time period) for any specific situation.
+•	지정된 기간 동안 시스템 또는 지정된 하위 시스템 내에서 발생하는 지정된 레벨의 예외 및 결함으로 인한 전체 스택 추적.
 
-Dashboards can be organized hierarchically. Top-level dashboards can give an overall view of each aspect of the system but enable an operator to drill down to the details. For example, a dashboard that depicts the overall disk I/O for the system should allow an analyst to view the I/O rates for each individual disk to ascertain whether one or more specific devices account for a disproportionate volume of traffic. Ideally, the dashboard should also display related information, such as the source of each request (the user or activity) that's generating this I/O. This information can then be used to determine whether (and how) to spread the load more evenly across devices, and whether the system would perform better if more devices were added.
+•	지정된 시간 창 동안 시스템 또는 지정된 하위 시스템에서 실패한 프로세스에 대한 크래시 덤프.
 
-A dashboard might also use color-coding or some other visual cues to indicate values that appear anomalous or that are outside an expected range. Using the previous example:
+•	지정된 기간 동안 모든 사용자 또는 선택된 사용자에 대해 수행되는 작업을 기록하는 활동 로그.
 
-* A disk with an I/O rate that's approaching its maximum capacity over an extended period (a hot disk) can be highlighted in red.
-* A disk with an I/O rate that periodically runs at its maximum limit over short periods (a warm disk) can be highlighted in yellow.
-* A disk that's exhibiting normal usage can be displayed in green.
 
-Note that for a dashboard system to work effectively, it must have the raw data to work with. If you are building your own dashboard system, or using a dashboard developed by another organization, you must understand which instrumentation data you need to collect, at what levels of granularity, and how it should be formatted for the dashboard to consume.
+문제 해결을 위해 데이터를 분석하려면 시스템 아키텍처와 솔루션을 구성하는 다양한 구성 요소에 대한 깊이 있는 기술적인 지식이 필요합니다. 결과적으로 데이터를 해석하고 문제의 원인을 파악하며 이를 수정하기 위한 적절한 전략을 권장하기 위해서는 높은 수준의 수작업이 필요합니다. 이 정보의 사본을 원래 형식으로 저장하고 전문가가 콜드 분석을 할 수 있도록 하는 것이 적절할 수 있습니다. 
 
-A good dashboard does not only display information, it also enables an analyst to pose ad hoc questions about that information. Some systems provide management tools that an operator can use to perform these tasks and explore the underlying data. Alternatively, depending on the repository that's used to hold this information, it might be possible to query this data directly, or import it into tools such as Microsoft Excel for further analysis and reporting.
+## 데이터 시각화 및 경고 발생
+모니터링 시스템의 중요한 측면 중 하나는 운영자가 모든 추세나 문제점을 신속하게 파악할 수 있는 방식으로 데이터를 표시할 수 있어야 한다는 것입니다. 또한 주의가 필요한 중대한 사건이 발생한 경우 운영자에게 신속히 알릴 수 있어야 합니다. 
 
-> [!NOTE]
-> You should restrict access to dashboards to authorized personnel, because this information might be commercially sensitive. You should also protect the underlying data for dashboards to prevent users from changing it.
+데이터 표시는 대시보드를 사용한 시각화, 경고 및 보고 등 여러 가지 형태로 이루어질 수 있습니다. 
+
+### 대시보드를 사용한 시각화
+데이터를 시각화하는 가장 일반적인 방법은 정보를 일련의 차트, 그래프 또는 기타 그림으로 표시할 수 있는 대시보드를 사용하는 것입니다. 이러한 항목은 매개 변수화될 수 있으며 분석가는 특정 상황에 대한 중요한 매개 변수(예: 기간)를 선택할 수 있어야 합니다. 
+
+대시보드는 계층적으로 구성할 수 있습니다. 최상위 수준의 대시보드는 시스템의 각 측면에 대한 전체적인 시각을 제공하면서 운영자가 세부적 수준까지 드릴다운할 수 있도록 합니다. 예를 들어 시스템의 전반적인 디스크 I/O를 나타내는 대시보드를 사용하면 분석가가 개별 디스크의 I/O 속도를 살펴보면서 하나 이상의 특정 장치가 불균형적인 양의 트래픽을 차지하는지 확인할 수 있습니다. 이상적으로 대시보드에는 이 I/O를 생성하는 각 요청(사용자 또는 활동)의 소스와 같은 관련 정보도 표시되어야 합니다. 그런 다음 이 정보를 사용하여 장치간에 부하를 균등하게 분산시킬지 여부(및 그 방법), 그리고 더 많은 장치를 추가하면 시스템의 성능이 향상되는지 여부를 결정할 수 있습니다. 
+
+대시보드는 색상 코딩이나 다른 시각적 신호를 사용하여 변칙적으로 나타나거나 예상 범위를 벗어나는 값을 나타낼 수도 있습니다. 이전 예제 사용: 
+
+•	확장된 기간에 걸쳐 최대 용량에 근접하는 I/O 속도로 작동하는 디스크(핫 디스크)는 빨간색으로 강조 표시할 수 있습니다.
+
+•	짧은 기간 동안 최대 한계에서 주기적으로 실행되는 I/O 속도로 작동하는 디스크(웜 디스크)는 노란색으로 강조 표시할 수 있습니다.
+
+•	정상적인 사용을 나타내는 디스크는 녹색으로 표시할 수 있습니다.
+
+
+대시보드 시스템이 효과적으로 작동하려면 작업할 원시 데이터가 있어야 합니다. 자체 대시보드 시스템을 구축하거나 다른 조직에서 개발한 대시보드를 사용하는 경우 수집해야 하는 계측 데이터, 세부적 수준 및 대시보드를 사용하기 위한 형식 지정 방법을 이해해야 합니다. 
+
+좋은 대시보드는 정보를 표시할 뿐만 아니라 분석가가 해당 정보에 대한 특별한 질문을 제기할 수 있도록 해줍니다. 일부 시스템은 운영자가 이러한 작업을 수행하고 기본 데이터를 탐색하는 데 사용할 수 있는 관리 도구를 제공합니다. 또는 이 정보를 저장하는 데 사용되는 리포지토리에 따라 이 데이터를 직접 쿼리하거나 추후 분석 및 보고를 위해 Microsoft Excel과 같은 도구로 가져올 수도 있습니다. 
+
+> [!참고]
+>대시보드에 대한 액세스는 상업적으로 민감할 수 있으므로 권한이 부여된 직원에게만 액세스를 제한해야 합니다. 또한, 사용자가 대시보드를 변경하지 못하도록 대시보드의 기본 데이터를 보호해야 합니다. 
 > 
 > 
 
-### Raising alerts
-Alerting is the process of analyzing the monitoring and instrumentation data and generating a notification if a significant event is detected.
+### 경고 발생
+경고는 중대한 이벤트가 감지되면 모니터링 및 계측 데이터를 분석하고 알림을 생성하는 프로세스입니다. 
 
-Alerting helps ensure that the system remains healthy, responsive, and secure. It's an important part of any system that makes performance, availability, and privacy guarantees to the users where the data might need to be acted on immediately. An operator might need to be notified of the event that triggered the alert. Alerting can also be used to invoke system functions such as autoscaling.
+경고는 시스템이 정상 상태를 유지하고 빠르게 응답하며 안전하게 유지되도록 합니다. 데이터를 즉시 처리해야 하는 사용자에게 성능, 가용성 및 개인 정보 보호를 보장하는 것은 시스템의 중요한 부분입니다. 운영자는 경고를 트리거한 이벤트를 통지 받아야 할 수도 있습니다. 경고는 자동 조정과 같은 시스템 기능을 호출하는 데 사용될 수도 있습니다. 
 
-Alerting usually depends on the following instrumentation data:
+경고에는 일반적으로 다음 계측 데이터가 필요합니다. 
 
-* Security events. If the event logs indicate that repeated authentication and/or authorization failures are occurring, the system might be under attack and an operator should be informed.
-* Performance metrics. The system must quickly respond if a particular performance metric exceeds a specified threshold.
-* Availability information. If a fault is detected, it might be necessary to quickly restart one or more subsystems, or fail over to a backup resource. Repeated faults in a subsystem might indicate more serious concerns.
+•	보안 이벤트. 이벤트 로그에서 반복되는 인증 및/또는 권한 부여 오류가 발생했다는 것이 드러나는 경우 시스템이 공격을 받을 수 있으므로 운영자에게 알려야 합니다.
 
-Operators might receive alert information by using many delivery channels such as email, a pager device, or an SMS text message. An alert might also include an indication of how critical a situation is. Many alerting systems support subscriber groups, and all operators who are members of the same group can receive the same set of alerts.
+•	성능 메트릭. 특정 성능 메트릭이 지정된 임계값을 초과하면 시스템이 신속하게 응답해야 합니다.
 
-An alerting system should be customizable, and the appropriate values from the underlying instrumentation data can be provided as parameters. This approach enables an operator to filter data and focus on those thresholds or combinations of values that are of interest. Note that in some cases, the raw instrumentation data can be provided to the alerting system. In other situations, it might be more appropriate to supply aggregated data. (For example, an alert can be triggered if the CPU utilization for a node has exceeded 90 percent over the last 10 minutes). The details provided to the alerting system should also include any appropriate summary and context information. This data can help reduce the possibility that false-positive events will trip an alert.
+•	가용성 정보. 오류가 감지되면 하나 이상의 하위 시스템을 신속하게 다시 시작하거나 백업 리소스로 장애 조치해야 할 수 있습니다. 하위 시스템에서 반복되는 결함은 더 심각한 문제를 나타낼 수 있습니다.
 
-### Reporting
-Reporting is used to generate an overall view of the system. It might incorporate historical data in addition to current information. Reporting requirements themselves fall into two broad categories: operational reporting and security reporting.
+운영자는 이메일, 호출 장치 또는 SMS 문자 메시지와 같은 많은 전달 매체를 사용하여 경고 정보를 수신할 수 있습니다. 경고에는 상황이 얼마나 중대한지에 대한 표시가 포함될 수도 있습니다. 많은 경보 시스템이 가입자 그룹을 지원하며 동일한 그룹에 구성원으로 속한 모든 운영자는 동일한 경고를 수신할 수 있습니다. 
 
-Operational reporting typically includes the following aspects:
+경고 시스템은 사용자 지정이 가능해야 하며 기본 계측 데이터의 적절한 값을 매개 변수로 제공할 수 있습니다. 이 접근법은 운영자가 데이터를 필터링하고 관심있는 임계값 또는 값의 조합에 집중할 수 있도록 합니다. 경우에 따라 원시 계측 데이터를 경고 시스템에 제공할 수 있습니다. 다른 상황에서는 집계된 데이터를 제공하는 것이 더 적절할 수 있습니다. (예를 들어 노드의 CPU 사용률이 지난 10분 동안 90%를 초과하면 경고가 트리거될 수 있습니다.) 경고 시스템에 제공되는 세부 정보에는 적절한 요약 및 컨텍스트 정보도 포함되어야 합니다. 이 데이터는 가양성 이벤트가 경고를 발생시킬 가능성을 줄이는 데 도움이 될 수 있습니다. 
 
-* Aggregating statistics that you can use to understand resource utilization of the overall system or specified subsystems during a specified time window
-* Identifying trends in resource usage for the overall system or specified subsystems during a specified period
-* Monitoring the exceptions that have occurred throughout the system or in specified subsystems during a specified period
-* Determining the efficiency of the application in terms of the deployed resources, and understanding whether the volume of resources (and their associated cost) can be reduced without affecting performance unnecessarily
+### 보고
+보고는 시스템의 전반적인 보기를 생성하는 데 사용됩니다. 현재 정보 외에 이력 데이터를 통합할 수 있습니다. 보고 요구 사항 자체는 운영보고 및 보안보고의 두 가지 범주로 나뉩니다. 
 
-Security reporting is concerned with tracking customers' use of the system. It can include:
+운영보고에는 일반적으로 다음과 같은 측면이 포함됩니다. 
 
-* Auditing user operations. This requires recording the individual requests that each user performs, together with dates and times. The data should be structured to enable an administrator to quickly reconstruct the sequence of operations that a user performs over a specified period.
-* Tracking resource use by user. This requires recording how each request for a user accesses the various resources that compose the system, and for how long. An administrator must be able to use this data to generate a utilization report by user over a specified period, possibly for billing purposes.
+•	지정된 시간 창 동안 전체 시스템 또는 지정된 하위 시스템의 리소스 사용률을 이해하는 데 사용할 수 있는 통계 집계
 
-In many cases, batch processes can generate reports according to a defined schedule. (Latency is not normally an issue.) But they should also be available for generation on an ad hoc basis if needed. As an example, if you are storing data in a relational database such as Azure SQL Database, you can use a tool such as SQL Server Reporting Services to extract and format data and present it as a set of reports.
+•	특정 기간 동안 전체 시스템 또는 지정된 하위 시스템에 대한 리소스 사용량 추이 확인
 
-## Related patterns and guidance
-* [Autoscaling guidance](../best-practices/auto-scaling.md) describes how to decrease management overhead by reducing the need for an operator to continually monitor the performance of a system and make decisions about adding or removing resources.
-* [Health Endpoint Monitoring Pattern](https://msdn.microsoft.com/library/dn589789.aspx) describes how to implement functional checks within an application that external tools can access through exposed endpoints at regular intervals.
-* [Priority Queue Pattern](https://msdn.microsoft.com/library/dn589794.aspx) shows how to prioritize queued messages so that urgent requests are received and can be processed before less urgent messages.
+•	지정된 기간 동안 전체 시스템 또는 지정된 하위 시스템에서 발생한 예외 모니터링
 
-## More information
-* [Monitor, diagnose, and troubleshoot Microsoft Azure Storage](/azure/storage/storage-monitoring-diagnosing-troubleshooting)
-* [Azure: Telemetry Basics and Troubleshooting](http://social.technet.microsoft.com/wiki/contents/articles/18146.windows-azure-telemetry-basics-and-troubleshooting.aspx)
-* [Enabling Diagnostics in Azure Cloud Services and Virtual Machines](/azure/cloud-services/cloud-services-dotnet-diagnostics)
-* [Azure Redis Cache](https://azure.microsoft.com/services/cache/), [Azure DocumentDB](https://azure.microsoft.com/services/documentdb/), and [HDInsight](https://azure.microsoft.com/services/hdinsight/)
-* [How to use Service Bus queues](/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues)
-* [SQL Server business intelligence in Azure Virtual Machines](/azure/virtual-machines/windows/sqlclassic/virtual-machines-windows-classic-ps-sql-bi)
-* [Receive alert notifications](/azure/monitoring-and-diagnostics/insights-receive-alert-notifications) and [Track service health](/azure/monitoring-and-diagnostics/insights-service-health)
-* [Application Insights](/azure/application-insights/app-insights-overview)
+•	배포된 리소스 측면에서 응용 프로그램의 효율성을 결정하고 불필요하게 성능에 영향을 미치지 않으면서 리소스의 양(및 관련 비용)을 줄일 수 있는지 여부를 파악
+
+
+보안보고는 고객의 시스템 사용을 추적하는 것과 관련됩니다. 여기에는 다음이 포함될 수 있습니다. 
+
+•	사용자 작업 감사. 이를 위해서는 각 사용자가 수행하는 개별 요청을 날짜 및 시간과 함께 기록해야 합니다. 이 데이터는 관리자가 지정된 기간 동안 사용자가 수행하는 작업 시퀀스를 신속하게 재구성할 수 있도록 구성되어야 합니다.
+
+•	사용자의 리소스 사용 추적. 이를 위해서는 사용자를 위한 각 요청이 시스템을 구성하는 다양한 리소스에 얼마나 오랫동안 액세스하는지 기록해야 합니다. 관리자는 이 데이터를 사용하여 지정된 기간 동안 사용자별로 사용 보고서를 생성할 수 있어야 합니다(요금 청구 등을 목적으로).
+
+
+대부분의 경우 배치 프로세스는 정의된 일정에 따라 보고서를 생성할 수 있습니다. (대기 시간은 일반적으로 문제가 되지 않습니다.) 그러나 필요에 따라 임시로 생성할 수도 있어야 합니다. 예를 들어, Azure SQL 데이터베이스와 같은 관계형 데이터베이스에 데이터를 저장하는 경우 SQL Server Reporting Services 등의 도구를 사용하여 데이터를 추출하고 형식을 지정하여 보고서 집합으로 표시할 수 있습니다. 
+
+## 관련 패턴 및 지침
+* [자동 조정 지침](../best-practices/auto-scaling.md)에는 운영자가 시스템 성능을 지속적으로 모니터링하고 리소스 추가 또는 제거에 대한 결정을 내릴 필요성을 줄임으로써 관리 부담을 줄이는 방법이 설명되어 있습니다.
+* [상태 끝점 모니터링 패턴](https://msdn.microsoft.com/library/dn589789.aspx)에는 외부 도구가 노출된 끝점을 통해 정기적으로 액세스할 수 있는 응용 프로그램 내에서 기능 검사를 구현하는 방법이 설명되어 있습니다.
+* [우선 순위 큐 패턴](https://msdn.microsoft.com/library/dn589794.aspx)에는 대기중인 메시지의 우선 순위를 지정하여 긴급한 요청을 받고 덜 긴급한 메시지보다 먼저 처리할 수 있는 방법이 나와 있습니다.
+
+## 자세한 정보
+* [Microsoft Azure Storage 모니터링, 진단 및 문제 해결](/azure/storage/storage-monitoring-diagnosing-troubleshooting)
+* [Azure: 원격 분석 기본 사항 및 문제 해결](http://social.technet.microsoft.com/wiki/contents/articles/18146.windows-azure-telemetry-basics-and-troubleshooting.aspx)
+* [Azure 클라우드 서비스 및 가상 컴퓨터에서 진단 도구 사용하기](/azure/cloud-services/cloud-services-dotnet-diagnostics)
+* [Azure Redis Cache, Azure DocumentDB 및 HDInsight](https://azure.microsoft.com/services/cache/), [Azure DocumentDB](https://azure.microsoft.com/services/documentdb/), and [HDInsight](https://azure.microsoft.com/services/hdinsight/)
+* [서비스 버스 큐 사용 방법](/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues)
+* [Azure 가상 시스템에서 SQL Server 비즈니스 인텔리전스](/azure/virtual-machines/windows/sqlclassic/virtual-machines-windows-classic-ps-sql-bi)
+* [경고 알림 수신 및 서비스 상태 추적](/azure/monitoring-and-diagnostics/insights-receive-alert-notifications) and [Track service health](/azure/monitoring-and-diagnostics/insights-service-health)
+* [응용 프로그램 통찰력](/azure/application-insights/app-insights-overview)
 
