@@ -83,7 +83,7 @@ pnp.pattern.categories: [availability, management-monitoring, resiliency]
 
      >  DoS 공격은 응용 프로그램의 작동에 영향을 미치지 않으면서 기본 기능 테스트를 수행하는 별도의 끝점에 더 적은 영향을 미칠 수 있습니다. 민감한 정보를 노출시킬 수 있는 테스트는 사용하지 않는 것이 좋습니다. 공격자에게 유용할 수 있는 정보를 반환해야 하는 경우, 끝점과 데이터에 권한이 없는 액세스의 차단 방법을 고려해야 하는데, 이 경우 은닉에만 의존하는 것으로는 충분하지 않습니다. 또한 서버에 부하를 추가하더라도 HTTPS 연결을 사용하고 민감한 데이터를 암호화하는 것도 고려해야 합니다.
 
-- 인증을 사용해 보안을 제공하는 끝점에 액세스하는 방법. 모든 도구와 프레임워크를 자격 증명과 상태 확인 요청을 포함하도록 구성할 수는 없습니다. 예를 들어 Microsoft Azure의 기본 제공 상태 확인 기능은 인증 자격 증명을 제공할 수 없습니다. 일부 타사 대안은 [Pingdom](https://www.pingdom.com/), [Panopta](http://www.panopta.com/), [NewRelic](https://newrelic.com/), 및 [Statuscake](https://www.statuscake.com/)입니다.
+- 인증을 사용해 보안을 제공하는 끝점에 액세스하는 방법. 모든 도구와 프레임워크를 자격 증명과 상태 확인 요청을 포함하도록 구성할 수는 없습니다. 예를 들어 Microsoft Azure의 기본 제공 상태 확인 기능은 인증 자격 증명을 제공할 수 없습니다. 일부 타사 대안은 [Pingdom](https://www.pingdom.com/), [Panopta](http://www.panopta.com/), [NewRelic](https://newrelic.com/) 및 [Statuscake](https://www.statuscake.com/)입니다.
 
 - 모니터링 에이전트가 올바르게 수행되고 있는지를 확인하는 방법. 한 가지 접근 방식은 응용 프로그램 구성의 값 또는 에이전트를 테스트하는 데 사용할 수 있는 임의 값을 단순 반환하는 끝점을 노출시키는 것입니다.
 
