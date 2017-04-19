@@ -12,74 +12,74 @@ pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories: [design-implementation, management-monitoring]
 ---
 
-# External Configuration Store
+# 외부 구성 저장소
 
 [!INCLUDE [header](../_includes/header.md)]
 
-Move configuration information out of the application deployment package to a centralized location. This can provide opportunities for easier management and control of configuration data, and for sharing configuration data across applications and application instances.
+구성 정보를 응용 프로그램 배포 패키지에서 중앙집중식 위치로 옮깁니다. 이렇게 하면 구성 데이터를 더 쉽게 관리하고 제어하며 구성 데이터를 응용 프로그램과 응용 프로그램 인스턴스에서 공유할 기회를 제공할 수 있습니다.
 
-## Context and problem
+## 배경 및 문제
 
-The majority of application runtime environments include configuration information that's held in files deployed with the application. In some cases, it's possible to edit these files to change the application behavior after it's been deployed. However, changes to the configuration require the application be redeployed, often resulting in unacceptable downtime and other administrative overhead.
+대부분의 응용 프로그램 런타임 환경은 응용 프로그램과 함께 배포된 파일에 보관되는 구성 정보를 포함합니다. 그런데 배포 후 이런 파일을 편집해 응용 프로그램 동작을 변경할 수 없는 경우가 있습니다. 그런 경우 구성 정보를 변경하려면 응용 프로그램을 재배포해야 하는데, 응용 프로그램의 재배포는 용납할 수 없는 가동 중지 시간 및 다른 관리 오버헤드를 초래하는 경우가 많습니다.
 
-Local configuration files also limit the configuration to a single application, but sometimes it would be useful to share configuration settings across multiple applications. Examples include database connection strings, UI theme information, or the URLs of queues and storage used by a related set of applications.
+로컬 구성 파일 역시 구성을 단일 응용 프로그램으로 제한하지만, 때로 여러 응용 프로그램에서 구성 설정을 공유하는 데 로컬 구성 파일이 유용할 수 있습니다. 그와 같은 사례로는 데이터베이스 연결 문자열, UI 테마 정보, 큐의 URL 및 응용 프로그램의 관련 집합이 사용하는 저장소를 꼽을 수 있습니다.
 
-It's challenging to manage changes to local configurations across multiple running instances of the application, especially in a cloud-hosted scenario. It can result in instances using different configuration settings while the update is being deployed.
+문제는 특히 클라우드 호스팅 시나리오와 관련해 응용 프로그램에서 실행 중인 여러 인스턴스의 로컬 구성 변경 내용을 관리하기가 어렵다는 것인데, 그 결과 업데이트를 배포하는 동안 여러 구성 설정을 사용하는 인스턴스가 발생할 수 있습니다.
 
-In addition, updates to applications and components might require changes to configuration schemas. Many configuration systems don't support different versions of configuration information.
+또한 응용 프로그램과 구성 요소를 업데이트하려면 구성 스키마를 변경해야 하는데, 대부분의 구성 시스템은 구성 정보의 다양한 버전을 지원하지 않습니다.
 
-## Solution
+## 해결책
 
-Store the configuration information in external storage, and provide an interface that can be used to quickly and efficiently read and update configuration settings. The type of external store depends on the hosting and runtime environment of the application. In a cloud-hosted scenario it's typically a cloud-based storage service, but could be a hosted database or other system.
+구성 정보를 외부 저장소에 저장하고 구성 설정을 빠르고 효율적으로 읽고 업데이트하는 데 사용할 수 있는 인터페이스를 제공합니다. 외부 저장소의 유형은 응용 프로그램의 호스팅과 런타임 환경에 따라 달라지는데, 클라우드 호스팅 시나리오에서는 보통 클라우드 기반 저장소 서비스이지만 호스팅된 데이터베이스 또는 다른 시스템이 될 수도 있습니다.
 
-The backing store you choose for configuration information should have an interface that provides consistent and easy-to-use access. It should expose the information in a correctly typed and structured format. The implementation might also need to authorize users’ access in order to protect configuration data, and be flexible enough to allow storage of multiple versions of the configuration (such as development, staging, or production, including multiple release versions of each one).
+구성 정보를 위해 선택하는 백업 저장소는 일관되고 사용하기 쉬운 액세스를 제공하는 인터페이스를 포함해야 합니다. 인터페이스는 올바르게 형식화된 정보를 구조화된 형식으로 표시해야 합니다. 구현도 구성 데이터를 보호하기 위해 사용자 액세스에 권한을 부여해야 하고 구성의 여러 버전(각각의 구성 별 여러 릴리스 버전을 포함하는 개발, 준비, 생산 등)을 저장할 수 있을 정도로 충분히 유연해야 합니다.
 
-> Many built-in configuration systems read the data when the application starts up, and cache the data in memory to provide fast access and minimize the impact on application performance. Depending on the type of backing store used, and the latency of this store, it might be helpful to implement a caching mechanism within the external configuration store. For more information, see the [Caching Guidance](https://msdn.microsoft.com/library/dn589802.aspx). The figure illustrates an overview of the External Configuration Store pattern with optional local cache.
+> 많은 기본 제공 구성 시스템은 응용 프로그램이 시작될 때 데이터를 읽고 데이터를 메모리에 캐시해 빠른 액세스를 제공하고 응용 프로그램 성능에 미치는 영향을 최소화합니다. 사용하는 백업 저장소의 유형과 백업 저장소의 대기 시간에 따라 외부 구성 저장소 내에 캐싱 메커니즘을 구현하는 것이 유용할 수 있습니다. 자세한 내용은 [캐싱 지침](https://msdn.microsoft.com/library/dn589802.aspx)을 참조하시기 바랍니다. 다음 그림은 선택적 로컬 캐시가 있는 외부 구성 저장소 패턴의 개요를 보여줍니다.
 
 ![An overview of the External Configuration Store pattern with optional local cache](./_images/external-configuration-store-overview.png)
 
 
-## Issues and considerations
+## 문제 및 고려 사항
 
-Consider the following points when deciding how to implement this pattern:
+이 패턴의 구현 방법을 결정할 때는 다음 사항을 고려해야 합니다.
 
-Choose a backing store that offers acceptable performance, high availability, robustness, and can be backed up as part of the application maintenance and administration process. In a cloud-hosted application, using a cloud storage mechanism is usually a good choice to meet these requirements.
+수락할 수 있는 성능, 고가용성, 견고성을 제공하고 응용 프로그램 유지와 관리 프로세스의 일부로 백업할 수 있는 백업 저장소를 선택합니다. 클라우드 호스팅 응용 프로그램에서 클라우드 저장소 메커니즘의 사용은 이런 요구 사항을 충족하는 일반적인 선택입니다.
 
-Design the schema of the backing store to allow flexibility in the types of information it can hold. Ensure that it provides for all configuration requirements such as typed data, collections of settings, multiple versions of settings, and any other features that the applications using it require. The schema should be easy to extend to support additional settings as requirements change.
+백업 저장소의 스키마를 보관할 수 있는 정보 유형에 유연성을 제공할 수 있는 방식으로 설계합니다. 형식화된 데이터, 설정 모음, 설정의 여러 버전 및 사용 중인 응용 프로그램에 필요한 모든 다른 기능과 같은 구성 요구 사항을 모두 제공하는지 확인합니다. 요구 사항이 변경될 때 추가 설정을 지원하도록 스키마는 확장하기 쉬워야 합니다.
 
-Consider the physical capabilities of the backing store, how it relates to the way configuration information is stored, and the effects on performance. For example, storing an XML document containing configuration information will require either the configuration interface or the application to parse the document in order to read individual settings. It'll make updating a setting more complicated, though caching the settings can help to offset slower read performance.
+백업 저장소의 물리적 기능, 이런 기능을 구성 정보가 저장되는 방식과 연관시키는 방법 및 성능에 미치는 영향을 고려합니다. 예를 들어 구성 정보를 포함하는 XML 문서를 저장하려면 문서를 구문 분석하여 개별 설정을 읽는 구성 인터페이스 또는 응용 프로그램이 필요합니다. 그러나 이런 사례에서 설정의 캐싱은 느려지는 읽기 성능을 보완하는 데 도움을 줄 수 있지만 설정의 업데이트를 더 복잡하게 만든다는 단점이 있습니다.
 
-Consider how the configuration interface will permit control of the scope and inheritance of configuration settings. For example, it might be a requirement to scope configuration settings at the organization, application, and the machine level. It might need to support delegation of control over access to different scopes, and to prevent or allow individual applications to override settings.
+구성 인터페이스가 구성 설정의 범위와 상속을 제어하도록 허용하는 방법을 고려합니다. 예를 들면 조직, 응용 프로그램 및 컴퓨터 수준에서 구성 설정의 범위를 지정하는 요구 사항이 여기에 해당할 수 있습니다. 한편 다양한 범위의 액세스에 대한 제어의 위임을 지원하고 개별 응용 프로그램에서 설정의 재정의를 방지 또는 허용할 필요가 있습니다.
 
-Ensure that the configuration interface can expose the configuration data in the required formats such as typed values, collections, key/value pairs, or property bags.
+구성 인터페이스가 구성 데이터를 형식화된 값, 모음, 키/값 쌍 또는 속성 모음과 같은 필요한 형식으로 표시할 수 있는지 확인합니다.
 
-Consider how the configuration store interface will behave when settings contain errors, or don't exist in the backing store. It might be appropriate to return default settings and log errors. Also consider aspects such as the case sensitivity of configuration setting keys or names, the storage and handling of binary data, and the ways that null or empty values are handled.
+설정이 오류를 포함하거나 백업 저장소에 설정이 없을 때 구성 저장소 인터페이스의 동작 방법을 고려합니다. 기본 설정으로 되돌리고 오류를 로그하는 것이 적절할 수 있습니다. 또한 구성 설정 키 또는 이름의 대/소문자 구분, 이진 데이터의 저장과 처리 및 null 값 또는 빈 값을 처리하는 방식과 같은 측면도 고려합니다.
 
-Consider how to protect the configuration data to allow access to only the appropriate users and applications. This is likely a feature of the configuration store interface, but it's also necessary to ensure that the data in the backing store can't be accessed directly without the appropriate permission. Ensure strict separation between the permissions required to read and to write configuration data. Also consider whether you need to encrypt some or all of the configuration settings, and how this'll be implemented in the configuration store interface.
+적절한 사용자와 응용 프로그램에만 액세스를 허용하도록 구성 데이터를 보호하는 방법을 고려합니다. 이런 방법에는 구성 저장소 인터페이스의 기능이 해당할 수 있지만, 적절한 권한 없이 백업 저장소의 데이터에 직접 액세스할 수 없게 하는 방식도 필요할 수 있습니다. 구성 데이터를 읽고 쓰는 데 필요한 권한을 엄격하게 분리합니다. 또한 구성 설정의 일부 또는 전부에 대한 암호화가 필요한지 여부 및 암호화를 구성 저장소 인터페이스에 구현하는 방법도 고려합니다.
 
-Centrally stored configurations, which change application behavior during runtime, are critically important and should be deployed, updated, and managed using the same mechanisms as deploying application code. For example, changes that can affect more than one application must be carried out using a full test and staged deployment approach to ensure that the change is appropriate for all applications that use this configuration. If an administrator edits a setting to update one application, it could adversely impact other applications that use the same setting.
+런타임 중 응용 프로그램 동작을 변경하는 중앙집중식으로 저장하는 구성은 굉장히 중요하며 응용 프로그램 코드의 배포와 동일한 방식을 사용해 배포, 업데이트, 관리해야 합니다. 예를 들어 하나 이상의 응용 프로그램에 영향을 줄 수 있는 변경은 완벽하게 테스트하고 준비한 배포 접근 방식을 사용하여 수행함으로써 변경이 이런 구성을 사용하는 모든 응용 프로그램에 적절하다는 것을 보장해야 합니다. 관리자가 하나의 응용 프로그램을 업데이트하기 위해 설정을 편집하는 경우, 동일한 설정을 사용하는 다른 응용 프로그램에 악영향을 미칠 수 있습니다.
 
-If an application caches configuration information, the application needs to be alerted if the configuration changes. It might be possible to implement an expiration policy over cached configuration data so that this information is automatically refreshed periodically and any changes picked up (and acted on). The [Runtime Reconfiguration pattern](runtime-reconfiguration.md) might be relevant to your scenario.
+응용 프로그램이 구성 정보를 캐시하는 경우, 구성 정보가 변경되면 응용 프로그램도 변경해야 합니다.  캐시된 구성 데이터에 만료 정책을 구현하여 캐시된 정보를 주기적으로 자동 새로 고침하고 모든 변경 내용을 선택하여 반영하도록 조치할 수 있습니다. [런타임 재구성 패턴](runtime-reconfiguration.md)은 사용자 시나리오에 관련될 수 있습니다.
 
-## When to use this pattern
+## 패턴 사용 사례
 
-This pattern is useful for:
+다음의 경우에 이 패턴이 유용합니다.
 
-- Configuration settings that are shared between multiple applications and application instances, or where a standard configuration must be enforced across multiple applications and application instances.
+- 구성 설정이 여러 응용 프로그램과 응용 프로그램 인스턴스에 공유되는 경우 또는 여러 응용 프로그램과 응용 프로그램 인스턴스에 표준 구성을 사용해야 하는 경우
 
-- A standard configuration system that doesn't support all of the required configuration settings, such as storing images or complex data types.
+- 저장 이미지 또는 복잡한 데이터 유형과 같은 필요한 구성 설정을 모두 지원하지 않는 표준 구성 시스템
 
-- As a complementary store for some of the settings for applications, perhaps allowing applications to override some or all of the centrally-stored settings.
+- 응용 프로그램의 일부 설정에 대한 보조 저장소로, 응용 프로그램이 중앙집중식으로 저장하는 설정의 일부 또는 전부를 재정의할 수 있는 경우
 
-- As a way to simplify administration of multiple applications, and optionally for monitoring use of configuration settings by logging some or all types of access to the configuration store.
+- 여러 응용 프로그램의 관리를 단순화하는 방식으로 구성 저장소에 대한 액세스의 일부 또는 모든 유형을 로그하여 구성 설정의 사용을 선택적으로 모니터링하는 경우
 
-## Example
+## 예제
 
-In a Microsoft Azure hosted application, a typical choice for storing configuration information externally is to use Azure Storage. This is resilient, offers high performance, and is replicated three times with automatic failover to offer high availability. Azure Table storage provides a key/value store with the ability to use a flexible schema for the values. Azure Blob storage provides a hierarchical, container-based store that can hold any type of data in individually named blobs.
+Microsoft Azure 호스팅 응용 프로그램에서 구성 정보를 외부적으로 저장하기 위한 대표적인 선택은 Azure Storage를 사용하는 것입니다. Azure Storage는 복원력이 있고, 고성능을 제공하며, 자동 장애 조치(failover)로 3번 복제되어 고가용성을 제공합니다. Azure Table 저장소는 값에 유연한 스키마를 사용할 수 있는 키/값 저장소를 제공합니다. Azure Blob 저장소는 데이터의 유형을 개별적으로 명명된 blob에 보관할 수 있는 계층적 컨테이너 기반 저장소를 제공합니다. 
 
-The following example shows how a configuration store can be implemented over Blob storage to store and expose configuration information. The `BlobSettingsStore` class abstracts Blob storage for holding configuration information, and implements the `ISettingsStore` interface shown in the following code.
+다음 예제는 구성 저장소를 구성 정보를 저장하고 표시하는 Blob 저장소로 구현하는 방법을 보여줍니다. `BlobSettingsStore` 클래스는 구성 정보를 보관하는 Blob 저장소를 추상화하고, 다음 코드에 제시되는`ISettingsStore` 인터페이스를 구현합니다.
 
-> This code is provided in the _ExternalConfigurationStore.Cloud_ project in the _ExternalConfigurationStore_ solution, available from [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/external-configuration-store).
+> 이 코드는 _ExternalConfigurationStore_ 솔루션의 _ExternalConfigurationStore.Cloud_ 프로젝트에 포함되어 있고 [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/external-configuration-store)에서 다운로드할 수 있습니다.
 
 ```csharp
 public interface IsettingsStore
@@ -92,17 +92,17 @@ public interface IsettingsStore
 }
 ```
 
-This interface defines methods for retrieving and updating configuration settings held in the configuration store, and includes a version number that can be used to detect whether any configuration settings have been modified recently. The `BlobSettingsStore` class uses the `ETag` property of the blob to implement versioning. The `ETag` property is updated automatically each time the blob is written.
+이 인터페이스는 구성 저장소에 보관된 구성 설정을 검색하고 업데이트하는 메서드를 정의하며 어떤 구성 설정이 최근에 수정되었는지를 검색하는 데 사용할 수 있는 버전 번호를 포함합니다. `BlobSettingsStore` 클래스는 blob의 `ETag` 속성을 사용해 버전 관리를 구현합니다. `ETag` 속성은 blob에 쓸 때마다 자동으로 업데이트됩니다.
 
-> By design, this simple solution exposes all configuration settings as string values rather than typed values.
+> 보통 이런 간단한 솔루션은 모든 구성 설정을 형식화된 값이 아닌 문자열 값으로 표시합니다.
 
-The `ExternalConfigurationManager` class provides a wrapper around a `BlobSettingsStore` object. An application can use this class to store and retrieve configuration information. This class uses the Microsoft [Reactive Extensions](https://msdn.microsoft.com/library/hh242985.aspx) library to expose any changes made to the configuration through an implementation of the `IObservable` interface. If a setting is modified by calling the `SetAppSetting` method, the `Changed` event is raised and all subscribers to this event will be notified.
+`ExternalConfigurationManager` 클래스는 `BlobSettingsStore` 개체를 감싸는 래퍼를 제공합니다. 응용 프로그램은 이 클래스를 사용해 구성 정보를 저장하고 검색할 수 있습니다. 이 클래스는 Microsoft [Reactive Extensions](https://msdn.microsoft.com/library/hh242985.aspx) 라이브러리를 사용하여 `IObservable` 인터페이스의 구현을 통해 구성에 이루어진 모든 변경 내용을 표시합니다. `SetAppSetting` 메서드를 호출해 설정을 수정하면 `Changed` 이벤트가 발생하고 이 이벤트의 모든 구독자에게 알려집니다.
 
-Note that all settings are also cached in a `Dictionary` object inside the `ExternalConfigurationManager` class for fast access. The `SetAppSetting` method updates this cache, and the `GetSetting` method used to retrieve a configuration setting reads the data from the cache. If the setting isn't found in the cache, it's retrieved from the `BlobSettingsStore` object instead.
+모든 설정은 빠른 액세스를 위해 `ExternalConfigurationManager` 클래스 내의 `Dictionary` 개체에 캐시되기도 합니다. `SetAppSetting` 메서드는 이 캐시를 업데이트하고, 구성 설정을 검색하는 데 사용되는 `GetSetting` 메서드는 캐시에서 데이터를 읽어옵니다. 설정이 캐시에 없으면 그 대신 `BlobSettingsStore` 개체에서 설정을 가져옵니다.
 
-The `GetSettings` method invokes the `CheckForConfigurationChanges` method to detect whether the configuration information in blob storage has changed. It does this by examining the version number and comparing it with the current version number held by the `ExternalConfigurationManager` object. If one or more changes have occurred, the `Changed` event is raised and the configuration settings cached in the `Dictionary` object are refreshed. This is an application of the [Cache-Aside pattern](cache-aside.md).
+`GetSettings` 메서드는 `CheckForConfigurationChanges` 메서드를 호출해 blob 저장소의 구성 정보가 변경되었는지 여부를 검색합니다. 이런 검색은 버전 번호를 검사하고 검사한 버전 번호와 `ExternalConfigurationManager` 개체에 보관된 현재 버전 번호의 비교를 통해 이루어집니다. 하나 이상의 변경 내용이 발생하면 `Changed` 이벤트가 발생하고 `Dictionary` 개체에 캐시된 구성 설정이 새로 고쳐집니다. 이런 과정은 [캐시 배제 패턴](cache-aside.md)의 적용에 해당합니다.
 
-The following code sample shows how the `Changed` event, the `SetAppSettings` method, the `GetSettings` method, and the `CheckForConfigurationChanges` method are implemented:
+다음 코드 샘플은 `Changed` 이벤트, `SetAppSettings` 메서드, `GetSettings` 메서드 및 `CheckForConfigurationChanges` 메서드의 구현 방법을 보여줍니다.
 
 ```csharp
 public class ExternalConfigurationManager : IDisposable
@@ -191,9 +191,9 @@ public class ExternalConfigurationManager : IDisposable
 }
 ```
 
-> The `ExternalConfigurationManager` class also provides a property named `Environment`. This property supports varying configurations for an application running in different environments, such as staging and production.
+> `ExternalConfigurationManager` 클래스도 `Environment`로 명명된 속성을 제공합니다. 이 속성은 준비와 생산 같은 다양한 환경에서 실행하는 응용 프로그램을 위한 다양한 구성을 지원합니다.
 
-An `ExternalConfigurationManager` object can also query the `BlobSettingsStore` object periodically for any changes (using a timer). The `StartMonitor` and `StopMonitor` methods illustrated in the code sample below start and stop the timer. The `OnTimerElapsed` method runs when the timer expires and invokes the `CheckForConfigurationChanges` method to detect any changes and raise the `Changed` event, as described earlier.
+`ExternalConfigurationManager` 개체도 변경 내용을 확인하기 위해 `BlobSettingsStore` 개체를 주기적으로 쿼리할 수 있습니다(타이머 사용). 다음의 코드 샘플에 제시된 `StartMonitor` 및 `StopMonitor` 메서드는 타이머를 시작하고 정지시킵니다. `OnTimerElapsed` 메서드는 타이머가 경과하면 실행되고 `CheckForConfigurationChanges` 메서드를 호출해 위에 설명한 대로 변경 내용을 검색하고 `Changed` 이벤트를 발생시킵니다.
 
 ```csharp
 public class ExternalConfigurationManager : IDisposable
@@ -273,7 +273,7 @@ public class ExternalConfigurationManager : IDisposable
 }
 ```
 
-The `ExternalConfigurationManager` class is instantiated as a singleton instance by the `ExternalConfiguration` class shown below.
+`ExternalConfigurationManager` 클래스는 다음에 제시된 `ExternalConfiguration` 클래스를 통해 단일 인스턴스로 인스턴스화됩니다.
 
 ```csharp
 public static class ExternalConfiguration
@@ -293,7 +293,7 @@ public static class ExternalConfiguration
 }
 ```
 
-The following code is taken from the `WorkerRole` class in the _ExternalConfigurationStore.Cloud_ project. It shows how the application uses the `ExternalConfiguration` class to read and update a setting.
+다음 코드는 _ExternalConfigurationStore.Cloud_ 프로젝트의 `WorkerRole` 클래스에서 가져온 것으로, 응용 프로그램이 `ExternalConfiguration` 클래스를 사용해 설정을 읽고 업데이트하는 방법을 보여줍니다.
 
 ```csharp
 public override void Run()
@@ -327,10 +327,10 @@ public override bool OnStart()
 }
 ```
 
-## Related patterns and guidance
+## 관련 패턴 및 지침
 
-The following information might also be relevant when implementing this pattern:
+이 패턴을 구현할 때 관련될 수 있는 정보는 다음과 같습니다.
 
-- [Runtime Reconfiguration pattern](runtime-reconfiguration.md). In addition to storing configuration settings externally, it's useful to be able to update them and have the changes applied without restarting the application. Describes how to design an application so that it can be reconfigured without requiring redeployment or restarting.
+- [런타임 재구성 패턴](runtime-reconfiguration.md). 구성 설정을 외부에 저장하는 방법 외에도 응용 프로그램을 다시 시작하지 않고 구성 설정을 업데이트하고 변경 내용을 적용할 수 있는 방법도 유용합니다. 응용 프로그램을 다시 배포하거나 다시 시작하지 않고 재구성할 수 있도록 설계하는 방법을 설명합니다.
 
-- A sample that demonstrates this pattern is available on [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/external-configuration-store).
+- 이 패턴을 보여주는 샘플은 [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/external-configuration-store)에서 다운로드할 수 있습니다.
