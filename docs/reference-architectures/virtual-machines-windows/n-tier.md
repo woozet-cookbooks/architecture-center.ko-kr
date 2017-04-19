@@ -155,7 +155,8 @@ DB 계층에서는 VM 수가 많다고 무조건 고가용성 DB가 되지 않�
    * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자는 편집하지 않습니다.
    
    * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
-   * **구입** 버튼을 클릭합니다.
+   
+   * **구입** 버튼을 클릭합니다.
 6. Azure 포털 알림에서 2단계 배포 완료 메시지를 확인합니다.
 7. 아래 버튼을 마우스 오른쪽 단추로 클릭한 후 "새 탭에서 열기" 또는 "새 창에서 열기"를 선택하여 3단계 배포를 시작합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fvirtual-machines%2Fn-tier-windows%2Fsecurity.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 8. Azure 포털에서 링크가 열리면 아래의 설정값을 입력합니다. 
