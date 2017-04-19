@@ -213,348 +213,373 @@ Elastic Database는 Azure SQL Database의 Federations 기능을 대체할 수 �
 
 그런 다음 이 응용 프로그램은 이 정보를 사용해 데이터 요청을 적절한 샤드에 전달합니다. 이 기능은 NuGet 패키지로 출시된 Azure SQL Database Elastic Database Client Library에 포함된 일련의 API 뒤에 숨겨져 있습니다. Microsoft 웹사이트의 [Elastic Database 기능 개요] 페이지에는 Elastic Database에 대한 보다 포괄적인 소개가 나와 있습니다.
 
-> [!NOTE]
-> You can replicate the global shard map manager database to reduce latency and improve availability. If you implement the database by using one of the Premium pricing tiers, you can configure active geo-replication to continuously copy data to databases in different regions. Create a copy of the database in each region in which users are based. Then configure your application to connect to this copy to obtain the shard map.
+> [!참고]
+> 전역 샤드 맵 관리자 데이터베이스를 복제하여 대기 시간을 줄이고 가용성을 개선할 수 있습니다. Premium 가격대를 사용해 데이터베이스를 구현할 경우 활성 지리적 복제를 구성하여 데이터를 다른 지역의 데이터베이스로 연속 복사할 수 있습니다. 사용자 기반의 각 영역에 데이터베이스 복사본을 만듭니다. 그런 다음 응용 프로그램을 구성하여 이 복사본에 연결하여 샤드 맵을 가져옵니다. 
 >
-> An alternative approach is to use Azure SQL Data Sync or an Azure Data Factory pipeline to replicate the shard map manager database across regions. This form of replication runs periodically and is more suitable if the shard map changes infrequently. Additionally, the shard map manager database does not have to be created by using a Premium pricing tier.
+> 대안은 Azure SQL Data Sync 또는 Azure Data Factory 파이프라인을 사용하여 전 영역에서 샤드 맵 관리자 데이터베이스를 복제하는 것입니다. 이 복제 양식은 정기적으로 실행되고 샤드 맵이 드물게 바뀌는 경우에 더 적합합니다. 물론, 샤드 맵 관리자 데이터베이스는 Premium 가격대를 사용해 만들지 않아도 됩니다. 
 >
 >
 
-Elastic Database provides two schemes for mapping data to shardlets and storing them in shards:
+Elastic Database는 데이터를 샤들렛에 매핑하고 이 데이터를 샤드에 저장하는 두 가지 체계를 갖추고 있습니다. 
 
-* A **list shard map** describes an association between a single key and a shardlet. For example, in a multitenant system, the data for each tenant can be associated with a unique key and stored in its own shardlet. To guarantee privacy and isolation (that is, to prevent one tenant from exhausting the data storage resources available to others), each shardlet can be held within its own shard.
+* **목록 샤드 맵**은 단일 키와 샤들렛 사이의 연관성을 잘 보여줍니다. 예를 들어, 다중 테넌트 시스템에서 각 테넌트별 데이터는 고유 키와 연결되어 자체 샤들렛에 저장되어 있을 수 있습니다. 개인 정보와 격리(즉, 하나의 테넌트가 다른 테넌트가 사용 가능한 데이터 저장소 리소스를 소모하지 못하도록 함)를 보장하기 위해 각 샤들렛은 자체 샤드에 저장될 수 있습니다.
 
 ![Using a list shard map to store tenant data in separate shards](./images/data-partitioning/PointShardlet.png)
 
-*Figure 4. Using a list shard map to store tenant data in separate shards*
+*그림 4. 목록 샤드 맵을 사용하여 별도의 샤드에 테넌트 데이터 저장*
 
-* A **range shard map** describes an association between a set of contiguous key values and a shardlet. In the multitenant example described previously, as an alternative to implementing dedicated shardlets, you can group the data for a set of tenants (each with their own key) within the same shardlet. This scheme is less expensive than the first (because tenants share data storage resources), but it also creates a risk of reduced data privacy and isolation.
+* **범위 샤드 맵**은 단일 키와 샤들렛 사이의 연관성을 잘 보여줍니다. 앞서 설명한 다중 테넌트 예에서 전용 샤들렛을 구현하는 대안으로서 동일한 샤들렛 내에서 테넌트 집합(각각 자체 키가 있음)의 데이터를 그룹화할 수 있습니다. 이 체계는 첫 번째보다 비용이 저렴하지만(테넌트가 데이터 저장소 리소스를 공유하기 때문), 데이터 개인정보와 격리 기능을 감소시킬 위험이 있습니다.
 
 ![Using a range shard map to store data for a range of tenants in a shard](./images/data-partitioning/RangeShardlet.png)
 
-*Figure 5. Using a range shard map to store data for a range of tenants in a shard*
+*그림 5. 범위 샤드 맵을 사용하여 샤드에 다양한 테넌트용 데이터 저장*
 
-Note that a single shard can contain the data for several shardlets. For example, you can use list shardlets to store data for different non-contiguous tenants in the same shard. You can also mix range shardlets and list shardlets in the same shard, although they will be addressed through different maps in the global shard map manager database. (The global shard map manager database can contain multiple shard maps.) Figure 6 depicts this approach.
+단일 샤드는 여러 샤들렛의 데이터를 포함한다는 것을 기억하십시오. 예를 들어, 목록 샤들렛을 사용하여 동일한 샤드에서 다른 비인접 테넌트를 저장할 수 있습니다. 또한 동일한 샤드에서 범위 샤들렛과 목록 샤들렛을 혼합할 수 있지만, 이것은 전역 샤드 맵 관리자 데이터베이스에서 다른 맵을 통해 처리됩니다. (전역 샤드 맵 관리자 데이터베이스에는 다중 샤드 맵이 포함될 수 있습니다.) 그림 6은 이 접근 방식을 나타냅니다. 
 
 ![Implementing multiple shard maps](./images/data-partitioning/MultipleShardMaps.png)
 
-*Figure 6. Implementing multiple shard maps*
+*그림 6. 다중 샤드 맵 구현*
 
-The partitioning scheme that you implement can have a significant bearing on the performance of your system. It can also affect the rate at which shards have to be added or removed, or the rate at which data must be repartitioned across shards. Consider the following points when you use Elastic Database to partition data:
+구현한 분할 체계는 시스템 성능과 상당한 관련이 있을 수 있습니다. 또한 샤드를 추가 또는 제거해야 하는 속도나 샤드에서 데이터가 다시 분할되어야 하는 속도에 영향을 줄 수도 있습니다. Elastic Database를 사용하여 데이터를 분할할 때에는 다음 사항을 고려해야 합니다.
 
-* Group data that is used together in the same shard, and avoid operations that need to access data that's held in multiple shards. Keep in mind that with Elastic Database, a shard is a SQL database in its own right, and Azure SQL Database does not support cross-database joins (which have to be performed on the client side). Remember also that in Azure SQL Database, referential integrity constraints, triggers, and stored procedures in one database cannot reference objects in another. Therefore, don't design a system that has dependencies between shards. A SQL database can, however, contain tables that hold copies of reference data frequently used by queries and other operations. These tables do not have to belong to any specific shardlet. Replicating this data across shards can help remove the need to join data that spans databases. Ideally, such data should be static or slow-moving to minimize the replication effort and reduce the chances of it becoming stale.
+•	동일한 샤드에서 함께 사용되는 데이터를 그룹화하고 여러 샤드에 저장된 데이터에 액세스해야 하는 작업을 하지 않아야 합니다. Elastic Database를 사용할 때 샤드는 자체 SQL 데이터베이스이고, Azure SQL Database는 교차 데이터베이스 조인(클라이언트 측에서 실행해야 함)을 지원하지 않습니다. 또한 Azure SQL Database에서는 하나의 데이터베이스의 참조 무결성 제약, 트리거, 저장된 절차는 다른 데이터베이스의 개체를 참조할 수 없다는 것을 기억하십시오. 그러므로, 샤드 간 종속성이 있는 시스템을 설계해서는 안 됩니다. 그렇지만, SQL 데이터베이스는 쿼리와 다른 작업에 자주 사용되는 참조 데이터 복사본을 저장한 테이블을 포함합니다. 이 테이블은 특정 샤들렛에 속하지 않습니다. 샤드에서 이 데이터를 복제하면 여러 데이터베이스에 걸쳐 있는 데이터를 조인하지 않아도 됩니다. 사실상 이러한 데이터는 정적이거나 유동성이 낮아서 복제 작업을 최소화하고 이 데이터가 부실하게 될 가능성을 낮추게 됩니다.
 
-  > [!NOTE]
-  > Although SQL Database does not support cross-database joins, you can perform cross-shard queries with the Elastic Database API. These queries can transparently iterate through the data held in all the shardlets that are referenced by a shard map. The Elastic Database API breaks cross-shard queries down into a series of individual queries (one for each database) and then merges the results. For more information, see the page [Multi-shard querying] on the Microsoft website.
+  > [!참고]
+  > SQL Database는 교차 데이터베이스 조인을 지원하지 않지만, Elastic Database API를 통해 교차 사드 쿼리를 실행할 수 있습니다. 이 쿼리는 샤드 맵이 참조하는 모든 샤들렛에 저장된 데이터를 통해 투명하게 반복될 수 있습니다. Elastic Database API는 교차 샤드 쿼리를 일련의 개별 쿼리(각 데이터베이스별로 하나씩)로 나눈 후 그 결과를 병합합니다. 자세한 내용은 Microsoft 웹사이트의 [다중 샤드 질의]페이지를 참조하십시오.
+  >
+•	동일한 샤드 맵에 속한 샤들렛에 저장된 데이터는 그 체계가 동일해야 합니다. 예를 들어, 테넌트 데이터를 포함하는 일부 샤들렛을 가리키는 목록 샤드 맵과 제품 정보를 포함하는 다른 샤들렛을 만들어서는 안 됩니다. Elastic Database이 이 규칙을 강제적으로 실행하지는 않지만, 각 샤들렛의 체계가 다를 경우 데이터 관리 및 질의가 매우 복잡해집니다. 바로 앞서 언급한 예에서 한 가지 좋은 해결책은 목록 샤드 맵 2개를 만드는 것입니다. 즉, 하나는 테넌트 데이터를 참조하고 다른 하나는 제품 정보를 가리키는 것입니다. 다른 샤들렛에 속하는 데이터는 동일한 샤드에 저장할 수 있다는 점을 명심해야 합니다.
+
+  > [!참고]
+  > Elastic Database API의 교차 샤드 쿼리 기능은 동일한 체계를 포함하는 샤드 맵의 각 샤들렛에 따라 달라집니다.
   >
   >
-* The data stored in shardlets that belong to the same shard map should have the same schema. For example, don't create a list shard map that points to some shardlets containing tenant data and other shardlets containing product information. This rule is not enforced by Elastic Database, but data management and querying becomes very complex if each shardlet has a different schema. In the example just cited, a good is solution is to create two list shard maps: one that references tenant data and another that points to product information. Remember that the data belonging to different shardlets can be stored in the same shard.
+•	동일한 샤드 내에 저장된 데이터의 경우에 트랜잭션 작업이 지원되고, 전체 샤드에서는 지원되지 않습니다. 트랜잭션은 샤들렛이 동일한 샤드의 일부인 경우에 한해 샤들렛을 포함할 수 있습니다. 그러므로, 비즈니스 논리가 트랜잭션을 실행해야 하는 경우, 동일한 샤드에 해당 데이터를 저장하거나 최종 일관성을 구현해야 합니다. 자세한 내용은 [데이터 일관성 프라이머턴]을 참조하십시오.
 
-  > [!NOTE]
-  > The cross-shard query functionality of the Elastic Database API depends on each shardlet in the shard map containing the same schema.
-  >
-  >
-* Transactional operations are only supported for data that's held within the same shard, and not across shards. Transactions can span shardlets as long as they are part of the same shard. Therefore, if your business logic needs to perform transactions, either store the affected data in the same shard or implement eventual consistency. For more information, see the [Data consistency primer].
-* Place shards close to the users that access the data in those shards (in other words, geo-locate the shards). This strategy helps reduce latency.
-* Avoid having a mixture of highly active (hotspots) and relatively inactive shards. Try to spread the load evenly across shards. This might require hashing the shardlet keys.
-* If you are geo-locating shards, make sure that the hashed keys map to shardlets held in shards stored close to the users that access that data.
-* Currently, only a limited set of SQL data types are supported as shardlet keys; *int, bigint, varbinary,* and *uniqueidentifier*. The SQL *int* and *bigint* types correspond to the *int* and *long* data types in C#, and have the same ranges. The SQL *varbinary* type can be handled by using a *Byte* array in C#, and the SQL *uniqueidentier* type corresponds to the *Guid* class in the .NET Framework.
+•	해당 샤드의 데이터에 액세스하는 사용자와 가까운 곳에 샤드를 배치합니다(샤드의 지리적 배치). 이 전략은 대기 시간을 줄이는 데 유용합니다.
 
-As the name implies, Elastic Database makes it possible for a system to add and remove shards as the volume of data shrinks and grows. The APIs in the Azure SQL Database Elastic Database client library enable an application to create and delete shards dynamically (and transparently update the shard map manager). However, removing a shard is a destructive operation that also requires deleting all the data in that shard.
+•	자주 사용되는 샤드(핫스폿)와 비교적 잘 사용되지 않는 샤드를 혼합하여 사용해서는 안 됩니다. 전체 샤드에서 부하를 균등하게 분산시켜야 합니다. 그러기 위해서는 샤들렛 키를 해싱해야 합니다.
 
-If an application needs to split a shard into two separate shards or combine shards, Elastic Database provides a separate split-merge service. This service runs in a cloud-hosted service (which must be created by the developer) and migrates data safely between shards. For more information, see the topic [Scaling using the Elastic Database split-merge tool] on the Microsoft website.
+•	샤드를 지리적으로 배치할 경우 해싱된 키는 해당 데이터에 액세스하는 사용자와 가까이에 저장된 샤드에 있는 샤들렛에 매핑되어야 합니다.
 
-## Partitioning strategies for Azure Storage
-Azure storage provides three abstractions for managing data:
+•	현재 제한적인 SQL 데이터 형식 집합 *(int, bigint, varbinary,uniqueidentifier)*만이 샤들렛 키로서 지원됩니다. SQL *int* 및 *bigint* 유형은 C#에서 *int* 및 *long* 데이터 형식에 해당되고, 범위가 동일합니다. SQL *varbinary* 유형은 C#의 *Byte* 배열을 사용해 처리할 수 있고, SQL *uniqueidentier* 유형은 .NET Framework의 *Guid* 클래스에 해당됩니다.
 
-* Table storage, which implements scalable structure storage. A table contains a collection of entities, each of which can include a set of properties and values.
-* Blob storage, which supplies storage for large objects and files.
-* Storage queues, which support reliable asynchronous messaging between applications.
+이름에서 알 수 있듯이 Elastic Database는 데이터 볼륨 감소와 증가에 따라 시스템이 샤드를 추가하고 제거할 수 있도록 해줍니다. Azure SQL Database Elastic Database 클라이언트 라이브러리의 API를 통해 응용 프로그램은 샤드를 동적으로 만들고 삭제할 수 있습니다(그리고 샤드 맵 관리자를 투명하게 업데이트함). 그렇지만, 샤드를 제거하는 일은 해당 샤드의 모든 데이터를 삭제해야 하는 상당한 손해를 유발하는 작업입니다. 
 
-Table storage and blob storage are essentially key-value stores that are optimized to hold structured and unstructured data respectively. Storage queues provide a mechanism for building loosely coupled, scalable applications. Table storage, blob storage, and storage queues are created within the context of an Azure storage account. Storage accounts support three forms of redundancy:
+응용 프로그램이 샤드를 개별 샤드 2개로 분할하거나 샤드를 결합해야 하는 경우, Elastic Database는 별도의 분할-병합 서비스를 제공합니다. 이 서비스는 클라우드 호스팅 서비스에서 실행되고(개발자가 만들어야 함) 샤드 간 데이터를 안전하게 마이그레이션합니다.자세한 내용은 Microsoft 웹사이트에서[Elastic Database 분할-병합 도구를 사용한 크기 조정] 항목을 참조하십시오. 
 
-* **Locally redundant storage**, which maintains three copies of data within a single datacenter. This form of redundancy protects against hardware failure but not against a disaster that encompasses the entire datacenter.
-* **Zone-redundant storage**, which maintains three copies of data spread across different datacenters within the same region (or across two geographically close regions). This form of redundancy can protect against disasters that occur within a single datacenter, but cannot protect against large-scale network disconnects that affect an entire region. Note that zone-redundant storage is currently only currently available for block blobs.
-* **Geo-redundant storage**, which maintains six copies of data: three copies in one region (your local region), and another three copies in a remote region. This form of redundancy provides the highest level of disaster protection.
+## Azure 저장소에 적합한 분할 전략
+Azure 저장소는 데이터 관리를 위한 추상화 세 가지를 지원합니다. 
 
-Microsoft has published scalability targets for Azure Storage. For more information, see the page [Azure Storage scalability and performance targets] on the Microsoft website. Currently, the total storage account capacity cannot exceed 500 TB. (This includes the size of data that's held in table storage and blob storage, as well as outstanding messages that are held in storage queue).
+•	하나는 테이블 저장소로서 확장 가능한 구조 저장소를 구현합니다. 테이블에는 엔터티 컬렉션이 포함되어 있고, 각 엔터티는 속성과 값 집합을 포함할 수 있습니다.
 
-The maximum request rate (assuming a 1-KB entity, blob, or message size) is 20 KBps. If your system is likely to exceed these limits, consider partitioning the load across multiple storage accounts. A single Azure subscription can create up to 100 storage accounts. However, note that these limits might change over time.
+•	다른 하나는 Blob 저장소로서, 대규모 개체와 파일을 위한 저장소입니다.
 
-## Partitioning Azure table storage
-Azure table storage is a key-value store that's designed around partitioning. All entities are stored in a partition, and partitions are managed internally by Azure table storage. Each entity that's stored in a table must provide a two-part key that includes:
+•	또 다른 하나는 저장소 큐로서, 응용 프로그램 간에 안정적인 비동기식 메시징을 지원합니다.
+ 
 
-* **The partition key**. This is a string value that determines in which partition Azure table storage will place the entity. All entities with the same partition key will be stored in the same partition.
-* **The row key**. This is another string value that identifies the entity within the partition. All entities within a partition are sorted lexically, in ascending order, by this key. The partition key/row key combination must be unique for each entity and cannot exceed 1 KB in length.
+테이블 저장소와 blob 저장소는 본래 키-값 저장소이며, 이것은 구조적인 데이터와 비구조적인 데이터를 각각 저장하도록 최적화되어 있습니다. 저장소 큐는 느슨하게 결합되어 있는 확장 가능 응용 프로그램을 구축하는 메커니즘을 지원합니다. 테이블 저장소, blob 저장소, 저장소 큐는 Azure 저장소 계정의 컨텍스트 내에서 만들어집니다. 저장소 계정은 다음 세 가지 형태의 중복을 지원합니다. 
 
-The remainder of the data for an entity consists of application-defined fields. No particular schemas are enforced, and each row can contain a different set of application-defined fields. The only limitation is that the maximum size of an entity (including the partition and row keys) is currently 1 MB. The maximum size of a table is 200 TB, although these figures might change in the future. (Check the page [Azure Storage scalability and performance targets] on the Microsoft website for the most recent information about these limits.)
+* **로컬 중복 저장소**, 단일 데이터 센터에서 데이터 복사본 3개를 유지합니다. 이 중복 형태는 하드웨어 오류가 발생해도 보호되지만 전체 데이터 센터까지 영향을 주는 재해에는 보호되지 않습니다.
+* **영역 중복 저장소**, 동일한 지역(또는 지역적으로 가까운 두 개의 지역)에 있는 여러 데이터 센터에 분포된 데이터 복사본 3개를 유지합니다. 이 중복 형태는 단일 데이터 센터에서 발생하는 재해로부터 보호되지만, 전체 지역에 영향을 주는 대규모 네트워크 연결이 끊길 경우에는 보호될 수 없습니다. 영역 중복 저장소는 현재 블록 blob에서만 사용할 수 있습니다.
+* **지역 중복 저장소**, 데이터 복사본 6개를 유지하며, 이 중 복사본 3개는 하나의 지역(사용자의 로컬 지역)에, 다른 3개는 먼 지역에 유지합니다. 이 중복 형태는 재해 보호 수준이 가장 높습니다.
 
-If you are attempting to store entities that exceed this capacity, then consider splitting them into multiple tables. Use vertical partitioning to divide the fields into the groups that are most likely to be accessed together.
+Microsoft는 Azure 저장소의 확장성 목표를 공개했습니다. 자세한 내용은 Microsoft 웹사이트의 [Azure 저장소 확장성 및 성능 목표]를 참조하십시오. 현재 저장소의 계정 총 용량은 500TB를 초과할 수 없습니다. (여기에는 테이블 저장소와 blob 저장소에 저장된 데이터 크기뿐 아니라 저장소 큐에 저장된 해결되지 않은 메시지도 포함됩니다). 
 
-Figure 7 shows the logical structure of an example storage account (Contoso Data) for a fictitious e-commerce application. The storage account contains three tables: Customer Info, Product Info, and Order Info. Each table has multiple partitions.
+최대 요청 속도(1-KB 엔터티, blob 또는 메시지 크기 가정)는 20KBps입니다. 시스템이 이 한계를 초과할 가능성이 있으면, 여러 저장소 계정에서 부하를 분할하는 것이 좋습니다. 단일 Azure 구독은 최대 100개의 저장소 계정을 만들 수 있습니다. 그렇지만, 이 한계는 시간의 경과에 따라 바뀔 수 있습니다. 
 
-In the Customer Info table, the data is partitioned according to the city in which the customer is located, and the row key contains the customer ID. In the Product Info table, the products are partitioned by product category, and the row key contains the product number. In the Order Info table, the orders are partitioned by the date on which they were placed, and the row key specifies the time the order was received. Note that all data is ordered by the row key in each partition.
+## 분할 Azure 테이블 저장소
+Azure 테이블 저장소는 분할을 중심으로 설계된 키-값 저장소입니다. 모든 엔터티는 파티션에 저장되고, 파티션은 Azure 테이블 저장소를 통해 내부적으로 관리됩니다. 테이블에 저장되는 각 엔터티는 다음을 포함하는 2파트 키를 제공해야 합니다. 
+
+* **파티션 키**. 이것은 파티션 Azure 테이블 저장소가 엔터티를 배치하는 위치를 결정하는 문자열 값입니다. 파티션 키가 동일한 모든 엔터티는 동일한 파티션에 저장됩니다.
+* **행 키**. 파티션 내에서 엔터티를 식별하는 다른 문자열 값입니다. 파티션에 있는 모든 엔터티가 이 키별로 오름차순으로 사전식으로 정렬됩니다. 이 파티션 키/행 키 조합은 각 엔터티별로 고유해야 하고 그 길이는 1KB를 초과해서는 안 됩니다.
+
+엔터티의 나머지 데이터는 응용 프로그램 정의 필드로 구성되어 있습니다. 어느 특정 체계를 실행할 수 없고, 각 행에는 다양한 응용 프로그램 정의 필드 집합을 포함할 수 있습니다. 유일한 제한은 엔터티의 최대 크기(파티션 및 행 키 포함)가 현재 1MB라는 점입니다. 테이블의 최대 크기는 200TB이며, 이 수치는 향후 변경될 수 있습니다. (이 제한에 대한 최신 정보는 Microsoft 웹사이트에서 [Azure 저장소 확장성 및 성능 목표] 페이지를 확인하십시오.) 
+
+이 용량을 초과하는 엔터티를 저장할 경우, 엔터티를 여러 테이블로 분할하는 것이 좋습니다. 수직 분할을 사용해 함께 액세스할 가능성이 높은 여러 그룹으로 필드를 나눕니다.
+
+그림 7은 가상 전자 상거래 응용 프로그램에서 저장소 계정(Contoso Data)의 논리 구조의 예를 보여줍니다. 저장소 계정에는 고객 정보, 제품 정보 및 주문 정보의 3가지 테이블이 포함되어 있습니다. 각 테이블에는 여러 파티션이 있습니다. 
+
+고객 정보 테이블에서 데이터는 고객이 거주하는 도시에 따라 분할되고, 행 키는 고객 ID를 포함합니다. 제품 정보 테이블에서 제품은 제품 카테고리별로 분할되고, 행 키는 제품 번호를 포함합니다. 주문 정보 테이블에서 주문은 주문 날짜별로 분할되고, 행 키는 주문을 받은 시간을 명시합니다. 모든 데이터는 각 파티션에서 행 키별로 정렬됩니다.
 
 ![The tables and partitions in an example storage account](./images/data-partitioning/TableStorage.png)
 
-*Figure 7. The tables and partitions in an example storage account*
+*그림 7. 저장소 계정 예의 테이블과 파티션*
 
-> [!NOTE]
-> Azure table storage also adds a timestamp field to each entity. The timestamp field is maintained by table storage and is updated each time the entity is modified and written back to a partition. The table storage service uses this field to implement optimistic concurrency. (Each time an application writes an entity back to table storage, the table storage service compares the value of the timestamp in the entity that's being written with the value that's held in table storage. If the values are different, it means that another application must have modified the entity since it was last retrieved, and the write operation fails. Don't modify this field in your own code, and don't specify a value for this field when you create a new entity.
+> [!참고]
+> Azure 테이블 저장소는 각 엔터티에 타임스탬프 필드를 추가합니다. 타임스탬프 필드는 테이블 저장소를 통해 유지되고 엔터티를 수정하고 파티션에 다시 작성할 때마다 업데이트됩니다. 테이블 저장소 서비스는 이 필드를 사용해 낙관적 동시성을 구현합니다. (응용 프로그램이 엔터티를 테이블 저장소에 다시 작성할 때마다 테이블 저장소 서비스는 작성 중인 엔터티에서 타임스탬프의 값을 테이블 저장소에 저장된 값과 비교합니다. 이들 값이 다르면 마지막 검색 이후로 다른 응용 프로그램이 이 엔터티를 수정했고 쓰기 작업에 실패했다는 것입니다. 자체 코드로 이 필드를 수정하지 말고, 새 엔터티를 만들 때 이 필드의 값을 지정하지 마십시오. 
 >
 >
 
-Azure table storage uses the partition key to determine how to store the data. If an entity is added to a table with a previously unused partition key, Azure table storage creates a new partition for this entity. Other entities with the same partition key will be stored in the same partition.
+Azure 테이블 저장소는 파티션 키를 사용해 데이터 저장 방법을 결정합니다. 이전에 사용하지 않은 파티션 키로 엔터티를 테이블에 추가하면, Azure 테이블 저장소는 이 엔터티를 위한 새 파티션을 만듭니다. 파티션 키가 동일한 다른 엔터티는 동일한 파티션에 저장됩니다. 
 
-This mechanism effectively implements an automatic scale-out strategy. Each partition is stored on a single server in an Azure datacenter to help ensure that queries that retrieve data from a single partition run quickly. However, different partitions can be distributed across multiple servers. Additionally, a single server can host multiple partitions if these partitions are limited in size.
+이 메커니즘은 자동 확장 전략을 효과적으로 구현합니다. Azure 데이터 센터의 단일 서버에 각 파티션이 저장되므로 단일 파티션에서 데이터를 검색하는 쿼리가 빠르게 실행됩니다. 그렇지만, 다양한 파티션이 여러 서버에서 배포될 수 있습니다. 또한, 단일 서버는 파티션 크기가 제한적인 경우에 이 여러 파티션을 호스팅할 수 있습니다. 
 
-Consider the following points when you design your entities for Azure table storage:
+Azure 테이블 저장소에 적합한 엔터티를 설계할 때에는 다음 사항을 고려해야 합니다. 
 
-* The selection of partition key and row key values should be driven by the way in which the data is accessed. Choose a partition key/row key combination that supports the majority of your queries. The most efficient queries retrieve data by specifying the partition key and the row key. Queries that specify a partition key and a range of row keys can be completed by scanning a single partition. This is relatively fast because the data is held in row key order. If queries don't specify which partition to scan, the partition key might require Azure table storage to scan every partition for your data.
+•	파티션 키와 행 키 값 선택은 데이터가 액세스하는 방식으로 진행되어야 합니다. 대다수 쿼리를 지원하는 파티션 키/행 키 조합을 선택합니다. 가장 효율적인 쿼리는 파티션 키와 행 키를 지정하여 데이터를 검색하는 것입니다. 파티션 키와 행 키 범위를 지정하는 쿼리는 단일 파티션을 스캔하여 완료할 수 있습니다. 데이터가 행 키 순서로 저장되어 있기 때문에 이 작업은 비교적 신속하게 끝납니다. 쿼리가 스캔할 파티션을 지정하지 않은 경우, 파티션 키는 Azure 테이블 저장소가 데이터에 적합한 모든 파티션을 스캔하도록 해야 할 수도 있습니다.
 
-  > [!TIP]
-  > If an entity has one natural key, then use it as the partition key and specify an empty string as the row key. If an entity has a composite key comprising two properties, select the slowest changing property as the partition key and the other as the row key. If an entity has more than two key properties, use a concatenation of properties to provide the partition and row keys.
+  > [!팁]
+  > 엔터티에 자연 키가 있으면, 이것을 파티션 키로 사용하고 빈 문자열을 행 키로 지정합니다. 엔터티에 2개 속성을 구성하는 복합 키가 있으면, 가장 느리게 변하는 속성을 파티션 키로 선택하고 다른 키를 행 키로 선택합니다. 엔터티에 키 속성이 3개 이상 있으면, 연속 속성을 사용해 파티션과 행 키를 제공합니다.
   >
   >
-* If you regularly perform queries that look up data by using fields other than the partition and row keys, consider implementing the [index table pattern].
-* If you generate partition keys by using a monotonic increasing or decreasing sequence (such as "0001", "0002", "0003", and so on) and each partition only contains a limited amount of data, then Azure table storage can physically group these partitions together on the same server. This mechanism assumes that the application is most likely to perform queries across a contiguous range of partitions (range queries) and is optimized for this case. However, this approach can lead to hotspots focused on a single server because all insertions of new entities are likely to be concentrated at one end or the other of the contiguous ranges. It can also reduce scalability. To spread the load more evenly across servers, consider hashing the partition key to make the sequence more random.
-* Azure table storage supports transactional operations for entities that belong to the same partition. This means that an application can perform multiple insert, update, delete, replace, or merge operations as an atomic unit (as long as the transaction doesn't include more than 100 entities and the payload of the request doesn't exceed 4 MB). Operations that span multiple partitions are not transactional, and might require you to implement eventual consistency as described by the [Data consistency primer]. For more information about table storage and transactions, go to the page [Performing entity group transactions] on the Microsoft website.
-* Give careful attention to the granularity of the partition key because of the following reasons:
-  * Using the same partition key for every entity causes the table storage service to create a single large partition that's held on one server. This prevents it from scaling out and instead focuses the load on a single server. As a result, this approach is only suitable for systems that manage a small number of entities. However, this approach does ensure that all entities can participate in entity group transactions.
-  * Using a unique partition key for every entity causes the table storage service to create a separate partition for each entity, possibly resulting in a large number of small partitions (depending on the size of the entities). This approach is more scalable than using a single partition key, but entity group transactions are not possible. Also, queries that fetch more than one entity might involve reading from more than one server. However, if the application performs range queries, then using a monotonic sequence to generate the partition keys might help to optimize these queries.
-  * Sharing the partition key across a subset of entities makes it possible for you to group related entities in the same partition. Operations that involve related entities can be performed by using entity group transactions, and queries that fetch a set of related entities can be satisfied by accessing a single server.
+•	파티션과 행 키 이외에 필드를 사용하여 데이터를 검색하는 쿼리를 정기적으로 실행할 경우 [인덱스 테이블 패턴]을 구현하는 것이 좋습니다.
 
-For additional information about partitioning data in Azure table storage, see the article [Azure storage table design guide] on the Microsoft website.
+•	단조로운 증가 또는 감소 순서("0001", "0002", "0003" 등)를 사용해 파티션 키를 생성하고 각 파티션이 제한적인 양의 데이터만을 포함하는 경우, Azure 테이블 저장소는 동일한 서버에서 이 파티션을 함께 물리적으로 그룹화할 수 있습니다. 이 메커니즘은 응용 프로그램이 연속 범위의 파티션(범위 쿼리)에서 쿼리를 실행할 가능성이 가장 높고 이 경우에 최적화되어 있다는 점을 가정합니다. 그렇지만, 이 접근 방식으로 인해 핫스폿이 단일 서버에 초점을 맞출 수도 있습니다. 왜냐하면 새 엔터티의 모든 삽입은 연속 범위의 한쪽 끝과 다른 쪽 끝에 집중될 가능성이 있기 때문입니다. 또한 이것은 확장성을 낮출 수도 있습니다. 서버 전체에서 부하를 더욱 균등하게 분산시키려면, 파티션 키를 해싱하여 순서를 임의로 지정하는 것이 좋습니다.
 
-## Partitioning Azure blob storage
-Azure blob storage makes it possible to hold large binary objects--currently up to 200 GB in size for block blobs or 1 TB for page blobs. (For the most recent information, go to the page [Azure Storage scalability and performance targets] on the Microsoft website.) Use block blobs in scenarios such as streaming where you need to upload or download large volumes of data quickly. Use page blobs for applications that require random rather than serial access to parts of the data.
+•	Azure 테이블 저장소는 동일한 파티션에 속하는 엔터티에서 트랜잭션 작업을 지원합니다. 즉, 응용 프로그램은 삽입, 업데이트, 삭제, 바꾸기, 병합 작업을 원자 단위로 여러 번 실행할 수 있습니다(트랙잭션에 엔터티가 100개를 초과하지 않고 요청의 페이로드가 4MB를 초과하지 않은 경우에 한함). 여러 파티션을 포함하는 작업은 트랜잭션이 아니므로, [데이터 일관성 프라이머]의 설명대로 최종 일관성을 구현해야 할 수도 있습니다. 테이블 저장소와 트랜잭션에 대한 자세한 내용은 Microsoft 웹사이트에서 [엔터티 그룹 트랙잭션 실행]을 참조하십시오.
 
-Each blob (either block or page) is held in a container in an Azure storage account. You can use containers to group related blobs that have the same security requirements, although this grouping is logical rather than physical. Inside a container, each blob has a unique name.
+•	다음 이유로 파티션 키의 세분성에 각별히 주의해야 합니다.
+ o	모든 엔터티에서 동일한 파티션 키를 사용하면 테이블 저장소 서비스가 하나의 서버에 저장되는 대형 파티션 하나를 만들게 됩니다. 이렇게 되면 규모 확장이 불가능하고 대신 단일 서버의 부하에 집중하게 됩니다. 그 결과, 이 접근 방식은 소량의 엔터티를 관리하는 시스템에만 적합하게 됩니다. 하지만, 이 접근 방식은 모든 엔터티가 엔터티 그룹 트랜잭션에 참여할 수 있도록 보장해 줍니다.
+ 
+  o	모든 엔터티에서 고유한 파티션 키를 사용하면 테이블 저장소 서비스가 각 엔터티의 개별 파티션을 만들어 많은 소형 파티션(엔터티 크기에 따라 다름)을 만들 수 있습니다. 이 접근 방식은 단일 파티션 키를 사용하는 것보다 확장성이 높지만, 엔터티 그룹 트랜잭션이 불가능합니다. 또한, 엔터티를 2개 이상 가져오는 쿼리는 2대 이상의 서버에서 판독할 수 있습니다. 그렇지만, 응용 프로그램이 범위 쿼리를 실행할 경우 단조로운 순서를 사용해 파티션 키를 생성하면 이 쿼리를 최적화할 수 있습니다.
+  
+ o	엔터티 하위 집합에서 파티션 키를 공유하면 동일한 파티션에서 관련 엔터티를 그룹화할 수 있습니다. 관련 엔터티를 포함하는 작업은 엔터티 그룹 트랜잭션을 사용하여 실행할 수 있고, 관련 엔터티 집합을 가져오는 쿼리는 단일 서버를 액세스하여 충족할 수 있습니다.
+ 
+Azure 테이블 저장소에서 분할 데이터에 대한 추가 정보는 Microsoft 웹사이트에 있는 [Azure 저장소 테이블 설계 가이드] 항목을 참조하십시오. 
 
-Blob storage is automatically partitioned based on the blob name. Each blob is held in its own partition. Blobs in the same container do not share a partition. This architecture helps Azure blob storage to balance the load across servers transparently because different blobs in the same container can be distributed across different servers.
+## 분할 Azure blob 저장소
+Azure blob 저장소는 대형 이진 개체를 저장할 수 있습니다. 즉, 현재 블록 blob에서는 최대 200GB, 페이지 blob에서는 1TB 크기가 지원됩니다. (자세한 내용은 Microsoft 웹사이트의 [Azure 저장소 확장성 및 성능 목표]를 참조하십시오.) 대용량 데이터를 빠르게 업로드하거나 다운로드해야 하는 스트리밍과 같은 시나리오에서 블록 blob을 사용합니다. 데이터의 여러 부분에 연속으로 액세스하기 보다는 임의로 액세스해야 하는 응용 프로그램에서는 페이지 blob을 사용합니다.
 
-The actions of writing a single block (block blob) or page (page blob) are atomic, but operations that span blocks, pages, or blobs are not. If you need to ensure consistency when performing write operations across blocks, pages, and blobs, take out a write lock by using a blob lease.
+각 blob(블록 또는 페이지)은 Azure 저장소 계정의 컨테이너에 저장됩니다. 컨테이너를 사용해 보안 요구사항이 동일한 관련 blob을 그룹화할 수 있지만, 이 그룹화는 물리적이기 보다는 논리적입니다. 컨테이너 내부에 있는 각 blob에는 고유한 이름이 있습니다.
 
-Azure blob storage supports transfer rates of up to 60 MB per second or 500 requests per second for each blob. If you anticipate surpassing these limits, and the blob data is relatively static, then consider replicating blobs by using the Azure Content Delivery Network. For more information, see the page [Using Delivery Content Network for Azure] on the Microsoft website. For additional guidance and considerations, see  [Using Content Delivery Network for Azure].
+Blob 저장소는 blob 이름에 따라 자동으로 분할됩니다. 각 blob은 자체 파티션에 저장됩니다. 동일한 컨테이너에 있는 blob은 파티션을 공유하지 않습니다. 동일한 컨테이너에 있는 다양한 blob은 여러 서버에서 분산될 수 있기 때문에 이 아키텍처는 서버 전체에서 Azure blob 저장소가 부하 균형을 투명하게 유지하는 데 도움이 됩니다. 
 
-## Partitioning Azure storage queues
-Azure storage queues enable you to implement asynchronous messaging between processes. An Azure storage account can contain any number of queues, and each queue can contain any number of messages. The only limitation is the space that's available in the storage account. The maximum size of an individual message is 64 KB. If you require messages bigger than this, then consider using Azure Service Bus queues instead.
+단일 블록(블록 blob) 또는 페이지(페이지 blob)를 쓰는 작업은 원자성이지만, 블록, 페이지 또는 blob을 포함하는 작업은 원자성이 아닙니다. 여러 블록, 페이지, blob에서 쓰기 작업을 실행할 때 일관성을 보장해야 하는 경우, blob 임대를 사용해 쓰기 잠금을 해제합니다. 
 
-Each storage queue has a unique name within the storage account that contains it. Azure partitions queues based on the name. All messages for the same queue are stored in the same partition, which is controlled by a single server. Different queues can be managed by different servers to help balance the load. The allocation of queues to servers is transparent to applications and users.
+Azure blob 저장소의 전송 속도는 각 blob별로 초당 최대 60MB 또는 초당 500개 요청입니다. 이 한도를 넘을 것으로 예상되고 blob 데이터가 비교적 정적이면, Azure Content Delivery Network를 사용하여 blob를 복제하는 것이 좋습니다. 자세한 내용은 Microsoft 웹사이트의 [Azure용 Delivery Content Network 사용]을 참조하십시오. 추가 지침과 고려 사항은 [Azure용 Content Delivery Network 사용]을 참조하십시오.
 
- In a large-scale application, don't use the same storage queue for all instances of the application because this approach might cause the server that's hosting the queue to become a hotspot. Instead, use different queues for different functional areas of the application. Azure storage queues do not support transactions, so directing messages to different queues should have little impact on messaging consistency.
+## Azure 저장소 큐 분할
+Azure 저장소 큐를 통해 프로세스 간 비동기식 메시징을 구현할 수 있습니다. Azure 저장소 계정은 큐를 얼마든지 포함할 수 있고, 각 큐는 메시지를 얼마든지 포함할 수 있습니다. 유일한 제한은 저장소 계정에서 사용할 수 있는 공간입니다. 개별 메시지의 최대 크기는 64KB입니다. 메시지가 이보다 클 경우, 대신 Azure Service Bus 큐를 사용하는 것이 좋습니다. 
 
-An Azure storage queue can handle up to 2,000 messages per second.  If you need to process messages at a greater rate than this, consider creating multiple queues. For example, in a global application, create separate storage queues in separate storage accounts to handle application instances that are running in each region.
+각 저장소 큐에는 저장소 계정 내에 고유한 이름이 있습니다. Azure 파티션 큐는 이 이름을 기준으로 합니다. 동일한 큐의 모든 메시지는 동일한 파티션에 저장되고, 이것은 단일 서버를 통해 제어됩니다. 큐는 서버별로 관리되어 부하 균형을 조정할 수 있습니다. 큐를 서버에 할당할 때 응용 프로그램과 사용자에게 투명합니다. 
 
-## Partitioning strategies for Azure Service Bus
-Azure Service Bus uses a message broker to handle messages that are sent to a Service Bus queue or topic. By default, all messages that are sent to a queue or topic are handled by the same message broker process. This architecture can place a limitation on the overall throughput of the message queue. However, you can also partition a queue or topic when it is created. You do this by setting the *EnablePartitioning* property of the queue or topic description to *true*.
+대규모 응용 프로그램에서는 모든 응용 프로그램 인스턴스에서 동일한 저장소 큐를 사용해서는 안 됩니다. 왜냐하면, 이 접근 방식은 큐를 호스팅하는 서버를 핫스폿으로 만들 수 있기 때문입니다. 그 대신, 응용 프로그램의 기능 영역별로 다른 큐를 사용합니다. Azure 저장소 큐는 트랜잭션을 지원하지 않으므로, 메시지를 다른 큐에 전달해도 메시징 일관성에는 거의 영향을 주지 않아야 합니다. 
 
-A partitioned queue or topic is divided into multiple fragments, each of which is backed by a separate message store and message broker. Service Bus takes responsibility for creating and managing these fragments. When an application posts a message to a partitioned queue or topic, Service Bus assigns the message to a fragment for that queue or topic. When an application receives a message from a queue or subscription, Service Bus checks each fragment for the next available message and then passes it to the application for processing.
+Azure 저장소 큐는 초당 최대 2,000개 메시지를 처리할 수 있습니다. 이보다 높은 속도로 메시지를 처리해야 하는 경우, 여러 큐를 만드는 것이 좋습니다. 예를 들어, 전역 응용 프로그램에서 별도의 저장소 계정에 별도의 저장소 큐를 만들어 각 영역에서 실행되고 있는 응용 프로그램 인스턴스를 처리합니다. 
 
-This structure helps distribute the load across message brokers and message stores, increasing scalability and improving availability. If the message broker or message store for one fragment is temporarily unavailable, Service Bus can retrieve messages from one of the remaining available fragments.
+## Azure Service Bus에 적합한 분할 전략
+Azure Service Bus는 메시지 브로커를 사용하여 Service Bus 큐 또는 항목에 보내는 메시지를 처리합니다. 기본적으로 큐 또는 항목에 보낸 모든 메시지는 동일한 메시지 브로커 프로세스를 통해 처리됩니다. 이 아키텍처는 메시지 큐의 전체 처리량을 제한할 수 있습니다. 그렇지만, 큐 또는 항목을 만들 때 이것을 분할할 수도 있습니다. 이 작업을 하려면 큐 또는 항목 설명의 *EnablePartitioning* 속성을 *true*로 설정합니다.
 
-Service Bus assigns a message to a fragment as follows:
+분할된 큐 또는 항목을 여러 조각으로 나누고, 이 각 조각을 별도의 메시지 저장소와 메시지 브로커를 통해 지원합니다. Service Bus는 이 조각을 만들고 관리할 책임이 있습니다. 응용 프로그램이 분할된 큐 또는 항목에 메시지를 게시하면, Service Bus는 이 메시지를 이 큐 또는 항목에 적합한 조각에 할당합니다. 응용 프로그램이 큐 또는 가입에서 메시지를 받으면, Service Bus는 각 조각에서 다음 사용 가능한 메시지가 있는지 확인하고 처리할 수 있도록 응용 프로그램에 전달합니다. 
 
-* If the message belongs to a session, all messages with the same value for the * SessionId*  property are sent to the same fragment.
-* If the message does not belong to a session, but the sender has specified a value for the *PartitionKey* property, then all messages with the same *PartitionKey* value are sent to the same fragment.
+이 구조를 통해 전체 메시지 브로커와 메시지 저장소에서 부하를 분산시켜 확장성과 가용성을 높일 수 있습니다. 한 조각의 메시지 브로커나 메시지 저장소를 일시적으로 사용할 수 없는 경우, Service Bus는 나머지 가용 조각 중 하나에서 메시지를 검색할 수 있습니다. 
 
-  > [!NOTE]
-  > If the *SessionId* and *PartitionKey* properties are both specified, then they must be set to the same value or the message will be rejected.
+Service Bus는 다음과 같이 조각에 메시지를 할당합니다. 
+
+•	메시지가 세션에 속한 경우, * SessionId* 속성에서 동일한 값을 갖는 모든 메시지는 동일한 조각으로 보내집니다.
+•	메시지가 세션에 속하지 않지만 보낸 사람이 *PartitionKey* 속성의 값을 지정한 경우, 동일한 *PartitionKey* 값을 갖는 모든 메시지는 동일한 조각으로 보내집니다.
+
+  > [!참고]
+  > *SessionId* 및 *PartitionKey* 속성이 모두 지정된 경우에는 동일한 값으로 설정되거나 메시지가 거부됩니다.
   >
   >
-* If the *SessionId* and *PartitionKey* properties for a message are not specified, but duplicate detection is enabled, the *MessageId* property will be used. All messages with the same *MessageId* will be directed to the same fragment.
-* If messages do not include a *SessionId, PartitionKey,* or *MessageId* property, then Service Bus assigns messages to fragments sequentially. If a fragment is unavailable, Service Bus will move on to the next. This means that a temporary fault in the messaging infrastructure does not cause the message-send operation to fail.
+•	메시지의 *SessionId* 및 *PartitionKey* 속성이 지정되지 않았지만 중복 감지가 활성화된 경우, *MessageId* 속성이 사용됩니다. 동일한 *MessageId* 를 갖는 모든 메시지는 동일한 조각으로 전송됩니다.
 
-Consider the following points when deciding if or how to partition a Service Bus message queue or topic:
+•	메시지에 *SessionId, PartitionKey,* 또는 *MessageId* 속성이 포함되지 않은 경우, Service Bus는 조각에 순서대로 메시지를  할당합니다. 조각을 사용할 수 없는 경우, Service Bus는 다음 조각으로 넘어갑니다. 이것은 메시징 인프라의 일시적인 오류때문에 메시지 전송 작업이 실패하지는 않는다는 것을 의미합니다.
 
-* Service Bus queues and topics are created within the scope of a Service Bus namespace. Service Bus currently allows up to 100 partitioned queues or topics per namespace.
-* Each Service Bus namespace imposes quotas on the available resources, such as the number of subscriptions per topic, the number of concurrent send and receive requests per second, and the maximum number of concurrent connections that can be established. These quotas are documented on the Microsoft website on the page [Service Bus quotas]. If you expect to exceed these values, then create additional namespaces with their own queues and topics, and spread the work across these namespaces. For example, in a global application, create separate namespaces in each region and configure application instances to use the queues and topics in the nearest namespace.
-* Messages that are sent as part of a transaction must specify a partition key. This can be a *SessionId*, *PartitionKey*, or *MessageId* property. All messages that are sent as part of the same transaction must specify the same partition key because they must be handled by the same message broker process. You cannot send messages to different queues or topics within the same transaction.
-* Partitioned queues and topics can't be configured to be automatically deleted when they become idle.
-* Partitioned queues and topics can't currently be used with the Advanced Message Queuing Protocol (AMQP) if you are building cross-platform or hybrid solutions.
+Service Bus 메시지 큐 또는 항목을 분할하지 여부나 분할 방법을 결정할 때에는 다음 사항을 고려해야 합니다. 
 
-## Partitioning strategies for Azure DocumentDB databases
-Azure DocumentDB is a NoSQL database that can store documents. A document in a DocumentDB database is a JSON-serialized representation of an object or other piece of data. No fixed schemas are enforced except that every document must contain a unique ID.
+•	Service Bus 큐와 항목은 Service Bus 네임스페이스 범위에서 만들어집니다. Service Bus는 현재 네임스페이스당 최대 100개의 분할된 큐 또는 항목을 허용합니다.
 
-Documents are organized into collections. You can group related documents together in a collection. For example, in a system that maintains blog postings, you can store the contents of each blog post as a document in a collection. You can also create collections for each subject type. Alternatively, in a multitenant application, such as a system where different authors control and manage their own blog posts, you can partition blogs by author and create separate collections for each author. The storage space that's allocated to collections is elastic and can shrink or grow as needed.
+•	각 Service Bus 네임스페이스는 항목당 가입 횟수, 초당 동시 전송 및 수신 요청 개수, 설정 가능한 동시 연결의 최대 개수 등 가용 리소스에 할당량을 부과합니다.  이 할당량은 Microsoft 웹사이트의 [Service Bus 할당량] 페이지에 기록됩니다. 이 값을 초과하는 경우, 자체 큐와 항목을 사용한 추가 네임스페이스를 만들고 이 네임스페이스에서 작업을 분산시킵니다. 예를 들어, 전역 응용 프로그램에서 각 영역에 별도의 네임스페이스를 만들고 응용 프로그램 인스턴스를 구성하여 가장 가까운 네임스페이스에서 큐와 항목을 사용합니다.
 
-Document collections provide a natural mechanism for partitioning data within a single database. Internally, a DocumentDB database can span several servers and might attempt to spread the load by distributing collections across servers. The simplest way to implement sharding is to create a collection for each shard.
+•	트랜잭션의 일부로서 보낸 메시지는 파티션 키를 지정해야 합니다. 이것은 *SessionId*, *PartitionKey*, or *MessageId* 속성 중 하나입니다. 동일한 트랜잭션의 일부로서 보낸 모든 메시지는 동일한 메시지 브로커 프로세스를 통해 처리되어야 하기 때문에 동일한 파티션 키를 지정해야 합니다. 동일한 트랜잭션 내에서 다른 큐 또는 항목으로 메시지를 보낼 수 없습니다.
 
-> [!NOTE]
-> Each DocumentDB database has a *performance level* that determines the amount of resources it gets. A performance level is associated with a *request unit* (RU) rate limit. The RU rate limit specifies the volume of resources that's reserved and available for exclusive use by that collection. The cost of a collection depends on the performance level that's selected for that collection. The higher the performance level (and RU rate limit) the higher the charge. You can adjust the performance level of a collection by using the Azure portal. For more information, see the page [Performance levels in DocumentDB] on the Microsoft website.
+•	할당된 큐와 항목은 유휴 상태가 될 때 자동으로 삭제되도록 구성할 수 없습니다.
+
+•	교차 플랫폼이나 하이브리드 솔루션을 빌드하는 경우 분할된 큐와 항목은 현재 AMQP(Advanced Message Queuing Protocol)에서 사용할 수 없습니다.
+
+## Azure DocumentDB 데이터베이스에 적합한 분할 전략
+Azure DocumentDB는 문서를 저장할 수 있는 NoSQL 데이터베이스입니다. DocumentDB 데이터베이스의 문서는 개체나 다른 데이터 조각의 JSON 직렬화된 표현입니다. 모든 문서가 고유 ID를 포함해야 하는 점을 제외하고 어떠한 고정 스키마도 실행되지 않습니다. 
+
+문서는 컬렉션으로 구성됩니다. 컬렉션에서 관련 문서를 모두 그룹화할 수 있습니다. 예를 들어, 블로그 게시물을 유지하는 시스템에서 각 블로그 게시물의 콘텐츠를 컬렉션의 문서로 저장할 수 있습니다. 또한 제목 유형별로 컬렉션을 만들 수도 있습니다. 그렇지 않으면, 다른 작성자가 자체 블로그 게시물을 제어하고 관리하는 시스템과 같은 다중 테넌트 응용 프로그램에서 작성자별로 블로그를 분할하고 각 작성자별로 별도의 컬렉션을 만들 수 있습니다. 컬렉션에 할당된 저장소 공간은 탄력적이어서 필요에 따라 줄이거나 늘릴 수 있습니다. 
+
+문서 컬렉션은 단일 데이터베이스 내에서 데이터를 분할하는 자연스러운 메커니즘을 지원합니다. 내부적으로 DocumentDB 데이터베이스는 여러 서버를 포함하고 전체 서버에서 컬렉션을 배포하여 부하를 분산시킬 수 있습니다. 샤딩을 구현하는 가장 간단한 방법은 각 샤드별로 컬렉션을 만드는 것입니다. 
+
+> [!참고]
+> 각 DocumentDB 데이터베이스에는 가져오는 리소스 양을 결정하는 성능 수준이 있습니다. 성능 수준은 요청 단위(RU) 속도 제한과 관련되어 있습니다. RU 속도 제한은 예약되어 해당 컬렉션에서 독점적으로 사용할 수 있는 리소스 볼륨을 제한합니다. 컬렉션 비용은 해당 컬렉션에서 선택한 성능 수준에 따라 달라집니다. 성능 수준(및 RU 속도 한계)이 높아질수록 요금이 높아집니다. Azure포털을 사용하여 컬렉션의 성능 수준을 조정할 수 있습니다. 자세한 내용은 Microsoft 웹사이트의 [DocumentDB에서 성능 수준] 페이지를 참조하십시오. 
 >
 >
 
-All databases are created in the context of a DocumentDB account. A single DocumentDB account can contain several databases, and it specifies in which region the databases are created. Each DocumentDB account also enforces its own access control. You can use DocumentDB accounts to geo-locate shards (collections within databases) close to the users who need to access them, and enforce restrictions so that only those users can connect to them.
+모든 데이터베이스는 DocumentDB 계정의 컨텍스트에서 만들어집니다. 단일 DocumentDB 계정에는 여러 데이터베이스가 포함될 수 있고, 이것은 데이터베이스를 만들 영역을 지정합니다. 각 DocumentDB 계정은 자체 액세스 제어를 실행합니다. DocumentDB 계정을 사용하여 액세스해야 하는 사용자와 가까이에 있는 샤드(데이터베이스에 있는 컬렉션)를 지리적으로 찾고 이 사용자만이 해당 샤드에 연결할 수 있도록 제한을 실행할 수 있습니다. 
 
-Each DocumentDB account has a quota that limits the number of databases and collections that it can contain and the amount of document storage that's available. These limits are subject to change, but are described on the page [DocumentDB limits and quotas] on the Microsoft website. It is theoretically possible that if you implement a system where all shards belong to the same database, you might reach the storage capacity limit of the account.
+각 DocumentDB 계정에는 포함하는 데이터베이스와 컬렉션의 개수와 사용 가능한 문서 저장소 양을 제한하는 할당량이 있습니다. 이 제한은 변경 가능하고, Microsoft 웹사이트의 [DocumentDB 제한 및 할당량] 페이지에 설명되어 있습니다. 이론상으로는 모든 샤드가 동일한 데이터베이스에 속한 시스템을 구현할 경우 계정의 저장소 용량 제한에 도달할 수 있습니다. 
 
-In this case, you might need to create additional DocumentDB accounts and databases, and distribute the shards across these databases. However, even if you are unlikely to reach the storage capacity of a database, it's a good practice to use multiple databases. That's because each database has its own set of users and permissions, and you can use this mechanism to isolate access to collections on a per-database basis.
+이 경우에 추가 DocumentDB 계정 및 데이터베이스를 만들고 이 데이터베이스에서 샤드를 배포해야 합니다. 그렇지만, 데이터베이스의 저장소 용량에 도달할 가능성이 없더라도 여러 데이터베이스를 사용하는 것이 좋습니다. 왜냐하면 각 데이터베이스에는 자체 사용자 및 권한 집합이 있고 이 메커니즘을 사용하여 데이터베이스별 컬렉션에 대한 액세스 권한을 분리할 수 있기 때문입니다. 
 
-Figure 8 illustrates the high-level structure of the DocumentDB architecture.
+그림 8은 DocumentDB 아키텍처의 높은 수준의 구조를 나타냅니다. 
 
 ![The structure of DocumentDB](./images/data-partitioning/DocumentDBStructure.png)
 
-*Figure 8.  The structure of the DocumentDB architecture*
+*그림 8. DocumentDB 아키텍처의 구조*
 
-It is the task of the client application to direct requests to the appropriate shard, usually by implementing its own mapping mechanism based on some attributes of the data that define the shard key. Figure 9 shows two DocumentDB databases, each containing two collections that are acting as shards. The data is sharded by a tenant ID and contains the data for a specific tenant. The databases are created in separate DocumentDB accounts. These accounts are located in the same region as the tenants for which they contain data. The routing logic in the client application uses the tenant ID as the shard key.
+적절한 샤드에 요청을 전달하는 것은 클라이언트 응용 프로그램의 작업이며, 이것은 보통 샤드 키를 정의하는 일부 데이터 특성을 기반으로 하는 자체 매핑 메커니즘을 구현하여 실행됩니다. 그림 9는 각기 샤드 역할을 하고 있는 컬렉션 2개를 포함하는 DocumentDB 데이터베이스 2개를 나타냅니다. 데이터는 테넌트 ID별로 샤딩되고 특정 테넌트의 데이터를 포함합니다. 이 데이터베이스는 별도의 DocumentDB 계정에서 만들어집니다. 이 계정은 계정이 데이터를 포함하는 테넌트와 동일한 영역에 있습니다. 클라이언트 응용 프로그램의 라우팅 논리는 테넌트 ID를 샤드 키로 사용합니다. 
 
 ![Implementing sharding using Azure DocumentDB](./images/data-partitioning/DocumentDBPartitions.png)
 
-*Figure 9. Implementing sharding using an Azure DocumentDB database*
+*그림 9. Azure DocumentDB 데이터베이스를 사용한 샤딩 구현*
 
-Consider the following points when deciding how to partition data with a DocumentDB database:
+DocumentDB 데이터베이스를 사용하여 데이터를 분할하는 방법을 결정할 때 고려할 사항은 다음과 같습니다. 
 
-* **The resources available to a DocumentDB database are subject to the quota limitations of the DocumentDB account**. Each database can hold a number of collections (again, there is a limit), and each collection is associated with a performance level that governs the RU rate limit (reserved throughput) for that collection. For more information, go to the page [DocumentDB limits and quotas] on the Microsoft website.
-* **Each document must have an attribute that can be used to uniquely identify that document within the collection in which it is held**. This attribute is different from the shard key, which defines which collection holds the document. A collection can contain a large number of documents. In theory, it's limited only by the maximum length of the document ID. The document ID can be up to 255 characters.
-* **All operations against a document are performed within the context of a transaction. Transactions in DocumentDB databases are scoped to the collection in which the document is contained.** If an operation fails, the work that it has performed is rolled back. While a document is subject to an operation, any changes that are made are subject to snapshot-level isolation. This mechanism guarantees that if, for example, a request to create a new document fails, another user who's querying the database simultaneously will not see a partial document that is then removed.
-* **DocumentDB database queries are also scoped to the collection level**. A single query can retrieve data from only one collection. If you need to retrieve data from multiple collections, you must query each collection individually and merge the results in your application code.
-* **DocumentDB databases supports programmable items that can all be stored in a collection alongside documents**. These include stored procedures, user-defined functions, and triggers (written in JavaScript). These items can access any document within the same collection. Furthermore, these items run either inside the scope of the ambient transaction (in the case of a trigger that fires as the result of a create, delete, or replace operation performed against a document), or by starting a new transaction (in the case of a stored procedure that is run as the result of an explicit client request). If the code in a programmable item throws an exception, the transaction is rolled back. You can use stored procedures and triggers to maintain integrity and consistency between documents, but these documents must all be part of the same collection.
-* **The collections that you intend to hold in the databases in a DocumentDB account should be unlikely to exceed the throughput limits defined by the performance levels of the collections**. These limits are described on the page [Manage DocumentDB capacity needs] on the Microsoft website. If you anticipate reaching these limits, consider splitting collections across databases in different DocumentDB accounts to reduce the load per collection.
+* **DocumentDB 데이터베이스에서 사용 가능한 리소스는 DocumentDB 계정의 할당량 제한에 따라 달라집니다**. 각 데이터베이스에는 많은 컬렉션(다시 말해 제한이 있음)을 저장할 수 있고, 각 컬렉션은 해당 컬렉션에서 RU 속도 제한(예약 처리량)을 통제하는 성능 수준과 관련되어 있습니다. 자세한 내용은 Microsoft 웹사이트의 [DocumentDB 제한 및 할당량] 페이지를 참조하십시오.
+* **각 문서에는 컬렉션에 있는 해당 문서를 고유하게 식별하는 데 사용할 수 있는 특성이 있어야 합니다**. 이 특성은 샤드 키와 다르고, 이것은 문서를 저장하는 컬렉션을 정의합니다. 컬렉션은 많은 문서를 포함할 수 하지만 원칙적으로 문서 ID의 최대 길이에 의해서만 제한받습니다. 문서 ID 길이는 최대 255자입니다.
+* **문서와 관련된 모든 작업은 트랜잭션의 컨텍스트 내에서 실행됩니다. DocumentDB 데이터베이스의 트랜잭션은 문서를 포함하는 컬렉션의 범위로 지정됩니다.** 작업이 실패하면, 실행한 작업은 롤백됩니다. 문서가 실행되는 동안 적용된 모든 변경 내용은 스냅샷 수준으로 분리됩니다. 이 메커니즘은 예를 들어 새 문서를 만드는 요청이 실패할 경우 이 데이터베이스를 동시에 조회하는 다른 사용자에게 이후 제거된 문서의 일부가 보이지 않게 해줍니다.
+* **DocumentDB 데이터베이스 쿼리는 컬렉션 수준으로 범위가 지정됩니다**. 단일 쿼리는 컬렉션 하나에서만 데이터를 검색할 수 있습니다. 여러 컬렉션에서 데이터를 검색해야 하는 경우, 각 컬렉션을 개별적으로 조회하고 응용 프로그램 코드에서 결과를 병합해야 합니다.
+* **DocumentDB 데이터베이스는 문서와 함께 컬렉션에 모두 저장될 수 있는 프로그래밍 가능 항목을 지원합니다**. 여기에는 저장된 절차, 사용자가 정의한 기능 및 트리거(JavaScript로 작성됨)가 있습니다. 이들 항목은 동일한 컬렉션 내에서 모든 문서를 액세스할 수 있습니다. 또한, 이 항목은 주위 트랜잭션 범위 내부에서 실행되거나(문서에 대해 실행되는 만들기, 삭제 또는 바꾸기 작업의 결과로서 시작되는 트리거의 경우) 새 트랜잭션을 시작하여 실행됩니다(명시적인 클라이언트 요청의 결과로서 실행되는 저장된 절차의 경우). 프로그래밍 가능한 항목의 코드에서 예외가 발생하면, 이 트랜잭션은 롤백됩니다. 저장된 절차와 문서 간 무결성과 일관성을 유지하는 트리거를 사용할 수 있지만, 이 문서는 모두 동일한 컬렉션의 일부여야 합니다.
+* **•	DocumentDB 계정에서 데이터베이스에 저장하려는 컬렉션은 컬렉션의 성능 수준에서 정의된 처리량 제한을 초과하지 않아야 합니다**. 이 제한은 Microsoft 웹사이트의 [DocumentDB 용량 요구 사항 관리] 페이지에 설명되어 있습니다. 이 제한에 도달할 것으로 예상되는 경우, 각기 다른 DocumentDB 계정의 데이터베이스에서 컬렉션을 분할하여 컬렉션당 부하를 줄이는 것이 좋습니다.
 
-## Partitioning strategies for Azure Search
-The ability to search for data is often the primary method of navigation and exploration that's provided by many web applications. It helps users find resources quickly (for example, products in an e-commerce application) based on combinations of search criteria. The Azure Search service provides full-text search capabilities over web content, and includes features such as type-ahead, suggested queries based on near matches, and faceted navigation. A full description of these capabilities is available on the page [What is Azure Search?] on the Microsoft website.
+## Azure Search에 적합한 분할 전략
+데이터를 검색하는 기능은 흔히 많은 웹 응용 프로그램에서 제공하는 탐색과 탐구의 주요 방법입니다. 이 기능을 통해 사용자는 검색 기준 조합에 따라 리소스를 빠르게 찾을 수 있습니다(예를 들어, 전자 상거래 응용 프로그램의 제품). Azure Search 서비스는 웹 콘텐츠를 통해 전체 텍스트 검색 기능을 제공하고, 거의 일치하는 항목을 기반으로 자동 완성, 제안된 쿼리, 다양한 탐색과 같은 여러 기능을 갖추고 있습니다. 이들 기능에 대한 전체 설명은 Microsoft 웹사이트의 [Azure Search란?] 페이지에 나와 있습니다. 
 
-Azure Search stores searchable content as JSON documents in a database. You define indexes that specify the searchable fields in these documents and provide these definitions to Azure Search. When a user submits a search request, Azure Search uses the appropriate indexes to find matching items.
+Azure Search는 검색 가능한 콘텐츠를 데이터베이스에 JSON 문서로 저장합니다. 이들 문서에 검색 가능한 필드를 지정하는 인덱스를 정의하고 이 정의를 Azure Search에 제공합니다. 사용자가 검색 요청을 제출하면, Azure Search는 적절한 인덱스를 사용해 일치하는 항목을 찾습니다. 
 
-To reduce contention, the storage that's used by Azure Search can be divided into 1, 2, 3, 4, 6, or 12 partitions, and each partition can be replicated up to 6 times. The product of the number of partitions multiplied by the number of replicas is called the *search unit* (SU). A single instance of Azure Search can contain a maximum of 36 SUs (a database with 12 partitions only supports a maximum of 3 replicas).
+경합을 줄이기 위해 Azure Search가 사용하는 저장소는 파티션 1개, 2개, 3개, 4개, 6개, 12개 중 하나로 나뉠 수 있고 각 파티션은 최대 6회까지 복제될 수 있습니다. 파티션 개수에 복제본 수를 곱한 것을 검색 단위(SU)라고 합니다. Azure Search의 단일 인스턴스는 최대 36개 SU(파티션 12개를 갖는 데이터베이스는 최대 복제본 3개만을 지원함)를 포함할 수 있습니다. 
 
-You are billed for each SU that is allocated to your service. As the volume of searchable content increases or the rate of search requests grows, you can add SUs to an existing instance of Azure Search to handle the extra load. Azure Search itself distributes the documents evenly across the partitions. No manual partitioning strategies are currently supported.
+서비스에 할당된 각 SU별로 요금이 청구됩니다. 검색 가능 콘텐츠의 볼륨이 증가하거나 검색 요청 속도가 증가하면, Azure Search의 기존 인스턴스에 SU를 추가하여 추가 부하를 처리할 수 있습니다. Azure Search는 자체적으로 파티션 전체에 문서를 고르게 배포합니다. 현재 지원되는 수동 분할 전략은 없습니다. 
 
-Each partition can contain a maximum of 15 million documents or occupy 300 GB of storage space (whichever is smaller). You can create up to 50 indexes. The performance of the service varies and depends on the complexity of the documents, the available indexes, and the effects of network latency. On average, a single replica (1 SU) should be able to handle 15 queries per second (QPS), although we recommend performing benchmarking with your own data to obtain a more precise measure of throughput. For more information, see the page [Service limits in Azure Search] on the Microsoft website.
+각 파티션은 최대 1500만 개의 문서를 포함하거나 300GB의 저장소 공간을 점유할 수 있습니다(어느 것이든 더 작은 것이 우선임). 최대 50개 인덱스를 만들 수 있습니다. 서비스 성능은 달라지고 이는 문서 복잡성, 가용 인덱스, 네트워크 대기 시간의 영향에 따라 다릅니다. 평균적으로 단일 복제본(1 SU)은 초당 쿼리(QPS) 15개를 처리할 수 있지만, 사용자 자체 데이터를 사용할 때 벤치마킹을 실행하여 더 정확한 처리량 평가를 확보하는 것을 권장합니다. 자세한 내용은 Microsoft 웹사이트의 [Azure Search의 서비스 제한]을 참조하십시오.
 
-> [!NOTE]
-> You can store a limited set of data types in searchable documents, including strings, Booleans, numeric data, datetime data, and some geographical data. For more details, see the page [Supported data types (Azure Search)] on the Microsoft website.
+> [!참고]
+> 검색 가능 문서에 문자열, 부울, 숫자 데이터, 날짜/시간 데이터, 일부 지리적 데이터를 포함하여 제한적인 데이터 형식 집합을 저장할 수 있습니다. 자세한 내용은 Microsoft 웹사이트의 [지원 데이터 형식(Azure Search)] 페이지를 참조하십시오. 
+>
+
+Azure Search가 서비스의 각 인스턴스별로 데이터를 분할하는 방법을 제한적으로 통제할 수 있습니다. 그렇지만, 다음 전략 중 하나를 이용해 서비스 자체를 분할하여 전역 환경에서 성능을 개선하고 대기 시간과 경합을 추가로 줄여야 할 수도 있습니다. 
+
+•	각 지리적 영역에서 Azure Search의 인스턴스를 만들고, 클라이언트 응용 프로그램이 가장 가까운 가용 인스턴스로 전달되도록 보장해야 합니다. 이 전략에서는 모든 서비스 인스턴스에서 검색 가능한 콘텐츠 업데이트를 적시에 복제해야 합니다.
+
+•	다음과 같이 Azure Search 계층 두 개를 만듭니다.
+
+ o	해당 영역에서 사용자가 가장 자주 액세스하는 데이터를 포함하는 각 지역별 로컬 서비스. 사용자는 여기에서 요청을 전달하여 빠르지만 제한적인 결과를 받을 수 있습니다.
+ 
+ o	모든 데이터를 포함하는 전역 서비스. 사용자는 여기에서 요청을 전달하여 느리지만 보다 완벽한 결과를 받을 수 있습니다.
+ 
+이 접근 방식은 검색 중인 데이터에 중대한 지역 변동이 있을 때 가장 적합합니다. 
+
+## Azure Redis Cache에 적합한 분할 전략
+Azure Redis Cache는 Redis 키-값 데이터 저장소를 기반으로 하는 클라우드에서 공유된 캐싱 서비스를 제공합니다. 이름에서도 알 수 있듯이 Azure Redis Cache는 캐싱 솔루션으로 제작되었습니다. 일시적 데이터를 저장하는 용도로만 사용하고 영구 데이터 저장소로 사용해서는 안 됩니다. Azure Redis Cache를 활용하는 응용 프로그램은 캐시를 사용할 수 없는 경우에 계속 작동할 수 있어야 합니다. Azure Redis Cache는 일차/이차 복제를 지원하여 고가용성을 제공하지만, 현재 최대 캐시 크기는 53GB로 제한되어 있습니다. 이보다 큰 공간이 필요하면, 추가 캐시를 만들어야 합니다. 자세한 내용은 Microsoft 웹사이트의 [Azure Redis Cache] 페이지를 참조하십시오. 
+
+Redis 데이터 저장소 분할에는 Redis 서비스 인스턴스에서의 데이터 분할이 포함됩니다. 각 인스턴스는 단일 파티션을 구성합니다. Azure Redis Cache는 파사드 뒤에서 Redis 서비스를 추상화하고 이것을 직접 노출하지는 않습니다. 분할을 구현하는 가장 간단한 방법은 여러 Azure Redis Cache 인스턴스를 만들고 여기에서 데이터를 분산시키는 것입니다. 
+
+데이터 항목을 저장할 캐시를 지정하는 식별자(파티션 키)와 각 데이터 항목을 연결할 수 있습니다. 그런 다음 클라이언트 응용 프로그램 논리는 이 식별자를 사용해 요청을 적절한 파티션으로 전달할 수 있습니다. 이 체계는 매우 간단하지만, 분할 체계가 바뀌면(예를 들어, 추가 Azure Redis Cache 인스턴스를 만들 경우), 클라이언트 응용 프로그램을 재구성해야 할 수도 있습니다. 
+
+네이티브 Redis(Azure Redis Cache가 아님)는 Redis 클러스터링을 기반으로 서버 측 분할을 지원합니다. 이 접근 방식에서는 해싱 메커니즘을 사용하여 데이터를 전체 서버에서 균등하게 나눌 수 있습니다. 각 Redis 서버는 파티션이 저장한 해시 키의 범위를 설명하는 메타데이터를 저장하고, 다른 서버에 있는 파티션에 위치한 해시 키에 대한 정보를 포함합니다. 
+
+클라이언트 응용 프로그램은 참여하는 Redis 서버(아마도 가장 가까운 서버) 중 어느 것으로든 간단히 요청을 보냅니다. Redis 서버는 클라이언트 요청을 점검하고 이것을 로컬에서 해결할 수 없을 경우, 요청된 작업을 실행합니다. Redis 서버가 요청을 실행하지 않을 경우 적절한 서버로 요청을 전달하게 됩니다.
+
+이 모델은 Redis 클러스터링을 사용해 구현되며, Redis 웹사이트의 [Redis 클러스터 자습서] 페이지에 자세히 설명되어 있습니다. Redis 클러스터링은 클라이언트 응용 프로그램에 투명합니다. 클라이언트를 재구성하지 않고 추가 Redis 서버를 클러스터에 추가할 수 있습니다(그리고 데이터를 다시 분할할 수 있음). 
+
+> [!중요]
+> Azure Redis Cache는 현재 Redis 클러스터링을 지원하지 않습니다. Azure를 사용하여 이 접근 방식을 구현하려면, Azure 가상 컴퓨터 집합에 Redis를 설치하고 수동으로 구성하여 자체 Redis 서버를 구현해야 합니다. Microsoft 웹사이트의 [Azure의 CentOS Linux VM에서 Redis 실행]페이지에는 Azure VM으로 실행되는 Redis 노드를 빌드하고 구성하는 방법을 보여 주는 예제가 나와 있습니다. 
 >
 >
 
-You have limited control over how Azure Search partitions data for each instance of the service. However, in a global environment you might be able to improve performance and reduce latency and contention further by partitioning the service itself using either of the following strategies:
+Redis 웹사이트의 [분할: 다중 Redis 인스턴스에서 데이터를 분할하는 방법] 페이지에는 Redis를 사용하여 분할을 실행하는 방법에 대한 자세한 정보가 나와 있습니다. 이 섹션의 나머지 부분에서는 사용자가 클라이언트 측 또는 프록시 지원 분할을 구현하고 있다고 가정합니다. 
 
-* Create an instance of Azure Search in each geographic region, and ensure that client applications are directed towards the nearest available instance. This strategy requires that any updates to searchable content are replicated in a timely manner across all instances of the service.
-* Create two tiers of Azure Search:
+Azure Redis Cache를 사용하여 데이터를 분할하는 방법을 결정할 때 고려할 사항은 다음과 같습니다. 
 
-  * A local service in each region that contains the data that's most frequently accessed by users in that region. Users can direct requests here for fast but limited results.
-  * A global service that encompasses all the data. Users can direct requests here for slower but more complete results.
+•	Azure Redis Cache는 본래 영구 데이터 저장소 역할을 하지 않으므로, 구현할 분할 체계에 상관 없이 응용 프로그램 코드는 캐시가 아닌 위치에서 데이터를 검색할 수 있어야 합니다.
 
-This approach is most suitable when there is a significant regional variation in the data that's being searched.
+•	함께 자주 액세스하는 데이터는 동일한 파티션에 보관해야 합니다. Redis는 강력한 키-값 저장소로서 데이터를 구조화하는 여러 개의 매우 최적화된 메커니즘을 지원합니다. 이 메커니즘에는 다음과 같은 것들이 있습니다.
 
-## Partitioning strategies for Azure Redis Cache
-Azure Redis Cache provides a shared caching service in the cloud that's based on the Redis key-value data store. As its name implies, Azure Redis Cache is intended as a caching solution. Use it only for holding transient data and not as a permanent data store. Applications that utilize Azure Redis Cache should be able to continue functioning if the cache is unavailable. Azure Redis Cache supports primary/secondary replication to provide high availability, but currently limits the maximum cache size to 53 GB. If you need more space than this, you must create additional caches. For more information, go to the page [Azure Redis Cache] on the Microsoft website.
+o	간단한 문자열(최대 512MB 길이의 이진 데이터)
 
-Partitioning a Redis data store involves splitting the data across instances of the Redis service. Each instance constitutes a single partition. Azure Redis Cache abstracts the Redis services behind a façade and does not expose them directly. The simplest way to implement partitioning is to create multiple Azure Redis Cache instances and spread the data across them.
+o	목록과 같은 유형 집계(큐와 스택 기능 지원)
 
-You can associate each data item with an identifier (a partition key) that specifies which cache stores the data item. The client application logic can then use this identifier to route requests to the appropriate partition. This scheme is very simple, but if the partitioning scheme changes (for example, if additional Azure Redis Cache instances are created), client applications might need to be reconfigured.
+o	세트(정렬 및 비정렬)
 
-Native Redis (not Azure Redis Cache) supports server-side partitioning based on Redis clustering. In this approach, you can divide the data evenly across servers by using a hashing mechanism. Each Redis server stores metadata that describes the range of hash keys that the partition holds, and also contains information about which hash keys are located in the partitions on other servers.
+o	해시(개체에서 필드를 나타내는 항목 등 관련 필드를 모두 그룹화할 수 있음)
 
-Client applications simply send requests to any of the participating Redis servers (probably the closest one). The Redis server examines the client request. If it can be resolved locally, it performs the requested operation. Otherwise it forwards the request on to the appropriate server.
-
-This model is implemented by using Redis clustering, and is described in more detail on the [Redis cluster tutorial] page on the Redis website. Redis clustering is transparent to client applications. Additional Redis servers can be added to the cluster (and the data can be re-partitioned) without requiring that you reconfigure the clients.
-
-> [!IMPORTANT]
-> Azure Redis Cache does not currently support Redis clustering. If you want to implement this approach with Azure, then you must implement your own Redis servers by installing Redis on a set of Azure virtual machines and configuring them manually. The page [Running Redis on a CentOS Linux VM in Azure] on the Microsoft website walks through an example that shows you how to build and configure a Redis node running as an Azure VM.
->
->
-
-The page [Partitioning: how to split data among multiple Redis instances] on the Redis website provides more information about implementing partitioning with Redis. The remainder of this section assumes that you are implementing client-side or proxy-assisted partitioning.
-
-Consider the following points when deciding how to partition data with Azure Redis Cache:
-
-* Azure Redis Cache is not intended to act as a permanent data store, so whatever partitioning scheme you implement, your application code must be able to retrieve data from a location that's not the cache.
-* Data that is frequently accessed together should be kept in the same partition. Redis is a powerful key-value store that provides several highly optimized mechanisms for structuring data. These mechanisms can be one of the following:
-
-  * Simple strings (binary data up to 512 MB in length)
-  * Aggregate types such as lists (which can act as queues and stacks)
-  * Sets (ordered and unordered)
-  * Hashes (which can group related fields together, such as the items that represent the fields in an object)
-* The aggregate types enable you to associate many related values with the same key. A Redis key identifies a list, set, or hash rather than the data items that it contains. These types are all available with Azure Redis Cache and are described by the [Data types] page on the Redis website. For example, in part of an e-commerce system that tracks the orders that are placed by customers, the details of each customer can be stored in a Redis hash that is keyed by using the customer ID. Each hash can hold a collection of order IDs for the customer. A separate Redis set can hold the orders, again structured as hashes, and keyed by using the order ID. Figure 10 shows this structure. Note that Redis does not implement any form of referential integrity, so it is the developer's responsibility to maintain the relationships between customers and orders.
+* •	집계 유형을 통해 많은 관련 값을 동일한 키와 연결할 수 있습니다. Redis 키는 포함하는 데이터 항목 이외에 목록, 세트, 해시를 식별합니다. 이 유형은 모두 Azure Redis Cache에서 사용할 수 있고 Redis 웹사이트의 [데이터 형식] 페이지에 설명되어 있습니다. 예를 들어, 고객 주문을 추적하는 전자 상거래 시스템의 일부에서 각 고객의 세부 정보는 고객 ID를 사용하여 입력되는 Redis 해시에 저장될 수 있습니다. 각 해시는 고객의 주문 ID 컬렉션을 저장할 수 있습니다. 별도의 Redis 세트는 주문을 저장하고, 다시 해시로 구조화되고, 주문 ID를 사용하여 입력됩니다. 그림 10은 이 구조를 나타냅니다. Redis는 어느 형태의 참조 무결성도 구현하지 않으므로, 고객과 주문 관계를 유지하는 것은 개발자의 책임입니다.
 
 ![Suggested structure in Redis storage for recording customer orders and their details](./images/data-partitioning/RedisCustomersandOrders.png)
 
-*Figure 10. Suggested structure in Redis storage for recording customer orders and their details*
+*그림 10. 고객 주문과 그 세부 정보를 기록하기 위한 Redis 저장소의 제안 구조*
 
-> [!NOTE]
-> In Redis, all keys are binary data values (like Redis strings) and can contain up to 512 MB of data. In theory, a key can contain almost any information. However, we recommend adopting a consistent naming convention for keys that is descriptive of the type of data and that identifies the entity, but is not excessively long. A common approach is to use keys of the form "entity_type:ID". For example, you can use "customer:99" to indicate the key for a customer with the ID 99.
+> [!참고]
+> Redis에서 모든 키는 이진 데이터 값(Redis 문자열 등)이고 최대 512MB의 데이터를 포함할 수 있습니다. 원칙적으로 키 하나는 거의 모든 정보를 포함할 수 있습니다. 그렇지만, 데이터 형식을 나타내고 엔터티를 식별하는 키의 일관된 명명 규칙을 채택하는 것을 권장합니다. 다만 이름이 지나치게 길어서는 안 됩니다. 일반적으로 "entity_type:ID" 형태의 키를 사용합니다. 예를 들어, "customer:99"를 사용하여 ID 99인 고객의 키를 나타낼 수 있습니다. 
+>
+
+* 동일한 데이터베이스의 각기 다른 집계에 관련 정보를 저장하여 수직 분할을 구현할 수 있습니다. 예를 들어, 전자 상거래 응용 프로그램에서 자주 액세스되는 제품 정보를 하나의 Redis 해시에 저장하고, 자주 사용하지 않는 세부 정보를 다른 해시에 저장할 수 있습니다. 이 두 해시는 키의 일부로서 동일한 제품 ID를 사용할 수 있습니다. 예를 들어, 제품 정보는 "product: *nn*" (여기서 *nn* 은 제품 ID임)을 사용하고 세부 데이터는 "product_details: *nn*" 을 사용할 수 있습니다. 이 전략은 대다수 쿼리가 검색할 가능성이 높은 데이터 볼륨을 줄이는 데 도움이 될 수 있습니다.
+
+* Redis 데이터 저장소를 다시 분할할 수 있지만, 이것은 복잡하고 시간이 많이 걸리는 작업임을 명심해야 합니다. Redis 클러스터링은 데이터를 자동으로 다시 분할할 수 있지만, 이 기능은 Azure Redis Cache에서 사용할 수 없습니다. 그러므로, 분할 체계를 설계할 때에는 시간 경과에 따라 예상되는 데이터 증가를 감안하여 각 파티션에 충분한 여유 공간을 마련하도록 합니다. 그렇지만, Azure Redis Cache는 데이터를 일시적으로 캐싱하도록 제작되었고, 캐시에 저장된 데이터는 TTL(time-to-live) 값으로 지정된 수명이 제한적일 수 있음을 명심해야 합니다. 비교적 변동이 심한 데이터의 경우 TTL은 짧지만, 정적 데이터의 경우에는 TTL이 훨씬 더 길 수 있습니다. 이 데이터의 볼륨이 캐시를 채울 가능성이 높은 경우 캐시에서 수명이 긴 데이터를 많이 저장하지 않도록 합니다. 공간이 프리미엄일 경우 Azure Redis Cache가 데이터를 제거하도록 하는 제거 정책을 지정할 수 있습니다.
+
+  > [!참고]
+  > Azure Redis 캐시를 사용할 때 적절한 가격대를 선택하여 최대 캐시 크기(250MB~53GB)를 지정합니다. 그렇지만, Azure Redis Cache를 만든 후에는 그 크기를 증가(또는 감소)시킬 수 없습니다.
+  >
+  >
+•	Redis 배치와 트랜잭션은 여러 연결을 포함할 수 없으므로, 배치 또는 트랜잭션의 영향을 받는 모든 데이터는 동일한 데이터베이스(샤드)에 저장해야 합니다.
+
+  > [!참고]
+  >Redis 트랜잭션에서 작업 순서가 반드시 원자성은 아닙니다. 트랜잭션을 구성하는 명령은 확인 과정을 거쳐  대기상태에 있다가 실행됩니다. 이 단계에서 오류가 발생하면, 전체 큐는 삭제됩니다. 그렇지만, 트랜잭션을 제출한 후 큐에 대기된 명령은 순서대로 실행됩니다. 어느 명령이든 실패하면, 해당 명령의 실행만이 중지됩니다. 큐에 있는 이전 및 후속 명령 전체가 실행됩니다. 자세한 내용은 Microsoft 웹사이트의 [트랜잭션] 페이지를 참조하십시오.
+  >
+  >
+•	Redis는 제한적인 수의 원자성 작업을 지원합니다. 여러 키와 값을 지원하는 이 유형의 유일한 작업은 MGET 및 MSET 작업입니다. MGET 작업은 지정된 키 목록에서 값 컬렉션을 반환하고, MSET 작업은 지정된 키 목록에서 값 컬렉션을 저장합니다. 이 작업을 사용해야 하는 경우, MSET 및 MGET 명령이 참조하는 키-값 쌍을 동일한 데이터베이스 내에 저장해야 합니다.
+
+## 파티션 균형 재조정
+시스템이 발전해가고 사용자가 사용 패턴을 좀더 이해하게 되면 분할 체계를 조정해야 합니다. 예를 들어, 개별 파티션은 균형이 맞지 않는 트래픽 볼륨을 유입하고 사용량이 매우 많아져 과도한 경합을 유발할 수 있습니다. 또한, 일부 파티션에서 데이터 볼륨을 과소평가하여 이 파티션에서 저장소 용량 제한에 도달할 수 있습니다. 원인이 무엇이든 간에 때로는 파티션 균형을 재조정하여 부하를 더욱 고르게 분산시켜야 합니다. 
+
+경우에 따라서는 데이터를 서버에 할당하는 방식을 공개적으로 표시하지 않은 데이터 저장소 시스템은 가용 리소스 제한 내에서 파티션 균형을 자동으로 재조정할 수 있습니다. 다른 상황에서 균형 재조정은 다음 2단계로 구성된 관리 작업입니다. 
+
+1.	알아낼 새 분할 전략 결정:
+
+   •	분할할 수 있는 파티션(또는 결합할 수 있는 파티션).
+   
+   •	새 파티션 키를 지정하여 이 새 파티션에 데이터를 할당하는 방법.
+
+2. 기존 분할 체계를 새 파티션 세트로 마이그레이션.
+
+> [!참고]
+> DocumentDB 데이터베이스 컬렉션을 서버에 매핑하는 과정은 투명하지만, 여전히 DocumentDB 계정의 저장소 용량과 처리량 제한점에 도달하는 상황에 이를 수 있습니다. 이런 문제가 발생하면, 분할 체계를 다시 설계하고 데이터를 마이그레이션해야 합니다. 
 >
 >
 
-* You can implement vertical partitioning by storing related information in different aggregations in the same database. For example, in an e-commerce application, you can store commonly accessed information about products in one Redis hash and less frequently used detailed information in another.
-  Both hashes can use the same product ID as part of the key. For example, you can use "product: *nn*" (where *nn* is the product ID) for the product information and "product_details: *nn*" for the detailed data. This strategy can help reduce the volume of data that most queries are likely to retrieve.
-* You can repartition a Redis data store, but keep in mind that it's a complex and time-consuming task. Redis clustering can repartition data automatically, but this capability is not available with Azure Redis Cache. Therefore, when you design your partitioning scheme, try to leave sufficient free space in each partition to allow for expected data growth over time. However, remember that Azure Redis Cache is intended to cache data temporarily, and that data held in the cache can have a limited lifetime specified as a time-to-live (TTL) value. For relatively volatile data, the TTL can be short, but for static data the TTL can be a lot longer. Avoid storing large amounts of long-lived data in the cache if the volume of this data is likely to fill the cache. You can specify an eviction policy that causes Azure Redis Cache to remove data if space is at a premium.
+데이터 저장소 기술과 데이터 저장소 시스템 설계에 따라 사용 중에 다른 파티션으로 데이터를 마이그레이션할 수 있습니다(온라인 마이그레이션). 이것이 가능하지 않을 경우, 데이터 위치를 변경하는 동안에는 일시적으로 해당 파티션을 사용할 수 없게 해야 합니다(오프라인 마이그레이션). 
 
-  > [!NOTE]
-  > When you use Azure Redis cache, you specify the maximum size of the cache (from 250 MB to 53 GB) by selecting the appropriate pricing tier. However, after an Azure Redis Cache has been created, you cannot increase (or decrease) its size.
-  >
-  >
-* Redis batches and transactions cannot span multiple connections, so all data that is affected by a batch or transaction should be held in the same database (shard).
+## 오프라인 마이그레이션
+오프라인 마이그레이션은 경합 발생 가능성을 낮춰주므로 확실히 가장 간단한 방법입니다. 이동하고 구조를 조정하는 동안 데이터를 변경하지 않아도 됩니다. 
 
-  > [!NOTE]
-  > A sequence of operations in a Redis transaction is not necessarily atomic. The commands that compose a transaction are verified and queued before they run. If an error occurs during this phase, the entire queue is discarded. However, after the transaction has been successfully submitted, the queued commands run in sequence. If any command fails, only that command stops running. All previous and subsequent commands in the queue are performed. For more information, go to the [Transactions] page on the Redis website.
-  >
-  >
-* Redis supports a limited number of atomic operations. The only operations of this type that support multiple keys and values are MGET and MSET operations. MGET operations return a collection of values for a specified list of keys, and MSET operations store a collection of values for a specified list of keys. If you need to use these operations, the key-value pairs that are referenced by the MSET and MGET commands must be stored within the same database.
+개념적으로 이 프로세스는 다음 단계를 따릅니다. 
 
-## Rebalancing partitions
-As a system matures and you understand the usage patterns better, you might have to adjust the partitioning scheme. For example, individual partitions might start attracting a disproportionate volume of traffic and become hot, leading to excessive contention. Additionally, you might have underestimated the volume of data in some partitions, causing you to approach the limits of the storage capacity in these partitions. Whatever the cause, it is sometimes necessary to rebalance partitions to spread the load more evenly.
+1.	샤드를 오프라인으로 표시합니다.
+2.	분할-병합을 실행하고 데이터를 새 샤드로 이동합니다.
+3.	데이터를 확인합니다.
+4.	새 샤드를 온라인으로 전환합니다.
+5.	이전 샤드를 제거합니다.
 
-In some cases, data storage systems that don't publicly expose how data is allocated to servers can automatically rebalance partitions within the limits of the resources available. In other situations, rebalancing is an administrative task that consists of two stages:
 
-1. Determining the new partitioning strategy to ascertain:
-   * Which partitions might need to be split (or possibly combined).
-   * How to allocate data to these new partitions by designing new partition keys.
-2. Migrating the affected data from the old partitioning scheme to the new set of partitions.
+일부 가용성을 유지하기 위해 1단계에서 원래 샤드를 사용할 수 없음으로 표시하는 대신 않고 읽기 전용으로 표시할 수 있습니다. 이렇게 하면 데이터 이동 중에 응용 프로그램이 데이터를 읽을 수는 있지만 데이터는 변경할 수 없게됩니다. 
 
-> [!NOTE]
-> The mapping of DocumentDB database collections to servers is transparent, but you can still reach the storage capacity and throughput limits of a DocumentDB account. If this happens, you might need to redesign your partitioning scheme and migrate the data.
->
->
+## 온라인 마이그레이션
+온라인 마이그레이션은 실행하기가 더 복잡하지만 전체 절차 진행 괒어에서 데이터를 계속 사용할 수 있기 때문에 사용자 작업이 중단되는 경우가 줄어듭니다. 이 프로세스는 원래 샤드를 오프라인으로 표시(1단계)하지 않는다는 점을 제외하면 오프라인 마이그레이션에서 사용하는 프로세스와 비슷합니다. 마이그레이션 프로세스의 세분성(예를 들어, 항목별 또는 샤드별로 실행할지 여부)에 따라 클라이언트 응용 프로그램의 데이터 액세스 코드는 2개의 위치에 저장된 데이터에 대한 읽기와 쓰기(원래 샤드와 새 샤드)작업을 처리해야 합니다. 
 
-Depending on the data storage technology and the design of your data storage system, you might be able to migrate data between partitions while they are in use (online migration). If this isn't possible, you might need to make the affected partitions temporarily unavailable while the data is relocated (offline migration).
+온라인 마이그레이션을 지원하는 솔루션의 예는 Microsoft 웹사이트에서 [Elastic Database 분할-병합 도구를 사용한 크기 조정] 항목을 참조하십시오. 
 
-## Offline migration
-Offline migration is arguably the simplest approach because it reduces the chances of contention occurring. Don't make any changes to the data while it is being moved and restructured.
+## 관련 패턴 및 지침
+데이터 일관성 구현 전략을 고려할 경우 다음 패턴들이 사용자의 시나리오와 관련되어 있을 수 있습니다. 
 
-Conceptually, this process includes the following steps:
+*	Microsoft 웹사이트의 [데이터 일관성 프라이머] 페이지에는 클라우드와 같은 분산 환경에서 일관성을 유지할 수 있는 전략에 대해 설명되어 있습니다.
+* Microsoft 웹사이트의 [데이터 분할 지침] 페이지에는 분산 솔루션에서 다양한 기준에 부합하도록 파티션을 설계하는 방법에 대한 일반적인 개요가 나와 있습니다.
+* Microsoft 웹사이트에 설명된 [샤딩 패턴]에는 일반적인 데이터 샤딩 전략에 대해 간략하게 나와 있습니다.
+* Microsoft 웹사이트에 설명된 [인덱스 테이블 패턴]에는 데이터에 대한 보조 인덱스를 만드는 방법이 설명되어 있습니다. 응용 프로그램은 이 방식으로 데이터를 빠르게 검색할 수 있으며, 이때 컬렉션의 기본 키를 참조하지 않는 쿼리를 사용합니다.
+* Microsoft 웹사이트에 설명된 [구체화된 보기 패턴] 에는 빠른 쿼리 작업을 지원하기 위해 데이터를 요약한 사전에 채운 보기를 생성하는 방법에 대한 설명이 나와 있습니다. 이 방법은 요약된 데이터를 포함하는 파티션을 여러 사이트에서 배포하는 경우 분할된 데이터 저장소에서 유용할 수 있습니다.
+* Microsoft 웹사이트의 [Azure 콘텐츠 제공 네트워크(CDN) 사용] 항목에는 Azure 콘텐츠 제공 네트워크(CDN)를 구성하고 사용하는 방법에 대한 추가 지침이 나와 있습니다.
 
-1. Mark the shard offline.
-2. Split-merge and move the data to the new shards.
-3. Verify the data.
-4. Bring the new shards online.
-5. Remove the old shard.
-
-To retain some availability, you can mark the original shard as read-only in step 1 rather than making it unavailable. This allows applications to read the data while it is being moved but not to change it.
-
-## Online migration
-Online migration is more complex to perform but less disruptive to users because data remains available during the entire procedure. The process is similar to that used by offline migration, except that the original shard is not marked offline (step 1). Depending on the granularity of the migration process (for example, whether it's done item by item or shard by shard), the data access code in the client applications might have to handle reading and writing data that's held in two locations (the original shard and the new shard).
-
-For an example of a solution that supports online migration, see the article [Scaling using the Elastic Database split-merge tool] on the Microsoft website.
-
-## Related patterns and guidance
-When considering strategies for implementing data consistency, the following patterns might also be relevant to your scenario:
-
-* The [Data consistency primer] page on the Microsoft website describes strategies for maintaining consistency in a distributed environment such as the cloud.
-* The [Data partitioning guidance] page on the Microsoft website provides a general overview of how to design partitions to meet various criteria in a distributed solution.
-* The [sharding pattern] as described on the Microsoft website summarizes some common strategies for sharding data.
-* The [index table pattern] as described on the Microsoft website illustrates how to create secondary indexes over data. An application can quickly retrieve data with this approach, by using queries that do not reference the primary key of a collection.
-* The [materialized view pattern] as described on the Microsoft website describes how to generate pre-populated views that summarize data to support fast query operations. This approach can be useful in a partitioned data store if the partitions that contain the data being summarized are distributed across multiple sites.
-* The [Using Azure Content Delivery Network] article on the Microsoft website provides additional guidance on configuring and using Content Delivery Network with Azure.
-
-## More information
-* The page [What is Azure SQL Database?] on the Microsoft website provides detailed documentation that describes how to create and use SQL databases.
-* The page [Elastic Database features overview] on the Microsoft website provides a comprehensive introduction to Elastic Database.
-* The page [Scaling using the Elastic Database split-merge tool] on the Microsoft website contains information about using the split-merge service to manage Elastic Database shards.
-* The page [Azure storage scalability and performance targets](https://msdn.microsoft.com/library/azure/dn249410.aspx) on the Microsoft website documents the current sizing and throughput limits of Azure Storage.
-* The page [Performing entity group transactions] on the Microsoft website provides detailed information about implementing transactional operations over entities that are stored in Azure table storage.
-* The article [Azure Storage table design guide] on the Microsoft website contains detailed information about partitioning data in Azure table storage.
-* The page [Using Azure Content Delivery Network] on the Microsoft website describes how to replicate data that's held in Azure blob storage by using the Azure Content Delivery Network.
-* The page [Manage DocumentDB capacity needs] on the Microsoft website contains information about how Azure DocumentDB databases allocate resources.
-* The page [What is Azure Search?] on the Microsoft website provides a full description of the capabilities that are available in Azure Search.
-* The page [Service limits in Azure Search] on the Microsoft website contains information about the capacity of each instance of Azure Search.
-* The page [Supported data types (Azure Search)] on the Microsoft website summarizes the data types that you can use in searchable documents and indexes.
-* The page [Azure Redis Cache] on the Microsoft website provides an introduction to Azure Redis Cache.
-* The [Partitioning: how to split data among multiple Redis instances] page on the Redis website provides information about how to implement partitioning with Redis.
-* The page [Running Redis on a CentOS Linux VM in Azure] on the Microsoft website walks through an example that shows you how to build and configure a Redis node running as an Azure VM.
-* The [Data types] page on the Redis website describes the data types that are available with Redis and Azure Redis Cache.
+## 자세한 정보
+* Microsoft 웹사이트의 [Azure SQL Database란?] 페이지에는 SQL 데이터베이스를 만들고 사용하는 방법을 설명한 세부 설명서가 나와 있습니다.
+*  Microsoft 웹사이트의 [Elastic Database 기능 개요] 페이지에는 Elastic Database에 대한 포괄적인 소개가 나와 있습니다.
+*  Microsoft 웹사이트의 [Elastic Database 분할-병합 도구를 사용한 크기 조정] 페이지에는 분할-병합 서비스를 사용하여 Elastic Database 샤드를 관리하는 방법에 대한 정보가 안내되어 있습니다.
+*  Microsoft 웹사이트의 [Azure 저장소 확장성 및 성능 목표](https://msdn.microsoft.com/library/azure/dn249410.aspx) 페이지에는 Azure 저장소의 현재 크기 조정 및 처리량 제한에 대한 정보가 안내되어 있습니다.
+*  Microsoft 웹사이트의 [엔터티 그룹 트랙잭션 실행] 페이지에는 Azure 테이블 저장소에 저장된 엔터티에서 트랜잭션 작업을 구현하는 방법에 대한 세부 정보가 안내되어 있습니다.
+*  Microsoft 웹사이트의 [Azure 저장소 테이블 설계 가이드] 항목에는 Azure 테이블 저장소에서 데이터를 분할하는 방법에 대한 세부 정보가 안내되어 있습니다.
+*  Microsoft 웹사이트의 [Azure 콘텐츠 제공 네트워크(CDN) 사용] 페이지에는 Azure blob 저장소에 저장된 데이터를 Azure 콘텐츠 제공 네트워크(CDN)를 사용하여 복제하는 방법에 대해 설명되어 있습니다.
+*  Microsoft 웹사이트의 [DocumentDB 용량 요구 사항 관리] 페이지에는 Azure DocumentDB 데이터베이스가 리소스를 할당하는 방법에 대해 안내되어 있습니다.
+*  Microsoft 웹사이트의 [Azure Search란?] 페이지에는 Azure Search에서 사용할 수 있는 기능에 대한 전체 설명이 안내되어 있습니다.
+*  Microsoft 웹사이트의 [Azure Search의 서비스 제한] 페이지에는 각 Azure Search 인스턴스의 용량에 대한 정보가 안내되어 있습니다.
+*  Microsoft 웹사이트의 [지원 데이터 형식(Azure Search)] 페이지에는 검색 가능한 문서와 인덱스에서 사용할 수 있는 데이터 형식에 대해 간략하게 설명되어 있습니다.
+*  Microsoft 웹사이트의 [Azure Redis Cache] 페이지에는 Azure Redis Cache에 대한 소개가 안내되어 있습니다.
+* Redis 웹사이트의 [분할: 다중 Redis 인스턴스에서 데이터를 분할하는 방법] 페이지에는 Redis를 사용하여 분할을 실행하는 방법에 대한 정보가 안내되어 있습니다.
+*  Microsoft 웹사이트의 [Azure의 CentOS Linux VM에서 Redis 실행] 페이지에는 Azure VM으로 실행되는 Redis 노드를 빌드하고 구성하는 방법을 보여 주는 예제가 나와 있습니다.
+* Redis 웹사이트의 [데이터 형식] 페이지에는 Redis와 Azure Redis Cache에서 사용할 수 있는 데이터 형식에 대한 설명이 안내되어 있습니다.
 
 [Azure Redis Cache]: http://azure.microsoft.com/services/cache/
 [Azure Storage Scalability and Performance Targets]: /azure/storage/storage-scalability-targets
