@@ -89,19 +89,19 @@ pnp.pattern.categories: [availability, management-monitoring, resiliency]
 
    >  또한 모니터링 시스템이 잘못된 반대 결과를 발행하지 않도록 자체 테스트 또는 기본 제공 테스트와 같은 검사를 자체적으로 수행하는지도 확인해야 합니다.
 
-## When to use this pattern
+## 패턴 사용 사례
 
-This pattern is useful for:
-- Monitoring websites and web applications to verify availability.
-- Monitoring websites and web applications to check for correct operation.
-- Monitoring middle-tier or shared services to detect and isolate a failure that could disrupt other applications.
-- Complementing existing instrumentation in the application, such as performance counters and error handlers. Health verification checking doesn't replace the requirement for logging and auditing in the application. Instrumentation can provide valuable information for an existing framework that monitors counters and error logs to detect failures or other issues. However, it can't provide information if the application is unavailable.
+다음 상황에 이 패턴이 유용합니다.
+- 가용성을 확인하기 위한 웹 사이트와 웹 응용 프로그램의 모니터링
+- 올바른 작동을 검사하기 위한 웹 사이트와 웹 응용 프로그램의 모니터링
+- 다른 응용 프로그램을 방해할 수 있는 장애를 검색하고 격리하기 위한 중간 계층 또는 공유 서비스의 모니터링
+- 응용 프로그램에서 성능 카운터와 오류 처리기 같은 기존 계측의 보완. 상태 확인 검사는 응용 프로그램에서 로깅과 감사의 요구 사항을 바꾸지 않습니다. 계측은 장애 또는 다른 문제를 검색하기 위해 카운터와 오류 로그를 모니터링하는 기존 프레임워크에 대한 귀중한 정보를 제공할 수 있습니다. 그러나 응용 프로그램을 사용할 수 없는 경우에는 정보를 제공할 수 없습니다.
 
-## Example
+## 예제
 
-The following code examples, taken from the `HealthCheckController` class (a sample that demonstrates this pattern is available on [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/health-endpoint-monitoring)), demonstrates exposing an endpoint for performing a range of health checks.
+`HealthCheckController` 클래스에서 가져온 다음 코드 예제(이 패턴을 보여주는 샘플은 [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/health-endpoint-monitoring)에서 다운로드 가능)는 다양한 상태 검사를 수행하기 위해 끝점을 노출시키는 것을 보여줍니다.
 
-The `CoreServices` method, shown below in C#, performs a series of checks on services used in the application. If all of the tests run without error, the method returns a 200 (OK) status code. If any of the tests raises an exception, the method returns a 500 (Internal Error) status code. The method could optionally return additional information when an error occurs, if the monitoring tool or framework is able to make use of it.
+아래 C#으로 제시된 `CoreServices` 메서드는 응용 프로그램에 사용되는 서비스에서 일련의 검사를 수행합니다. 모든 테스트가 오류 없이 실행되면 이 메서드는 200 (OK) 상태 코드를 반환합니다. 어떤 테스트라도 예외를 발생시키면 이 메서드는 500 (Internal Error) 상태 코드를 반환합니다. 모니터링 도구 또는 프레임워크를 사용할 수 있는 경우, 이 메서드는 오류가 발생할 때 추가 정보를 선택적으로 반환할 수 있습니다.
 
 ```csharp
 public ActionResult CoreServices()
@@ -128,7 +128,7 @@ public ActionResult CoreServices()
   return new HttpStatusCodeResult((int)HttpStatusCode.OK);
 }
 ```
-The `ObscurePath` method shows how you can read a path from the application configuration and use it as the endpoint for tests. This example, in C#, also shows how you can accept an ID as a parameter and use it to check for valid requests.
+`ObscurePath` 메서드는 경로를 응용 프로그램 구성에서 읽어와 테스트를 위한 끝점으로 사용하는 방법을 보여줍니다. C#으로 제시된 이 예도 ID를 매개 변수로 수락하고 유효한 요청을 검사하는 데 사용하는 방법을 보여줍니다.
 
 ```csharp
 public ActionResult ObscurePath(string id)
@@ -153,7 +153,7 @@ public ActionResult ObscurePath(string id)
 }
 ```
 
-The `TestResponseFromConfig` method shows how you can expose an endpoint that performs a check for a specified configuration setting value.
+`TestResponseFromConfig` 메서드는 지정된 구성 설정 값의 검사를 수행하는 끝점을 노출시키는 방법을 보여줍니다.
 
 ```csharp
 public ActionResult TestResponseFromConfig()
@@ -172,35 +172,35 @@ public ActionResult TestResponseFromConfig()
   return new HttpStatusCodeResult(returnStatusCode);
 }
 ```
-## Monitoring endpoints in Azure hosted applications
+## Azure 호스팅 응용 프로그램에서 끝점 모니터링
 
-Some options for monitoring endpoints in Azure applications are:
+Azure 응용 프로그램에서 끝점을 모니터링하기 위한 몇 가지 옵션은 다음과 같습니다.
 
-- Use the built-in monitoring features of Azure.
+- Azure의 기본 제공 모니터링 기능 사용
 
-- Use a third-party service or a framework such as Microsoft System Center Operations Manager.
+- 타사 서비스 또는 Microsoft System Center Operations Manager와 같은 프레임워크 사용
 
-- Create a custom utility or a service that runs on your own or on a hosted server.
+- 호스팅 서버 또는 사용자가 직접 운영하는 사용자 지정 유틸리티나 서비스 생성
 
-   >  Even though Azure provides a reasonably comprehensive set of monitoring options, you can use additional services and tools to provide extra information. Azure Management Services provides a built-in monitoring mechanism for alert rules. The alerts section of the management services page in the Azure portal allows you to configure up to ten alert rules per subscription for your services. These rules specify a condition and a threshold value for a service such as CPU load, or the number of requests or errors per second, and the service can automatically send email notifications to addresses you define in each rule.
+   >  Azure가 상당히 포괄적인 모니터링 옵션을 제공하는 것은 사실이지만, 추가 정보를 제공하는 추가 서비스와 도구를 사용할 수 있습니다. Azure Management Service는 경고 규칙을 위한 기본 제공 모니터링 메커니즘을 제공합니다. Azure 포털에서 관리 서비스 페이지의 경고 섹션을 사용하면 사용자 서비스를 위한 구독당 최대 10개의 경고 규칙을 구성할 수 있습니다. 경고 규칙은 CPU 부하와 같은 서비스의 조건과 임계값 또는 초당 요청이나 오류의 개수를 지정하고, 서비스는 각 규칙에 정의된 주소로 전자 메일 알림을 자동으로 전송할 수 있습니다.
 
-The conditions you can monitor vary depending on the hosting mechanism you choose for your application (such as Web Sites, Cloud Services, Virtual Machines, or Mobile Services), but all of these include the ability to create an alert rule that uses a web endpoint you specify in the settings for your service. This endpoint should respond in a timely way so that the alert system can detect that the application is operating correctly.
+모니터링할 수 있는 조건은 응용 프로그램을 위해 선택하는 호스팅 방식(예: 웹 사이트, 클라우드 서비스, 가상 컴퓨터, 모바일 서비스)에 따라 달라지지만, 모든 호스팅 방식은 서비스를 위한 설정에 지정되는 웹 끝점을 사용하는 경고 규칙을 만드는 능력을 갖추고 있습니다. 이런 끝점은 응용 프로그램이 올바르게 작동하고 있다는 것을 경고 시스템이 감지할 수 있도록 시기적절한 방식으로 응답해야 합니다.
 
->  Read more information about [creating alert notifications][portal-alerts].
+>  [경고 알림 만들기][portal-alerts]에 대한 자세한 내용을 확인해보시기 바랍니다.
 
-If you host your application in Azure Cloud Services web and worker roles or Virtual Machines, you can take advantage of one of the built-in services in Azure called Traffic Manager. Traffic Manager is a routing and load-balancing service that can distribute requests to specific instances of your Cloud Services hosted application based on a range of rules and settings.
+응용 프로그램을 Azure Cloud Service 웹과 작업자 역할 또는 가상 컴퓨터에서 호스팅하는 경우, Traffic Manager라 부르는 Azure의 기본 제공 서비스 중 하나를 활용할 수 있습니다. Traffic Manager는 다양한 규칙과 설정을 기반으로 하는 Cloud Service 호스팅 응용 프로그램의 특정 인스턴스에 요청을 분산시킬 수 있는 라우팅과 부하 분산 서비스입니다.
 
-In addition to routing requests, Traffic Manager pings a URL, port, and relative path that you specify on a regular basis to determine which instances of the application defined in its rules are active and are responding to requests. If it detects a status code 200 (OK), it marks the application as available. Any other status code causes Traffic Manager to mark the application as offline. You can view the status in the Traffic Manager console, and configure the rule to reroute requests to other instances of the application that are responding.
+요청 라우팅 외에 Traffic Manager는 사용자가 지정하는 URL, 포트 및 상대 경로에 정기적으로 핑을 전송해 규칙에 정의된 응용 프로그램의 어떤 인스턴스가 사용 중이고 요청에 응답하고 있는지를 결정합니다. 상태 코드 200 (OK)을 감지하면 Traffic Manager는 응용 프로그램을 사용할 수 있음으로 표시합니다. 다른 상태 코드의 경우 Traffic Manager는 응용 프로그램을 오프라인으로 표시합니다. 사용자는 상태를 Traffic Manager 콘솔에서 확인하고 요청을 응답 중인 응용 프로그램의 다른 인스턴스로 경로 조정하는 규칙을 구성할 수 있습니다.
 
-However, Traffic Manager will only wait ten seconds to receive a response from the monitoring URL. Therefore, you should ensure that your health verification code executes in this time, allowing for network latency for the round trip from Traffic Manager to your application and back again.
+그러나 Traffic Manager는 모니터링 URL에서 응답을 수신하는 데 단 10초만 기다립니다. 따라서 Traffic Manager에서 사용자 응용 프로그램까지 및 사용자 응용 프로그램에서 Traffic Manager까지 왕복하기 위한 네트워크 대기 시간을 허용하도록 상태 확인 코드가 이 시점에 실행되는지를 확인해야 합니다.
 
->  Read more information about using [Traffic Manager to monitor your applications](https://azure.microsoft.com/documentation/services/traffic-manager/). Traffic Manager is also discussed in [Multiple Datacenter Deployment Guidance](https://msdn.microsoft.com/library/dn589779.aspx).
+>  [Traffic Manager를 사용해 사용자 응용 프로그램 모니터링](https://azure.microsoft.com/documentation/services/traffic-manager/)에 대한 자세한 내용을 확인해보시기 바랍니다. Traffic Manager는 [다중 데이터 센터 배포 지침](https://msdn.microsoft.com/library/dn589779.aspx)에서도 논의됩니다.
 
-## Related guidance
+## 관련 지침
 
-The following guidance can be useful when implementing this pattern:
-- [Instrumentation and Telemetry Guidance](https://msdn.microsoft.com/library/dn589775.aspx). Checking the health of services and components is typically done by probing, but it's also useful to have information in place to monitor application performance and detect events that occur at runtime. This data can be transmitted back to monitoring tools as additional information for health monitoring. Instrumentation and Telemetry Guidance explores gathering remote diagnostics information that's collected by instrumentation in applications.
-- [Receiving alert notifications][portal-alerts].
-- This pattern includes a downloadable [sample application](https://github.com/mspnp/cloud-design-patterns/tree/master/health-endpoint-monitoring).
+이 패턴을 구현할 때 유용할 수 있는 지침은 다음과 같습니다.
+- [계측 및 원격 분석 지침](https://msdn.microsoft.com/library/dn589775.aspx). 보통 서비스와 구성 요소의 상태 검사는 검색으로 이루어지지만, 응용 프로그램 성능을 모니터링하고 런타임에서 발생하는 이벤트를 검색하기 위해 정보를 수집하는 것도 유용합니다. 이런 데이터는 상태 모니터링을 위한 추가 정보로 모니터링 도구에 다시 전송할 수 있습니다. 계측 및 원격 분석 지침은 응용 프로그램 내 계측을 통해 수집되는 원격 진단 정보 수집을 탐색합니다.
+- [경고 알림 수신][portal-alerts].
+- 이 패턴에는 다운로드할 수 있는 [샘플 응용 프로그램](https://github.com/mspnp/cloud-design-patterns/tree/master/health-endpoint-monitoring)이 포함되어 있습니다.
 
 [portal-alerts]: https://azure.microsoft.com/documentation/articles/insights-receive-alert-notifications/
