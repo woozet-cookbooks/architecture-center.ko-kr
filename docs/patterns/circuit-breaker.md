@@ -12,99 +12,99 @@ pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories: [resiliency]
 ---
 
-# Circuit Breaker
+# 회로 차단기
 
-Handle faults that might take a variable amount of time to recover from, when connecting to a remote service or resource. This can improve the stability and resiliency of an application.
+원격 서비스 또는 리소스에 연결 시 복구 시간이 가변적인 장애를 처리합니다. 따라서 응용 프로그램의 안정성과 복원력을 향상시킬 수 있습니다.
 
-## Context and problem
+## 배경 및 문제
 
-In a distributed environment, calls to remote resources and services can fail due to transient faults, such as slow network connections, timeouts, or the resources being overcommitted or temporarily unavailable. These faults typically correct themselves after a short period of time, and a robust cloud application should be prepared to handle them by using a strategy such as the [Retry pattern][retry-pattern].
+분산 환경에서는 느린 네트워크 연결, 시간 초과 또는 오버 커밋되거나 일시적으로 사용할 수 없는 리소스와 같은 일시적인 장애로 인해 원격 리소스와 서비스 호출이 실패할 수 있습니다. 보통 이런 장애는 시간이 지나면 저절로 해결되는데, 강력한 클라우드 응용 프로그램이라면 [다시 시도 패턴][retry-pattern] 과 같은 전략을 사용해 장애를 처리하도록 설계되어야 합니다.
 
-However, there can also be situations where faults are due to unanticipated events, and that might take much longer to fix. These faults can range in severity from a partial loss of connectivity to the complete failure of a service. In these situations it might be pointless for an application to continually retry an operation that is unlikely to succeed, and instead the application should quickly accept that the operation has failed and handle this failure accordingly.
+그러나 장애가 예상하지 못한 이벤트로 인해 발생하여 해결 시간이 훨씬 더 소요되는 상황도 있을 수 있는데, 이런 장애는 연결의 부분 상실부터 서비스의 완전한 실패까지 심각도가 다양할 수 있습니다. 이런 상황에서는 응용 프로그램이 성공할 가능성이 없는 작업을 계속 다시 시도하는 것이 의미가 없습니다. 대신 응용 프로그램은 작업 실패를 신속하게 수락하고 이런 장애를 적절하게 처리해야 합니다.
 
-Additionally, if a service is very busy, failure in one part of the system might lead to cascading failures. For example, an operation that invokes a service could be configured to implement a timeout, and reply with a failure message if the service fails to respond within this period. However, this strategy could cause many concurrent requests to the same operation to be blocked until the timeout period expires. These blocked requests might hold critical system resources such as memory, threads, database connections, and so on. Consequently, these resources could become exhausted, causing failure of other possibly unrelated parts of the system that need to use the same resources. In these situations, it would be preferable for the operation to fail immediately, and only attempt to invoke the service if it's likely to succeed. Note that setting a shorter timeout might help to resolve this problem, but the timeout shouldn't be so short that the operation fails most of the time, even if the request to the service would eventually succeed.
+더구나 서비스가 매우 바쁜 경우, 시스템의 한 부분에서 발생한 장애는 단계적 장애로 이어질 수 있습니다. 예를 들면 서비스를 호출하는 작업에 시간 제한을 구현한 뒤 서비스가 제한 시간 이내에 응답에 실패하는 경우 실패 메시지를 표시하도록 구성할 수 있습니다. 그러나 이런 전략으로 인해 동일한 작업에 대한 많은 동시 요청이 제한 시간이 경과할 때까지 차단되는 결과가 초래될 수 있는데, 이렇게 차단된 요청은 메모리, 스레드, 데이터베이스 연결 등과 같은 중요한 시스템 리소스를 차지합니다. 결국 이와 같은 리소스가 차단된 요청으로 인해 소진됨에 따라 시스템 내에서 동일한 리소스를 사용해야 하는 관련 없는 부분의 장애가 초래될 수 있습니다. 이런 상황에서는 작업을 즉시 실패하게 하고 성공할 가능성이 있는 서비스의 호출만 시도하는 것이 바람직할 수 있습니다. 시간 제한을 더 짧게 설정하면 이런 문제를 손 쉽게 해결할 수 있지만, 시간 제한이 너무 짧으면 결과적으로 서비스 요청이 성공하더라도 작업이 실패할 수 있으므로 시간 제한을 너무 짧게 설정해서는 안 됩니다.
 
-## Solution
+## 해결책
 
-The Circuit Breaker pattern can prevent an application from repeatedly trying to execute an operation that's likely to fail. Allowing it to continue without waiting for the fault to be fixed or wasting CPU cycles while it determines that the fault is long lasting. The Circuit Breaker pattern also enables an application to detect whether the fault has been resolved. If the problem appears to have been fixed, the application can try to invoke the operation.
+회로 차단기 패턴을 사용하면 응용 프로그램이 실패할 가능성이 있는 작업의 실행을 반복적으로 시도하지 못하도록 제어할 수 있습니다. 그러면 장애가 해결될 때까지 기다리거나 장애가 오래 지속되는 유형인지 여부를 결정하는 동안 CPU 사이클을 낭비하지 않고 계속 운영할 수 있습니다. 회로 차단기 패턴을 사용하면 응용 프로그램이 장애가 해결되었는지 감지할 수 있도록 지원할 수 있습니다. 응용 프로그램이 문제가 해결되었다고 판단하면 작업의 호출을 시도할 수 있습니다.
 
-> The purpose of the Circuit Breaker pattern is different than the Retry pattern. The Retry pattern enables an application to retry an operation in the expectation that it'll succeed. The Circuit Breaker pattern prevents an application from performing an operation that is likely to fail. An application can combine these two patterns by using the Retry pattern to invoke an operation through a circuit breaker. However, the retry logic should be sensitive to any exceptions returned by the circuit breaker and abandon retry attempts if the circuit breaker indicates that a fault is not transient.
+> 회로 차단기 패턴의 목적은 다시 시도 패턴과 다릅니다. 다시 시도 패턴을 사용하면 응용 프로그램이 성공할 것으로 예상되는 작업을 다시 시도하지만 회로 차단기 패턴을 사용하면 응용 프로그램이 실패할 가능성이 있는 작업의 수행을 중단합니다. 응용 프로그램은 다시 시도 패턴을 사용하여 두 패턴을 조합한 뒤 회로 차단기를 통해 작업을 호출할 수 있습니다. 그러나 다시 시도 논리는 회로 차단기가 반환하는 예외에 민감해야 할 뿐 아니라 회로 차단기가 장애가 일시적인 것이 아니라고 표시하는 경우에는 다시 시도를 포기해야 합니다.
 
-A circuit breaker acts as a proxy for operations that might fail. The proxy should monitor the number of recent failures that have occurred, and use this information to decide whether to allow the operation to proceed, or simply return an exception immediately.
+회로 차단기는 실패가능성이 있는 작업의 프록시로 작용합니다. 프록시는 최근 발생한 실패 횟수를 모니터링하고 실패 횟수 정보를 사용해 작업을 진행할 것인지, 아니면 단순히 예외를 즉시 반환할 것인지 여부를 결정해야 합니다.
 
-The proxy can be implemented as a state machine with the following states that mimic the functionality of an electrical circuit breaker:
+프록시는 전기 회로 차단기의 기능을 모방하는 다음 상태를 포함한 상태 시스템으로 구현할 수 있습니다.
 
-- **Closed**: The request from the application is routed to the operation. The proxy maintains a count of the number of recent failures, and if the call to the operation is unsuccessful the proxy increments this count. If the number of recent failures exceeds a specified threshold within a given time period, the proxy is placed into the **Open** state. At this point the proxy starts a timeout timer, and when this timer expires the proxy is placed into the **Half-Open** state.
+- **폐쇄**: 응용 프로그램의 요청이 작업에 전달됩니다. 프록시는 최근 실패 횟수의 카운트를 유지하고 있다가 작업의 호출이 실패하는 경우 실패 횟수 카운트를 하나씩 늘립니다. 최근 실패 횟수가 지정된 시간 이내에 지정된 임계값을 초과하면 프록시는 **개방** 상태로 전환됩니다. 개방 상태로 전환된 프록시는 시간 초과 타이머를 시작하고, 시간 초과 타이머가 만료되면 프록시는 **반개방** 상태로 전환됩니다.
 
-    > The purpose of the timeout timer is to give the system time to fix the problem that caused the failure before allowing the application to try to perform the operation again.
+    > 시간 초과 타이머는 응용 프로그램이 작업의 수행을 다시 시도하기 전에 먼저 시스템이 실패의 원인이 되는 문제를 해결할 시간을 확보하기 위한 것입니다.
 
-- **Open**: The request from the application fails immediately and an exception is returned to the application.
+- **개방**: 응용 프로그램의 요청이 즉시 실패하고 예외가 응용 프로그램에 반환됩니다.
 
-- **Half-Open**: A limited number of requests from the application are allowed to pass through and invoke the operation. If these requests are successful, it's assumed that the fault that was previously causing the failure has been fixed and the circuit breaker switches to the **Closed** state (the failure counter is reset). If any request fails, the circuit breaker assumes that the fault is still present so it reverts back to the **Open** state and restarts the timeout timer to give the system a further period of time to recover from the failure.
+- **반개방**: 응용 프로그램으로부터 제한된 횟수의 요청이 통과되어 작업을 호출할 수 있게 됩니다. 이와 같은 요청이 성공하면 이전에 실패를 유발한 장애가 해결되었다고 판단하여 회로 차단기가 **폐쇄** 상태로 전환되고 실패 카운터가 초기화되지만 이와 같은 요청이 실패하면 장애가 여전히 남아 있다고 판단하여 회로 차단기가 다시 **개방** 상태로 되돌아가고 시간 초과 타이머를 다시 시작해 시스템이 장애를 복구할 추가 시간을 확보합니다.
 
-    > The **Half-Open** state is useful to prevent a recovering service from suddenly being flooded with requests. As a service recovers, it might be able to support a limited volume of requests until the recovery is complete, but while recovery is in progress a flood of work can cause the service to time out or fail again.
+    > **반개방** 상태는 복구 중인 서비스가 요청으로 인해 갑자기 서비스 장애를 일으키는 것을 방지하는 데 유용합니다. 복구가 진행되는 동안 서비스는 복구가 완료될 때까지 제한된 양의 요청을 지원할 수 있지만, 복구가 진행되는 동안 엄청난 양의 작업이 요청되면 서비스의 시간 초과 또는 실패가 다시 초래될 수 있습니다.
 
 ![Circuit Breaker states](./_images/circuit-breaker-diagram.png)
 
-In the figure, the failure counter used by the **Closed** state is time based. It's automatically reset at periodic intervals. This helps to prevent the circuit breaker from entering the **Open** state if it experiences occasional failures. The failure threshold that trips the circuit breaker into the **Open** state is only reached when a specified number of failures have occurred during a specified interval. The counter used by the **Half-Open** state records the number of successful attempts to invoke the operation. The circuit breaker reverts to the **Closed** state after a specified number of consecutive operation invocations have been successful. If any invocation fails, the circuit breaker enters the **Open** state immediately and the success counter will be reset the next time it enters the **Half-Open** state.
+위의 그림에서 **폐쇄** 상태가 사용하는 실패 카운터는 시간을 기반으로 하고 일정간 간격에 따라 자동으로 초기화됩니다. 이와 같은 정기적 초기화는 실패가 간헐적으로 발생하는 경우 회로 차단기가 **개방** 상태로 전환되지 못하도록 방지하는 데 도움이 됩니다. 지정된 실패 횟수가 지정된 간격 중 발생하는 경우에만 회로 차단기를 **개방** 상태로 전환하는 실패 임계값에 도달합니다. **반개방** 상태가 사용하는 카운터는 작업을 호출하기 위한 시도 중 성공 횟수를 기록합니다. 회로 차단기는 지정된 횟수의 연속 작업 호출이 성공하면 **폐쇄** 상태로 되돌아가지만 호출이 실패하면 회로 차단기는 즉시 **개방** 상태로 전환되고 성공 카운터는 다음에 회로 차단기가 **반개방** 상태로 전환될 때 초기화됩니다.
 
-> How the system recovers is handled externally, possibly by restoring or restarting a failed component or repairing a network connection.
+> 시스템 복구는 실패한 구성 요소를 복원하거나 다시 시작하거나 네트워크 연결을 복구하는 등의 외부적인 방법으로 이루어집니다.
 
-The Circuit Breaker pattern provides stability while the system recovers from a failure and minimizes the impact on performance. It can help to maintain the response time of the system by quickly rejecting a request for an operation that's likely to fail, rather than waiting for the operation to time out, or never return. If the circuit breaker raises an event each time it changes state, this information can be used to monitor the health of the part of the system protected by the circuit breaker, or to alert an administrator when a circuit breaker trips to the **Open** state.
+시스템이 장애를 복구하고 성능에 미치는 영향을 최소화하는 동안 안정성을 제공하는 회로 차단기 패턴은 작업의 시간 초과를 기다리기보다 실패할 가능성이 있는 작업의 요청을 신속하게 거부하거나 요청을 반환하지 않음으로써 시스템의 응답 시간을 유지하는 데 도움이 될 수 있습니다. 회로 차단기가 상태를 변경할 때마다 이벤트를 발생시키면 이런 정보를 회로 차단기가 보호하는 시스템 요소의 상태를 모니터링하는데 사용하거나 회로 차단기가 **개방** 상태로 전환될 때 관리자에게 경보를 발령하는 데 사용할 수 있습니다.
 
-The pattern is customizable and can be adapted according to the type of the possible failure. For example, you can apply an increasing timeout timer to a circuit breaker. You could place the circuit breaker in the **Open** state for a few seconds initially, and then if the failure hasn't been resolved increase the timeout to a few minutes, and so on. In some cases, rather than the **Open** state returning failure and raising an exception, it could be useful to return a default value that is meaningful to the application.
+회로 차단기 패턴은 사용자 지정이 가능하고 가능한 실패 유형에 따라 조정할 수 있습니다. 예를 들어 증가식 시간 초과 타이머를 회로 차단기에 적용할 수 있습니다. 처음 몇 초간은 회로 차단기를 **개방** 상태로 둔 다음, 실패가 해결되지 않으면 시간 제한을 몇 분으로 늘릴 수 있습니다. 실패를 반환하고 예외를 발생시키는 **개방** 상태보다 작업에 의미 있는 기본값을 반환하는 것이 유용한 경우도 있습니다.
 
-## Issues and considerations
+## 문제 및 고려 사항
 
-You should consider the following points when deciding how to implement this pattern:
+이 패턴의 구현 방법을 결정할 때는 다음 사항을 고려해야 합니다.
 
-**Exception Handling**. An application invoking an operation through a circuit breaker must be prepared to handle the exceptions raised if the operation is unavailable. The way exceptions are handled will be application specific. For example, an application could temporarily degrade its functionality, invoke an alternative operation to try to perform the same task or obtain the same data, or report the exception to the user and ask them to try again later.
+**예외 처리**. 회로 차단기를 통해 작업을 호출하는 응용 프로그램은 작업을 사용할 수 없는 경우 발생된 예외를 처리하도록 설계되어야 합니다. 예외를 처리하는 방식은 응용 프로그램에 따라 다릅니다. 예를 들면 응용 프로그램은 기능을 임시로 저하시키고, 동일한 작업의 수행 또는 동일한 데이터의 획득을 시도하기 위해 대안 작업을 호출하며, 사용자에게 예외를 보고하고 나중에 다시 시도할 것인지 질의할 수 있습니다.
 
-**Types of Exceptions**. A request might fail for many reasons, some of which might indicate a more severe type of failure than others. For example, a request might fail because a remote service has crashed and will take several minutes to recover, or because of a timeout due to the service being temporarily overloaded. A circuit breaker might be able to examine the types of exceptions that occur and adjust its strategy depending on the nature of these exceptions. For example, it might require a larger number of timeout exceptions to trip the circuit breaker to the **Open** state compared to the number of failures due to the service being completely unavailable.
+**예외 유형**. 요청은 많은 이유로 인해 실패하는데, 실패의 원인에 따라 실패의 심각도가 달라집니다. 예를 들어 원격 서비스의 충돌이 일어나고 이를 복구하는 데 몇 분이 걸리기 때문에 실패하는 요청이 있는가 하면 일시적으로 과부하가 발생한 서비스로 인한 시간 초과 때문에 실패하는 요청도 있습니다. 회로 차단기는 발생하는 예외의 유형을 검사하고 이런 예외의 특성에 따라 전략을 조정할 수 있습니다. 회로 차단기를 **개방** 상태로 전환하는데 필요한 실패 횟수를 예로 들면, 시간 초과 예외의 실패 횟수가 완전히 사용할 수 없는 서비스로 인한 실패 횟수에 비해 더 많아야 합니다.
 
-**Logging**. A circuit breaker should log all failed requests (and possibly successful requests) to enable an administrator to monitor the health of the operation.
+**로깅**. 회로 차단기는 실패한 모든 요청(과 가능하면 성공한 요청)을 로그에 기록해 관리자가 작업의 상태를 모니터링할 수 있도록 지원해야 합니다.
 
-**Recoverability**. You should configure the circuit breaker to match the likely recovery pattern of the operation it's protecting. For example, if the circuit breaker remains in the **Open** state for a long period, it could raise exceptions even if the reason for the failure has been resolved. Similarly, a circuit breaker could fluctuate and reduce the response times of applications if it switches from the **Open** state to the **Half-Open** state too quickly.
+**복구성**. 보호 중인 작업의 가능한 복구 패턴과 일치하도록 회로 차단기를 구성해야 합니다. 예를 들어 오랫 동안 **개방** 상태를 유지한 회로 차단기는 실패 이유가 해결되었더라도 예외를 발생시킬 수 있는 반면 **개방** 상태에서 **반개방** 상태로 너무 빠르게 전환된 회로 차단기는 응용 프로그램의 응답 시간을 변경하고 줄일 수 있습니다.
 
-**Testing Failed Operations**. In the **Open** state, rather than using a timer to determine when to switch to the **Half-Open** state, a circuit breaker can instead periodically ping the remote service or resource to determine whether it's become available again. This ping could take the form of an attempt to invoke an operation that had previously failed, or it could use a special operation provided by the remote service specifically for testing the health of the service, as described by the [Health Endpoint Monitoring pattern](health-endpoint-monitoring.md).
+**실패한 작업 테스트**. 회로 차단기는 타이머를 사용해 **개방** 상태에서 **반개방** 상태로 전환할 시점을 결정하는 대신 원격 서비스 또는 리소스에 정기적으로 핑을 전송해 회로 차단기를 다시 사용할 수 있을지 여부를 결정할 수 있습니다. 이런 핑은 이전에 실패한 작업을 호출하기 위한 시도로 이루어질 수 있는데, [상태 끝점 모니터링 패턴](health-endpoint-monitoring.md)에 설명된 대로 특히 서비스의 상태를 테스트하기 위해 원격 서비스가 제공하는 특별한 작업을 사용할 수도 있습니다.
 
-**Manual Override**. In a system where the recovery time for a failing operation is extremely variable, it's beneficial to provide a manual reset option that enables an administrator to close a circuit breaker (and reset the failure counter). Similarly, an administrator could force a circuit breaker into the **Open** state (and restart the timeout timer) if the operation protected by the circuit breaker is temporarily unavailable.
+**수동 재정의**. 실패한 작업의 복구 시간이 굉장히 가변적인 시스템에서는 관리자가 회로 차단기를 닫고 실패 카운터를 초기화할 수 있는 수동 초기화 옵션을 제공하는 것이 바람직할 수 있습니다. 이와 비슷하게 관리자는 회로 차단기가 보호하는 작업을 일시적으로 사용할 수 없는 경우 회로 차단기를 강제로 **개방** 상태로 전환하고 시간 초과 타이머를 다시 시작할 수 있습니다.
 
-**Concurrency**. The same circuit breaker could be accessed by a large number of concurrent instances of an application. The implementation shouldn't block concurrent requests or add excessive overhead to each call to an operation.
+**동시성**. 많은 수의 응용 프로그램 동시 인스턴스가 하나의 회로 차단기에 액세스할 수 있습니다. 따라서 회로 차단기는 동시 요청을 차단하거나 작업을 호출할 때마다 과도한 오버헤드를 추가하지 않도록 구현되어야 합니다.
 
-**Resource Differentiation**. Be careful when using a single circuit breaker for one type of resource if there might be multiple underlying independent providers. For example, in a data store that contains multiple shards, one shard might be fully accessible while another is experiencing a temporary issue. If the error responses in these scenarios are merged, an application might try to access some shards even when failure is highly likely, while access to other shards might be blocked even though it's likely to succeed.
+**리소스 차별화**. 기본 독립 공급자가 다수 존재할 수 있는 경우, 하나의 리소스 유형을 위해 하나의 회로 차단기를 사용한다면 주의해야 합니다. 예를 들어 복수의 분할된 데이터베이스를 포함하는 데이터 저장소의 경우 어느 분할된 데이터베이스에는 완전히 액세스할 수 있는 반면 어느 분할된 데이터베이스에는 일시적인 문제가 발생할 수 있습니다. 이와 같은 시나리오에서 오류 응답이 병합되면 응용 프로그램은 실패할 가능성이 매우 높은 분할된 데이터베이스에 엑세스를 시도하는가 하면 성공할 가능성이 있는 분할된 데이터베이스에 대한 액세스를 차단하기도 합니다.
 
-**Accelerated Circuit Breaking**. Sometimes a failure response can contain enough information for the circuit breaker to trip immediately and stay tripped for a minimum amount of time. For example, the error response from a shared resource that's overloaded could indicate that an immediate retry isn't recommended and that the application should instead try again in a few minutes.
+**회로 차단 가속화**. 때로 실패 응답에는 즉시 전환되고 최소한의 시간 동안 전환된 상태를 유지하는 회로 차단기에 대한 충분한 정보가 포함되어 있을 수 있습니다. 예를 들어 과부하가 발생한 공유 리소스의 오류 응답은 응용 프로그램의 즉시 다시 시도보다는 몇 분 후 다시 시도를 권장한다는 것을 의미할 수 있습니다.
 
-> [!NOTE]
-> A service can return HTTP 429 (Too Many Requests) if it is throttling the client, or HTTP 503 (Service Unavailable) if the service is not currently available. The response can include additional information, such as the anticipated duration of the delay.
+> [!참고]
+> 클라이언트를 제한하는 서비스의 경우 HTTP 429(너무 많은 요청)를 반환할 수 있고, 현재 사용할 수 없는 서비스의 경우 HTTP 503(서비스 사용 불가)을 반환할 수 있습니다. 응답에는 지연의 예상 지속 시간과 같은 추가 정보가 포함되어 있을 수 있습니다.
 
-**Replaying Failed Requests**. In the **Open** state, rather than simply failing quickly, a circuit breaker could also record the details of each request to a journal and arrange for these requests to be replayed when the remote resource or service becomes available.
+**실패한 요청 재생**. **개방** 상태의 회로 차단기는 단순히 신속한 실패를 선택하기보다 각 요청의 세부 사항을 저널에 기록하고 원격 리소스 또는 서비스를 사용할 수 있게 될 때 재생할 요청을 정렬할 수도 있습니다.
 
-**Inappropriate Timeouts on External Services**. A circuit breaker might not be able to fully protect applications from operations that fail in external services that are configured with a lengthy timeout period. If the timeout is too long, a thread running a circuit breaker might be blocked for an extended period before the circuit breaker indicates that the operation has failed. In this time, many other application instances might also try to invoke the service through the circuit breaker and tie up a significant number of threads before they all fail.
+**외부 서비스에서의 부적절한 제한 시간**. 회로 차단기는 제한 시간이 길게 지정된 외부 서비스에서 실패하는 작업에 대해 응용 프로그램을 완전히 보호할 수 없습니다. 제한 시간이 너무 길면 회로 차단기를 실행하는 스레드가 상당히 긴 시간 동안 차단되고, 그 뒤에야 회로 차단기가 작업 실패를 표시하게 됩니다. 이때 다른 응용 프로그램의 수 많은 인스턴스도 회로 차단기를 통해 서비스의 호출을 시도할 수 있고 스레드가 모두 실패하기 전에 상당한 수의 스레드를 묶을 수 있습니다.
 
-## When to use this pattern
+## 패턴 사용 사례
 
-Use this pattern:
+다음의 경우에 이 패턴을 사용합니다.
 
-- To prevent an application from trying to invoke a remote service or access a shared resource if this operation is highly likely to fail.
+- 실패 가능성이 매우 높은 경우 응용 프로그램이 원격 서비스를 호출하거나 공유 리소스에 액세스하려는 시도를 방지
 
-This pattern isn't recommended:
+다음의 경우에는 이 패턴을 권장하지 않습니다.
 
-- For handling access to local private resources in an application, such as in-memory data structure. In this environment, using a circuit breaker would add overhead to your system.
-- As a substitute for handling exceptions in the business logic of your applications.
+- 메모리 내 데이터 구조와 같은 응용 프로그램의 로컬 개인 리소스에 대한 액세스 처리. 이런 환경에서 회로 차단기를 사용하면 시스템에 오버헤드가 추가될 수 있습니다.
+- 사용자 응용 프로그램의 비즈니스 논리에서 예외를 처리하기 위한 대안으로 사용
 
-## Example
+## 예제
 
-In a web application, several of the pages are populated with data retrieved from an external service. If the system implements minimal caching, most hits to these pages will cause a round trip to the service. Connections from the web application to the service could be configured with a timeout period (typically 60 seconds), and if the service doesn't respond in this time the logic in each web page will assume that the service is unavailable and throw an exception.
+웹 응용 프로그램의 여러 페이지는 외부 서비스에서 검색한 데이터로 채워집니다. 시스템이 최소 캐싱을 구현하는 경우, 이런 페이지에 대한 호출이 늘어날수록 서비스까지의 왕복 이동이 늘어나게 됩니다. 웹 응용 프로그램에서 서비스까지의 연결은 제한 시간(보통 60초)으로 구성할 수 있고, 서비스가 제한 시간 이내에 응답하지 않을 경우 각 웹 페이지의 논리는 서비스가 사용할 수 없는 상태이고 예외를 발생시킨다고 판단하게 됩니다.
 
-However, if the service fails and the system is very busy, users could be forced to wait for up to 60 seconds before an exception occurs. Eventually resources such as memory, connections, and threads could be exhausted, preventing other users from connecting to the system, even if they aren't accessing pages that retrieve data from the service.
+그러나 서비스가 실패하고 시스템이 매우 바쁜 경우, 사용자는 예외가 발생하기 전에 강제로 60초를 기다려야 합니다. 결국 메모리, 연결, 스레드와 같은 리소스가 소진될 수 있고, 그에 따라 서비스에서 데이터를 검색하는 페이지에 액세스하고 있지 않은 다른 사용자까지 시스템에 연결되지 못할 수 있습니다.
 
-Scaling the system by adding further web servers and implementing load balancing might delay when resources become exhausted, but it won't resolve the issue because user requests will still be unresponsive and all web servers could still eventually run out of resources.
+웹 서버를 추가하고 부하 분산을 구현해 시스템을 확장하더라도 리소스가 소진되면 지연될 수 있어 문제를 해결할 수 없습니다. 사용자 요청에 대해 여전히 응답이 없고 모든 웹 서버가 결국 리소스를 전부 소진할 수 있기 때문입니다.
 
-Wrapping the logic that connects to the service and retrieves the data in a circuit breaker could help to solve this problem and handle the service failure more elegantly. User requests will still fail, but they'll fail more quickly and the resources won't be blocked.
+서비스에 연결하고 회로 차단기에서 데이터를 검색하는 논리의 래핑은 이런 문제를 해결하고 서비스 실패를 더 우아하게 처리하는 데 도움이 될 수 있습니다. 사용자 요청이 여전히 실패하는 경우, 사용자 요청은 더 빠르게 실패하고 리소스는 차단되지 않을 것이기 때문입니다.
 
-The `CircuitBreaker` class maintains state information about a circuit breaker in an object that implements the `ICircuitBreakerStateStore` interface shown in the following code.
+`CircuitBreaker` 클래스는 회로 차단기에 대한 상태 정보를 다음 코드에서 제시하는 `ICircuitBreakerStateStore` 인터페이스를 구현하는 개체 내에 유지합니다.
 
 ```csharp
 interface ICircuitBreakerStateStore
@@ -125,11 +125,11 @@ interface ICircuitBreakerStateStore
 }
 ```
 
-The `State` property indicates the current state of the circuit breaker, and will be either **Open**, **HalfOpen**, or **Closed** as defined by the `CircuitBreakerStateEnum` enumeration. The `IsClosed` property should be true if the circuit breaker is closed, but false if it's open or half open. The `Trip` method switches the state of the circuit breaker to the open state and records the exception that caused the change in state, together with the date and time that the exception occurred. The `LastException` and the `LastStateChangedDateUtc` properties return this information. The `Reset` method closes the circuit breaker, and the `HalfOpen` method sets the circuit breaker to half open.
+`State` 속성은 회로 차단기의 현재 상태를 표시하며 `CircuitBreakerStateEnum` 열거에 정의된 **개방**, **반개방**, **폐쇄** 중 하나가 됩니다. `IsClosed` 속성은 회로 차단기가 폐쇄된 경우 true이고 개방이나 반개방인 경우 false이어야 합니다. `Trip` 메서드는 회로 차단기의 상태를 개방 상태로 전환하고 예외가 발생한 날짜 및 시간과 함께 상태 변경을 초래한 예외를 기록합니다. `LastException` 및 `LastStateChangedDateUtc` 속성은 이런 정보를 반환합니다. `Reset` 메서드는 회로 차단기를 닫고, `HalfOpen` 메서드는 회로 차단기를 반개방으로 설정합니다.
 
-The `InMemoryCircuitBreakerStateStore` class in the example contains an implementation of the `ICircuitBreakerStateStore` interface. The `CircuitBreaker` class creates an instance of this class to hold the state of the circuit breaker.
+이 예제의 `InMemoryCircuitBreakerStateStore` 클래스는 `ICircuitBreakerStateStore` 인터페이스의 구현을 포함합니다. `CircuitBreaker` 클래스는 회로 차단기의 상태를 보유하는 이 클래스의 인스턴스를 생성합니다.
 
-The `ExecuteAction` method in the `CircuitBreaker` class wraps an operation, specified as an `Action` delegate. If the circuit breaker is closed, `ExecuteAction` invokes the `Action` delegate. If the operation fails, an exception handler calls `TrackException`, which sets the circuit breaker state to open. The following code example highlights this flow.
+`CircuitBreaker` 클래스의 `ExecuteAction` 메서드는 `Action` 대리자로 지정된 작업을 래핑합니다. 회로 차단기가 닫히면 `ExecuteAction` 메서드는 `Action` 대리자를 호출합니다. 작업이 실패하면 예외 처리기는 회로 차단기를 개방으로 설정하는 `TrackException` 를 호출합니다. 다음 코드 예제는 이런 흐름을 강조해 보여줍니다.
 
 ```csharp
 public class CircuitBreaker
@@ -182,13 +182,13 @@ public class CircuitBreaker
 }
 ```
 
-The following example shows the code (omitted from the previous example) that is executed if the circuit breaker isn't closed. It first checks if the circuit breaker has been open for a period longer than the time specified by the local `OpenToHalfOpenWaitTime` field in the `CircuitBreaker` class. If this is the case, the `ExecuteAction` method sets the circuit breaker to half open, then tries to perform the operation specified by the `Action` delegate.
+다음 예제는 회로 차단기가 닫히지 않은 경우 실행되는 코드(이전 예제에서 생략)를 보여줍니다. 먼저 회로 차단기가 `CircuitBreaker` 클래스의 로컬 `OpenToHalfOpenWaitTime` 필드에 지정된 시간보다 길게 열려 있는지를 검사합니다. 그러면 `ExecuteAction` 메서드는 회로 차단기를 반개방으로 설정한 다음 `Action` 대리자로 지정된 작업의 수행을 시도합니다.
 
-If the operation is successful, the circuit breaker is reset to the closed state. If the operation fails, it is tripped back to the open state and the time the exception occurred is updated so that the circuit breaker will wait for a further period before trying to perform the operation again.
+작업이 성공하면 회로 차단기는 폐쇄 상태로 초기화됩니다. 작업이 실패하면 회로 차단기는 다시 개방 상태로 전환되며 예외가 발생하는 시간이 업데이트되어 회로 차단기는 추가 시간을 기다렸다가 작업의 수행을 다시 시도합니다.
 
-If the circuit breaker has only been open for a short time, less than the `OpenToHalfOpenWaitTime` value, the `ExecuteAction` method simply throws a `CircuitBreakerOpenException` exception and returns the error that caused the circuit breaker to transition to the open state.
+회로 차단기가 `OpenToHalfOpenWaitTime` 값보다 짧은 시간 동안만 열리면 `ExecuteAction` 메서드는 단순히 `CircuitBreakerOpenException` 예외를 발생시키고 회로 차단기를 개방 상태로 전환하게 한 오류를 반환합니다.
 
-Additionally, it uses a lock to prevent the circuit breaker from trying to perform concurrent calls to the operation while it's half open. A concurrent attempt to invoke the operation will be handled as if the circuit breaker was open, and it'll fail with an exception as described later.
+거기에 더해 반개방 상태에 있는 회로 차단기가 작업을 동시에 호출하는 시도를 방지하기 위해 잠금을 사용합니다. 작업을 호출하기 위한 동시 시도는 회로 차단기가 열려 있는 것처럼 처리되며 나중에 설명하는 예외와 함께 실패합니다.
 
 ```csharp
     ...
@@ -253,7 +253,7 @@ Additionally, it uses a lock to prevent the circuit breaker from trying to perfo
     ...
 ```
 
-To use a `CircuitBreaker` object to protect an operation, an application creates an instance of the `CircuitBreaker` class and invokes the `ExecuteAction` method, specifying the operation to be performed as the parameter. The application should be prepared to catch the `CircuitBreakerOpenException` exception if the operation fails because the circuit breaker is open. The following code shows an example:
+작업을 보호하는 `CircuitBreaker` 개체를 사용하기 위해 응용 프로그램은 `CircuitBreaker` 클래스의 인스턴스를 생성하고 매개 변수로 수행할 작업을 지정해 `ExecuteAction` 메서드를 호출합니다. 응용 프로그램은 회로 차단기가 열려 있어 작업이 실패하는 경우 `CircuitBreakerOpenException` 예외를 발생시키도록 작성되어야 합니다. 다음 코드 예제를 참고하시기 바랍니다.
 
 ```csharp
 var breaker = new CircuitBreaker();
@@ -278,13 +278,13 @@ catch (Exception ex)
 }
 ```
 
-## Related patterns and guidance
+## 관련 패턴 및 지침
 
-The following patterns might also be useful when implementing this pattern:
+이 패턴을 구현할 때 유용할 수 있는 패턴은 다음과 같습니다.
 
-- [Retry Pattern][retry-pattern]. Describes how an application can handle anticipated temporary failures when it tries to connect to a service or network resource by transparently retrying an operation that has previously failed.
+- [다시 시도 패턴][retry-pattern]. 이전에 실패한 작업을 투명하게 다시 시도해 서비스 또는 네트워크 리소스에 연결을 시도할 때 응용 프로그램이 예상되는 일시적인 장애를 처리할 수 있는 방법을 설명합니다.
 
-- [Health Endpoint Monitoring Pattern](health-endpoint-monitoring.md). A circuit breaker might be able to test the health of a service by sending a request to an endpoint exposed by the service. The service should return information indicating its status.
+- [상태 끝점 모니터링 패턴](health-endpoint-monitoring.md). 회로 차단기는 서비스가 노출하는 끝점에 요청을 전송해 서비스의 상태를 테스트할 수 있습니다. 서비스는 상태를 표시하는 정보를 반환해야 합니다.
 
 
 [retry-pattern]: ./retry.md
