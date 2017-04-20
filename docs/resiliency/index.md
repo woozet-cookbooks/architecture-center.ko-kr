@@ -10,86 +10,86 @@ ms.custom: resiliency
 
 pnp.series.title: Design for Resiliency
 ---
-# Designing resilient applications for Azure
+# 복원 가능한 Azure용 응용 프로그램 설계
 
-In a distributed system, failures will happen. Hardware can fail. The network can have transient failures. Rarely, an entire service or region may experience a disruption, but even those must be planned for. 
+분산 시스템에서도 장애가 발생합니다. 하드웨어 고장도 발생할 수 있습니다. 네트워크에 일시적 장애가 발생할 수 있습니다. 드물게 전체 서비스나 지역이 중단될 수 있지만, 그에 대한 계획도 세워야 합니다.
 
-Building a reliable application in the cloud is different than building a reliable application in an enterprise setting.  While historically you may have purchased higher-end hardware to scale up, in a cloud environment you must scale out instead of up. Costs for cloud environments are kept low through the use of commodity hardware. Instead of focusing on preventing failures and optimizing "mean time between failures," in this new environment the focus shifts to "mean time to restore." The goal is to minimize the impact from a failure.
+클라우드에 신뢰성 있는 응용 프로그램을 구축하는 것은 엔터프라이즈 환경에 신뢰성 있는 응용 프로그램을 구축하는 것과는 다릅니다. 과거에는 수직 확장을 위해 고급 사양의 하드웨어를 구매하였을 수 있지만, 클라우드 환경에서는 수직 확장 대신에 수평 확장을 해야 합니다. 상용 하드웨어를 사용함으로써 클라우드 환경 비용이 낮게 유지됩니다. 장애 방지 및 "평균 무고장 시간" 최적화에 초점을 맞추는 대신에, 이 새로운 환경에서는 "평균 복원 시간"에 초점을 맞춥니다. 목표는 장애의 영향을 최소화하는 것입니다.
 
-This article gives an overview of how to build resilient applications in Microsoft Azure. It starts with a definition of the term *resiliency* and related concepts. Then it describes a process for achieving resiliency, using a structured approach over the life of an application, from design and implementation, to deployment and operations.
+이 문서에서는 Microsoft Azure에서 복원 가능한 응용 프로그램을 구축하는 방법의 개요를 설명합니다. 우선 *복원력* 이라는 용어와 관련 개념의 정의부터 시작합니다. 그 다음에 설계, 구현, 배포, 운영에 이르기까지 응용 프로그램의 수명 동안 구조화된 접근법을 사용하여 복원력을 달성하는 프로세스를 설명합니다.
 
-## What is resiliency?
-**Resiliency** is the ability to recover from failures and continue to function. It's not about *avoiding* failures, but *responding* to failures in a way that avoids downtime or data loss. The goal of resiliency is to return the application to a fully functioning state after a failure.
+## 복원력이란 무엇일까요?
+**복원력** 은 장애로부터 복구하여 계속 기능을 발휘하는 것을 말합니다. 이는 장애를 *피하는 것* 이 아니라 가동 중시 또는 데이터 손실을 방지하는 방식으로 장애에 *대응* 하는 것을 말합니다. 복원의 목표는 장애 이후에 응용 프로그램을 완전히 작동하는 상태로 되돌리는 것입니다.
 
-Two important aspects of resiliency are high availability and disaster recovery.
+복원의 중요한 두 가지 측면은 고가용성과 장애 복구입니다.
 
-* **High availability** (HA) is the ability of the application to keep running in a healthy state, without significant downtime. By "healthy state," we mean the application is responsive, and users can connect to the application and interact with it.  
-* **Disaster recovery** (DR) is the ability to recover from rare but major incidents: Non-transient, wide-scale failures, such as service disruption that affects an entire region. Disaster recovery includes data backup and archiving, and may include manual interventions, such as restoring a database from backup. 
+* **고가용성** (HA) 은 응용 프로그램이 유의미한 가동 중지 없이 정상 상태로 계속 작동하게 하는 능력입니다. "정상 상태"란 응용 프로그램이 응답하고 사용자가 응용 프로그램에 연결하여 상호작용할 수 있는 상태를 의미합니다.  
+* **재해 복구** (DR) 는 드물지만 중대한 사고 즉 전체 지역에 영향을 주는 서비스 중단처럼 일시적이지 않고 광범위한 규모의 장애로부터 복구하는 능력을 말합니다. 재해 복구에는 데이터 백업과 보관이 포함되며, 백업에서 데이터베이스를 복원하는 등 수동 개입도 포함될 수 있습니다.
 
-One way to think about HA versus DR is that DR starts when the impact of a fault exceeds the ability of the HA design to handle it. For example, putting several VMs behind a load balancer will provide availability if one VM fails, but not if they all fail at the same time. 
+DR에 대비하여 HA를 생각하는 한 가지 방법은, DR은 장애의 영향이 설계된 HA의 처리 능력을 초과했을 때 시작됩니다. 예를 들어, 부하 분산 장치 뒤에 몇 개의 VM을 두면 하나의 VM에 장애가 발생해도 가용성을 제공하지만, 그 VM 모두에 동시에 장애가 발생하면 그렇게 할 수 없습니다.
 
-When you design an application to be resilient, you have to understand your availability requirements. How much downtime is acceptable? This is partly a function of cost. How much will potential downtime cost your business? How much should you invest in making the application highly available? You also have to define what it means for the application to be available. For example, is the application "down" if a customer can submit an order but the system cannot process it in the normal timeframe?
+복원 가능한 응용 프로그램을 설계할 때에는 가용성 요구사항을 이해해야 합니다. 어느 정도의 가동 중지 시간이 허용 가능합니까? 이는 부분적으로 비용의 함수입니다. 잠재적 가동 중지로 얼마의 비즈니스 비용이 발생할까요? 응용 프로그램의 고가용성 확보를 위해 얼마를 투자해야 할까요? 또한 응용 프로그램의 가용성에 대한 정의도 해야 합니다. 예를 들어, 고객이 주문서를 제출할 수 있지만 시스템이 정상 기간 내에 처리할 수 없다면 응용 프로그램이 "다운"되었다고 간주합니까?
 
-Another common term is **business continuity** (BC), which is the ability to perform essential business functions during and after a disaster. BC covers the entire operation of the business, including physical facilities, people, communications, transportation, and IT. In this article, we are just focused on cloud applications, but resilience planning must be done in the context of overall BC requirements. 
+또 하나의 일반적인 용어가 **비즈니스 연속성**(BC)인데, 이는 재해 기간 또는 그 후에 필수적 비즈니스 기능을 수행하는 능력을 말합니다. BC는 물리적 시설, 인력, 커뮤니케이션, 운송, IT 등 전체 비즈니스 운영에 적용됩니다. 이 문서에서는 클라우드 응용 프로그램에만 초점을 맞추지만, 복원 계획은 전반적 BC 요구 사항 맥락에서 수행해야 합니다. 
 
-## Process to achieve resiliency
-Resiliency is not an add-on. It must be designed into the system and put into operational practice. Here is a general model to follow:
+## 복원력 달성을 위한 프로세스
+복원력은 애드온이 아닙니다. 이는 반드시 시스템 내에 설계하고 운영 시 실행해야 하는 것입니다. 따라야 할 일반적인 모델은 다음과 같습니다.
 
-1. **Define** your availability requirements, based on business needs
-2. **Design** the application for resiliency. Start with an architecture that follows proven practices, and then identify the possible failure points in that architecture.
-3. **Implement** strategies to detect and recover from failures. 
-4. **Test** the implementation by simulating faults and triggering forced failovers. 
-5. **Deploy** the application into production using a reliable, repeatable process. 
-6. **Monitor** the application to detect failures. By monitoring the system, you can gauge the health of the application and respond to incidents if necessary. 
-7. **Respond** if there are incidents that require manual interventions.
+1. **정의:** 비즈니스 요구를 기준으로 가용성 요구 사항을 정의합니다.
+2. **설계:** 응용 프로그램의 복원력을 설계합니다. 검증된 관행을 따르는 아키텍처로 시작한 후, 그 아키텍처에서 예상되는 장애 지점을 식별합니다.
+3. **구현:** 장애를 감지하고 복원하는 전략을 구현합니다.
+4. **테스트:** 장애를 시뮬레이션하고 강제 장애 조치를 트리거하여 구현 내용을 테스트합니다.
+5. **배포:** 신뢰성 있고 반복할 수 있는 프로세스를 사용하여 응용 프로그램을 생산 환경에 배포합니다.
+6. **모니터링:** 응용 프로그램을 모니터링하여 장애를 감지합니다. 시스템을 모니터링함으로써 응용 프로그램의 상태를 측정하고 필요 시 사고에 대응할 수 있습니다.
+7. **대응:** 수동 개입이 필요한 사고가 있을 경우에 대응합니다.
 
-In the remainder of this article, we discuss each of these steps in more detail.
+이 문서의 나머지 부분에서는 이들 각 단계에 관해서 자세히 설명합니다.
 
-## Defining your resiliency requirements
-Resiliency planning starts with business requirements. Here are some approaches for thinking about resiliency in those terms.
+## 복원 요구 사항의 정의
+복원 계획은 비즈니스 요구 사항에서 시작됩니다. 그러한 조건에서 복원력에 관하여 생각하는 몇 가지 접근법이 있습니다.
 
-### Decompose by workload
-Many cloud solutions consist of multiple application workloads. The term "workload" in this context means a discrete capability or computing task, which can be logically separated from other tasks, in terms of business logic and data storage requirements. For example, an e-commerce app might include the following workloads:
+### 작업을 기준으로 구성 해체
+다수의 클라우드 솔루션은 여러 응용 프로그램 작업으로 구성됩니다. 이러한 맥락에서 "작업"(workload)이란 용어는 비즈니스 논리와 데이터 저장 요구 사항 측면에서 다른 작업과 논리적으로 분리될 수 있는 개별 기능 또는 컴퓨팅 작업을 의미합니다. 예를 들어, 전자 상거래 앱에는 아래의 작업이 포함될 수 있습니다.
 
-* Browse and search a product catalog.
-* Create and track orders.
-* View recommendations.
+* 제품 카탈로그 찾아보기 및 검색.
+* 주문서 작성 및 추적.
+* 권장 사항 보기.
 
-These workloads might have different requirements for availability, scalability, data consistency, disaster recovery, and so forth. Again, these are business decisions.
+이들 작업의 가용성, 확장성, 데이터 일관성, 재해 복구 등에 대한 요구 사항은 다를 수 있습니다. 다시 말하지만 그것은 비즈니스 결정 사항입니다.
 
-Also think about usage patterns. Are there certain critical periods when the system must be available? For example, a tax-filing service can't go down right before the filing deadline; a video streaming service must stay up during a big sports event; and so on. During the critical periods, you might have redundant deployments across several regions, so the application could fail over if one region failed. However, a multi-region deployment is more expensive, so during less critical times, you might run the application in a single region.  
+또한 이용 패턴도 생각하십시오. 시스템이 반드시 가용성을 유지해야 할 중요한 특정 기간이 있습니까? 예를 들어 신고 기간 직전에 세무 신고 서비스가 다운되어서는 안 되며, 큰 스포츠 이벤트 기간 동안에는 비디오 스트리밍 서비스가 반드시 작동되어야 합니다. 중요한 기간에는, 한 지역에 장애가 발생해도 응용 프로그램이 장애 조치를 취할 수 있도록 여러 지역에 걸쳐 중복 배포를 보유할 수 있습니다. 하지만 다중 지역 배포는 비용이 더 많이 소요되므로 덜 중요한 기간에는 응용 프로그램을 단일 지역에서 실행할 수 있습니다.
 
-### RTO and RPO
-Two important metrics to consider are the recovery time objective and recovery point objective:
+### RTO와 RPO
+고려해야 할 중요한 두 가지 메트릭은 복구 시간 목표와 복구 지점 목표입니다.
 
-* **Recovery time objective** (RTO) is the maximum acceptable time that an application can be unavailable after an incident. If your RTO is 90 minutes, you must be able to restore the application to a running state within 90 minutes from the start of a disaster. If you have a very low RTO, you might keep a second deployment continually running on standby, to protect against a regional outage.
-* **Recovery point objective** (RPO) is the maximum duration of data loss that is acceptable during a disaster. For example, if you store data in a single database, with no replication to other databases, and perform hourly backups, you could lose up to an hour of data. 
+* **복구 시간 목표** (RTO)는 사고 후에 응용 프로그램의 사용 불가 상태를 허용하는 최대 수용 가능한 시간입니다. RTO가 90분이면 재해 시작 시점부터 90분 이내에 응용 프로그램을 작동 상태로 복원할 수 있어야 합니다. RTO 시간이 매우 낮으면 지역의 서비스 중단을 방지하기 위해 보조 배포를 계속 대기 상태로 운영하는 것이 필요할 수 있습니다.
+* **복구 지점 목표** (RPO) 는 재해 시 수용 가능한 최대 데이터 손실 기간을 말합니다. 예를 들어 데이터를 단일 데이터베이스에 저장하는데 다른 데이터베이스에 복제하지 않고 매시간 백업을 수행한다면, 최대 1시간 분량의 데이터가 손실될 수 있습니다.
 
-RTO and RPO are business requirements. Another common metric is **mean time to recover** (MTTR), which is the average time that it takes to restore the application after a failure. MTTR is an empirical fact about a system. If MTTR exceeds the RTO, then a failure in the system will cause an unacceptable business disruption, because it won't be possible to restore the system within the defined RTO. 
+RTO와 RPO는 비즈니스 요구 사항입니다. 또 하나의 일반적 메트릭으로 **평균 복구 시간** (MTTR)이 있는데 이는 장애 후에 응용 프로그램을 복구하는 데 소요되는 평균 시간을 말합니다. MTTR는 시스템에 관한 경험적 사실입니다. MTTR가 RTO를 초과하면 정의된 RTO 내에 시스템을 복원할 수 없기 때문에 시스템 장애가 수용 불가능한 비즈니스 중단을 야기합니다. 
 
 ### SLAs
-In Azure, the [Service Level Agreement][sla] (SLA) describes Microsoft’s commitments for uptime and connectivity. If the SLA for a particular service is 99.9%, it means you should expect the service to be available 99.9% of the time.
+Azure에서 [서비스 수준 계약][sla] (SLA)은 가동 시간과 연결성에 관한 Microsoft의 약속을 설명합니다. 특정 서비스의 SLA가 99.9%이면, 서비스가 시간 중 99.9% 동안 이용할 수 있다고 기대할 수 있습니다.
 
-> [!NOTE]
-> The Azure SLA also includes provisions for obtaining a service credit if the SLA is not met, along with specific definitions of "availability" for each service. That aspect of the SLA acts as an enforcement policy. 
+> [!참고]
+> T또한 Azure SLA에는 SLA가 충족되지 않았을 경우에 서비스 크레딧을 받는 조항, 그리고 각 서비스에 대한 "가용성"의 구체적 정의도 포함되어 있습니다. SLA의 그러한 측면이 적용 정책의 역할을 수행합니다.
 > 
 > 
 
-You should define your own target SLAs for each workload in your solution. An SLA makes it possible to reason about the architecture, and whether the architecture meets the business requirements. For example, if a workload requires 99.99% uptime, but depends on a service with a 99.9% SLA, that service cannot be a single-point of failure in the system. One remedy is to have a fallback path in case the service fails, or take other measures to recover from a failure in that service. 
+여러분은 솔루션 내의 각 작업에 대해 자체적인 목표 SLA를 정의해야 합니다. SLA가 있으면 아키텍처에 관한 추론이 가능하고 아키텍처가 비즈니스 요구 사항을 충족하는지 여부를 판단할 수 있습니다. 예를 들어 작업이 99.99%의 가동 시간을 요구하지만 99.99% SLA의 서비스에 의존한다면, 그 서비스는 시스템에서 단일 실패 지점이 될 수 없습니다. 한 가지 해결책은 서비스 장애가 발생할 경우에 대비하여 대체 경로를 확보하거나 그 서비스의 장애로부터 복구하는 다른 조치를 취하는 것입니다.
 
-The following table shows the potential cumulative downtime for various SLA levels. 
+아래 표는 다양한 SLA 수준별로 예상되는 누적 가동 중지 시간을 표시하고 있습니다.
 
-| SLA | Downtime per week | Downtime per month | Downtime per year |
+| SLA | 주간 가동 중지 시간 | 월간 가동 중지 시간 | 연간 가동 중지 시간 |
 | --- | --- | --- | --- |
-| 99% |1.68 hours |7.2 hours |3.65 days |
-| 99.9% |10.1 minutes |43.2 minutes |8.76 hours |
-| 99.95% |5 minutes |21.6 minutes |4.38 hours |
-| 99.99% |1.01 minutes |4.32 minutes |52.56 minutes |
-| 99.999% |6 seconds |25.9 seconds |5.26 minutes |
+| 99% |1.68 시간 |7.2 시간 |3.65 일 |
+| 99.9% |10.1 분 |43.2 분 |8.76 시간 |
+| 99.95% |5 분 |21.6 분 |4.38 시간 |
+| 99.99% |1.01 분 |4.32 분 |52.56 분 |
+| 99.999% |6 초 |25.9 초 |5.26 분 |
 
-Of course, higher availability is better, everything else being equal. But as you strive for more 9s, the cost and complexity to achieve that level of availability grows. An uptime of 99.99% translates to about 5 minutes of total downtime per month. Is it worth the additional complexity and cost to reach five 9s? The answer depends on the business requirements. 
+물론 모든 조건이 동일하다면 고가용성이 더 좋습니다. 하지만 더 많은 9를 확보하려면 그 수준의 가용성을 달성하기 위한 비용과 복잡성도 증가합니다. 99.99%의 가동 시간은 월간 총 가동 중지 시간이 약 5분임을 의미합니다. 다섯 개의 9를 달성하는 데 소요되는 추가적 복잡성과 비용을 투입할 가치가 있습니까? 그 답변은 비즈니스 요구 사항에 달려있습니다.
 
-Here are some other considerations when defining an SLA:
+SLA를 정의할 때 고려해야 할 기타 몇 가지 고려사항이 있습니다.
 
 * To achieve four 9's (99.99%), you probably can't rely on manual intervention to recover from failures. The application must be self-diagnosing and self-healing. 
 * Beyond four 9's, it is challenging to detect outages quickly enough to meet the SLA.
