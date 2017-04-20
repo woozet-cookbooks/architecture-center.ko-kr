@@ -9,22 +9,22 @@ ms.author: pnp
 
 pnp.series.title: Best Practices
 ---
-# Retry guidance for specific services
+# 특정 서비스를 위한 다시 시도 지침
 [!INCLUDE [header](../_includes/header.md)]
 
-Most Azure services and client SDKs include a retry mechanism. However, these differ because each service has different characteristics and requirements, and so each retry mechanism is tuned to a specific service. This guide summarizes the retry mechanism features for the majority of Azure services, and includes information to help you use, adapt, or extend the retry mechanism for that service.
+대부분의 Azure 서비스 및 클라이언트 SDK는 다시 시도 메커니즘을 제공합니다. 그러나 서비스마다 특성 및 요구 사항이 다르기 때문에 다시 시도 메커니즘도 서로 다르며, 따라서 각 다시 시도 메커니즘은 특정 서비스에 맞게 조정됩니다. 이 가이드는 대부분의 Azure 서비스에 대한 다시 시도 메커니즘 기능을 요약하며 해당 서비스에서 다시 시도 메커니즘을 사용, 적용  또는 확장하는 데 도움이 되는 정보를 제공합니다. 
 
-For general guidance on handling transient faults, and retrying connections and operations against services and resources, see [Retry guidance](./transient-faults.md).
+일시적 오류 처리 및 서비스와 리소스에 대한 연결과 작업 다시 시도에 대한 일반 지침은 [다시 시도 지침](./transient-faults.md)을 참조하세요.
 
-The following table summarizes the retry features for the Azure services described in this guidance.
+아래 표에는 본 가이드에 설명되어 있는 Azure 서비스에 대한 다시 시도 기능이 요약되어 있습니다. 
 
-| **Service** | **Retry capabilities** | **Policy configuration** | **Scope** | **Telemetry features** |
+| **서비스** | **다시 시도 기능** | **정책 구성** | **범위** | **원격 분석 기능** |
 | --- | --- | --- | --- | --- |
-| **[Azure Storage](#azure-storage-retry-guidelines)** |Native in client |Programmatic |Client and individual operations |TraceSource |
-| **[SQL Database with Entity Framework](#sql-database-using-entity-framework-6-retry-guidelines)** |Native in client |Programmatic |Global per AppDomain |None |
-| **[SQL Database with ADO.NET](#azure-storage-retry-guidelines)** |Topaz* |Declarative and programmatic |Single statements or blocks of code |Custom |
-| **[Service Bus](#service-bus-retry-guidelines)** |Native in client |Programmatic |Namespace Manager, Messaging Factory, and Client |ETW |
-| **[Azure Redis Cache](#azure-redis-cache-retry-guidelines)** |Native in client |Programmatic |Client |TextWriter |
+| **[Azure 저장소](#azure-storage-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |클라이언트 및 개별 작업 |TraceSource |
+| **[Entity Framework를 사용하는 SQL 데이터베이스](#sql-database-using-entity-framework-6-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |AppDomain에 따라 전역 |없음 |
+| **[ADO.NET을 사용하는 SQL 데이터베이스](#azure-storage-retry-guidelines)** |Topaz* |선언적 및 프로그래밍 방식 |코드의 단일 문 또는 블록 |사용자 지정 |
+| **[서비스 버스](#service-bus-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |네임스페이스 관리자, 메시징 팩터리 및 클라이언트 |ETW |
+| **[Azure Redis Cache](#azure-redis-cache-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |Client |TextWriter |
 | **[DocumentDB](#documentdb-retry-guidelines)** |Native in service |Non-configurable |Global |TraceSource |
 | **[Azure Search](#azure-storage-retry-guidelines)** |Native in client |Programmatic |Client |ETW or Custom |
 | **[Active Directory](#azure-active-directory-retry-guidelines)** |Topaz* (with custom detection strategy) |Declarative and programmatic |Blocks of code |Custom |
