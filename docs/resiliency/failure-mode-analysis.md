@@ -152,42 +152,42 @@ Application_End 로깅이 앱 도메인 종료(소프트 프로세스 크래시)
 ### Elasticsearch에서 데이터 읽기가 실패함.
 **검색**. Catch the appropriate exception for the particular [Elasticsearch client][elasticsearch-client] being used.
 
-**Recovery**
+**복구**
 
 * Use a retry mechanism. Each client has its own retry policies.
 * Deploy multiple Elasticsearch nodes and use replication for high availability.
 
 For more information, see [Running Elasticsearch on Azure][elasticsearch-azure].
 
-**Diagnostics**. You can use monitoring tools for Elasticsearch, or log all errors on the client side with the payload. See the 'Monitoring' section in [Running Elasticsearch on Azure][elasticsearch-azure].
+**진단**. You can use monitoring tools for Elasticsearch, or log all errors on the client side with the payload. See the 'Monitoring' section in [Running Elasticsearch on Azure][elasticsearch-azure].
 
 ### Writing data to Elasticsearch fails.
 **검색**. Catch the appropriate exception for the particular [Elasticsearch client][elasticsearch-client] being used.  
 
-**Recovery**
+**복구**
 
 * Use a retry mechanism. Each client has its own retry policies.
 * If the application can tolerate a reduced consistency level, consider writing with `write_consistency` setting of `quorum`.
 
 For more information, see [Running Elasticsearch on Azure][elasticsearch-azure].
 
-**Diagnostics**. You can use monitoring tools for Elasticsearch, or log all errors on the client side with the payload. See the 'Monitoring' section in [Running Elasticsearch on Azure][elasticsearch-azure].
+**진단**. You can use monitoring tools for Elasticsearch, or log all errors on the client side with the payload. See the 'Monitoring' section in [Running Elasticsearch on Azure][elasticsearch-azure].
 
 ## Queue storage
 ### Writing a message to Azure Queue storage fails consistently.
 **검색**. After *N* retry attempts, the write operation still fails.
 
-**Recovery**
+**복구**
 
 * Store the data in a local cache, and forward the writes to storage later, when the service becomes available.
 * Create a secondary queue, and write to that queue if the primary queue is unavailable.
 
-**Diagnostics**. Use [storage metrics][storage-metrics].
+**진단**. Use [storage metrics][storage-metrics].
 
 ### The application cannot process a particular message from the queue.
 **검색**. Application specific. For example, the message contains invalid data, or the business logic fails for some reason.
 
-**Recovery**
+**복구**
 
 Move the message to a separate queue. Run a separate process to examine the messages in that queue.
 
@@ -196,34 +196,34 @@ Consider using Azure Service Bus Messaging queues, which provides a [dead-letter
 > [!NOTE]
 > If you are using Storage queues with WebJobs, the WebJobs SDK provides built-in poison message handling. See [How to use Azure queue storage with the WebJobs SDK][sb-poison-message].
 
-**Diagnostics**. Use application logging.
+**진단**. Use application logging.
 
 ## Redis Cache
 ### Reading from the cache fails.
 **검색**. Catch `StackExchange.Redis.RedisConnectionException`.
 
-**Recovery**
+**복구**
 
 1. Retry on transient failures. Azure Redis cache supports built-in retry through See [Redis Cache retry guidelines][redis-retry].
 2. Treat non-transient failures as a cache miss, and fall back to the original data source.
 
-**Diagnostics**. Use [Redis Cache diagnostics][redis-monitor].
+**진단**. Use [Redis Cache diagnostics][redis-monitor].
 
 ### Writing to the cache fails.
 **검색**. Catch `StackExchange.Redis.RedisConnectionException`.
 
-**Recovery**
+**복구**
 
 1. Retry on transient failures. Azure Redis cache supports built-in retry through See [Redis Cache retry guidelines][redis-retry].
 2. If the error is non-transient, ignore it and let other transactions write to the cache later.
 
-**Diagnostics**. Use [Redis Cache diagnostics][redis-monitor].
+**진단**. Use [Redis Cache diagnostics][redis-monitor].
 
 ## SQL Database
 ### Cannot connect to the database in the primary region.
 **검색**. Connection fails.
 
-**Recovery**
+**복구**
 
 Prerequisite: The database must be configured for active geo-replication. See [SQL Database Active Geo-Replication][sql-db-replication].
 
@@ -235,22 +235,22 @@ The replica uses a different connection string, so you will need to update the c
 ### Client runs out of connections in the connection pool.
 **검색**. Catch `System.InvalidOperationException` errors.
 
-**Recovery**
+**복구**
 
 * Retry the operation.
 * As a mitigation plan, isolate the connection pools for each use case, so that one use case can't dominate all the connections.
 * Increase the maximum connection pools.
 
-**Diagnostics**. Application logs.
+**진단**. Application logs.
 
 ### Database connection limit is reached.
 **검색**. Azure SQL Database limits the number of concurrent workers, logins, and sessions. The limits depend on the service tier. For more information, see [Azure SQL Database resource limits][sql-db-limits].
 
 To detect these errors, catch `System.Data.SqlClient.SqlException` and check the value of `SqlException.Number` for the SQL error code. For a list of relevant error codes, see [SQL error codes for SQL Database client applications: Database connection error and other issues][sql-db-errors].
 
-**Recovery**. These errors are considered transient, so retrying may resolve the issue. If you consistently hit these errors, consider scaling the database.
+**복구**. These errors are considered transient, so retrying may resolve the issue. If you consistently hit these errors, consider scaling the database.
 
-**Diagnostics**. - The [sys.event_log][sys.event_log] query returns successful database connections, connection failures, and deadlocks.
+**진단**. - The [sys.event_log][sys.event_log] query returns successful database connections, connection failures, and deadlocks.
 
 * Create an [alert rule][azure-alerts] for failed connections.
 * Enable [SQL Database auditing][sql-db-audit] and check for failed logins.
@@ -261,7 +261,7 @@ To detect these errors, catch `System.Data.SqlClient.SqlException` and check the
 
 For more information, see [Service Bus messaging exceptions][sb-messaging-exceptions].
 
-**Recovery**
+**복구**
 
 1. Retry on transient failures. See [Service Bus retry guidelines][sb-retry].
 2. Messages that cannot be delivered to any receiver are placed in a *dead-letter queue*. Use this queue to see which messages could not be received. There is no automatic cleanup of the dead-letter queue. Messages remain there until you explicitly retrieve them. See [Overview of Service Bus dead-letter queues][sb-dead-letter-queue].
@@ -271,7 +271,7 @@ For more information, see [Service Bus messaging exceptions][sb-messaging-except
 
 For more information, see [Service Bus messaging exceptions][sb-messaging-exceptions].
 
-**Recovery**
+**복구**
 
 1. The Service Bus client automatically retries after transient errors. By default, it uses exponential back-off. After the maximum retry count or maximum timeout period, the client throws an exception. For more information, see [Service Bus retry guidelines][sb-retry].
 2. If the queue quota is exceeded, the client throws [QuotaExceededException][QuotaExceededException]. The exception message gives more details. Drain some messages from the queue before retrying, and consider using the Circuit Breaker pattern to avoid continued retries while the quota is exceeded. Also, make sure the [BrokeredMessage.TimeToLive] property is not set too high.
@@ -286,7 +286,7 @@ For more information, see [Service Bus messaging exceptions][sb-messaging-except
 ### Duplicate message.
 **검색**. Examine the `MessageId` and `DeliveryCount` properties of the message.
 
-**Recovery**
+**복구**
 
 * If possible, design your message processing operations to be idempotent. Otherwise, store message IDs of messages that are already processed, and check the ID before processing a message.
 * Enable duplicate detection, by creating the queue with `RequiresDuplicateDetection` set to true. With this setting, Service Bus automatically deletes any message that is sent with the same `MessageId` as a previous message.  Note the following:
@@ -294,12 +294,12 @@ For more information, see [Service Bus messaging exceptions][sb-messaging-except
   * This setting prevents duplicate messages from being put into the queue. It doesn't prevent a receiver from processing the same message more than once.
   * Duplicate detection has a time window. If a duplicate is sent beyond this window, it won't be detected.
 
-**Diagnostics**. Log duplicated messages.
+**진단**. Log duplicated messages.
 
 ### The application cannot process a particular message from the queue.
 **검색**. Application specific. For example, the message contains invalid data, or the business logic fails for some reason.
 
-**Recovery**
+**복구**
 
 There are two failure modes to consider.
 
@@ -308,32 +308,32 @@ There are two failure modes to consider.
 
 For more information, see [Overview of Service Bus dead-letter queues][sb-dead-letter-queue].
 
-**Diagnostics**. Whenever the application moves a message to the dead-letter queue, write an event to the application logs.
+**진단**. Whenever the application moves a message to the dead-letter queue, write an event to the application logs.
 
 ## Service Fabric
 ### A request to a service fails.
 **검색**. The service returns an error.
 
-**Recovery**
+**복구**
 
 * Locate a proxy again (`ServiceProxy` or `ActorProxy`) and call the service/actor method again.
 * **Stateful service**. Wrap operations on reliable collections in a transaction. If there is an error, the transaction will be rolled back. The request, if pulled from a queue, will be processed again.
 * **Stateless service**. If the service persists data to an external store, all operations need to be idempotent.
 
-**Diagnostics**. Application log
+**진단**. Application log
 
 ### Service Fabric node is shut down.
 **검색**. A cancellation token is passed to the service's `RunAsync` method. Service Fabric cancels the task before shutting down the node.
 
-**Recovery**. Use the cancellation token to detect shutdown. When Service Fabric requests cancellation, finish any work and exit `RunAsync` as quickly as possible.
+**복구**. Use the cancellation token to detect shutdown. When Service Fabric requests cancellation, finish any work and exit `RunAsync` as quickly as possible.
 
-**Diagnostics**. Application logs
+**진단**. Application logs
 
 ## Storage
 ### Writing data to Azure Storage fails
 **검색**. The client receives errors when writing.
 
-**Recovery**
+**복구**
 
 1. Retry the operation, to recover from transient failures. The [retry policy][Storage.RetryPolicies] in the client SDK handles this automatically.
 2. Implement the Circuit Breaker pattern to avoid overwhelming storage.
@@ -342,24 +342,24 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
    * Store the data in a local cache, and forward the writes to storage later, when the service becomes available.
    * If the write action was in a transactional scope, compensate the transaction.
 
-**Diagnostics**. Use [storage metrics][storage-metrics].
+**진단**. Use [storage metrics][storage-metrics].
 
 ### Reading data from Azure Storage fails.
 **검색**. The client receives errors when reading.
 
-**Recovery**
+**복구**
 
 1. Retry the operation, to recover from transient failures. The [retry policy][Storage.RetryPolicies] in the client SDK handles this automatically.
 2. For RA-GRS storage, if reading from the primary endpoint fails, try reading from the secondary endpoint. The client SDK can handle this automatically. See [Azure Storage replication][storage-replication].
 3. If *N* retry attempts fail, take a fallback action to degrade gracefully. For example, if a product image can't be retrieved from storage, show a generic placeholder image.
 
-**Diagnostics**. Use [storage metrics][storage-metrics].
+**진단**. Use [storage metrics][storage-metrics].
 
 ## Virtual Machine
 ### Connection to a backend VM fails.
 **검색**. Network connection errors.
 
-**Recovery**
+**복구**
 
 * Deploy at least two backend VMs in an availability set, behind a load balancer.
 * If the connection error is transient, sometimes TCP will successfully retry sending the message.
@@ -367,29 +367,29 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 * For persistent or non-transient errors, implement the [Circuit Breaker][circuit-breaker] pattern.
 * If the calling VM exceeds its network egress limit, the outbound queue will fill up. If the outbound queue is consistently full, consider scaling out.
 
-**Diagnostics**. Log events at service boundaries.
+**진단**. Log events at service boundaries.
 
 ### VM instance becomes unavailable or unhealthy.
 **검색**. Configure a Load Balancer [health probe][lb-probe] that signals whether the VM instance is healthy. The probe should check whether critical functions are responding correctly.
 
-**Recovery**. For each application tier, put multiple VM instances into the same availability set, and place a load balancer in front of the VMs. If the health probe fails, the Load Balancer stops sending new connections to the unhealthy instance.
+**복구**. For each application tier, put multiple VM instances into the same availability set, and place a load balancer in front of the VMs. If the health probe fails, the Load Balancer stops sending new connections to the unhealthy instance.
 
-**Diagnostics**. - Use Load Balancer [log analytics][lb-monitor].
+**진단**. - Use Load Balancer [log analytics][lb-monitor].
 
 * Configure your monitoring system to monitor all of the health monitoring endpoints.
 
 ### Operator accidentally shuts down a VM.
 **검색**. N/A
 
-**Recovery**. Set a resource lock with `ReadOnly` level. See [Lock resources with Azure Resource Manager][rm-locks].
+**복구**. Set a resource lock with `ReadOnly` level. See [Lock resources with Azure Resource Manager][rm-locks].
 
-**Diagnostics**. Use [Azure Activity Logs][azure-activity-logs].
+**진단**. Use [Azure Activity Logs][azure-activity-logs].
 
 ## WebJobs
 ### Continuous job stops running when the SCM host is idle.
 **검색**. Pass a cancellation token to the WebJob function. For more information, see [Graceful shutdown][web-jobs-shutdown].
 
-**Recovery**. Enable the `Always On` setting in the web app. For more information, see [Run Background tasks with WebJobs][web-jobs].
+**복구**. Enable the `Always On` setting in the web app. For more information, see [Run Background tasks with WebJobs][web-jobs].
 
 ## Application design
 ### Application can't handle a spike in incoming requests.
@@ -399,7 +399,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 * Dependent services, such as database or storage, start to throttle requests. Look for HTTP errors such as HTTP 429 (Too Many Requests), depending on the service.
 * HTTP queue length grows.
 
-**Recovery**
+**복구**
 
 * Scale out to handle increased load.
 * Mitigate failures to avoid having cascading failures disrupt the entire application. Mitigation strategies include:
@@ -408,29 +408,29 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
   * Use [queue-based load leveling][queue-based-load-leveling] to buffer requests and process them at an appropriate pace.
   * Prioritize certain clients. For example, if the application has free and paid tiers, throttle customers on the free tier, but not paid customers. See [Priority queue pattern][priority-queue-pattern].
 
-**Diagnostics**. Use [App Service diagnostic logging][app-service-logging]. Use a service such as [Azure Log Analytics][azure-log-analytics], [Application Insights][app-insights], or [New Relic][new-relic] to help understand the diagnostic logs.
+**진단**. Use [App Service diagnostic logging][app-service-logging]. Use a service such as [Azure Log Analytics][azure-log-analytics], [Application Insights][app-insights], or [New Relic][new-relic] to help understand the diagnostic logs.
 
 ### One of the operations in a workflow or distributed transaction fails.
 **검색**. After *N* retry attempts, it still fails.
 
-**Recovery**
+**복구**
 
 * As a mitigation plan, implement the [Scheduler Agent Supervisor][scheduler-agent-supervisor] pattern to manage the entire workflow.
 * Don't retry on timeouts. There is a low success rate for this error.
 * Queue work, in order to retry later.
 
-**Diagnostics**. Log all operations (successful and failed), including compensating actions. Use correlation IDs, so that you can track all operations within the same transaction.
+**진단**. Log all operations (successful and failed), including compensating actions. Use correlation IDs, so that you can track all operations within the same transaction.
 
 ### A call to a remote service fails.
 **검색**. HTTP error code.
 
-**Recovery**
+**복구**
 
 1. Retry on transient failures.
 2. If the call fails after *N* attempts, take a fallback action. (Application specific.)
 3. Implement the [Circuit Breaker pattern][circuit-breaker] to avoid cascading failures.
 
-**Diagnostics**. Log all remote call failures.
+**진단**. Log all remote call failures.
 
 ## Next steps
 For more information about the FMA process, see [Resilience by design for cloud services][resilience-by-design-pdf] (PDF download).
