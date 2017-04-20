@@ -8,173 +8,278 @@ ms.date: 03/24/2017
 ms.author: pnp
 ms.custom: resiliency, checklist
 ---
-# Resiliency checklist
+# 복원력 체크리스트
 [!INCLUDE [header](../_includes/header.md)]
 
-Designing your application for resiliency requires planning for and mitigating a variety of failure modes that could occur. Review the items in this checklist against your application design to make it more resilient.
+복원력 있는 애플리케이션을 디자인하려면 발생 가능성이 있는 다양한 오류를 예측하여 완화시켜야 합니다. 이 체크리스트의 항목을 해당 응용 프로그램 설계와 비교 검토하여 복원력을 향상시킵니다. 
 
-## Requirements
-* **Define your customer's availability requirements.** Your customer will have availability requirements for the components in your application and this will affect your application's design. Get agreement from your customer for the availability targets of each piece of your application, otherwise your design may not meet the customer's expectations. For more information, see the [Defining your resiliency requirements](../resiliency/index.md#defining-your-resiliency-requirements) section of the [Designing resilient applications for Azure](../resiliency/index.md) document.
+## 요구사항
 
-## Failure Mode Analysis
-* **Perform a failure mode analysis (FMA) for your application.** FMA is a process for building resiliency into an application early in the design stage. The goals of an FMA include:  
+* **고객의 가용성 요구사항을 정의합니다.** 고객은 귀사의 응용 프로그램 구성 요소에 대한 가용성 요구사항이 있으며, 이는 응용 프로그램 설계에 영향을 줍니다. 각 응용 프로그램의 가용성 목표에 대해 고객의 동의를 구하십시오. 그렇지 않으면 귀사의 설계가 고객의 기대에 못 미칠 수 있습니다. 자세한 내용은 문서 [Zaure를 위한 복원력 높은 응용 프로그램 설계하기(Designing resilient applications for Azure)](../resiliency/index.md) document 중 [복원력 요구사항 정의(Defining your resiliency requirements)](../resiliency/index.md#defining-your-resiliency-requirements) 섹션을 참조하십시오. 
 
-  * Identify what types of failures an application might experience.
-  * Capture the potential effects and impact of each type of failure on the application.
-  * Identify recovery strategies.
+## 실패 모드 분석
 
-    For more information, see [Designing resilient applications for Azure: Failure mode analysis][fma].  
+* **응용 프로그램에 대해 실패 모드 분석(FMA)을 수행합니다.** FMA는 설계 단계 초기에 응용 프로그램에 복원력을 구축하기 위한 프로세스입니다. FMA의 목표는 다음과 같습니다. 
 
-## Application
-* **Deploy multiple instances of services.** Services will inevitably fail, and if your application depends on a single instance of a service it will inevitably fail also. To provision multiple instances for [Azure App Service](/azure/app-service/app-service-value-prop-what-is/), select an [App Service Plan](/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview/) that offers multiple instances. For Azure Cloud Services, configure each of your roles to use [multiple instances](/azure/cloud-services/cloud-services-choose-me/#scaling-and-management). For [Azure Virtual Machines (VMs)](/azure/virtual-machines/virtual-machines-windows-about/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json), ensure that your VM architecture includes more than one VM and that each VM is included in an [availability set][availability-sets].   
-* **Use a load balancer to distribute requests.** A load balancer distributes your application's requests to healthy service instances by removing unhealthy instances from rotation. If your service uses Azure App Service or Azure Cloud Services, it is already load balanced for you. However, if your application uses Azure VMs, you will need to provision a load balancer. See the [Azure Load Balancer](/azure/load-balancer/load-balancer-overview/) overview for more details.
-* **Configure Azure Application Gateways to use multiple instances.** Depending on your application's requirements, an [Azure Application Gateway](/azure/application-gateway/application-gateway-introduction/) may be better suited to distributing requests to your application's services. However, single instances of the Application Gateway service are not guaranteed by an SLA so it's possible that your application could fail if the Application Gateway instance fails. Provision more than one medium or larger Application Gateway instance to guarantee availability of the service under the terms of the [SLA](https://azure.microsoft.com/support/legal/sla/application-gateway/v1_0/).
-* **Use Availability Sets for each application tier**. Placing your instances in an [availability set][availability-sets] provides a higher [SLA](https://azure.microsoft.com/support/legal/sla/virtual-machines/). 
-* **Consider deploying your application across multiple regions.** If your application is deployed to a single region, in the rare event the entire region becomes unavailable, your application will also be unavailable. This may be unacceptable under the terms of your application's SLA. If so, consider deploying your application and its services across multiple regions. A multi-region deployment can use an active-active pattern (distributing requests across multiple active instances) or an active-passive pattern (keeping a "warm" instance in reserve, in case the primary instance fails). We recommend that you deploy multiple instances of your application's services across regional pairs. For more information, see [Business continuity and disaster recovery (BCDR): Azure Paired Regions](/azure/best-practices-availability-paired-regions).
-* **Implement resiliency patterns for remote operations where appropriate.** If your application depends on communication between remote services, the communication path will inevitably fail. If there are multiple failures, the remaining healthy instances of your application's services could be overwhelmed with requests. There are several patterns useful for dealing with common failures including the timeout pattern, the [retry pattern][retry-pattern], the [circuit breaker][circuit-breaker] pattern, and others. For more information, see [Designing resilient applications for Azure](../resiliency/index.md#resiliency-strategies).
-* **Use autoscaling to respond to increases in load.** If your application is not configured to scale out automatically as load increases, it's possible that your application's services will fail if they become saturated with user requests. For more details, see the following:
+  o	응용 프로그램에 발생할 수 있는 실패의 유형을 식별합니다.
 
-  * General: [Scalability checklist](./scalability.md)
-  * Azure App Service: [Scale instance count manually or automatically][app-service-autoscale]
-  * Cloud Services: [How to auto scale a cloud service][cloud-service-autoscale]
-  * Virtual Machines: [Automatic scaling and virtual machine scale sets][vmss-autoscale]
-* **Implement asynchronous operations whenever possible.** Synchronous operations can monopolize resources and block other operations while the caller waits for the process to complete. Design each part of your application to allow for asynchronous operations whenever possible. For more information on how to implement asynchronous programming in C#, see [Asynchronous Programming with async and await][asynchronous-c-sharp].
-* **Use Azure Traffic Manager to route your application's traffic to different regions.**  [Azure Traffic Manager][traffic-manager] performs load balancing at the DNS level and can route traffic to different regions based on the [traffic routing][traffic-manager-routing] method you specify and the health of your application's endpoints.
-* **Configure and test health probes for your load balancers and traffic managers.** Ensure that your health logic checks the critical parts of the system and responds appropriately to health probes.
+  o	각 유형의 실패가 응용 프로그램에 주는 잠재적 결과와 영향을 포착합니다.
 
-  * The health probes for [Azure Traffic Manager][traffic-manager] and [Azure Load Balancer][load-balancer] serve a specific function. For Traffic Manager, the health probe determines whether to fail over to another region. For a load balancer, it determines whether to remove a VM from rotation.      
-  * For a Traffic Manager probe, your health endpoint should check any critical dependencies that are deployed within the same region, and whose failure should trigger a failover to another region.  
-  * For a load balancer, the health endpoint should report the health of the VM. Don't include other tiers or external services. Otherwise, a failure that occurs outside the VM will cause the load balancer to remove the VM from rotation.
-  * For guidance on implementing health monitoring in your application, see [Health Endpoint Monitoring Pattern](https://msdn.microsoft.com/library/dn589789.aspx).
-* **Monitor third-party services.** If your application has dependencies on third-party services, identify where and how these third-party services can fail and what effect those failures will have on your application. A third-party service may not include monitoring and diagnostics, so it's important to log your invocations of them and correlate them with your application's health and diagnostic logging using a unique identifier. For more information on best practices for monitoring and diagnostics, see the [Monitoring and Diagnostics guidance][monitoring-and-diagnostics-guidance] document.
-* **Ensure that any third-party service you consume provides an SLA.** If your application depends on a third-party service, but the third party provides no guarantee of availability in the form of an SLA, your application's availability also cannot be guaranteed. Your SLA is only as good as the least available component of your application.
+  o	복구 전략을 식별합니다.
 
-## Data management
-* **Understand the replication methods for your application's data sources.** Your application data will be stored in different data sources and have different availability requirements. Evaluate the replication methods for each type of data storage in Azure, including [Azure Storage Replication](/azure/storage/storage-redundancy/) and [SQL Database Active Geo-Replication](/azure/sql-database/sql-database-geo-replication-overview/) to ensure that your application's data requirements are satisfied.
-* **Ensure that no single user account has access to both production and backup data.** Your data backups are compromised if one single user account has permission to write to both production and backup sources. A malicious user could purposely delete all your data, while a regular user could accidentally delete it. Design your application to limit the permissions of each user account so that only the users that require write access have write access and it's only to either production or backup, but not both.
-* **Document your data source fail over and fail back process and test it.** In the case where your data source fails catastrophically, a human operator will have to follow a set of documented instructions to fail over to a new data source. If the documented steps have errors, an operator will not be able to successfully follow them and fail over the resource. Regularly test the instruction steps to verify that an operator following them is able to successfully fail over and fail back the data source.
-* **Validate your data backups.** Regularly verify that your backup data is what you expect by running a script to validate data integrity, schema, and queries. There's no point having a backup if it's not useful to restore your data sources. Log and report any inconsistencies so the backup service can be repaired.
-* **Consider using a storage account type that is geo-redundant.** Data stored in an Azure Storage account is always replicated locally. However, there are multiple replication strategies to choose from when a Storage Account is provisioned. Select [Azure Read-Access Geo Redundant Storage (RA-GRS)](/azure/storage/storage-redundancy/#read-access-geo-redundant-storage) to protect your application data against the rare case when an entire region becomes unavailable.
 
-  > [!NOTE]
-  > For VMs, do not rely on RA-GRS replication to restore the VM disks (VHD files). Instead, use [Azure Backup][azure-backup].   
+    자세한 내용은 see [Zaure를 위한 복원력 높은 응용 프로그램 설계하기(Designing resilient applications for Azure)](https://docs.microsoft.com/en-us/azure/architecture/resiliency/failure-mode-analysis)를 참조하십시오. [fma](https://docs.microsoft.com/en-us/azure/architecture/resiliency/failure-mode-analysis).  
+
+## 응용 프로그램
+
+* **여러 서비스 인스턴스를 배포합니다.** 서비스는 어쩔 수 없이 실패하게 되며, 응용 프로그램이 단일 서비스 인스턴스에 의존하고 있는 경우, 응용 프로그램도 필연적으로 실패하게 됩니다. [Azure 앱 서비스](/azure/app-service/app-service-value-prop-what-is/)에 여러 인스턴스를 구축하려면, 여러 인스턴스를 제공하는 [앱 서비스 계획(App Service Plan)](/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview/)을 선택합니다. Azure 클라우드 서비스의 경우, 각 역할을 [여러 인스턴스(/azure/cloud-services/cloud-services-choose-me/#scaling-and-management)를 사용하도록 설정합니다. [Azure 가상 컴퓨터(VM)](/azure/virtual-machines/virtual-machines-windows-about/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)의 경우, VM 아키텍처에 한 개 이상의 VM이 포함되고, 각 VM은 [가용성 집합(availability set)](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/manage-availability)에 포함되어야 합니다. 
+
+* **부하 분산 장치를 사용해 요청을 배포합니다.** 부하 분산 장치는 작업에서 비정상 인스턴스를 제거함으로써, 응용 프로그램의 요청을 정상 서비스 인스턴스에 배포합니다. 귀사의 서비스가 Azure 앱 서비스 또는 Azure 클라우드 서비스를 사용하는 경우, 부하 분산이 이미 되어 있습니다. 단, 응용 프로그램이 Azure VM을 사용하는 경우, 부하 분산 장치를 구축해야 합니다. 자세한 내용은 [Azure 부하 분산 장치](/azure/load-balancer/load-balancer-overview/) 소개를 참조하십시오. 
+
+* **다중 인스턴스 사용을 위해 Azure 응용 프로그램 게이트웨이를 설정합니다.** 응용 프로그램 요구사항에 따라, 응용 프로그램 서비스에 요청을 배포하는 데 [Azure 응용 프로그램 게이트웨이](/azure/application-gateway/application-gateway-introduction/)가 더 적절할 수 있습니다. 단, 응용 프로그램 게이트웨이 서비스의 단일 인스턴스는 SLA에서 보증하지 않으므로, 응용 프로그램 게이트웨이 인스턴스에 오류가 발생하는 경우 응용 프로그램도 실패할 수 있습니다. [SLA](https://azure.microsoft.com/support/legal/sla/application-gateway/v1_0/) 조건 하에 서비스 가용성을 보장하기 위해서는 한 개 이상의 중대형 응용 프로그램 게이트웨이 인스턴스를 구축합니다.
+
+* **각 응용 프로그램 계층에 가용성 집합을 사용합니다.** 인스턴스를 [가용성 집합][availability-sets]에 두면 [SLA](https://azure.microsoft.com/support/legal/sla/virtual-machines/)가 더 높아집니다.
+
+* **응용 프로그램을 여러 영역에 배포하는 것이 좋습니다.** 응용 프로그램을 한 영역에 배포했을 때, 영역 전체를 사용할 수 없게 되는 드문 경우, 응용 프로그램도 사용할 수 없게 됩니다. 이는 응용 프로그램의 SLA 조건에서 승인되지 않습니다. 그러므로, 응용 프로그램과 그 서비스를 여러 영역에 배포하는 것이 좋습니다.  다중 영역 배포는 활성-활성 패턴(여러 활성 인스턴스에 요청을 배포하는 것) 또는 활성-수동 패턴(기본 인스턴스가 실패할 경우를 위해 '웜(warm)' 인스턴스를 예비로 두는 것)을 사용할 수 있습니다. 한 쌍의 영역에 응용 프로그램 서비스의 인스턴스를 여러 개 배포할 것을 권장합니다. 자세한 내용은 [비즈니스 연속성 및 재해 복구(Business continuity and disaster recovery (BCDR)): Azure Paired Regions](/azure/best-practices-availability-paired-regions)를 참조하십시오.
+
+* **원격 작업을 위해 복원성 패턴을 최대한 구현합니다.** 응용 프로그램이 원격 서비스 간 통신에 의존하는 경우, 통신 경로에 불가피한 오류가 발생합니다. 오류가 여러 개 발생한 경우, 응용 프로그램 서비스에서 남은 정상 인스턴스가 요청으로 가득 찰 수 있습니다. 시간 제한 패턴, [재시도 패턴][retry-pattern], [회로 차단기][circuit-breaker] 패턴 등 일반적인 실패에 대처할 수 있는 여러 가지 유용한 패턴이 있습니다. 자세한 내용은 [Azure를 위한 복원력 높은 응용 프로그램 설계하기(Designing resilient applications for Azure)](../resiliency/index.md#resiliency-strategies)를 참조하십시오.
+
+* **자동 크기 조정을 사용하여 부하 증가에 대응합니다.** 응용 프로그램을 부하 증가에 따라 크기가 자동 조정되도록 설정하지 않은 경우, 응용 프로그램 서비스가 사용자 요청으로 가득 찬 상태가 되면 서비스 오류가 발생합니다. 자세한 내용은 다음을 참조하십시오.
+
+  * 일반 사항: [확장성 체크리스트](./scalability.md)
+  
+  * Azure 앱 서비스: [인스턴스 개수의 수동 또는 자동 조정][app-service-autoscale]
+  
+  * 클라우드 서비스: [클라우드 서비스의 자동 크기 조정 방법][cloud-service-autoscale]
+  
+  * 가상 컴퓨터: [자동 크기 조정 및 VM 크기 집합][vmss-autoscale]
+  
+* **가능하면 비동기 작업을 구현합니다.** 동기식 작업은 리소스를 독점하여 호출자가 프로세스가 완료되기를 기다리는 동안 다른 작업을 차단할 수 있습니다. 가능하면 응용 프로그램의 각 부분을 비동기 작업이 허용되도록 설계합니다. C#로 비동기 프로그래밍 구현하는 방법에 대한 내용은 [async 및 await를 사용한 비동기 프로그래밍][asynchronous-c-sharp]을 참조하십시오.
+
+* **Azure 트래픽 관리자를 사용하여 응용 프로그램의 트래픽을 여러 영역으로 라우팅합니다.**  [Azure 트래픽 관리자][traffic-manager]는 DNS 수준에서 부하 분산을 수행하며 지정된 [트래픽 라우팅][traffic-manager-routing] 방법과 응용 프로그램 끝점의 상태를 기준으로 트래픽을 여러 영역에 라우팅할 수 있습니다. 
+
+* **부하 분산 장치 및 트래픽 관리자에 대해 상태 프로브를 구성하여 테스트합니다.** 상태 로직에서 시스템의 중요 부분을 검사하고 상태 프로브에 적절하게 응답하는지 확인합니다. 
+
+  * [Azure 트래픽 관리자][traffic-manager] 및 [Azure 부하 분산 장치][load-balancer] 의 상태 프로브는 특정한 기능을 합니다. 트래픽 관리자에 대해서, 상태 프로브는 다른 영역으로 장애 조치를 할 지 여부를 결정합니다. 부하 분산 장치에 대해서는, 작업에서 VM을 제거할지 여부를 결정합니다.
+  
+  * 트래픽 관리자 프로브의 경우, 상태 끝점은 같은 영역 내에서 배포된 중요 의존 관계를 검사하고, 어느 오류로 인해 다른 영역으로 장애 조치가 작동되었는지 검사합니다.  
+  
+  * 부하 분산 장치의 경우, 상태 끝점은 VM의 상태를 보고합니다. 다른 계층 또는 외부 서비스는 포함시키지 않습니다. 그렇게 할 경우, VM 외부에서 오류가 발생했을 때 부하 분산 장치가 VM을 작업에서 제외할 수 있습니다.
+  
+  * 응용 프로그램에서 상태 모니터링을 구현하는 데 대한 자세한 내용은 [상태 끝점 모니터링 패턴(Health Endpoint Monitoring Pattern)](https://msdn.microsoft.com/library/dn589789.aspx)을 참조하십시오.
+  
+* **타사 서비스 모니터링** I응용 프로그램이 타사 서비스에 종속된 경우, 해당 타사 서비스가 어디서 어떻게 실패할 수 있는지 그리고 이러한 실패가 응용 프로그램에 미칠 영향을 파악합니다.  타사 서비스에는 모니터링 및 진단 기능이 없을 수 있으므로, 타사 서비스 호출을 기록하고 고유 식별자를 통해 응용 프로그램의 상태 및 진단 로깅과 상관 관계를 지정하는 것이 중요합니다. 모니터링 및 진단의 모범 사례에 대한 자세한 내용은 문서 [모니터링 및 진단 지침서][monitoring-and-diagnostics-guidance]를 참조하십시오.
+
+* **사용하는 타사 서비스는 SLA를 제공해야 합니다.** 응용 프로그램이 타사 서비스에 의존하지만 타사에서 SLA 형태의 가용성 보증을 제공하지 않는 경우, 응용 프로그램의 가용성도 보장되지 않습니다. SLA는 응용 프로그램의 가장 가용성 낮은 구성 요소만큼 유용합니다.
+
+## 데이터 관리
+
+* **응용 프로그램의 데이터 소스에 대한 복제 방법을 이해합니다.** 응용 프로그램 데이터는 다양한 데이터 소스에 저장되며 가용성 요구사항이 서로 다릅니다. [Azure 저장소 복제](/azure/storage/storage-redundancy/) 및 [SQL 데이터베이스 활성 지역 복제(Active Geo-Replication)](/azure/sql-database/sql-database-geo-replication-overview/)를 포함해 Azure에 있는 데이터 저장소의 유형 별 복제 방법을 평가하여 응용 프로그램 데이터 요구사항이 충족되었는지 확인합니다.
+
+* **어떤 단일 사용자 계정도 프로덕션 데이터 및 백업 데이터 양쪽에 대한 액세스 권한을 가질 수 없습니다.** 어느 단일 사용자 계정이 프로덕션 및 백업 소스 모두에 쓰기 권한을 가진 경우 데이터 백업이 손상됩니다.  악성 사용자가 고의로 모든 데이터를 삭제하거나 일반 사용자가 실수로 삭제할 수 있습니다. 응용 프로그램에서 각 사용자 계정의 권한을 제한하여 쓰기 권한이 필요한 사용자에게만 쓰기 권한을 부여하되 프로덕션 또는 백업 둘 중 하나에만 액세스할 수 있도록 설계합니다.
+
+* **데이터 소스 장애 조치 및 대체 프로세스를 문서화하여 테스트합니다.** 데이터 소스가 치명적으로 실패한 경우, 운영자는 문서화된 지침에 따라 새로운 데이터 소스로 장애 조치를 해야 합니다. 문서화된 단계에 오류가 있으면, 운영자는 지침에 따라 리소스의 장애 조치를 완료할 수 없습니다. 정기적으로 지침 단계를 테스트하여, 지침대로 따를 경우 데이터 소스의 장애 조치 및 대체를 완료할 수 있는지 확인합니다.
+
+* **데이터 백업의 유효성을 검사합니다.** 데이터 무결성, 스키마, 쿼리의 유효성을 검사하는 스크립트를 실행하여, 백업 데이터가 예상한 바와 같은지 정기적으로 확인합니다.  데이터 소스를 복원할 수 없으면 백업을 해도 의미가 없습니다.  모든 불일치 문제를 기록 및 보고하여 백업 서비스를 복구할 수 있도록 합니다.
+
+* **지역 중복 저장소 계정을 사용하는 것이 좋습니다.** Azure 저장소 계정에 저장된 데이터는 항상 로컬에 복제됩니다. 단, 저장소 계정을 구축할 때 선택할 수 있는 복제 전략이 여러 개 있습니다. [Azure 읽기-액세스 지역 중복 저장소(Read-Access Geo Redundant Storage, RA-GRS)](/azure/storage/storage-redundancy/#read-access-geo-redundant-storage)를 선택하여, 전체 영역을 사용할 수 없는 드문 경우에 대비해 응용 프로그램 데이터를 보호합니다. 
+
+  > [!참고]
+  > VM의 경우, VM 디스크 복원에 RA-GRS 복제를 적용하지 않습니다. 대신 [Azure 백업][azure-backup]을 사용합니다.   
   >
   >
 
-## Operations
-* **Implement monitoring and alerting best practices in your application.** Without proper monitoring, diagnostics, and alerting, there is no way to detect failures in your application and alert an operator to fix them. For more information on best practices, see the [Monitoring and Diagnostics guidance][monitoring-and-diagnostics-guidance] document.
-* **Measure remote call statistics and make the information available to the application team.**  If you don't track and report remote call statistics in real time and provide an easy way to review this information, the operations team will not have an instantaneous view into the health of your application. And if you only measure average remote call time, you will not have enough information to reveal issues in the services. Summarize remote call metrics such as latency, throughput, and errors in the 99 and 95 percentiles. Perform statistical analysis on the metrics to uncover errors that occur within each percentile.
-* **Track the number of transient exceptions and retries over an appropriate timeframe.** If you don't track and monitor transient exceptions and retry attempts over time, it's possible that an issue or failure could be hidden by your application's retry logic. That is, if your monitoring and logging only shows success or failure of an operation, the fact that the operation had to be retried multiple times due to exceptions will be hidden. A trend of increasing exceptions over time indicates that the service is having an issue and may fail. For more information, see [Retry service specific guidance][retry-service-guidance].
-* **Implement an early warning system that alerts an operator.** Identify the key performance indicators of your application's health, such as transient exceptions and remote call latency, and set appropriate threshold values for each of them. Send an alert to operations when the threshold value is reached. Set these thresholds at levels that identify issues before they become critical and require a recovery response.
-* **Document the release process for your application.** Without detailed release process documentation, an operator might deploy a bad update or improperly configure settings for your application. Clearly define and document your release process, and ensure that it's available to the entire operations team. Best practices for resilient deployment of your application are detailed in the [resilient deployment][resilient-deployment] section of the Resiliency Guidance document.
-* **Ensure that more than one person on the team is trained to monitor the application and perform any manual recovery steps.** If you only have a single operator on the team who can monitor the application and kick off recovery steps, that person becomes a single point of failure. Train multiple individuals on detection and recovery and make sure there is always at least one active at any time.
-* **Automate your application's deployment process.** If your operations staff is required to manually deploy your application, human error can cause the deployment to fail. For more information on best practices for automating application deployment, see the [resilient deployment][resilient-deployment] section of the Resiliency Guidance document.
-* **Design your release process to maximize application availability.** If your release process requires services to go offline during deployment, your application will be unavailable until they come back online. Use the [blue/green](http://martinfowler.com/bliki/BlueGreenDeployment.html) or [canary release](http://martinfowler.com/bliki/CanaryRelease.html) deployment technique to deploy your application to production. Both of these techniques involve deploying your release code alongside production code so users of release code can be redirected to production code in the event of a failure. For more information, see the [resilient deployment][resilient-deployment] section of the Resiliency Guidance document.
-* **Log and audit your application's deployments.** If you use staged deployment techniques such as blue/green or canary releases there will be more than one version of your application running in production. If a problem should occur, it's critical to determine which version of your application is causing a problem. Implement a robust logging strategy to capture as much version-specific information as possible.
-* **Ensure that your application does not run up against [Azure subscription limits](/azure/azure-subscription-service-limits/).** Azure subscriptions have limits on certain resource types, such as number of resource groups, number of cores, and number of storage accounts.  If your application requirements exceed Azure subscription limits, create another Azure subscription and provision sufficient resources there.
-* **Ensure that your application does not run up against [per-service limits](/azure/azure-subscription-service-limits/).** Individual Azure services have consumption limits &mdash; for example, limits on storage, throughput, number of connections, requests per second, and other metrics. Your application will fail if it attempts to use resources beyond these limits. This will result in service throttling and possible downtime for affected users.
+## 운영
+* **응용 프로그램에 모니터링 및 경고 모범 사례를 구현합니다.** 정확한 모니터링, 진단, 경고 없이는, 응용 프로그램의 오류를 감지해 운영자가 이를 수정하도록 경고할 방법이 없습니다. 모범 사례에 대한 자세한 내용은 문서 [모니터링 및 진단 가이던스(Monitoring and Diagnostics guidance)][monitoring-and-diagnostics-guidance]를 참조하십시오.
 
-    Depending on the specific service and your application requirements, you can often avoid these limits by scaling up (for example, choosing another pricing tier) or scaling out (adding new instances).  
-* **Design your application's storage requirements to fall within Azure storage scalability and performance targets.** Azure storage is designed to function within predefined scalability and performance targets, so design your application to utilize storage within those targets. If you exceed these targets your application will experience storage throttling. To fix this, provision additional Storage Accounts. If you run up against the Storage Account limit, provision additional Azure Subscriptions and then provision additional Storage Accounts there. For more information, see [Azure Storage Scalability and Performance Targets](/azure/storage/storage-scalability-targets/).
-* **Select the right VM size for your application.** Measure the actual CPU, memory, disk, and I/O of your VMs in production and verify that the VM size you've selected is sufficient. If not, your application may experience capacity issues as the VMs approach their limits. VM sizes are described in detail in the [Sizes for virtual machines in Azure](/azure/virtual-machines/virtual-machines-windows-sizes/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json) document.
-* **Determine if your application's workload is stable or fluctuating over time.** If your workload fluctuates over time, use Azure VM scale sets to automatically scale the number of VM instances. Otherwise, you will have to manually increase or decrease the number of VMs. For more information, see the [Virtual Machine Scale Sets Overview](/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-overview/).
-* **Select the right service tier for Azure SQL Database.** If your application uses Azure SQL Database, ensure that you have selected the appropriate service tier. If you select a tier that is not able to handle your application's database transaction unit (DTU) requirements, your data use will be throttled. For more information on selecting the correct service plan, see the [SQL Database options and performance: Understand what's available in each service tier](/azure/sql-database/sql-database-service-tiers/) document.
-* **Have a rollback plan for deployment.** It's possible that your application deployment could fail and cause your application to become unavailable. Design a rollback process to go back to a last known good version and minimize downtime. See the [resilient deployment][resilient-deployment] section of the Resiliency Guidance document for more information.
-* **Create a process for interacting with Azure support.** If the process for contacting [Azure support](https://azure.microsoft.com/support/plans/) is not set before the need to contact support arises, downtime will be prolonged as the support process is navigated for the first time. Include the process for contacting support and escalating issues as part of your application's resiliency from the outset.
-* **Ensure that your application doesn't use more than the maximum number of storage accounts per subscription.** Azure allows a maximum of 200 storage accounts per subscription. If your application requires more storage accounts than are currently available in your subscription, you will have to create a new subscription and create additional storage accounts there. For more information, see [Azure subscription and service limits, quotas, and constraints](/azure/azure-subscription-service-limits/#storage-limits).
-* **Ensure that your application doesn't exceed the scalability targets for virtual machine disks.** An Azure IaaS VM supports attaching a number of data disks depending on several factors, including the VM size and type of storage account. If your application exceeds the scalability targets for virtual machine disks, provision additional storage accounts and create the virtual machine disks there. For more information, see [Azure Storage Scalability and Performance Targets](/azure/storage/storage-scalability-targets/#scalability-targets-for-virtual-machine-disks)
+* **원격 호출 통계를 측정하여 응용 프로그램 팀에 제공합니다.**  원격 호출 통계를 실시간으로 추적, 보고하여 정보의 간편한 검토 방안을 제공하지 못하면, 운영 팀이 응용 프로그램의 상태를 즉각적으로 확인할 수 없습니다. 또한 평균 원격 호출 시간만 측정하는 경우, 서비스의 문제를 알아낼 충분한 정보를 얻을 수 없습니다. 대기 시간, 처리량, 오류 등 원격 호출 수치를 99 및 95번째 백분위수로 요약합니다. 해당 수치에 대한 통계 분석을 수행하여 각 백분위수 내에서 발생하는 오류를 파악합니다.
 
-## Test
-* **Perform failover and failback testing for your application.** If you haven't fully tested failover and failback, you can't be certain that the dependent services in your application come back up in a synchronized manner during disaster recovery. Ensure that your application's dependent services failover and fail back in the correct order.
-* **Perform fault-injection testing for your application.** Your application can fail for many different reasons, such as certificate expiration, exhaustion of system resources in a VM, or storage failures. Test your application in an environment as close as possible to production, by simulating or triggering real failures. For example, delete certificates, artificially consume system resources, or delete a storage source. Verify your application's ability to recover from all types of faults, alone and in combination. Check that failures are not propagating or cascading through your system.
-* **Run tests in production using both synthetic and real user data.** Test and production are rarely identical, so it's important to use blue/green or a canary deployment and test your application in production. This allows you to test your application in production under real load and ensure it will function as expected when fully deployed.
+* **해당 시간 범위에 대한 일시적 예외 및 재시도 횟수를 추적합니다.** 일정 시간에 대한 일시적 예외 및 재시도 횟수를 추적하고 모니터링하지 않으면, 응용 프로그램의 재시도 로직에 의해 문제 또는 실패가 숨겨질 수 있습니다. 즉, 모니터링 및 로깅이 작업의 성공 또는 실패만 나타내는 경우, 예외로 인해 작업을 여러 번 재시도했다는 사실이 숨겨집니다. 시간이 경과하면서 예외가 늘어나는 경향은 서비스에 문제가 있어 실패할 수 있다는 것을 나타냅니다. 자세한 내용은 [재시도 서비스별 가이던스(Retry service specific guidance)][retry-service-guidance]를 참조하십시오.
 
-## Security
-* **Implement application-level protection against distributed denial of service (DDoS) attacks.** Azure services are protected against DDos attacks at the network layer. However, Azure cannot protect against application-layer attacks, because it is difficult to distinguish between true user requests from malicious user requests. For more information on how to protect against application-layer DDoS attacks, see the "Protecting against DDoS" section of [Microsoft Azure Network Security](http://download.microsoft.com/download/C/A/3/CA3FC5C0-ECE0-4F87-BF4B-D74064A00846/AzureNetworkSecurity_v3_Feb2015.pdf) (PDF download).
-* **Implement the principle of least privilege for access to the application's resources.** The default for access to the application's resources should be as restrictive as possible. Grant higher level permissions on an approval basis. Granting overly permissive access to your application's resources by default can result in someone purposely or accidentally deleting resources. Azure provides [role-based access control](/azure/active-directory/role-based-access-built-in-roles/) to manage user privileges, but it's important to verify least privilege permissions for other resources that have their own permissions systems such as SQL Server.
+* **운영자에게 경고하는 조기 경고 시스템을 구현합니다.** 일시적 예외 및 원격 호출 대기 시간과 같이 응용 프로그램 상태의 핵심 성능 지표를 식별하고 각각의 적절한 임계값을 설정합니다. 임계값에 도달하면 운영자에게 알림을 보냅니다. 심각해지면서 복구 대응이 필요하기 전에 문제를 식별하는 수준에 임계값을 설정합니다.
 
-## Telemetry
-* **Log telemetry data while the application is running in the production environment.** Capture robust telemetry information while the application is running in the production environment or you will not have sufficient information to diagnose the cause of issues while it's actively serving users. More information is available in the logging best practices is available in the [Monitoring and Diagnostics guidance][monitoring-and-diagnostics-guidance] document.
-* **Implement logging using an asynchronous pattern.** If logging operations are synchronous, they might block your application code. Ensure that your logging operations are implemented as asynchronous operations.
-* **Correlate log data across service boundaries.** In a typical n-tier application, a user request may traverse several service boundaries. For example, a user request typically originates in the web tier and is passed to the business tier and finally persisted in the data tier. In more complex scenarios, a user request may be distributed to many different services and data stores. Ensure that your logging system correlates calls across service boundaries so you can track the request throughout your application.
+* **응용 프로그램에 맞는 해제 프로세스를 문서화합니다.** 상세한 해제 프로세스를 문서화하지 않으면 운영자가 잘못된 업데이트를 배포하거나 응용 프로그램에 대한 설정을 잘못 구성할 수 있습니다. 해제 프로세스를 명확하게 정의하고 문서화하여, 전체 운영 팀이 사용할 수 있도록 합니다. 응용 프로그램의 복원력 높은 배포를 위한 모범 사례는 복원력 지침서(Resiliency Guidance)의 [복원력 높은 배포(resilient deployment)][resilient-deployment] 섹션에 상세하게 나와 있습니다.
 
-## Azure Resources
-* **Use Azure Resource Manager templates to provision resources.** Resource Manager templates make it easier to automate deployments via PowerShell or the Azure CLI, which leads to a more reliable deployment process. For more information, see [Azure Resource Manager overview][resource-manager].
-* **Give resources meaningful names.** Giving resources meaningful names makes it easier to locate a specific resource and understand its role. For more information, see [Naming conventions for Azure resources](../best-practices/naming-conventions.md)
-* **Use role-based access control (RBAC)**. Use RBAC to control access to the Azure resources that you deploy. RBAC lets you assign authorization roles to members of your DevOps team, to prevent accidental deletion or changes to deployed resources. For more information, see [Get started with access management in the Azure portal](/azure/active-directory/role-based-access-control-what-is/)
-* **Use resource locks for critical resources, such as VMs.** Resource locks prevent an operator from accidentally deleting a resource. For more information, see [Lock resources with Azure Resource Manager](/azure/azure-resource-manager/resource-group-lock-resources/)
-* **Regional pairs.** When deploying to two regions, choose regions from the same regional pair. In the event of a broad outage, recovery of one region is prioritized out of every pair. Some services such as Geo-Redundant Storage provide automatic replication to the paired region. For more information, see [Business continuity and disaster recovery (BCDR): Azure Paired Regions](/azure/best-practices-availability-paired-regions)
-* **Organize resource groups by function and lifecycle**.  In general, a resource group should contain resources that share the same lifecycle. This makes it easier to manage deployments, delete test deployments, and assign access rights, reducing the chance that a production deployment is accidentally deleted or modified. Create separate resource groups for production, development, and test environments. In a multi-region deployment, put resources for each region into separate resource groups. This makes it easier to redeploy one region without affecting the other region(s).
+* **한 명 이상의 팀원이 응용 프로그램 모니터링 및 수동 복원 단계 수행에 대한 교육을 받아야 합니다.** 응용 프로그램을 모니터링하고 복원 단계를 수행할 수 있는 팀원이 한 명 뿐인 경우, 해당 팀원이 단일 실패 지점이 됩니다. 여러 명에게 감지 및 복원 교육을 실시하여 언제든지 한 명 이상 작업할 수 있도록 합니다.
 
-## Azure Services
-The following checklist items apply to specific services in Azure.
+* **응용 프로그램의 배포 프로세스를 자동화합니다.** 운영 스태프가 응용 프로그램을 수동 배포해야 하는 경우, 인적 실수로 인해 배포가 실패할 수 있습니다.  응용 프로그램 배포 자동화의 모범 사례에 대한 자세한 내용은 복원력 지침서의 [복원력 높은 배포(resilient deployment)][resilient-deployment] 섹션을 참조하십시오. 
 
-### App Service
-* **Use Standard or Premium tier.** These tiers support staging slots and automated backups. For more information, see [Azure App Service plans in-depth overview](/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview/)
-* **Avoid scaling up or down.** Instead, select a tier and instance size that meet your performance requirements under typical load, and then [scale out](/azure/app-service-web/web-sites-scale/) the instances to handle changes in traffic volume. Scaling up and down may trigger an application restart.  
-* **Store configuration as app settings.** Use app settings to hold configuration settings as app settings. Define the settings in your Resource Manager templates, or using PowerShell, so that you can apply them as part of an automated deployment / update process, which is more reliable. For more information, see [Configure web apps in Azure App Service](/azure/app-service-web/web-sites-configure/).
-* **Create separate App Service plans for production and test.** Don't use slots on your production deployment for testing.  All apps within the same App Service plan share the same VM instances. If you put production and test deployments in the same plan, it can negatively affect the production deployment. For example, load tests might degrade the live production site. By putting test deployments into a separate plan, you isolate them from the production version.  
-* **Separate web apps from web APIs**. If your solution has both a web front-end and a web API, consider decomposing them into separate App Service apps. This design makes it easier to decompose the solution by workload. You can run the web app and the API in separate App Service plans, so they can be scaled independently. If you don't need that level of scalability at first, you can deploy the apps into the same plan, and move them into separate plans later, if needed.
-* **Avoid using the App Service backup feature to back up Azure SQL databases.** Instead, use [SQL Database automated backups][sql-backup]. App Service backup exports the database to a SQL .bacpac file, which costs DTUs.  
-* **Deploy to a staging slot.** Create a deployment slot for staging. Deploy application updates to the staging slot, and verify the deployment before swapping it into production. This reduces the chance of a bad update in production. It also ensures that all instances are warmed up before being swapped into production. Many applications have a significant warmup and cold-start time. For more information, see [Set up staging environments for web apps in Azure App Service](/azure/app-service-web/web-sites-staged-publishing/).
-* **Create a deployment slot to hold the last-known-good (LKG) deployment.** When you deploy an update to production, move the previous production deployment into the LKG slot. This makes it easier to roll back a bad deployment. If you discover a problem later, you can quickly revert to the LKG version. For more information, see [Basic web application](../reference-architectures/managed-web-app/basic-web-app.md).
-* **Enable diagnostics logging**, including application logging and web server logging. Logging is important for monitoring and diagnostics. See [Enable diagnostics logging for web apps in Azure App Service](/azure/app-service-web/web-sites-enable-diagnostic-log/)
-* **Log to blob storage**. This makes it easier to collect and analyze the data.
-* **Create a separate storage account for logs.** Don't use the same storage account for logs and application data. This helps to prevent logging from reducing application performance.
-* **Monitor performance.** Use a performance monitoring service such as [New Relic](http://newrelic.com/) or [Application Insights](/azure/application-insights/app-insights-overview/) to monitor application performance and behavior under load.  Performance monitoring gives you real-time insight into the application. It enables you to diagnose issues and perform root-cause analysis of failures.
+* **해제 프로세스는 응용 프로그램 가용성을 최대화하도록 설계합니다.** 해제 프로세스에서 배포하는 동안 서비스가 오프라인 상태로 되어야 하는 경우, 서비스가 온라인 상태로 될 때까지 응용 프로그램을 사용할 수 없습니다. [청/녹](http://martinfowler.com/bliki/BlueGreenDeployment.html) 또는 [카나리아 해제](http://martinfowler.com/bliki/CanaryRelease.html) 배포 기술을 사용해 응용 프로그램을 프로덕션에 배포합니다. 두 가지 기술 모두 해제 코드를 프로덕션 코드와 함께 배포해, 오류가 발생하는 경우 해제 코드 사용자를 프로덕션 코드로 리디렉션할 수 있습니다.  자세한 내용은 복원력 지침서의 [복원력 높은 배포(resilient deployment)][resilient-deployment] 섹션을 참조하십시오.
 
-### Application Gateway
-* **Provision at least two instances.** Deploy Application Gateway with at least two instances. A single instance is a single point of failure. Use two or more instances for redundancy and scalability. In order to qualify for the [SLA](https://azure.microsoft.com/support/legal/sla/application-gateway/v1_0/), you must provision two or more medium or larger instances.
+* **응용 프로그램 배포를 기록하고 감사합니다.** 청/녹 또는 카나리아 해제와 같이 미리 구성된 배포 기술을 사용하는 경우, 실행되는 응용 프로그램 버전이 한 개 이상 있을 것입니다. 문제가 발생하는 경우, 어느 버전의 응용 프로그램이 원인인지 파악하는 것이 중요합니다. 가능한 많은 버전별 정보를 수집하기 위해 강력한 로깅 전략을 구현합니다.
 
-### Azure Search
-* **Provision more than one replica.** Use at least two replicas for read high-availability, or three for read-write high-availability.
-* **Configure indexers for multi-region deployments.** If you have a multi-region deployment, consider your options for continuity in indexing.
+* **응용 프로그램이 [Azure 구독 제한](/azure/azure-subscription-service-limits/)에 걸리지 않는지 확인합니다.** . Azure 구독에는 리소스 그룹 수, 코어 수, 저장소 계정 수와 같이 특정한 리소스 종류에 대한 제한이 있습니다. 응용 프로그램 요구사항이 Azure 구독 제한을 초과하는 경우, 다른 Azure 구독을 생성한 다음 충분한 리소스를 구축합니다.
 
-  * If the data source is geo-replicated, point each indexer of each regional Azure Search service to its local data source replica.  
-  * If the data source is not geo-replicated, point multiple indexers at the same data source, so that Azure Search services in multiple regions continuously and independently index from the data source. For more information, see [Azure Search performance and optimization considerations][search-optimization].
+* **응용 프로그램이 [서비스당 제한](/azure/azure-subscription-service-limits/)에 걸리지 않는지 확인합니다.** 개별 Azure 서비스에는 사용 제한이 있습니다. 예를 들어, 저장소, 처리량, 연결 수, 초당 요청 및 기타 수치 등이 있습니다.  응용 프로그램에서 이 제한을 초과해 리소스를 사용하려고 하는 경우, 오류가 발생합니다. 이 경우, 해당 사용자에 대해 서비스가 제한되고 다운타임이 발생할 수 있습니다.
 
-### Azure Storage
-* **For application data, use read-access geo-redundant storage (RA-GRS).** RA-GRS storage replicates the data to a secondary region, and provides read-only access from the secondary region. If there is a storage outage in the primary region, the application can read the data from the secondary region. For more information, see [Azure Storage replication](/azure/storage/storage-redundancy/).
-* **For VM disks, use Premium Storage** For more information, see [Premium Storage: High-Performance Storage for Azure Virtual Machine Workloads](/azure/storage/storage-premium-storage/).
-* **For Queue storage, create a backup queue in another region.** For Queue storage, a read-only replica has limited use, because you can't queue or dequeue items. Instead, create a backup queue in a storage account in another region. If there is a storage outage, the application can use the backup queue, until the primary region becomes available again. That way, the application can still process new requests.  
+    특정 서비스 및 응용 프로그램 요구사항에 따라, 규모를 강화하거나(다른 가격 계층 선택 등) 규모 확장(새 인스턴스 추가 등)을 통해 이러한 제한을 피할 수 있습니다. 
+    
+* **응용 프로그램의 저장소 요구사항은 Azure 저장소 확장성 및 성능 대상에 포함되도록 설계합니다.** Azure 저장소는 사전 설정된 확장성 및 성능 대상 내에서 기능하도록 설계되어 있으므로, 응용 프로그램이 이 범위 내에서 저장소를 사용하도록 설계합니다. 이 범위를 벗어나는 경우, 응용 프로그램의 저장소가 제한될 수 있습니다. 이를 해결하려면 추가 저장소 계정을 구축합니다. 저장소 계정 제한에 걸리는 경우, 추가 Azure 구독을 구축한 다음 추가 저장소 계정을 구축합니다. 자세한 내용은 [Azure 저장소 확장성 및 성능 대상](/azure/storage/storage-scalability-targets/)을 참조합니다.
+
+* **응용 프로그램에 적절한 VM 크기를 선택합니다.** 프로덕션 VM의 실제 CPU, 메모리, 디스크, I/O를 측정하여 선택한 VM 크기가 충분한지 확인합니다. 충분하지 않은 경우, VM이 한계에 가까워지면서 응용 프로그램에 용량 문제가 발생할 수 있습니다. VM 크기에 대한 자세한 내용은 문서 [Azure의 가상 컴퓨터크기](/azure/virtual-machines/virtual-machines-windows-sizes/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)에 나와 있습니다.
+
+* **응용 프로그램의 작업이 일정 기간 동안 안정적인지 변동적인지 여부를 파악합니다.** 일정 기간 동안 작업이 변동적인 경우, Azure VM 크기 집합을 사용해 VM 인스턴스의 개수를 자동 조정합니다. 그렇지 않으면, VM의 개수를 수동으로 늘리거나 줄여야 합니다. 자세한 내용은 [가상 컴퓨터 크기 집합 개요](/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-overview/)를 참조하십시오.
+
+* **Azure SQL 데이터베이스에 적절한 서비스 계층을 선택합니다.** 응용 프로그램이 Azure SQL 데이터베이스를 사용하는 경우, 적절한 서비스 계층을 선택해야 합니다.  응용 프로그램의 데이터베이스 트랜잭션 단위(DTU) 요구사항을 처리할 수 없는 계층을 선택하는 경우, 데이터 사용이 제한됩니다. 올바른 서비스 계획 선택에 대한 자세한 내용은 [SQL 데이터베이스 옵션 및 성능: 각 서비스 계층에서 사용 가능한 내용 이해하기](/azure/sql-database/sql-database-service-tiers/)를 참조하십시오.
+
+* **배포를 위한 롤백 계획을 세웁니다.** 응용 프로그램 배포가 실패하여 응용 프로그램을 사용할 수 없는 경우가 있습니다. 마지막으로 알려진 정상 버전으로 돌아가 다운타임을 최소화하는 롤백 프로세스를 설계합니다. 자세한 내용은 복원력 지침서의 [복원력 높은 배포(resilient deployment)][resilient-deployment] 섹션을 참조하십시오. 
+
+* **Azure 지원팀과 연락하는 프로세스를 수립합니다.** [Azure 지원팀](https://azure.microsoft.com/support/plans/)에 연락할 일이 발생하기 전에 연락 프로세스를 설정해 두지 않으면, 최초에 지원 프로세스를 탐색하면서 다운타임이 길어집니다. 지원팀에 연락하기와 처음부터 문제를 응용 프로그램 복원력의 일부로 제기하는 과정을 프로세스에 포함시킵니다.
+
+* **응용 프로그램이 구독당 최대 저장소 계정 개수 이상 사용하지 않도록 합니다.** Azure는 구독당 최대 200개의 저장소 계정을 허용합니다. 응용 프로그램에 현재 구독에서 사용 가능한 것보다 더 많은 저장소 계정이 필요한 경우, 새 구독을 생성하여 새 구독에서 추가 저장소 계정을 만들어야 합니다.  자세한 내용은 [Azure 구독 및 서비스 제한, 할당량, 제약 조건](/azure/azure-subscription-service-limits/#storage-limits)을 참조하십시오.
+
+* **응용 프로그램이 가상 컴퓨터 디스크의 확장성 범위를 초과하지 않도록 합니다.** Azure IaaS VM은 VM 크기 및 저장소 계정 종류 등 여러 가지 요소에 따라 다양한 데이터 디스크 첨부를 지원합니다. 응용 프로그램이 가상 컴퓨터 디스크의 확장성 범위를 초과하는 경우, 추가 저장소 계정을 구축하고 그 계정에서 가상 컴퓨터 디스크를 생성합니다. 자세한 내용은 [Azure 저장소 확장성 및 성능 대상](/azure/storage/storage-scalability-targets/#scalability-targets-for-virtual-machine-disks)을 참조합니다.
+
+## 테스트
+
+* **응용 프로그램의 장애 조치 및 장애 복구 테스트를 수행합니다.** 장애 조치 및 장애 복구 기능을 완전히 테스트하지 않으면, 재해 복구 과정에서 응용 프로그램의 종속 서비스가 동기화되어 복구되는지 확신할 수 없습니다. 응용 프로그램의 종속 서비스가 정확한 순서로 장애 조치 및 복구되는지 확인합니다.
+
+* **응용 프로그램의 오류 주입 테스트를 수행합니다.**응용 프로그램은 인증서 만료, MV의 시스템 리소스 소진, 저장소 오류 등 다양한 이유로 실패할 수 있습니다. 실제 오류를 시뮬레이션 또는 트리거하여, 프로덕션 환경과 최대한 유사한 환경에서 응용 프로그램을 테스트합니다. 예를 들어, 인증서를 삭제하거나, 시스템 리소스를 인위적으로 소모하거나, 저장소 소스를 삭제합니다. 응용 프로그램이 단독 또는 결합된 모든 유형의 오류를 복구할 수 있는 기능을 확인합니다. 오류가 시스템을 통해 전파되거나 연속 발생하지 않는지 확인합니다.
+
+* **가상 데이터 및 실제 사용자 데이터를 사용해 프로덕션 테스트를 실시합니다.** 테스트와 프로덕션은 같은 점이 거의 없으므로, 청/녹 또는 카나리아 배포를 사용해 프로덕션 중인 응용 프로그램을 테스트해야 합니다. 이렇게 함으로써 실제 부하를 적용해 프로덕션 중인 응용 프로그램을 테스트하여, 완전히 배포되었을 때 예상대로 기능하는지 확인할 수 있습니다.
+
+## 보안
+
+* **배포된 서비스 거부(DDoS) 공격에 대비해 분산 응용 프로그램 수준의 보호를 구현합니다.** Azure 서비스는 네트워크 계층에서 DDoS 공격으로부터 보호를 받습니다. 그러나, Azure는 응용 프로그램 계층 공격에 대해서는 보호할 수 없습니다. 정상 사용자 요청과 악성 사용자 요청을 구분하기 어렵기 때문입니다. 응용 프로그램 계층 DDoS 공격으로부터 보호하는 방안에 대한 자세한 내용은 [Microsoft Azure 네트워크 보안](http://download.microsoft.com/download/C/A/3/CA3FC5C0-ECE0-4F87-BF4B-D74064A00846/AzureNetworkSecurity_v3_Feb2015.pdf)중 'DDoS 공격 보호' 섹션을 참조하십시오(PDF 다운로드). 
+
+* **응용 프로그램 리소스에 대한 액세스의 최소 권한 원칙을 구현합니다.** 응용 프로그램 리소스에 대한 액세스의 기본값은 최대한 제한적이어야 합니다. 더 높은 수준의 권한은 승인에 근거하여 허용합니다. 응용 프로그램 리소스에 과도한 권한의 액세스를 기본값으로 허용하면 고의나 실수로 리소스를 삭제하는 경우가 발생할 수 있습니다. Azure는 사용자 권한을 관리하는 [역할 기반 액세스 제어](/azure/active-directory/role-based-access-built-in-roles/) 를 제공하지만, SQL 서버 등 자체 권한 시스템이 있는 다른 리소스에 대해 최소 권한 허용을 확인해야 합니다.
+
+## 원격 분석
+
+* **응용 프로그램이 프로덕션 환경에서 실행되는 동안 원격 분석 데이터를 기록합니다.** 응용 프로그램이 프로덕션 환경에서 실행되는 동안 강력한 원격 분석 정보를 수집합니다. 그렇지 않으면, 사용자가 활발히 사용하는 동안 문제의 원인을 진단할 정보가 충분하지 않습니다. 로깅 모범 사례에 대한 자세한 정보는 문서 [모니터링 및 진단 지침][monitoring-and-diagnostics-guidance]에 나와 있습니다.
+
+* **비동기 패턴을 사용해 로깅을 구현합니다.** 로깅 작업이 동기식인 경우, 응용 프로그램 코드를 차단할 수 있습니다.   로깅 작업은 비동기식 작업으로 구현되어야 합니다.
+
+* **여러 서비스 영역에 걸쳐 로그 데이터의 상관 관계를 지정합니다.** 일반적인 n 계층 응용 프로그램에서, 사용자 요청은 여러 서비스 경계를 넘을 수 있습니다. 예를 들어, 사용자 요청은 대개 웹 계층에서 시작되고, 비즈니스 계층으로 전달되어 마지막으로 데이터 계층에 저장됩니다. 더 복잡한 시나리오에서는, 사용자 요청을 다양한 서비스 및 데이터 저장소로 배포할 수 있습니다.  로깅 시스템이 여러 서비스 영역에 걸친 호출의 상관 관계를 지정해야 전체 응용 프로그램에서 요청을 추적할 수 있습니다. 
+
+## Azure 리소스
+
+* **Azure 리로스 관리자 템플릿을 사용해 리소스를 구축합니다.** 리소스 관리자 템플릿을 사용하면 PowerShell 또는 Azure CLI를 통해 배포를 간편하게 자동화할 수 있어, 배포 프로세스의 신뢰성을 향상시킵니다. 자세한 내용은 [Azure 리소스 관리자 개요][resource-manager]를 참조하십시오.
+
+* **리소스에 의미 있는 이름을 지정합니다.** 리소스에 의미 있는 이름을 지정하면 특정 리소스를 찾거나 그 역할을 이해하기가 쉽습니다.  자세한 내용은 [Azure 리소스의 명명 규칙](../best-practices/naming-conventions.md)을 참조하십시오.
+
+* **역할 기반 액세스 제어(RBAC)를 사용합니다.** RBAC를 사용해 배포된 Azure 리소스에 대한 액세스를 관리합니다. RBAC를 통해 권한 부여 역할을 DevOps 팀원에게 할당하고, 배포된 리소스가 실수로 삭제되거나 변경되지 않도록 보호할 수 있습니다. 자세한 내용은 [Azure 포털에서 액세스 관리 시작하기](/azure/active-directory/role-based-access-control-what-is/)를 참조하십시오.
+
+* **MV 등 중요 리소스에 대한 리소스 잠금을 사용합니다.** 리소스 잠금을 사용해 운영자가 실수로 리소스를 삭제하지 않도록 방지합니다. 자세한 내용은 [Azure 리소스 관리자를 사용한 리소스 잠금](/azure/azure-resource-manager/resource-group-lock-resources/)을 참조하십시오.
+
+* **지역 쌍.** 두 개의 지역에 배포하는 경우, 같은 지역 쌍에서 지역을 선택합니다. 광범위한 중단이 발생했을 때, 모든 쌍 중에서 한 지역의 복구를 우선 처리합니다. 지역 중복 저장소(GR Storage)와 같은 일부 서비스는 연결된 지역에 자동 복제 기능을 제공합니다.  자세한 내용은 [비즈니스 연속성 및 재해 복구(Business continuity and disaster recovery (BCDR)): Azure 지역적 쌍 연결](/azure/best-practices-availability-paired-regions)을 참조하십시오.
+
+* **기능 및 수명 주기에 따라 리소스를 그룹화합니다.**  일반적으로 리소스 그룹에는 수명 주기가 같은 리소스가 포함됩니다. 이렇게 할 경우, 배포 관리, 테스트 배포 삭제, 액세스 권한 할당이 간편해, 프로덕션 배포가 실수로 삭제되거나 수정될 가능성이 줄어듭니다. 프로덕션, 개발, 테스트 환경별로 각각 다른 리소스 그룹을 만듭니다. 다중 지역 배포 시, 각 지역의 리소스는 별도의 리소스 그룹에 넣습니다. 이렇게 하면 다른 지역에 영향을 주지 않고도 간편하게 한 지역을 다시 배포할 수 있습니다.
+
+## Azure 서비스
+다음 체크리스트 항목은 Azure의 특정 서비스에 적용됩니다.
+
+### 앱 서비스
+
+* **표준 또는 프리미엄 계층을 사용합니다.** 이 계층은 스테이징 슬롯 및 자동화 백업을 지원합니다. 자세한 내용은 [Azure 앱 서비스 계획 상세 개요](/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview/)를 참조하십시오.
+
+* **규모 확대나 규모 축소를 사용하지 않습니다.** 그 대신 표준 부하에서 성능 요구사항을 충족하는 계층 및 인스턴스 크기를 선택한 다음 트래픽 변경을 처리할 수 있도록 인스턴스를 [확장](/azure/app-service-web/web-sites-scale/)합니다. 규모 확대 및 축소로 인해 응용 프로그램의 재부팅이 트리거될 수 있습니다.
+
+* **구성을 앱 설정으로 저장합니다.** 앱 설정을 사용해 구성 설정을 앱 설정으로 저장합니다. 리소스 관리자 템플릿이나 PowerShell을 사용해, 자동화 배포 / 업데이트 프로세스의 일부로 적용할 수 있도록 설정을 정의하면 신뢰성을 향상시킬 수 있습니다. 자세한 내용은 [Azure 앱 서비스의 웹 앱 구성](/azure/app-service-web/web-sites-configure/)을 참조하십시오.
+
+* **프로덕션 및 테스트에 대해 별도의 앱 서비스 계획을 세웁니다.**프로덕션 배포의 슬롯을 테스트에 사용하지 마십시오.  같은 앱 서비스 계획에 있는 앱은 모두 동일한 VM 인스턴스를 공유합니다.  프로덕션 및 테스트 배포를 같은 계획에 포함시키면, 프로덕션 배포에 부정적 영향을 줄 수 있습니다. 예를 들어, 부하 테스트로 인해 라이브 프로덕션 사이트의 성능이 저하될 수 있습니다. 테스트 배포를 별도의 계획에 넣어 프로덕션 버전에서 분리시킵니다. 
+
+* **웹 API에서 웹 앱을 분리합니다.**. 솔루션에 웹 전단 및 웹 API가 모두 있는 경우, 별도의 앱 서비스(App Service) 앱으로 분리하는 것이 좋습니다.  이렇게 설계하면 솔루션을 작업별로 간편하게 분리할 수 있습니다. 서로 다른 앱 서비스 계획에서 웹 앱과 API를 실행하여, 독립적으로 크기를 조정할 수 있습니다. 초기에 그 정도 수준의 확장성이 필요 없는 경우, 앱을 같은 계획에 배포하고 이후 필요하면 별도의 계획으로 이동할 수 있습니다.
+
+* **Azure SQL 데이터베이스 백업에 앱 서비스 백업 기능을 사용하지 않습니다.** 대신 [SQL 데이터베이스 자동 백업][sql-backup]을 사용합니다. 앱 서비스 백업은 데이터베이스를 SQL.bacpac 파일로 내보내며, 이 때 DTU가 사용됩니다.
+
+* **스테이징 슬롯으로 배포합니다.** 스테이징을 위한 배포 슬롯을 만듭니다. 응용 프로그램 업데이트를 스테이징 슬롯에 배포하고, 이를 프로덕션으로 교환하기 전에 배포를 확인합니다. 이를 통해, 프로덕션의 잘못된 업데이트 가능성을 줄입니다. 또한, 프로덕션으로 교환하기 전에 모든 인스턴스를 준비할 수 있습니다. 대다수의 응용 프로그램에는 중요한 준비 시간 및 콜드 부팅 시간이 있습니다. 자세한 내용은 [Azure 앱 서비스에서 웹 앱의 스테이징 환경 설정](/azure/app-service-web/web-sites-staged-publishing/)을 참조하십시오.
+
+* **배포 슬롯을 만들어 마지막으로 성공한(LKG) 배포를 저장합니다.** 업데이트를 프로덕션에 배포할 때, 이전 프로덕션 배포는 LKG 슬롯으로 이동합니다.  이렇게 함으로써 잘못된 배포를 간편하게 롤백할 수 있습니다. 차후 문제가 발견되면, LKG 버전으로 빠르게 되돌릴 수 있습니다. 자세한 내용은 [기본 웹 응용 프로그램](../reference-architectures/managed-web-app/basic-web-app.md)을 참조하십시오.
+
+* **응용 프로그램 로깅 및 웹 서버 로깅을 포함해 진단 로깅을 활성화합니다.** 로깅은 모니터링과 진단에 중요한 역할을 합니다. [Azure 앱 서비스에서 웹 앱의 진단 로깅 사용](/azure/app-service-web/web-sites-enable-diagnostic-log/)을 참조하십시오.
+
+* **blob 저장소에 로그합니다.** 이렇게 하면 데이터 수집과 분석이 더 간편해집니다.
+
+* **로그를 위한 별도의 저장소 계정을 만듭니다.** 동일한 저장소 계정을 로그와 응용 프로그램 데이터에 같이 사용하지 않습니다. 로깅으로 응용 프로그램 성능이 저하되지 않도록 하기 위한 것입니다.
+
+* **성능을 모니터링합니다.** [New Relic](http://newrelic.com/) 또는 [응용 프로그램 통찰력(Application Insights)](/azure/application-insights/app-insights-overview/) 등 성능 모니터링 서비스를 사용해 실행 중인 응용 프로그램의 성능과 동작을 모니터링합니다. 성능 모니터링은 응용 프로그램을 실시간으로 이해하도록 해 줍니다. 사용자가 문제를 진단하고 오류의 근본 원인을 분석할 수 있습니다.
+
+### 응용 프로그램 게이트웨이
+
+* **두 개 이상의 인스턴스를 구축합니다.** 두 개 이상의 인스턴스로 응용 프로그램 게이트웨이를 구축합니다. 단일 인스턴스는 단일 실패 지점입니다.  이중화와 확장성을 위해 두 개 이상의 인스턴스를 사용합니다. [SLA](https://azure.microsoft.com/support/legal/sla/application-gateway/v1_0/) 요건을 갖추려면 두 개 이상의 중대형 인스턴스를 구축해야 합니다.
+
+### Azure 검색
+
+* **한 개 이상의 복제본을 구축합니다.** 읽기 고가용성을 위해 두 개이상의 복제본 또는 읽기-쓰기 고가용성을 위해 세 개 이상의 복제본을 사용합니다.
+
+* **다중 영역 배포에 대한 인덱서를 구성합니다.** 다중 영역 배포의 경우, 인덱싱의 연속성을 위한 옵션을 고려합니다.
+
+o	데이터 소스가 지역 복제된 경우, 각 영역 Azure 검색 서비스의 각 인덱서를 해당 로컬 데이터 소스 복제본으로 지정합니다.  
+
+o	데이터 소스가 지역 복제되지 않은 경우, 같은 데이터 소스에서 여러 인덱서를 지정하여 여러 영역의 Azure 검색 서비스가 지속적, 독립적으로 해당 데이터 소스에서 인덱싱할 수 있도록 합니다. 자세한 내용은 [Azure 검색 성능 및 최적화 고려 사항][search-optimization]을 참조합니다.
+
+### Azure 저장소
+
+* **응용 프로그램 데이터의 경우, 읽기-액세스 지역 중복 저장소(RA-GRS)를 사용합니다.**RA-GRS 저장소는 데이터를 보조 영역에 복제하며, 보조 영역에서 읽기 전용으로 액세스 할 수 있도록 합니다. 기본 영역에서 저장소가 중단되는 경우, 응용 프로그램은 보조 영역에서 데이터를 읽을 수 있습니다. 자세한 내용은 [Azure 저장소 복제](/azure/storage/storage-redundancy/)를 참조하십시오.
+
+* **VM 디스크에 대해서는 프리미엄 저장소를 사용합니다.** 자세한 내용은 [프리미엄 저장소: Azure 가상 컴퓨터 작업을 위한 고성능 저장소](/azure/storage/storage-premium-storage/)를 참조하십시오.
+
+* **큐 저장소에 대해서는, 다른 영역에 백업 큐를 만듭니다.** 큐 저장소의 경우, 사용자는 항목을 큐에 추가하거나 제거할 수 없기 때문에 읽기 전용 복제본의 사용이 제한적입니다. 대신, 다른 영역의 저장소 계정에 백업 큐를 만듭니다. 저장소가 중단되는 경우, 기본 영역을 다시 사용할 때까지 응용 프로그램에서 백업 큐를 사용할 수 있습니다.  이를 통해 응용 프로그램은 새로운 요청을 계속 처리할 수 있습니다.  
 
 ### DocumentDB
-* **Replicate the database across regions.** With a multi-region account, your DocumentDB database has one write region and multiple read regions. If there is a failure in the write region, you can read from another replica. The Client SDK handles this automatically. You can also fail over the write region to another region. For more information, see [Distribute data globally with DocumentDB](/azure/documentdb/documentdb-distribute-data-globally/).
 
-### SQL Database
-* **Use Standard or Premium tier.** These tiers provide a longer point-in-time restore period (35 days). For more information, see [SQL Database options and performance](/azure/sql-database/sql-database-service-tiers/).
-* **Enable SQL Database auditing.** Auditing can be used to diagnose malicious attacks or human error. For more information, see [Get started with SQL database auditing](/azure/sql-database/sql-database-auditing-get-started/).
-* **Use Active Geo-Replication** Use Active Geo-Replication to create a readable secondary in a different region.  If your primary database fails, or simply needs to be taken offline, perform a manual failover to the secondary database.  Until you fail over, the secondary database remains read-only.  For more information, see [SQL Database Active Geo-Replication](/azure/sql-database/sql-database-geo-replication-overview/).
-* **Use sharding**. Consider using sharding to partition the database horizontally. Sharding can provide fault isolation. For more information, see [Scaling out with Azure SQL Database](/azure/sql-database/sql-database-elastic-scale-introduction/).
-* **Use point-in-time restore to recover from human error.**  Point-in-time restore returns your database to an earlier point in time. For more information, see [Recover an Azure SQL database using automated database backups][sql-restore].
-* **Use geo-restore to recover from a service outage.** Geo-restore restores a database from a geo-redundant backup.  For more information, see [Recover an Azure SQL database using automated database backups][sql-restore].
+* **여러 영역에 걸쳐 데이터베이스를 복제합니다.**다중 영역 계정으로, DocumentDB 데이터베이스에는 한 개의 쓰기 영역과 여러 개의 읽기 영역이 있습니다. 쓰기 영역에 오류가 발생하면 다른 복제본에서 읽기를 수행할 수 있습니다. 클라이언트 SDK가 이를 자동 처리합니다. 쓰기 영역을 다른 영역으로 장애 조치할 수도 있습니다. 자세한 내용은 [DocumentDB를 사용한 데이터의 전역 배포](/azure/documentdb/documentdb-distribute-data-globally/)를 참조하십시오.
 
-### SQL Server (running in a VM)
-* **Replicate the database.** Use SQL Server Always On Availability Groups to replicate the database. Provides high availability if one SQL Server instance fails. For more information, see  [More information...](../reference-architectures/virtual-machines-windows/n-tier.md)
-* **Back up the database**. If you are already using [Azure Backup](https://azure.microsoft.com/documentation/services/backup/) to back up your VMs, consider using [Azure Backup for SQL Server workloads using DPM](/azure/backup/backup-azure-backup-sql/). With this approach, there is one backup administrator role for the organization and a unified recovery procedure for VMs and SQL Server. Otherwise, use [SQL Server Managed Backup to Microsoft Azure](https://msdn.microsoft.com/library/dn449496.aspx).
+### SQL 데이터베이스
 
-### Traffic Manager
-* **Perform manual failback.** After a Traffic Manager failover, perform manual failback, rather than automatically failing back. Before failing back, verify that all application subsystems are healthy.  Otherwise, you can create a situation where the application flips back and forth between data centers. For more information, see [Run VMs in multiple regions for high availability](../reference-architectures/virtual-machines-windows/multi-region-application.md).
-* **Create a health probe endpoint**. Create a custom endpoint that reports on the overall health of the application. This enables Traffic Manager to fail over if any critical path fails, not just the front end. The endpoint should return an HTTP error code if any critical dependency is unhealthy or unreachable. Don't report errors for non-critical services, however. Otherwise, the health probe might trigger failover when it's not needed, creating false positives. For more information, see [Traffic Manager endpoint monitoring and failover](/azure/traffic-manager/traffic-manager-monitoring/).
+* **표준 또는 프리미엄 계층을 사용합니다.** 이 계층에서는 특정 시점 복원 기간이 더 깁니다(35일). 자세한 내용은 [SQL 데이터베이스 옵션 및 성능](/azure/sql-database/sql-database-service-tiers/)을 참조하십시오.
 
-### Virtual Machines
-* **Avoid running a production workload on a single VM.** A single VM deployment is not resilient to planned or unplanned maintenance. Instead, put multiple VMs in an availability set or [VM scale set](/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-overview/), with a load balancer in front.
-* **Specify the availability set when you provision the VM.** Currently, there is no way to add a Resource Manager VM to an availability set after the VM is provisioned. When you add a new VM to an existing availability set, make sure to create a NIC for the VM, and add the NIC to the back-end address pool on the load balancer. Otherwise, the load balancer won't route network traffic to that VM.
-* **Put each application tier into a separate Availability Set.** In an N-tier application, don't put VMs from different tiers into the same availability set. VMs in an availability set are placed across fault domains (FDs) and update domains (UD). However, to get the redundancy benefit of FDs and UDs, every VM in the availability set must be able to handle the same client requests.
-* **Choose the right VM size based on performance requirements.** When moving an existing workload to Azure, start with the VM size that's the closest match to your on-premises servers. Then measure the performance of your actual workload with respect to CPU, memory, and disk IOPS, and adjust the size if needed. This helps to ensure the application behaves as expected in a cloud environment. Also, if you need multiple NICs, be aware of the NIC limit for each size.
-* **Use premium storage for VHDs.** Azure Premium Storage provides high-performance, low-latency disk support. For more information, see [Premium Storage: High-Performance Storage for Azure Virtual Machine Workloads](/azure/storage/storage-premium-storage/) Choose a VM size that supports premium storage.
-* **Create a separate storage account for each VM.** Place the VHDs for one VM into a separate storage account. This helps to avoid hitting the IOPS limits for storage accounts. For more information, see [Azure Storage Scalability and Performance Targets](/azure/storage/storage-scalability-targets/). However, if you are deploying a large number of VMs, be aware of the per-subscription limit for storage accounts. See [Storage limits](/azure/azure-subscription-service-limits/#storage-limits).
-* **Create a separate storage account for diagnostic logs**. Don't write diagnostic logs to the same storage account as the VHDs, to avoid having the diagnostic logging affect the IOPS for the VM disks. A standard locally redundant storage (LRS) account is sufficient for diagnostic logs.
-* **Install applications on a data disk, not the OS disk.** Otherwise, you may reach the disk size limit.
-* **Use Azure Backup to back up VMs.** Backups protect against accidental data loss. For more information, see [Protect Azure VMs with a recovery services vault](/azure/backup/backup-azure-vms-first-look-arm/).
-* **Enable diagnostic logs**, including basic health metrics, infrastructure logs, and [boot diagnostics][boot-diagnostics]. Boot diagnostics can help you diagnose a boot failure if your VM gets into a non-bootable state. For more information, see [Overview of Azure Diagnostic Logs][diagnostics-logs].
-* **Use the AzureLogCollector extension**. (Windows VMs only.) This extension aggregates Azure platform logs and uploads them to Azure storage, without the operator remotely logging into the VM. For more information, see [AzureLogCollector Extension](/azure/virtual-machines/virtual-machines-windows-log-collector-extension/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+* **SQL 데이터베이스 감사를 사용합니다.** 감사를 통해 악성 공격 또는 인적 오류를 진단할 수 있습니다. 자세한 내용은 [SQL 데이터베이스 감사 시작하기](/azure/sql-database/sql-database-auditing-get-started/)를 참조하십시오.
 
-### Virtual Network
-* **To whitelist or block public IP addresses, add an NSG to the subnet.** Block access from malicious users, or allow access only from users who have privilege to access the application.  
-* **Create a custom health probe.** Load Balancer Health Probes can test either HTTP or TCP. If a VM runs an HTTP server, the HTTP probe is a better indicator of health status than a TCP probe. For an HTTP probe, use a custom endpoint that reports the overall health of the application, including all critical dependencies. For more information, see [Azure Load Balancer overview](/azure/load-balancer/load-balancer-overview/).
-* **Don't block the health probe.** The Load Balancer Health probe is sent from a known IP address, 168.63.129.16. Don't block traffic to or from this IP in any firewall policies or network security group (NSG) rules. Blocking the health probe would cause the load balancer to remove the VM from rotation.
-* **Enable Load Balancer logging.** The logs show how many VMs on the back-end are not receiving network traffic due to failed probe responses. For more information, see [Log analytics for Azure Load Balancer](/azure/load-balancer/load-balancer-monitor-log/).
+* **활성 지역 복제를 사용합니다.** 활성 지역 복제를 사용해 다른 영역에 읽기 가능한 보조를 만듭니다. 기본 데이터베이스가 실패하거나 단순히 연결을 중단해야 하는 경우, 보조 데이터베이스로 수동 장애 조치를 수행합니다. 장애 조치가 완료될 때까지 보조 데이터베이스는 읽기 전용으로 유지됩니다. 자세한 내용은 [SQL 활성 지역 복제](/azure/sql-database/sql-database-geo-replication-overview/)를 참조하십시오.
+
+* **분할을 사용합니다.** 분할(sharding) 기능을 사용해 데이터베이스를 수평 분할하는 것이 좋습니다. 분할은 오류를 격리합니다. 자세한 내용은 [Azure SQL 데이터베이스의 규모 확장](/azure/sql-database/sql-database-elastic-scale-introduction/)을 참조하십시오.
+
+* **특정 시점 복원을 사용해 인적 오류를 복구합니다.**  특정 시점 복구는 데이터베이스를 과거 특정 시점으로 되돌립니다. 자세한 내용은 [자동화 데이터베이스 백업을 사용한 Azure SQL 데이터베이스 복구][sql-restore]를 참조하십시오. 
+
+* **지역 복원을 사용해 서비스 중단을 복구합니다.** 지역 복원은 지역 중복 백업에서 데이터베이스를 복원합니다. 자세한 내용은 [자동화 데이터베이스 백업을 사용한 Azure SQL 데이터베이스 복구][sql-restore]를 참조하십시오.
+
+### SQL 서버(VM에서 실행)
+
+* **데이터베이스를 복제합니다.** SQL 서버의 Always On 가용성 그룹을 사용해 데이터베이스를 복제합니다. SQL 서버 인스턴스 한 개가 실패해도 고가용성을 제공합니다. 자세한 내용은 [자세히 보기...](../reference-architectures/virtual-machines-windows/n-tier.md)를 참조하십시오.
+
+* **데이터베이스를 백업합니다.** VM 백업을 위해 이미 [Azure 백업](https://azure.microsoft.com/documentation/services/backup/)을 사용 중인 경우, [DPM을 사용한 SQL 서버 작업의 Azure 백업](/azure/backup/backup-azure-backup-sql/)을 참조하십시오. 이 방법을 사용하면, 조직에 하나의 백업 관리자 역할과 VM 및 SQL 서버용 통합 복구 절차가 있습니다. 그렇지 않으면 [Microsoft Azure로 SQL 서버 매니지드 백업](https://msdn.microsoft.com/library/dn449496.aspx)을 참조하십시오.
+
+### 트래픽 관리자
+
+* **수동 장애 복구를 수행합니다.** 트래픽 관리자 장애 처리 후, 자동 복구 대신 수동으로 장애 복구를 수행합니다. 장애 복구 전, 모든 응용 프로그램 하위 시스템의 정상 여부를 확인합니다.  그러지 않을 경우, 응용 프로그램이 데이터 센터 사이를 왔다 갔다 하는 상황이 발생할 수 있습니다. 자세한 내용은 [고가용성을 위한 다중 영역의 VM 실행](../reference-architectures/virtual-machines-windows/multi-region-application.md)을 참조하십시오.
+
+* **상태 프로브 끝점을 만듭니다.** 응용 프로그램의 전반적 상태에 대해 보고하는 사용자 지정 끝점을 만듭니다. 이렇게 하면 전단뿐만 아니라 중요 경로가 실패하는 경우 트래픽 관리자가 장애 조치를 할 수 있습니다. 중요 종속성이 비정상이거나 연결할 수 없는 경우, 끝점은 HTTP 오류 코드를 반환해야 합니다.  단, 비중요 서비스에 대한 오류는 보고하지 않습니다. 그렇지 않으면, 필요 없는 상황에서 상태 프로브가 장애 복구를 트리거하여, 가양성이 발생할 수 있습니다. 자세한 내용은 [트래픽 관리자 끝점 모니터링 및 장애 복구](/azure/traffic-manager/traffic-manager-monitoring/)를 참조하십시오.
+
+### 가상 컴퓨터
+
+* **단일 VM에서 프로덕션 워크로드를 실행하지 않습니다.** 단일 VM 배포는 계획적 또는 비계획적 유지 관리에 대해 복원력이 없습니다. 대신, 가용성 집합 또는 [VM 크기 집합](/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-overview/)에 여러 VM을 포함시키고 전면에 부하 분산 장치를 둡니다.
+
+* **•M 구축 시 가용성 집합을 지정합니다.** 현재는 VM을 구축하고 난 후에 리소스 관리자 VM을 가용성 집합에 추가할 방법이 없습니다.  새로운 VM을 기존 가용성 집합에 추가할 때는 VM에 대한 NIC을 만든 다음 해당 NIC을 부하 분산 장치의 백 엔드 주소 풀에 추가해야 합니다.  그렇지 않으면, 부하 분산 장치가 네트워크 트래픽을 VM에 라우팅하지 않게 됩니다.
+
+* **각 응용 프로그램 계층을 별도의 가용성 집합으로 분리합니다.** N 계층 응용 프로그램에서, 계층이 서로 다른 VM을 동일한 가용성 집합에 포합시키면 안 됩니다.  같은 가용성 집합의 VM은 오류 도메인(FD)과 업데이트 도메인(UD)에 걸쳐 위치합니다.  그러나, FD 및 UD의 중복 장점을 활용하려면 가용성 집합의 모든 VM이 동일한 클라이언트 요청을 처리할 수 있어야 합니다. 
+
+* **성능 요구사항에 따라 적절한 VM 크기를 선택합니다.** 기존 워크로드를 Azure에 이동할 때는, 온프레미스 서버와 가장 일치하는 VM 크기로 시작합니다.  그런 다음, CPU, 메모리, 디스크 IOPS와 관련해 실제 워크로드의 성능을 측정하여 필요에 따라 크기를 조정합니다.  이렇게 하면 응용 프로그램이 클라우드 환경에서 예상한 바에 따라 운용됩니다.  또한, 여러 NIC가 필요한 경우 각 크기에 따른 NIC 한도를 파악해야 합니다. 
+
+* **VHD에는 프리미엄 저장소를 사용합니다.** Azure 프리미엄 저장소는 고성능 저지연 디스크 지원을 제공합니다.  자세한 내용은 [프리미엄 저장소: Azure 가상 컴퓨터 워크로드를 위한 고성능 저장소](/azure/storage/storage-premium-storage/)를 참조하십시오.  프리미엄 저장소를 지원하는 VM 크기를 선택합니다.
+
+* **각 VM마다 별도의 저장소 계정을 만듭니다.** 각 VM 별 VHD를 별도의 저장소 계정에 둡니다.  이렇게 하면 저장소 계정에 대한 IOPS 용량 한도를 유지할 수 있습니다.  자세한 내용은 [Azure 저장소 확장성 및 성능 대상](/azure/storage/storage-scalability-targets/)을 참조합니다. 단, 대량의 VM을 배포하는 경우, 저장소 계정에 대한 구독별 용량 한도를 파악해야 합니다. [저장소 용량 한도](/azure/azure-subscription-service-limits/#storage-limits)를 참조하십시오.
+
+* **진단 로그를 위한 별도의 저장소 계정을 만듭니다.** 진단 로그를 VHD로 동일한 저장소 계정에 쓰지 마십시오. 진단 로깅이 VM 디스크에 대한 IOPS에 영향을 줄 수 있습니다.  진단 로그에는 표준 로컬 중복 저장소(LRS) 계정으로 충분합니다. 
+
+* **응용 프로그램은 OS 디스크가 아닌 데이터 디스크에 설치합니다.** 그렇지 않을 경우, 디스크 크기 한도에 도달할 수 있습니다. 
+
+* **Azure 백업을 사용해 VM을 백업합니다.** 백업은 실수로 인한 데이터 손실을 방지합니다.  자세한 내용은 [복구 서비스 보관으로 Azure VM 보호](/azure/backup/backup-azure-vms-first-look-arm/)를 참조하십시오.
+
+* **기본 상태 수치, 인프라 로그, [부팅 진단][boot-diagnostics] 등 진단 로그를 사용합니다.** 부팅 진단을 사용해 VM이 부팅 불가 상태가 되는 경우 부팅 실패를 진단할 수 있습니다. 자세한 내용은 [Azure 진단 로그 개요][diagnostics-logs]를 참조하십시오.
+
+* **확장명 AzureLogCollector를 사용합니다.** (Windows VM에만 해당) 이 확장명을 사용하면 운영자가 VM에 원격 로깅하지 않고도 Azure 플랫폼 로그를 집계하여 Azure 저장소에 업로드합니다. 자세한 내용은 [AzureLogCollector 확장명](/azure/virtual-machines/virtual-machines-windows-log-collector-extension/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)을 참조하십시오.
+
+### 가상 네트워크 
+
+* **공용 IP 주소를 허용 또는 차단하기 위해 서브넷에 NSG를 추가합니다.** 악성 사용자의 액세스를 차단하거나, 응용 프로그램 액세스 권한을 가진 사용자의 액세스만 허용합니다.  
+
+* **사용자 지정 상태 프로브를 만듭니다.** 부하 분산 장치 상태 프로브를 사용해 HTTP 또는 TCP를 테스트할 수 있습니다.  VM이 HTTP 서버를 실행한다면, HTTP 프로브가 TCP 프로브보다 더 나은 상태 표시기가 됩니다.  HTTP 프로브의 경우, 모든 중요 종속성을 포함해 응용 프로그램의 전반적 상태를 보고하는 사용자 지정 끝점을 사용하십시오. 자세한 내용은 [Azure 부하 분산 장치 개요](/azure/load-balancer/load-balancer-overview/)를 참조하십시오.
+
+* **상태 프로브를 차단하지 않습니다.** 부하 분산 장치 상태 프로브는 알려진 IP 주소(168.63.129.16)에서 전송됩니다.  방화벽 정책 또는 네트워크 보안 그룹(NSG) 규칙에 상관 없이, 이 IP으로 가거나 그로부터 오는 트래픽을 차단해서는 안 됩니다.  상태 프로브를 차단하는 경우 부하 분산 장치가 회전에서 VM을 제거할 수 있습니다. 
+
+* **부하 분산 장치 로깅을 사용합니다.** 로그는 실패한 프로브 응답으로 인해 네트워크 트래픽을 받지 못하는 VM이 백엔드에 얼마나 많은지 보여 줍니다.  자세한 내용은 [Azure 부하 분산 장치에 대한 로그 분석](/azure/load-balancer/load-balancer-monitor-log/)을 참조하십시오.
 
 <!-- links -->
 [app-service-autoscale]: /azure/monitoring-and-diagnostics/insights-how-to-scale/
