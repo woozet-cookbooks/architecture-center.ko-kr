@@ -12,107 +12,107 @@ pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories: [messaging, resiliency]
 ---
 
-# Scheduler Agent Supervisor
+# 스케줄러 에이전트 감독자
 
 [!INCLUDE [header](../_includes/header.md)]
 
-Coordinate a set of distributed actions as a single operation. If any of the actions fail, try to handle the failures transparently, or else undo the work that was performed, so the entire operation succeeds or fails as a whole. This can add resiliency to a distributed system, by enabling it to recover and retry actions that fail due to transient exceptions, long-lasting faults, and process failures.
+분산된 작업들을 단일 작업으로 조정합니다. 작업이 하나라도 실패할 경우, 실패를 투명하게 처리하거나 아니면 수행된 작업을 원 상태로 돌려놓습니다. 그렇게 함으로써 전체 작업이 전반적으로 성공하거나 실패합니다. 또 일시적 예외로 인해 실패한 작업, 지속적 오류, 프로세스 오류를 복구하고 재시도할 수 있게 하여 분산 시스템에 복원력을 추가할 수 있습니다.
 
-## Context and problem
+## 컨텍스트와 문제점
 
-An application performs tasks that include a number of steps, some of which might invoke remote services or access remote resources. The individual steps might be independent of each other, but they are orchestrated by the application logic that implements the task.
+응용 프로그램은 많은 단계를 포함하는 태스크를 수행하는데, 일부 업무는 원격 서비스를 호출하거나 원격 리소스를 액세스할 수 있습니다. 개별 단계는 서로서로 의존적일 수 있으나, 태스크를 구현한 응용 프로그램 로직에 의해 조정됩니다. 
 
-Whenever possible, the application should ensure that the task runs to completion and resolve any failures that might occur when accessing remote services or resources. Failures can occur for many reasons. For example, the network might be down, communications could be interrupted, a remote service might be unresponsive or in an unstable state, or a remote resource might be temporarily inaccessible, perhaps due to resource constraints. In many cases the failures will be transient and can be handled by using the [Retry pattern][retry-pattern].
+가능한 한 응용 프로그램은 태스크가 완료될 때까지 실행되는 것을 확인하고. 원격 서버나 리소스를 액세스할 때 일어날 수 있는 오류를 해결해야 합니다. 오류는 여러 가지 이유로 발생할 수 있습니다. 예를 들면, 네트워크가 다운되거나 통신이 중단될 수 있고, 원격 서비스가 응답하지 않거나 불안정한 상태일 수 있으며, 자원 제약 등의 이유로 원격 리소스가 일시적으로 액세스 불가일 수 있습니다. 많은 경우에 오류는 일시적이기 때문에 [패턴 재시도][retry-pattern]를 사용하여 처리할 수 있습니다. 
 
-If the application detects a more permanent fault it can't easily recover from, it must be able to restore the system to a consistent state and ensure integrity of the entire operation.
+응용 프로그램이 쉽게 복구할 수 없는 보다 영구적인 오류를 감지한 경우, 시스템을 일관성 있는 상태로 복원해서 전체 작업의 무결성을 보장할 수 있어야 합니다.
 
-## Solution
+## 솔루션
 
-The Scheduler Agent Supervisor pattern defines the following actors. These actors orchestrate the steps to be performed as part of the overall task.
+스케줄러 에이전트 감독자 패턴은 다음과 같은 배우들을 정의합니다. 이 배우들은 전반적인 태스크의 일부로서 수행될 단계들을 조정합니다.
 
-- The **Scheduler** arranges for the steps that make up the task to be executed and orchestrates their operation. These steps can be combined into a pipeline or workflow. The Scheduler is responsible for ensuring that the steps in this workflow are performed in the right order. As each step is performed, the Scheduler records the state of the workflow, such as "step not yet started," "step running," or "step completed." The state information should also include an upper limit of the time allowed for the step to finish, called the complete-by time. If a step requires access to a remote service or resource, the Scheduler invokes the appropriate Agent, passing it the details of the work to be performed. The Scheduler typically communicates with an Agent using asynchronous request/response messaging. This can be implemented using queues, although other distributed messaging technologies could be used instead.
+- **스케줄러** 는 실행될 태스크를 구성하는 단계들을 정리하고 그 작업을 조정합니다. 이 단계들은 파이프라인이나 워크플로와 결합될 수 있습니다. 스케줄러는 이 워크플로의 단계들이 올바른 순서로 수행될 수 있게 합니다. 각 단계가 수행될 때, 스케줄러는 "시작하지 않은 단계", "실행 단계" 또는 "완료 단계"와 같은 워크플로 상태를 기록합니다. 상태 정보는 단계 종료에 허용된 상한 시간도 포함해야 하는데, 이를 완료기한(complete-by time)이라고 합니다. 단계가 원격 서비스 또는 리소스에 대한 액세스를 요구할 경우, 스케줄러는 적절한 에이전트를 호출해서 수행될 작업의 세부 내용을 전달합니다.  스케줄러는 일반적으로 비동기 요청/응답 메시징을 사용하여 에이전트와 통신합니다.  스케줄러는 다른 분산 메시징 기술을 대신 사용할 수 있지만, 큐를 사용하여 구현할 수 있습니다.
 
-    > The Scheduler performs a similar function to the Process Manager in the [Process Manager pattern](http://www.enterpriseintegrationpatterns.com/patterns/messaging/ProcessManager.html). The actual workflow is typically defined and implemented by a workflow engine that's controlled by the Scheduler. This approach decouples the business logic in the workflow from the Scheduler.
+    > 스케줄러는 [프로세스 관리자 패턴](http://www.enterpriseintegrationpatterns.com/patterns/messaging/ProcessManager.html)에서 프로세스 관리자와 비슷한 기능을 수행합니다. 실제 워크플로는 일반적으로 스케줄러에 의해 제어되는 워크플로 엔진에 의해 정의되고 구현됩니다. 이 접근 방식은 워크플로의 비즈니스 로직을 스케줄러에서 분리합니다.
 
-- The **Agent** contains logic that encapsulates a call to a remote service, or access to a remote resource referenced by a step in a task. Each Agent typically wraps calls to a single service or resource, implementing the appropriate error handling and retry logic (subject to a timeout constraint, described later). If the steps in the workflow being run by the Scheduler use several services and resources across different steps, each step might reference a different Agent (this is an implementation detail of the pattern).
+- **에이전트** 는 태스크의 어떤 단계에서 찹조하는 원격 서비스 호출이나 원격 리소스 액세스를 캡슐화한 로직을 포함합니다. 각 에이전트는 일반적으로 단일 서비스 또는 리소스 호출을 포함하고, 적절한 오류 처리와 재시도 로직을 구현합니다(시간초과 제약을 조건으로 함, 추후 설명). 여러 단계들 사이에서 스케줄러에 의해 실행되는 워크플로의 단계들이 몇몇 서비스와 리소스를 사용할 경우, 각 단계는 다른 에이전트를 참조할 수 있습니다(이것은 패턴의 세부 구현사항입니다).
 
-- The **Supervisor** monitors the status of the steps in the task being performed by the Scheduler. It runs periodically (the frequency will be system specific), and examines the status of steps maintained by the Scheduler. If it detects any that have timed out or failed, it arranges for the appropriate Agent to recover the step or execute the appropriate remedial action (this might involve modifying the status of a step). Note that the recovery or remedial actions are implemented by the Scheduler and Agents. The Supervisor should simply request that these actions be performed.
+- **감독자** 는 스케줄러에 의해 수행되는 태스크에서 단계들의 상태를 모니터합니다. 모니터링은 주기적으로(주기는 시스템 고유의 값입니다) 실행되고 스케줄러에 의해 유지 관리되는 단계의 상태를 검사합니다. 시간초과나 실패를 감지할 경우, 적절한 에이전트를 배치하여 그 단계를 복구하거나 적절한 수정 조치를 실행합니다(이 조치는 단계의 상태 변경을 포함할 수 있음). 복구 또는 수정 조치는 스케줄러와 에이전트에 의해 구현되는 점에 주목하세요. 감독자는 단순히 이 조치를 수행할 것을 요청해야 합니다.
 
-The Scheduler, Agent, and Supervisor are logical components and their physical implementation depends on the technology being used. For example, several logical agents might be implemented as part of a single web service.
+스케줄러, 에이전트, 감독자는 논리적 구성요소이고 그 물리적 구현은 사용되는 기술에 의존합니다. 예를 들면, 몇몇 논리적 에이전트는 단일 웹 서비스의 일부분으로 구현될 수 있습니다.
 
-The Scheduler maintains information about the progress of the task and the state of each step in a durable data store, called the state store. The Supervisor can use this information to help determine whether a step has failed. The figure illustrates the relationship between the Scheduler, the Agents, the Supervisor, and the state store.
+스케줄러는 상태 저장소라고 하는 지속형 데이터 저장소에서 태스크 진행과 모든 단계의 상태에 관한 정보를 유지 관리합니다. 감독자는 단계가 실패했는지 판단하는 데 도움을 주고자 이 정보를 사용할 수 있습니다. 그림은 스케줄러, 에이전트, 감독자, 상태 저장소 간의 관계를 나타냅니다.
 
 ![Figure 1 - The actors in the Scheduler Agent Supervisor pattern](./_images/scheduler-agent-supervisor-pattern.png)
 
 
-> This diagram shows a simplified version of the pattern. In a real implementation, there might be many instances of the Scheduler running concurrently, each a subset of tasks. Similarly, the system could run multiple instances of each Agent, or even multiple Supervisors. In this case, Supervisors must coordinate their work with each other carefully to ensure that they don’t compete to recover the same failed steps and tasks. The [Leader Election pattern](leader-election.md) provides one possible solution to this problem.
+> 이 다이어그램은 패턴을 단순화해서 보여줍니다. 실제 구현에서는 동시에 수행되는 스케줄러의 인스턴스들과 하위 태스크들이 많이 있을 수 있습니다. 마찬가지로 시스템은 각 에이전트의 다중 인스턴스, 심지어 다중 감독자를 실행할 수 있습니다. 이 경우, 감독자들은 실패한 동일한 단계와 태스크를 복구하기 위해 경쟁하지 않도록 서로 주의해서 작업을 조정해야 합니다. [리더 선거 패턴](leader-election.md) 은 이런 문제에 가능한 해결 방법을 제시합니다. 
 
-When the application is ready to run a task, it submits a request to the Scheduler. The Scheduler records initial state information about the task and its steps (for example, step not yet started) in the state store and then starts performing the operations defined by the workflow. As the Scheduler starts each step, it updates the information about the state of that step in the state store (for example, step running).
+응용 프로그램이 태스크를 수행할 준비가 되면, 스케줄러에 요청을 제출합니다. 스케줄러는 태스크와 그 단계의 초기 상태 정보를 상태 저장소에 기록한 다음(예: 아직 시작하지 않은 단계), 워크플로에 의해 정의된 작업을 수행하기 시작합니다. 스케줄러는 각 단계를 시작하는 동안, 그 단계의 상태에 관한 정보를 상태 저장소에 업데이트합니다(예: 단계 실행).
 
-If a step references a remote service or resource, the Scheduler sends a message to the appropriate Agent. The message contains the information that the Agent needs to pass to the service or access the resource, in addition to the complete-by time for the operation. If the Agent completes its operation successfully, it returns a response to the Scheduler. The Scheduler can then update the state information in the state store (for example, step completed) and perform the next step. This process continues until the entire task is complete.
+단계가 원격 서비스나 리소스를 참조할 경우, 스케줄러는 적절한 에이전트에 메시지를 전송합니다. 메시지에는 작업의 완료기한뿐만 아니라 에이전트가 서비스에 전달하거나 리소스를 액세스할 필요가 있는 정보가 담깁니다. 에이전트가 작업을 완료하면 스케줄러에 응답을 반환합니다. 스케줄러는 상태 정보를 상태 저장소에 업데이트할 수 있습니다(예: 단계 완료). 전체 태스크가 완료될 때까지 이 프로세스가 계속됩니다.
 
-An Agent can implement any retry logic that's necessary to perform its work. However, if the Agent doesn't complete its work before the complete-by period expires, the Scheduler will assume that the operation has failed. In this case, the Agent should stop its work and not try to return anything to the Scheduler (not even an error message), or try any form of recovery. The reason for this restriction is that, after a step has timed out or failed, another instance of the Agent might be scheduled to run the failing step (this process is described later).
+에이전트는 작업 수행에 필요한 재시도 로직을 구현할 수 있습니다. 그러나, 에이전트가 완료기한 안에 작업을 완료하지 않은 경우, 스케줄러는 작업이 실패했다고 간주할 것입니다. 이 경우, 에이전트는 작업을 중단하고 스케줄러에 어떤 것도 반환하려 하거나(오류 메시지라고 해도) 어떤 형태의 복구도 시도하면 안 됩니다.  이런 제한의 이유는, 단계가 시간초과되거나 실패한 후, 에이전트의 또 다른 인스턴스가 실패한 그 단계를 실행하도록 계획되었을 수 있기 때문입니다(이 과정은 추후 설명).
 
-If the Agent fails, the Scheduler won't receive a response. The pattern doesn't make a distinction between a step that has timed out and one that has genuinely failed.
+에이전트가 실패한 경우, 스케줄러는 응답을 받지 않을 것입니다. 패턴은 시간초과된 단계와 진짜 실패한 단계를 구분하지 않습니다.
 
-If a step times out or fails, the state store will contain a record that indicates that the step is running, but the complete-by time will have passed. The Supervisor looks for steps like this and tries to recover them. One possible strategy is for the Supervisor to update the complete-by value to extend the time available to complete the step, and then send a message to the Scheduler identifying the step that has timed out. The Scheduler can then try to repeat this step. However, this design requires the tasks to be idempotent.
+단계가 시간초과되거나 실패한 경우, 상태 저장소는 그 단계가 실행 중임을 나타내는 레코드를 포함하겠지만, 완료기한은 지나가버릴 것입니다.  감독자는 이와 같은 단계를 찾아서 복구하고자 합니다. 한 가지 가능한 전략은 감독자가 완료기한 값을 업데이트해서 단계를 완료하는 데 사용할 수 있는 시간을 연장하는 것입니다. 그런 다음 시간초과된 단계를 확인하는 스케줄러에 메시지를 전송합니다. 스케줄러는 이 단계의 반복을 시도할 수 있습니다. 그러나, 이 설계는 태스크가 멱등원(idempotent) 되는 것을 요구합니다.
 
-The Supervisor might need to prevent the same step from being retried if it continually fails or times out. To do this, the Supervisor could maintain a retry count for each step, along with the state information, in the state store. If this count exceeds a predefined threshold the Supervisor can adopt a strategy of waiting for an extended period before notifying the Scheduler that it should retry the step, in the expectation that the fault will be resolved during this period. Alternatively, the Supervisor can send a message to the Scheduler to request the entire task be undone by implementing a [Compensating Transaction pattern])compensating-transaction.md). This approach will depend on the Scheduler and Agents providing the information necessary to implement the compensating operations for each step that completed successfully.
+감독자는 단계가 계속 실패하거나 시간초과될 경우, 같은 단계를 재시도하지 않게 해야할 수 있습니다. 이를 위해서 감독자는 상태 정보와 함께 각 단계의 재시도 횟수를 상태 저장소에서 유지 관리할 수 있습니다. 이 횟수가 미리 정의된 임계값을 초과할 경우, 감독자는 단계를 재시도해야 한다고 스케줄러에 알리기 전에, 연장된 기간에 오류가 해결되기를 기대하여 이 기간 동안 기다리는 전략을 채택할 수 있습니다. 또는, 감독자가 [보상 트랜잭션 패턴](compensating-transaction.md)을 구현하여 전체 태스크가 처리되지 않게 요청하는 메시지를 스케줄러에 보낼 수 있습니다. 이 접근 방식은, 성공적으로 완료된 단계에 대한 보상 작업 구현에 필요한 정보를 제공하는 스케줄러와 에이전트에 의존할 것입니다.
 
-> It isn't the purpose of the Supervisor to monitor the Scheduler and Agents, and restart them if they fail. This aspect of the system should be handled by the infrastructure these components are running in. Similarly, the Supervisor shouldn't have knowledge of the actual business operations that the tasks being performed by the Scheduler are running (including how to compensate should these tasks fail). This is the purpose of the workflow logic implemented by the Scheduler. The sole responsibility of the Supervisor is to determine whether a step has failed and arrange either for it to be repeated or for the entire task containing the failed step to be undone.
+> 스케줄러와 에이전트를 모니터하고 이들이 실패할 때 재시동하는 것이 감독자의 목적이 아닙니다. 시스템의 이러한 측면은 이런 구성요소들이 실행되는 인프라에 의해 처리되어야 합니다. 마찬가지로, 감독자는 스케줄러에 의해 수행되는 태스크가 실행되는 실제 비즈니스 작업을 몰라야 합니다(이 태스크 실패를 보상하는 방법을 포함하여).   이것이 스케줄러에 의해 구현된 워크플로 로직의 목적입니다. 감독자의 유일한 책임은 단계가 실패했는지 여부를 판단하고, 그 단계를 반복할지 아니면 실패한 단계를 포함한 전체 태스크를 취소할지를 결정하는 것입니다.
 
-If the Scheduler is restarted after a failure, or the workflow being performed by the Scheduler terminates unexpectedly, the Scheduler should be able to determine the status of any inflight task that it was handling when it failed, and be prepared to resume this task from that point. The implementation details of this process are likely to be system specific. If the task can't be recovered, it might be necessary to undo the work already performed by the task. This might also require implementing a [compensating transaction](compensating-transaction.md).
+실패 후 스케줄러가 재시동되거나 스케줄러에 의해 수행되는 워크플로가 예상치 않게 종료된 경우, 스케줄러는 작업이 실패할 때 처리 중이었던 인플라이트(inflight) 태스크 상태를 파악하고, 그 지점부터 이 태스크를 재개할 준비를 해야 합니다. 이 프로세스의 세부 구현 내용은 대체로 시스템별로 고유합니다. 태스크가 복구될 수 없는 경우, 태스크에 의해 이미 수행된 작업을 취소해야 할 수 있습니다. 이 때 [보상 트랜잭션](compensating-transaction.md) 구현을 요구할 수 있습니다.
 
-The key advantage of this pattern is that the system is resilient in the event of unexpected temporary or unrecoverable failures. The system can be constructed to be self healing. For example, if an Agent or the Scheduler fails, a new one can be started and the Supervisor can arrange for a task to be resumed. If the Supervisor fails, another instance can be started and can take over from where the failure occurred. If the Supervisor is scheduled to run periodically, a new instance can be automatically started after a predefined interval. The state store can be replicated to reach an even greater degree of resiliency.
+이 패턴의 중요한 장점은 예상치 않게 일시적이거나 복구 불가능한 오류가 생겼을 때 시스템이 복원된다는 점입니다. 시스템은 자동 복구되도록 생성될 수 있습니다. 예를 들면, 에이전트나 스케줄러가 실패할 경우, 새 에이전트나 스케줄러가 시작할 수 있고 감독자는 재개될 태스크에 해당되도록 조정할 수 있습니다. 감독자가 실패한 경우, 새로운 인스턴스가 시작되어 실패가 발생한 곳을 이어받을 수 있습니다. 감독자가 주기적으로 수행하도록 계획한 경우, 미리 예정된 간격이 지나면 새 인스턴스가 자동으로 시작될 수 있습니다. 훨씬 큰 규모로 복원하기 위해서 상태 저장소가 복제될 수 있습니다.
 
-## Issues and considerations
+## 문제점 및 고려사항
 
-You should consider the following points when deciding how to implement this pattern:
+이 패턴을 구현하는 방법을 결정할 때 다음 사항을 고려해야 합니다.
 
-- This pattern can be difficult to implement and requires thorough testing of each possible failure mode of the system.
+- 이 패턴은 구현하기 어려울 수 있으며, 시스템에 생길 수 있는 오류 모드에 대한 철저한 시험이 필요합니다.
 
-- The recovery/retry logic implemented by the Scheduler is complex and dependent on state information held in the state store. It might also be necessary to record the information required to implement a compensating transaction in a durable data store.
+- 스케줄러에 의해 구현된 복구/재시도 로직은 복잡하고 상태 저장소에 저장된 상태 정보에 의존합니다.  또한 보상 트랜잭션을 구현하는 데 요구되는 정보를 지속형 데이터 저장소에 기록해야 할 수 있습니다.
 
-- How often the Supervisor runs will be important. It should run often enough to prevent any failed steps from blocking an application for an extended period, but it shouldn't run so often that it becomes an overhead.
+- 감독자가 얼마나 자주 실행될 것인지도 중요합니다. 실패한 단계가 연장된 기간에 응용 프로그램을 차단할 수 없을 만큼 충분히 자주 실행되어야 하지만, 오버헤드가 될 정도로 자주 실행되어서는 안 됩니다.
 
-- The steps performed by an Agent could be run more than once. The logic that implements these steps should be idempotent.
+- 에이전트에 의해 수행되는 단계는 한 번 이상 실행될 수 있습니다. 이 단계를 구현하는 로직은 멱등원이어야 합니다.
 
-## When to use this pattern
+## 이 패턴을 사용하는 때
 
-Use this pattern when a process that runs in a distributed environment, such as the cloud, must be resilient to communications failure and/or operational failure.
+클라우드와 같은 분산 환경에서 실행하는 프로세스가 통신 실패 및/또는 운영상 실패로 인하여 복원되어야 할 때, 이 패턴을 사용합니다.
 
-This pattern might not be suitable for tasks that don't invoke remote services or access remote resources.
+이 패턴은 원격 서비스를 호출하거나 원격 리소스를 액세스하지 않는 태스크에 적절하지 않을 수 있습니다.
 
-## Example
+## 예
 
-A web application that implements an ecommerce system has been deployed on Microsoft Azure. Users can run this application to browse the available products and to place orders. The user interface runs as a web role, and the order processing elements of the application are implemented as a set of worker roles. Part of the order processing logic involves accessing a remote service, and this aspect of the system could be prone to transient or more long-lasting faults. For this reason, the designers used the Scheduler Agent Supervisor pattern to implement the order processing elements of the system.
+Microsoft Azure에 전자 상거래 시스템을 구현하는 웹 응용 프로그램이 배포되었습니다. 사용자는 사용 가능한 제품을 찾거나 주문하기 위해서 이 응용 프로그램을 실행할 수 있습니다. 사용자 인터페이스가 웹 역할로 실행되고, 응용 프로그램의 주문 처리 요소가 작업자 역할로 구현됩니다. 주문 처리 로직의 일부는 원격 서비스 액세스를 포함하는데, 시스템의 이런 측면은 일시적이거나 더 오래 지속되는 오류일 가능성이 있습니다. 이런 이유로, 설계자는 시스템의 주문 저리 요소를 구현하기 위해서 스케줄러 에이전트 감독자 패턴을 사용했습니다.
 
-When a customer places an order, the application constructs a message that describes the order and posts this message to a queue. A separate submission process, running in a worker role, retrieves the message, inserts the order details into the orders database, and creates a record for the order process in the state store. Note that the inserts into the orders database and the state store are performed as part of the same operation. The submission process is designed to ensure that both inserts complete together.
+고객이 주문할 때, 응용 프로그램은 주문 내용을 나타내는 메시지를 구성하고 이 메시지를 큐에 게시합니다. 작업자 역할에서 실행되는 별도의 전송 프로세스는 메시지를 검색하고, 세부 주문 내용을 주문 데이터베이스에 삽입하고, 상태 저장소에 주문 프로세스에 대한 레코드를 만듭니다. 주문 데이터베이스와 상태 저장소로의 삽입은 동일 작업의 일환으로 수행된다는 사실에 주의하세요. 제출 프로세스는 두 가지 입력이 동시에 완료되도록 설계됩니다.
 
-The state information that the submission process creates for the order includes:
+전송 프로세스가 주문에 대해서 생성하는 상태 정보에는 다음 항목이 포함됩니다:
 
-- **OrderID**. The ID of the order in the orders database.
+- **OrderID**. 주문 데이터베이스에 있는 주문 ID.
 
-- **LockedBy**. The instance ID of the worker role handling the order. There might be multiple current instances of the worker role running the Scheduler, but each order should only be handled by a single instance.
+- **LockedBy**. 주문을 처리하는 작업자 역할의 인스턴스 ID. 스케줄러를 실행하는 작업자 역할의 현재 인스턴스가 다수일 수 있지만, 각 주문은 단일 인스턴스에 의해서만 처리되어야 합니다. 
 
-- **CompleteBy**. The time the order should be processed by.
+- **CompleteBy**. 주문이 처리되어야 하는 기한.
 
-- **ProcessState**. The current state of the task handling the order. The possible states are:
+- **ProcessState**. 주문을 처리하는 태스크의 현재 상태 . 가능한 상태:
 
-    - **Pending**. The order has been created but processing hasn't yet been started.
-    - **Processing**. The order is currently being processed.
-    - **Processed**. The order has been processed successfully.
-    - **Error**. The order processing has failed.
+    - **보류(Pending)**. 주문이 생성되었으나 처리가 아직 시작되지 않았습니다.
+    - **처리 중(Processing)**. 주문이 현재 처리되고 있습니다.
+    - **처리 완료(Processed)**. 주문이 성공적으로 처리되었습니다.
+    - **오류(Error)**. 주문 처리가 실패했습니다.
 
-- **FailureCount**. The number of times that processing has been tried for the order.
+- **FailureCount**. 주문 처리가 시도된 횟수.
 
-In this state information, the `OrderID` field is copied from the order ID of the new order. The `LockedBy` and `CompleteBy` fields are set to `null`, the `ProcessState` field is set to `Pending`, and the `FailureCount` field is set to 0.
+이 상태 정보에서, `OrderID` 필드는 새 주문의 order ID에서 복사됩니다. `LockedBy` 와 `CompleteBy` 필드는 `null`로, `ProcessState` 필드는 `보류`로, `FailureCount` 필드는 0으로 설정됩니다.
 
-> In this example, the order handling logic is relatively simple and only has a single step that invokes a remote service. In a more complex multistep scenario, the submission process would likely involve several steps, and so several records would be created in the state store—each one describing the state of an individual step.
+> 이 예에서, 주문 처리 로직은 비교적 단순하고 원격 서비스를 호출하는 단일 단계로 구성됩니다. 보다 복잡한 다단계 시나리오에서, 전송 프로세스는 여러 단계를 포함할 것이고, 그에 따라 상태 저장소에 레코드가 여러 개 생성될 것입니다 - 각 레코드는 각 단계의 상태를 설명함.
 
-The Scheduler also runs as part of a worker role and implements the business logic that handles the order. An instance of the Scheduler polling for new orders examines the state store for records where the `LockedBy` field is null and the `ProcessState` field is pending. When the Scheduler finds a new order, it immediately populates the `LockedBy` field with its own instance ID, sets the `CompleteBy` field to an appropriate time, and sets the `ProcessState` field to processing. The code is designed to be exclusive and atomic to ensure that two concurrent instances of the Scheduler can't try to handle the same order simultaneously.
+스케줄러는 또 작업자 역할의 일부로 실행되고 주문을 처리하는 비즈니스 로직을 구현합니다. 새 주문을 폴링하는 스케줄러의 인스턴스는 상태 저장소에서 `LockedBy` 필드가 null이고, `ProcessState` 필드가 보류인 레코드를 검사합니다. 스케줄러가 새 주문을 찾으면, 즉시 `LockedBy` 필드를 자신의 인스턴스 ID로, `CompleteBy` 필드를 적절한 시간으로, `ProcessState` 필드를 처리 중으로 설정합니다. 코드는 스케줄러의 동시성 인스턴스 2개가 동일한 주문을 동시에 처리하는 것을 시도할 수 없게 기본적이고 배타적으로 설계되었습니다.
 
-The Scheduler then runs the business workflow to process the order asynchronously, passing it the value in the `OrderID` field from the state store. The workflow handling the order retrieves the details of the order from the orders database and performs its work. When a step in the order processing workflow needs to invoke the remote service, it uses an Agent. The workflow step communicates with the Agent using a pair of Azure Service Bus message queues acting as a request/response channel. The figure shows a high level view of the solution.
+스케줄러는 상태 저장소에서 `OrderID` 필드 값을 넘겨받으며 주문을 비동기식으로 처리하기 위해서 비즈니스 워크플로를 실행합니다 주문을 처리하는 워크플로는 주문 데이터베이스에서 세부 주문 사항을 검색하고 그 작업을 수행합니다. 워크플로를 처리하는 주문에서 어떤 단계가 원격 서비스를 호출할 필요가 있으면, 에이전트를 사용합니다. 워크플로 단계는 요청/응답 채널로 작용하는 한 쌍의 Azure 서비스 버스 메시지 큐를 사용하여 에이전트와 통신합니다. 그림은 상위 수준의 관점에서 솔루션을 보여줍니다.
 
 ![Figure 2 - Using the Scheduler Agent Supervisor pattern to handle orders in a Azure solution](./_images/scheduler-agent-supervisor-solution.png)
 
