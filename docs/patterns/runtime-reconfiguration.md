@@ -12,83 +12,83 @@ pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories: [design-implementation, management-monitoring]
 ---
 
-# Runtime Reconfiguration
+# 런타임 재구성
 
 [!INCLUDE [header](../_includes/header.md)]
 
-Design an application so that it can be reconfigured without requiring redeployment or restarting the application. This helps to maintain availability and minimize downtime.
+응용 프로그램은 응용 프로그램을 재배포 또는 재시작할 필요 없이 재구성할 수 있도록 설계합니다.  이렇게 하면 가용성을 유지하고 다운타임을 최소화할 수 있습니다. 
 
-## Context and problem
+## 컨텍스트와 문제점
 
-A primary goal for applications such as commercial and business websites is to minimize downtime and interruption to customers and users. Sometimes it's necessary to reconfigure the application to change specific behavior or settings while it's deployed and in use. Therefore, it's an advantage for the application to be designed to allow these configuration changes to be applied while it's running, and for the components of the application to detect the changes and apply them as soon as possible.
+상용 및 비즈니스 웹사이트와 같은 응용 프로그램의 기본 목적은 다운타임을 줄이고 고객 및 사용자의 사용 중단을 최소화하는 것입니다.  응용 프로그램을 배포 또는 사용 중에 특정한 동작이나 설정을 변경하도록 재구성해야 하는 경우가 있습니다. 그러므로, 응용 프로그램이 실행되는 동안 이러한 구성 변경을 적용할 수 있고, 프로그램의 구성요소가 그 변경 내용을 최대한 빨리 감지하여 적용하도록 설계한 것은 큰 장점입니다. 
 
-Examples of the kinds of configuration changes to be applied might be adjusting the granularity of logging to assist in debugging a problem with the application, swapping connection strings to use a different data store, or turning on or off specific sections or functionality of the application.
+이와 같은 구성 변경이 적용된 예는 로깅 단위를 조정하여 응용 프로그램의 문제점을 디버깅하는 것을 지원하거나, 연결 문자열을 전환하여 다른 데이터 저장소를 사용하는 것, 또는 응용 프로그램의 특정 기능 섹션을 끄거나 켜는 것 등입니다. 
 
-## Solution
+## 솔루션
 
-The solution for implementing this pattern depends on the features available in the application hosting environment. Typically, the application code will respond to one or more events that are raised by the hosting infrastructure when it detects a change to the application configuration. This is usually the result of uploading a new configuration file, or in response to changes in the configuration through the administration portal or by accessing an API.
+이러한 패턴 구현의 솔루션은 응용 프로그램 호스팅 환경에서 사용할 수 있는 기능에 좌우됩니다. 일반적으로, 응용 프로그램 코드는 응용 프로그램 구성에 대한 변경 내용을 감지하면  호스팅 인프라에 의해 발생한 하나 이상의 이벤트에 응답합니다. 이는 대개 새로운 구성 파일을 업로드한 결과이거나 API에 액세스함으로써 관리 포털을 통해 구성의 변경 내용에 대한 응답입니다.
 
-Code that handles the configuration change events can examine the changes and apply them to the components of the application. These components have to detect and react to the changes, and so the values they use will usually be exposed as writable properties or methods that the code in the event handler can set to new values or execute. From this point, the components should use the new values so that the required changes to the application behavior occur.
+구성 변경 이벤트를 처리하는 코드는 변경 내용을 검사하고 이를 응용 프로그램의 구성 요소에 적용할 수 있습니다. 이 구성 요소는 변경 내용을 감지하고 이에 대응해야 합니다. 그러므로 구성 요소에 사용되는 값은 대개 이벤트 처리기의 코드가 새 값으로 설정하거나 실행할 수 있는 쓰기 가능 속성 또는 메서드로 표시됩니다.  이 때부터 구성 요소는 응용 프로그램 동작에 필요한 변경 내용이 발생하도록 새로운 값을 사용합니다. 
 
-If it isn't possible for the components to apply the changes at runtime, it'll be necessary to restart the application so that these changes are applied when the application starts up again. In some hosting environments it's possible to detect these types of changes, and indicate to the environment that the application must be restarted. In other cases it might be necessary to implement code that analyses the setting changes and forces an application restart when necessary.
+구성 요소에서 런타임에 변경 내용을 적용할 수 없는 경우, 응용 프로그램을 다시 시작할 때 이 변경 내용이 적용되도록 응용 프로그램을 다시 시작해야 합니다.  일부 호스팅 환경에서는 이런 종류의 변경 내용을 감지하고, 응용 프로그램을 다시 시작해야 한다는 것을 해당 환경에 표시하는 것이 가능합니다. 또 다른 경우, 설정 변경 내용을 분석하고 필요에 따라 응용 프로그램을 강제로 다시 시작하는 코드를 구현해야 할 수 있습니다.
 
-The figure shows an overview of this pattern.
+그림은 이러한 패턴의 개요를 보여 줍니다.
 
 ![Figure 1 - A basic overview of this pattern](./_images/runtime-reconfiguration-pattern.png)
 
 
-Most environments expose events raised in response to configuration changes. In those that don't, it will be necessary to have a polling mechanism that regularly checks for changes to the configuration and applies these changes. It might also be necessary to restart the application if the changes can't be applied at runtime. For example, it's possible to compare the date and time of a configuration file at preset intervals, and run code to apply the changes when a newer version is found. Another approach is to incorporate a control in the administration UI of the application, or expose a secured endpoint that can be accessed from outside the application, that executes code that reads and applies the updated configuration.
+대부분의 환경은 구성 변경으로 인해 발생한 이벤트를 표시합니다. 그렇지 않은 경우, 구성에 대한 변경을 정기적으로 확인하여 변경 내용을 적용하는 폴링 메커니즘이 있어야 합니다.  또한, 변경 내용이 런타임에 적용할 수 없는 경우 응용 프로그램을 다시 시작해야 합니다. 예를 들어, 사전에 설정된 간격으로 구성 파일의 날짜와 시간을 비교하고, 새 버전이 발견되면 변경 내용을 적용하는 코드를 실행할 수 있습니다. 또 다른 방식은 응용 프로그램의 관리 UI에 제어를 통합하거나, 응용 프로그램 외부에서 액세스할 수 있는 보안 끝점을 노출하여, 업데이트된 구성을 읽고 적용하는 코드를 실행하도록 하는 것입니다.
 
-Alternatively, the application can react to some other change in the environment. For example, occurrences of a specific runtime error might change the logging configuration to automatically collect additional information, or the code could use the current date to read and apply a theme that reflects the season or a special event.
+또는 응용 프로그램이 해당 환경의 일부 다른 변경 내용에 대응할 수 있습니다. 예를 들어, 특정 런타임 오류의 발생으로 로깅 구성이 변경되어 추가 정보를 자동 수집하거나, 코드가 현재 날짜를 사용해 시즌이나 특별 이벤트를 반영하는 테마를 읽고 적용할 수 있습니다.
 
-## Issues and considerations
+## 문제점과 고려 사항
 
-Consider the following points when deciding how to implement this pattern:
+이러한 패턴의 구현 방식을 결정할 때 다음 사항을 고려합니다.
 
-The configuration settings must be stored outside of the deployed application so they can be updated without requiring the entire package to be redeployed. Typically, the settings are stored in a configuration file, or in an external repository such as a database or online storage. Access to the runtime configuration mechanism should be strictly controlled, as well as strictly audited when used.
+구성 설정은 배포된 응용 프로그램 외부에 저장해야 패키지 전체를 다시 배포하지 않고도 업데이트할 수 있습니다. 일반적으로 설정은 구성 파일 또는 데이터베이스나 온라인 저장소와 같은 외부 리포지토리에 저장됩니다. 런타임 구성 메커니즘에 대한 액세스는 엄격하게 제어해야 하며, 사용할 때도 철저하게 감사해야 합니다.
 
-If the hosting infrastructure doesn't automatically detect configuration change events, and expose these events to the application code, you must implement an alternative mechanism to detect and apply the changes. This can be through a polling mechanism, or by exposing an interactive control or endpoint that initiates the update process.
+호스팅 인프라가 구성 변경 이벤트를 자동 감지하지 않고 응용 프로그램 코드에 이 이벤트를 표시하지 않는다면, 변경을 감지하고 적용할 다른 메커니즘을 구현해야 합니다.  이는 폴링 메커니즘을 사용하거나 업데이트 프로세스를 시작하는 대화형 제어 또는 끝점을 표시함으로써 가능합니다.
 
-If you need to implement a polling mechanism, consider how often checks for updates to the configuration should take place. A long polling interval means that changes might not be applied for some time. A short interval might adversely affect operation by absorbing available compute and I/O resources.
+폴링 메커니즘을 구현해야 하는 경우, 구성 업데이트 확인을 얼마나 자주 수행할 지 고려합니다. 폴링 간격이 길면 일정 시간 동안 변경 내용이 적용되지 않을 수 있습니다. 간격이 짧으면 사용 가능한 게산 및 I/O 리소스를 포함함으로써 운영에 좋지 않은 영향을 줄 수 있습니다. 
 
-If there's more than one instance of the application, additional factors should be considered, depending on how changes are detected. If changes are detected automatically through events raised by the hosting infrastructure, they might not be detected by all application instances at the same time. This means that some instances will be using the original configuration for a period while others will use the new settings. If the update is detected through a polling mechanism, this must communicate the change to all instances in order to maintain consistency.
+응용 프로그램에 하나 이상의 인스턴스가 있는 경우, 변경 감지 방식에 따라 추가 요소를 고려해야 합니다. 호스팅 인프라에 의해 발생한 이벤트를 통해 변경이 자동 감지되는 경우, 모든 응용 프로그램 인스턴스가 같은 시간에 변경을 감지하지 않을 수 있습니다. 즉, 일정 기간 동안 원래의 구성을 사용하는 인스턴스가 일부 있고, 새로운 설정을 사용하는 인스턴스도 있습니다. 폴링 메커니즘을 통해 업데이트를 감지하는 경우, 이는 모든 인스턴스에 변경 내용을 전달해 일관성을 유지해야 합니다. 
 
-Some configuration changes require the application to be restarted, or even require the hosting server to be rebooted. You must identify these types of configuration settings and perform the appropriate action for each one. For example, a change that requires the application be restarted might do this automatically, or it might be the responsibility of the administrator to initiate the restart when the application isn't under excessive load and other instances of the application can handle the load.
+일부 구성 변경은 응용 프로그램을 다시 시작해야 하며, 호스팅 서버를 재부팅해야 하는 경우도 있습니다. 이런 종류의 구성 설정을 식별하고 각각에 적절한 작업을 수행해야 합니다. 예를 들어, 응용 프로그램을 다시 시작해야 하는 변경에 대해 이를 자동으로 수행하는 경우가 있고 또는 응용 프로그램이 과도한 로드에 있지 않고 응용 프로그램의 다른 인스턴스가 부하를 처리할 수 있는 경우 관리자가 다시 시작해야 하는 경우도 있습니다. 
 
-Plan for a staged rollout of updates and confirm they're successful, and that the updated application instances are performing correctly, before applying the update to all instances. This can prevent a total outage of the application should an error occur. Where the update requires a restart or a reboot of the application, particularly where the application has a significant start up or warm up time, use a staged rollout to prevent multiple instances being offline at the same time.
+업데이트를 모든 인스턴스에 적용하기 전에, 업데이트의 단계별 롤아웃을 계획하고, 업데이트의 성공적 수행 여부와 업데이트된 응용 프로그램 인스턴스가 정확하게 작동하고 있는지 확인합니다. 이를 통해 오류 발생의 경우 전체 응용 프로그램의 중단을 방지할 수 있습니다. 업데이트로 인해 응용 프로그램을 다시 시작하거나 다시 부팅해야 하는 경우, 특히 응용 프로그램의 시작 또는 웜업 시간이 오래 걸리는 경우라면 단계별 롤아웃을 통해 여러 인스턴스가 동시에 오프라인되지 않도록 합니다. 
 
-Consider how you'll roll back configuration changes that cause issues, or that result in failure of the application. For example, it should be possible to roll back a change immediately instead of waiting for a polling interval to detect the change.
+문제를 야기하거나 응용 프로그램의 실패를 초래하는 구성 변경은 어떻게 롤백할지 고려합니다. 예를 들어, 변경 내용을 감지하는 폴링 간격을 기다리지 않고 즉시 변경을 롤백할 수 있어야 합니다. 
 
-Consider how the location of the configuration settings might affect application performance. For example, handle any errors that might occur if the external store is unavailable when the application starts, or when configuration changes are applied. You can do this using a default configuration or by caching the settings locally on the server and reusing these values while retrying access to the remote data store.
+구성 설정의 위치가 어떻게 응용 프로그램 성능에 영향을 줄 수 있는지 고려합니다. 예를 들어, 응용 프로그램을 시작하거나 구성 변경 내용을 적용할 때 외부 저장소를 사용할 수 없는 경우 발생하는 오류를 처리해야 합니다. 기본 구성을 사용하거나, 또는 설정을 서버에 로컬로 캐싱하여 원격 데이터 저장소에 액세스를 시도하는 동안 이 값을 다시 사용하는 방법이 있습니다. 
 
-Caching can help to reduce delays if a component needs to repeatedly access configuration settings. However, when the configuration changes, the application code has to invalidate the cached settings, and the component must use the updated settings.
+캐싱을 사용하면 구성 요소가 구성 설정에 계속 액세스해야 하는 경우 지연을 줄일 수 있습니다. 그러나, 구성이 변경되면 응용 프로그램 코드는 캐싱된 설정을 무효화하고 구성 요소는 업데이트된 설정을 사용해야 합니다. 
 
-## When to use this pattern
+## 패턴을 언제 사용할 것인가
 
-This pattern is useful for:
+이 방식은 다음과 같은 경우에 권장합니다:
 
-- Applications that have to avoid all unnecessary downtime, while still being able to apply changes to the application configuration.
+- 불필요한 모든 다운타임을 방지해야 하는 응용 프로그램, 변경 내용을 응용 프로그램 구성에 계속 적용할 수 있어야 함. 
 
-- Environments that expose events raised automatically when the main configuration changes. Typically this is when a new configuration file is detected, or when changes are made to an existing configuration file.
+- 주요 구성이 변경되어 자동으로 발생한 이벤트를 표시한 환경. 일반적으로 새 구성 파일이 감지되거나, 기존 구성 파일이 변경되었을 때입니다. 
 
-- Applications where the configuration changes often and the changes can be applied to components without requiring the application to be restarted, or without requiring the hosting server to be rebooted.
+- 구성이 자주 변경되고 응용 프로그램을 다시 시작하거나 호스팅 서버를 다시 부팅하지 않고도 변경 내용을 구성 요소에 적용할 수 있는 응용 프로그램. 
 
-This pattern might not be useful if the runtime components are designed so they can only be configured at initialization time, and the effort of updating those components can't be justified in comparison to restarting the application and enduring a short downtime.
+런타임 구성 요소가 초기화에서만 구성할 수 있도록 설계된 경우 이 패턴은 적절하지 않을 수 있으며, 그러한 구성 요소를 업데이트하는 작업이 응용 프로그램을 다시 시작하고 짧은 다운타임을 감내하는 것에 비해 타당하지 않을 수 있습니다.
 
-## Example
+## 예시
 
-Microsoft Azure Cloud Services roles detect and expose two events that are raised when the hosting environment detects a change to the ServiceConfiguration.cscfg files:
+Microsoft Azure 클라우드 서비스 역할은 호스팅 환경이 ServiceConfiguration.cscfg 파일의 변경을 감지했을 때 발생하는 두 가지 이벤트를 감지하고 표시합니다. 
 
-- **RoleEnvironment.Changing**. This event is raised after a configuration change is detected, but before it's applied to the application. You can handle the event to query the changes and to cancel the runtime reconfiguration. If you cancel the change, the web or worker role will be restarted automatically so that the new configuration is used by the application.
-- **RoleEnvironment.Changed**. This event is raised after the application configuration has been applied. You can handle the event to query the changes that were applied.
+- **RoleEnvironment.Changing**. 이 이벤트는 구성 변경이 감지된 후 응용 프로그램에 적용하기 전에 발생합니다. 이벤트를 처리해 변경 내용을 조회하고 런타임 재구성을 취소할 수 있습니다. 변경을 취소하는 경우, 응용 프로그램에서 새 구성을 사용하도록 웹 또는 작업자 역할이 자동으로 재시작됩니다.
+- **RoleEnvironment.Changed**. 이 이벤트는 응용 프로그램 구성이 적용된 후 발생합니다. 이벤트를 처리해 적용된 변경 내용을 조회할 수 있습니다.
 
-When you cancel a change in the `RoleEnvironment.Changing` event you're indicating to Azure that a new setting can't be applied while the application is running, and that it must be restarted in order to use the new value. Effectively, you'll cancel a change only if your application or component can't react to the change at runtime, and requires a restart in order to use the new value.
+`RoleEnvironment.Changing` 이벤트의 변경을 취소하는 것은, 응용 프로그램이 실행되는 동안 새 설정을 적용할 수 없으며 새 값을 사용하려면 응용 프로그램을 다시 시작해야 한다는 것을 Azure에 표시하는 것입니다. 실제로는, 런타임 중 응용 프로그램 또는 구성 요소가 변경에 대응할 수 없고 새 값을 사용하려면 다시 시작해야 하는 경우에만 변경을 취소합니다.
 
-> For more information, see [RoleEnvironment.Changing Event](https://msdn.microsoft.com/library/azure/microsoft.windowsazure.serviceruntime.roleenvironment.changing.aspx).
+> 자세한 내용은 [RoleEnvironment.Changing 이벤트](https://msdn.microsoft.com/library/azure/microsoft.windowsazure.serviceruntime.roleenvironment.changing.aspx)를 참조하십시오.
 
-To handle the `RoleEnvironment.Changing` and `RoleEnvironment.Changed` events you typically add a custom handler to the event. For example, the following code from the `Global.asax.cs` class (in the Runtime Reconfiguration solution available from [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/runtime-reconfiguration)) shows how to add a custom function named `RoleEnvironment_Changed` to the event handler chain. This is from the Global.asax.cs file of the example.
+`RoleEnvironment.Changing` 및 `RoleEnvironment.Changed` 이벤트를 처리하려면, 일반적으로 이벤트에 사용자 지정 처리기를 추가합니다.  예를 들어, `Global.asax.cs` 클래스의 다음 코드는([GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/runtime-reconfiguration)에 있는 런타임 재구성 솔루션에 포함) 이름이 `RoleEnvironment_Changed` 인 사용자 지정 기능을 어떻게 이벤트 처리기 체인에 추가하는지 보여 줍니다. 이는 예시 Global.asax.cs 파일에서 가져왔습니다.
 
-> The examples for this pattern are in the RuntimeReconfiguration.Web project of the RuntimeReconfiguration solution.
+> 이 패턴의 예시는 RuntimeReconfiguration 솔루션의 RuntimeReconfiguration.Web 프로젝트에 있습니다.
 
 ```csharp
 protected void Application_Start(object sender, EventArgs e)
@@ -111,13 +111,13 @@ public override bool OnStart()
 }
 ```
 
-Be aware that, in the case of web roles, the `OnStart` event handler runs in a separate process from the web application process. This is why you typically handle the `RoleEnvironment.Changed` event handler in the Global.asax file so that you can update the runtime configuration of your web application, and the `RoleEnvironment.Changing` event in the role. In the case of a worker role, you can subscribe to both the `RoleEnvironment.Changing` and `RoleEnvironment.Changed` events in the `OnStart` event handler.
+웹 역할의 경우 `OnStart` 이벤트 처리기는 웹 응용 프로그램 프로세스와는 다른 프로세스에서 실행됩니다. 그렇기 때문에 일반적으로 웹 응용 프로그램의 런타임 구성과 그 역할의 `RoleEnvironment.Changing` 이벤트를 업데이트할 수 있도록 Global.asax 파일의 `RoleEnvironment.Changed` 이벤트 처리기를 처리하는 것입니다. 작업자 역할의 경우, `RoleEnvironment.Changing` 및 `RoleEnvironment.Changed` 이벤트 모두 `OnStart` 이벤트 처리기로 구독할 수 있습니다. 
 
-> You can store custom configuration settings in the service configuration file, in a custom configuration file, in a database such as Azure SQL Database or SQL Server in a Virtual Machine, or in Azure blob or table storage. You'll need to create code that can access the custom configuration settings and apply these to the application&mdash;typically by setting the properties of components in the application.
+> 사용자 지정 구성 설정을 서비스 구성 파일, 사용자 지정 구성 파일, Azure SQL 데이터베이스나 SQL 서버와 같은 가상 컴퓨터 내의 데이터베이스, 또는 Azure Blob나 테이블 저장소에 저장할 수 있습니다.  사용자 지정 구성 설정에 액세스하여 이를 응용 프로그램에 적용할 수 있는 코드를 만들어야 하며, 대개는 응용 프로그램의 구성 요소 속성을 설정하여 수행합니다.
 
-For example, the following custom function reads the value of a setting from the Azure service configuration file and then applies it to the current instance of a runtime component named `SomeRuntimeComponent`. This is from the Global.asax.cs file of the example.
+예를 들어 다음 사용자 지정 기능은 Azure 서비스 구성 파일에서 설정 값을 읽은 다음 `SomeRuntimeComponent` 라는 런타임 구성 요소의 현재 인스턴스에 이를 적용합니다. 이는 예시 Global.asax.cs 파일에서 가져왔습니다.
 
-> Some configuration settings, such as those for Windows Identity Framework, can't be stored in the Azure service configuration file and must be in the App.config or Web.config file.
+> Windows Identify Framework의 구성 설정 등 일부 구성 설정은 Azure 서비스 구성 파일에 저장할 수 없으며 App.config 또는 Web.config 파일에 저장해야 합니다. 
 
 ```csharp
 private static void ConfigureFromSetting(string settingName)
@@ -127,13 +127,13 @@ private static void ConfigureFromSetting(string settingName)
 }
 ```
 
-In Azure, some configuration changes are detected and applied automatically. This includes the configuration of the Azure diagnostics system in the Diagnostics.wadcfg file that specifies the types of information to collect and how to persist the log files. Therefore, it's only necessary to write code that handles the custom settings you add to the service configuration file. Your code should either:
+Azure에서 일부 구성 변경 내용은 자동으로 감지되고 적용됩니다.  여기에는, Diagnostics.wadcfg 파일로 된 Azure 진단 시스템의 구성이 포함되며, 이는 수집 정보의 종류 및 로그 파일 보관 방식을 지정합니다.  그러므로, 서비스 구성 파일에 추가할 사용자 지정 설정을 처리하는 코드를 만드는 것이 필요합니다. 코드는 다음 중 하나를 수행합니다.
 
-- Apply the custom settings from an updated configuration to the appropriate components of your application at runtime so that their behavior reflects the new configuration.
+- 업데이트된 구성의 사용자 지정 설정을 런타임에 응용 프로그램의 해당 구성 요소에 적용하여 새로운 구성을 작동에 반영하도록 합니다.
 
-- Cancel the change to tell Azure that the new value can't be applied at runtime, and that the application must be restarted in order for the change to be applied.
+- 런타임에 새로운 값을 적용할 수 없으며 변경 내용을 적용하려면 응용 프로그램을 다시 시작해야 한다고 Azure에 알리도록 변경을 취소합니다. 
 
-For example, the following code shows how you can use the `RoleEnvironment.Changing` event to cancel the update for all settings except the ones that can be applied at runtime without requiring a restart. This example allows a change to the "CustomSetting" to be applied at runtime without restarting the application. The component that uses this setting will be able to read the new value and change its behavior accordingly at runtime. Any other change to the configuration will automatically cause the web or worker role to restart.
+예를 들어, 다음 코드는 `RoleEnvironment.Changing` 이벤트를 사용해 재시작 없이 런타임 중에 적용할 수 있는 설정을 제외한 모든 설정의 업데이트를 취소하는 방법을 나타냅니다. 이 예시를 사용하면 응용 프로그램을 다시 시작하지 않고 런타임 중에 'CustomSetting'의 변경 내용을 적용할 수 있습니다. 이 설정을 사용하는 구성 요소는 새로운 값을 읽고 그에 따라 런타임 중에 동작을 변경할 수 있습니다. 기타 다른 구성 요소 변경 내용으로 인해 웹 또는 작업자 역할이 자동으로 다시 시작됩니다.
 
 ```csharp
 private void RoleEnvironment_Changing(object sender,
@@ -163,9 +163,9 @@ private void RoleEnvironment_Changing(object sender,
 }
 ```
 
-> This approach demonstrates good practice because it ensures that a change to any setting that the application code isn't aware of (and so can't be sure it can be applied at runtime) will cause a restart. If any one of the changes is canceled, the role will be restarted.
+> 이 방식은 응용 프로그램 코드에서 인식하지 못하는(런타임 중에 적용할 수 있는지 확인 불가) 설정 변경으로 인해 재시작되기 때문에 모범 사례가 됩니다. 이런 변경 내용 중 하나라도 취소되면 역할이 다시 시작됩니다. 
 
-Updates that aren't canceled in the `RoleEnvironment.Changing` event handler can then be detected and applied to the application components after the new configuration has been accepted by the Azure framework. For example, the following code in the `Global.asax` file of the example solution handles the `RoleEnvironment.Changed` event. It examines each configuration setting and, when it finds the “CustomSetting”, calls a function that applies the new setting to the appropriate component in the application.
+`RoleEnvironment.Changing` 이벤트 처리기에서 취소되지 않은 업데이트는 이후에 감지되어 Azure 프레임워크에서 새로운 구성 요소를 승인한 후 응용 프로그램 구성 요소에 적용할 수 있습니다. 예를 들어, 샘플 솔루션의 `Global.asax` 파일에 있는 다음 코드는 `RoleEnvironment.Changed` 이벤트를 처리합니다. 각 구성 설정을 검사하고, 'CustomSetting'을 발견하면 새 설정을 응용 프로그램의 해당 구성 요소에 적용할 기능을 호출합니다.
 
 ```csharp
 private void RoleEnvironment_Changed(object sender,
@@ -187,9 +187,9 @@ private void RoleEnvironment_Changed(object sender,
 }
 ```
 
-Note that if you fail to cancel a configuration change, but don't apply the new value to your application component, then the change won't take effect until the next time that the application is restarted. This can lead to unpredictable behavior, particularly if the hosting role instance is restarted automatically by Azure as part of its regular maintenance operations&mdash;at which point the new setting value will be applied.
+구성 변경을 취소하지 못했지만 새로운 값을 응용 프로그램 구성 요소에 적용하지 않는 경우, 이후 응용 프로그램을 다시 시작할 때까지 변경 내용이 적용되지 않습니다. 이는 특히 호스팅 역할 인스턴스가 Azure에 의해 정기 유지 관리 작업의 일부로 자동으로 재시작되는 경우(이 시점부터 새 설정값이 적용됩니다), 예상치 못한 동작이 발생할 수 있습니다.
 
-## Related patterns and guidance
+## 관련 패턴 및 지침
 
-- A sample that demonstrates this pattern is available on [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/runtime-reconfiguration).
-- Moving configuration information out of the application deployment package to a centralized location can provide easier management and control of configuration data, and allows sharing of configuration data across applications and application instances. For more information, see [External Configuration Store pattern](external-configuration-store.md).
+- 이 패턴을 잘 보여주는 예시는 [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/runtime-reconfiguration)에 나타나 있습니다.
+- 응용 프로그램 배지 패키지에서 중앙 위치로 구성 정보를 이동하면 구성 데이터의 관리와 제어가 간편해 지고, 응용 프로그램 및 응용 프로그램 인스턴스 간에 구성 데이터를 공유할 수 있습니다. 자세한 내용은 [외부 구성 저장소 패턴](external-configuration-store.md)을 참조하십시오.
