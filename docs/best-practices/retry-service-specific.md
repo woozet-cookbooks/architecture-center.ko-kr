@@ -24,32 +24,32 @@ pnp.series.title: Best Practices
 | **[Entity Framework를 사용하는 SQL 데이터베이스](#sql-database-using-entity-framework-6-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |AppDomain에 따라 전역 |없음 |
 | **[ADO.NET을 사용하는 SQL 데이터베이스](#azure-storage-retry-guidelines)** |Topaz* |선언적 및 프로그래밍 방식 |코드의 단일 문 또는 블록 |사용자 지정 |
 | **[서비스 버스](#service-bus-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |네임스페이스 관리자, 메시징 팩터리 및 클라이언트 |ETW |
-| **[Azure Redis Cache](#azure-redis-cache-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |Client |TextWriter |
-| **[DocumentDB](#documentdb-retry-guidelines)** |Native in service |Non-configurable |Global |TraceSource |
-| **[Azure Search](#azure-storage-retry-guidelines)** |Native in client |Programmatic |Client |ETW or Custom |
-| **[Active Directory](#azure-active-directory-retry-guidelines)** |Topaz* (with custom detection strategy) |Declarative and programmatic |Blocks of code |Custom |
+| **[Azure Redis Cache](#azure-redis-cache-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |클라이언트 |TextWriter |
+| **[DocumentDB](#documentdb-retry-guidelines)** |서비스에서 기본 지원 |구성할 수 없음 |전역 |TraceSource |
+| **[Azure Search](#azure-storage-retry-guidelines)** |클라이언트에서 기본 지원 |프로그래밍 방식 |클라이언트 |ETW 또는 사용자 지정 |
+| **[Active Directory](#azure-active-directory-retry-guidelines)** |Topaz*(사용자 지정 검색 전략 포함) |선언적 및 프로그래밍 방식 |코드의 블록 |사용자 지정 |
 
-*Topaz in the friendly name for the Transient Fault Handling Application Block that is included in [Enterprise Library 6.0][entlib]. You can use a custom detection strategy with Topaz for most types of services, as described in this guidance. Default strategies for Topaz are shown in the section [Transient Fault Handling Application Block (Topaz) strategies](#transient-fault-handling-application-block-topaz-strategies) at the end of this guidance. Note that the block is now an open-sourced framework and is not directly supported by Microsoft.
+*Topaz는 [Enterprise Library 6.0][entlib]에 포함된 일시적 오류 처리 응용 프로그램 블록에 대한 식별 이름입니다. 이 가이드에 설명되어 있듯이 대부분 유형의 서비스에는 Topaz와 사용자 지정 검색 전략을 사용할 수 있습니다. Topaz에 대한 기본 전략은 본 가이드 끝의 [일시적 오류 처리 응용 프로그램 블록(Topaz) 전략](#transient-fault-handling-application-block-topaz-strategies) 섹션에 나와 있습니다. 블록은 현재 오픈 소스 프레임워크이며 Microsoft가 직접 지원하지 않습니다. 
 
-> [!NOTE]
-> For most of the Azure built-in retry mechanisms, there is currently no way apply a different retry policy for different types of error or exception beyond the functionality include in the retry policy. Therefore, the best guidance available at the time of writing is to configure a policy that provides the optimum average performance and availability. One way to fine-tune the policy is to analyze log files to determine the type of transient faults that are occurring. For example, if the majority of errors are related to network connectivity issues, you might attempt an immediate retry rather than wait a long time for the first retry.
+> [!참고]
+> 대부분의 Azure 기본 제공 다시 시도 메커니즘에서는 다시 시도 정책에 포함된 기능을 넘어서 오류 또는 예외 유형에 따라 서로 다른 다시 시도 정책을 적용할 방법이 없습니다. 따라서 작성 시 사용할 수 있는 최상의 지침은 최적의 평균 성능과 가용성을 제공하는 정책을 구성하는 것입니다. 정책을 미세 조정하는 한 가지 방법은 로그 파일을 분석하여 발생하는 일시적 오류의 유형을 확인하는 것입니다. 예를 들어 대부분의 오류가 네트워크 연결 문제와 관련된 경우, 첫 번째 다시 시도를 위해 오랜 시간 기다리기 보다 즉시 다시 시도를 수행할 수 있습니다. 
 >
 >
 
-## Azure Storage retry guidelines
-Azure storage services include table and blob storage, files, and storage queues.
+## Azure 저장소 다시 시도 지침
+Azure 저장소 서비스에는 테이블과 blob 저장소, 파일 및 저장소 큐가 포함되어 있습니다. 
 
-### Retry mechanism
-Retries occur at the individual REST operation level and are an integral part of the client API implementation. The client storage SDK uses classes that implement the [IExtendedRetryPolicy Interface](http://msdn.microsoft.com/library/microsoft.windowsazure.storage.retrypolicies.iextendedretrypolicy.aspx).
+### 다시 시도 메커니즘
+다시 시도는 개별 REST 작업 수준에서 이루어지며 클라이언트 API 구현의 중요한 부분입니다. 클라이언트 저장소 SDK는 [IExtendedRetryPolicy 인터페이스](http://msdn.microsoft.com/library/microsoft.windowsazure.storage.retrypolicies.iextendedretrypolicy.aspx)를 구현하는 클래스를 사용합니다.
 
-There are different implementations of the interface. Storage clients can choose from policies specifically designed for accessing tables, blobs, and queues. Each implementation uses a different retry strategy that essentially defines the retry interval and other details.
+인터페이스 구현은 여러 가지가 있습니다. 저장소 클라이언트는 테이블, blob 및 큐에 액세스하기 위해 특별히 설계된 정책에서 선택할 수 있습니다. 각 구현에서는 기본적으로 다시 시도 간격 및 기타 세부 정보를 정의하는 서로 다른 다시 시도 전략을 사용합니다. 
 
-The built-in classes provide support for linear (constant delay) and exponential with randomization retry intervals. There is also a no retry policy for use when another process is handling retries at a higher level. However, you can implement your own retry classes if you have specific requirements not provided by the built-in classes.
+기본 제공 클래스는 불규칙 다시 시도 간격으로 선형(일정한 지연) 및 지수를 지원합니다. 또한 다른 프로세스가 더 높은 수준에서 다시 시도를 처리하는 경우 사용할 다시 시도 정책이 없습니다. 그러나 기본 제공 클래스에서 제공하지 않는 특정 요구 사항이 있는 경우, 고유한 다시 시도 클래스를 구현할 수 있습니다. 
 
-Alternate retries switch between primary and secondary storage service location if you are using read access geo-redundant storage (RA-GRS) and the result of the request is a retryable error. See [Azure Storage Redundancy Options](http://msdn.microsoft.com/library/azure/dn727290.aspx) for more information.
+RA-GRS(읽기 액세스 지역 중복 저장소)를 사용하고 요청의 결과가 다시 시도 가능한 오류인 경우, 기본과 보조 저장소 서비스 위치 간에 대체 다시 시도가 전환됩니다. 자세한 내용은 [Azure 저장소 중복 옵션](http://msdn.microsoft.com/library/azure/dn727290.aspx)을 참조하세요.
 
-### Policy configuration
-Retry policies are configured programmatically. A typical procedure is to create and populate a **TableRequestOptions**, **BlobRequestOptions**, **FileRequestOptions**, or **QueueRequestOptions** instance.
+### 정책 구성
+다시 시도 정책은 프로그래밍 방식으로 구성됩니다. 일반적인 절차는 **TableRequestOptions**, **BlobRequestOptions**, **FileRequestOptions**, 또는 **QueueRequestOptions** 인스턴스를 만들고 채우는 것입니다.
 
 ```csharp
 TableRequestOptions interactiveRequestOption = new TableRequestOptions()
@@ -63,20 +63,20 @@ TableRequestOptions interactiveRequestOption = new TableRequestOptions()
 };
 ```
 
-The request options instance can then be set on the client, and all operations with the client will use the specified request options.
+그 다음 요청 옵션 인스턴스를 클라이언트에서 설정할 수 있으며, 클라이언트와 관련된 모든 작업은 지정된 요청 옵션을 사용하게 됩니다. 
 
 ```csharp
 client.DefaultRequestOptions = interactiveRequestOption;
 var stats = await client.GetServiceStatsAsync();
 ```
 
-You can override the client request options by passing a populated instance of the request options class as a parameter to operation methods.
+요청 옵션 클래스에 채워진 인스턴스를 매개변수로 작업 메서드에 전달하여 클라이언트 요청 옵션을 재정의할 수 있습니다.
 
 ```csharp
 var stats = await client.GetServiceStatsAsync(interactiveRequestOption, operationContext: null);
 ```
 
-You use an **OperationContext** instance to specify the code to execute when a retry occurs and when an operation has completed. This code can collect information about the operation for use in logs and telemetry.
+**OperationContext** 인스턴스를 사용하여 다시 시도가 발생할 때와 작업이 완료되었을 때 실행할 코드를 지정합니다. 이 코드는 로그 및 원격 분석에 사용할 작업에 대한 정보를 수집할 수 있습니다.
 
     // Set up notifications for an operation
     var context = new OperationContext();
@@ -91,39 +91,40 @@ You use an **OperationContext** instance to specify the code to execute when a r
     };
     var stats = await client.GetServiceStatsAsync(null, context);
 
-In addition to indicating whether a failure is suitable for retry, the extended retry policies return a **RetryContext** object that indicates the number of retries, the results of the last request, whether the next retry will happen in the primary or secondary location (see table below for details). The properties of the **RetryContext** object can be used to decide if and when to attempt a retry. For more details, see [IExtendedRetryPolicy.Evaluate Method](http://msdn.microsoft.com/library/microsoft.windowsazure.storage.retrypolicies.iextendedretrypolicy.evaluate.aspx).
+확장된 다시 시도 정책은 오류가 다시 시도에 적합한지 여부를 나타낼 뿐만 아니라 다시 시도 횟수, 마지막 요청의 결과, 다음 다시 시도가 기본 또는 보조 위치에서  발생할지를 나타내는 **RetryContext** 개체를 반환합니다(자세한 내용은 아래 표 참조). 개체의 속성은 다시 시도를 시도할 경우 및 시기를 결정하는 데 사용할 수 있습니다. 자세한 내용은 [IExtendedRetryPolicy.Evaluate 메서드](http://msdn.microsoft.com/library/microsoft.windowsazure.storage.retrypolicies.iextendedretrypolicy.evaluate.aspx)를 참조하세요.
 
-The following table shows the default settings for the built-in retry policies.
+다음 표는 기본 제공 다시 시도 정책의 기본 설정을 보여줍니다. 
 
-| **Context** | **Setting** | **Default value** | **Meaning** |
+| **컨텍스트** | **설정** | **기본값** | **의미** |
 | --- | --- | --- | --- |
-| Table / Blob / File<br />QueueRequestOptions |MaximumExecutionTime<br /><br />ServerTimeout<br /><br /><br /><br /><br />LocationMode<br /><br /><br /><br /><br /><br /><br />RetryPolicy |120 seconds<br /><br />None<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />ExponentialPolicy |Maximum execution time for the request, including all potential retry attempts.<br />Server timeout interval for the request (value is rounded to seconds). If not specified, it will use the default value for all requests to the server. Usually, the best option is to omit this setting so that the server default is used.<br />If the storage account is created with the Read access geo-redundant storage (RA-GRS) replication option, you can use the location mode to indicate which location should receive the request. For example, if **PrimaryThenSecondary** is specified, requests are always sent to the primary location first. If a request fails, it is sent to the secondary location.<br />See below for details of each option. |
-| Exponential policy |maxAttempt<br />deltaBackoff<br /><br /><br />MinBackoff<br /><br />MaxBackoff |3<br />4 seconds<br /><br /><br />3 seconds<br /><br />30 seconds |Number of retry attempts.<br />Back-off interval between retries. Multiples of this timespan, including a random element, will be used for subsequent retry attempts.<br />Added to all retry intervals computed from deltaBackoff. This value cannot be changed.<br />MaxBackoff is used if the computed retry interval is greater than MaxBackoff. This value cannot be changed. |
-| Linear policy |maxAttempt<br />deltaBackoff |3<br />30 seconds |Number of retry attempts.<br />Back-off interval between retries. |
+| Table / Blob / File<br />QueueRequestOptions |MaximumExecutionTime<br /><br />ServerTimeout<br /><br /><br /><br /><br />LocationMode<br /><br /><br /><br /><br /><br /><br />RetryPolicy |120초<br /><br />없음<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />ExponentialPolicy |모든 잠재적 다시 시도 횟수를 포함한 요청의 최대 실행 시간입니다.<br />요청에 대한 서버 제한 시간 간격입니다(값은 초로 반올림). 지정되지 않은 경우, 서버에 대한 모든 요청에 기본값이 사용됩니다. 일반적으로 서버 기본값이 사용되도록 이 설정을 생략하는 것이 가장 좋습니다.<br />저장소 계정을 RA-GRS(읽기 액세스 지역 중복 저장소) 복제 옵션을 사용해 만드는 경우, 위치 모드를 사용하여 어떤 위치에서 요청을 수신해야 하는지 표시할 수 있습니다. 예를 들어 **PrimaryThenSecondary** 를 지정하면 요청은 항상 기본 위치로 먼저 전송됩니다. 요청이 실패하면 보조 위치로 전송됩니다.<br />각 옵션에 대한 자세한 내용은 아래를 참조하세요. |
+| 지수 정책 |maxAttempt<br />deltaBackoff<br /><br /><br />MinBackoff<br /><br />MaxBackoff |3<br />4초<br /><br /><br />3초<br /><br />30초 |다시 시도 횟수입니다.<br />다시 시도 사이의 백오프 간격입니다. 임의 요소를 포함해 이 timespan의 배수가 후속 다시 시도 횟수에 사용됩니다.<br />deltaBackoff에서 계산된 모든 다시 시도 간격에 추가됩니다. 이 값은 변경할 수 없습니다.<br />MaxBackoff보다 큰 경우에는 MaxBackoff가 사용됩니다. 이 값은 변경할 수 없습니다. |
+| 선형 정책 |maxAttempt<br />deltaBackoff |3<br />30초 |다시 시도 횟수입니다.<br />다시 시도 사이의 백오프 간격입니다. |
 
-### Retry usage guidance
-Consider the following guidelines when accessing Azure storage services using the storage client API:
+### 다시 시도 사용 지침
+저장소 클라이언트 API를 사용하여 Azure 저장소 서비스에 액세스할 때는 다음 지침을 고려합니다.
 
-* Use the built-in retry policies from the Microsoft.WindowsAzure.Storage.RetryPolicies namespace where they are appropriate for your requirements. In most cases, these policies will be sufficient.
-* Use the **ExponentialRetry** policy in batch operations, background tasks, or non-interactive scenarios. In these scenarios, you can typically allow more time for the service to recover—with a consequently increased chance of the operation eventually succeeding.
-* Consider specifying the **MaximumExecutionTime** property of the **RequestOptions** parameter to limit the total execution time, but take into account the type and size of the operation when choosing a timeout value.
-* If you need to implement a custom retry, avoid creating wrappers around the storage client classes. Instead, use the capabilities to extend the existing policies through the **IExtendedRetryPolicy** interface.
-* If you are using read access geo-redundant storage (RA-GRS) you can use the **LocationMode** to specify that retry attempts will access the secondary read-only copy of the store should the primary access fail. However, when using this option you must ensure that your application can work successfully with data that may be stale if the replication from the primary store has not yet completed.
+•	요구 사항에 적합한 Microsoft.WindowsAzure.Storage.RetryPolicies 네임스페이스에서 기본 제공 다시 시도 정책을 사용합니다. 대부분의 경우에는 이러한 정책들로 충분합니다.
 
-Consider starting with following settings for retrying operations. These are general purpose settings, and you should monitor the operations and fine tune the values to suit your own scenario.  
+•	일괄 작업, 백그라운드 작업 또는 비대화형 시나리오에서는 **ExponentialRetry** 정책을 사용합니다. 이러한 시나리오에서는 일반적으로 서비스가 복구되는 데 더 많은 시간을 허용하여 결과적으로 작업이 성공할 가능성이 높아집니다.
+• **RequestOptions** 매개 변수의 **MaximumExecutionTime** 속성을 지정해서 총 실행 시간을 제한하고 제한 시간 값을 선택할 때 작업의 유형과 크기를 고려하는 것이 좋습니다.
+•	사용자 지정 다시 시도를 구현해야 할 경우에는 저장소 클라이언트 클래스를 감싸는 래퍼를 만들지 않습니다. 대신에 **IExtendedRetryPolicy** 인터페이스를 통해 기존 정책을 확장하는 기능을 사용합니다.
+•	RA-GRS(읽기 액세스 지역 중복 저장소)를 사용하는 경우, 기본 액세스에 실패하면 **LocationMode** 를 사용해 다시 시도에서 저장소의 보조 읽기 전용 복사본에 액세스하도록 지정할 수 있습니다. 그러나 이 옵션을 사용할 때는 기본 저장소에서의 복제가 아직 완료되지 않은 경우에 응용 프로그램이 오래된 데이터에서 성공적으로 작동할 수 있는지 확인해야 합니다.
 
-| **Context** | **Sample target E2E<br />max latency** | **Retry policy** | **Settings** | **Values** | **How it works** |
+다시 시도 작업의 경우 다음 설정을 사용해 시작하는 것이 좋습니다. 이러한 설정은 범용이므로 작업을 모니터링하고 고유한 시나리오에 맞게 값을 미세 조정해야 합니다.  
+
+| **컨텍스트** | **샘플 대상 E2E<br />최대 대기 시간** | **다시 시도 정책** | **설정** | **값** | **작동 방법** |
 | --- | --- | --- | --- | --- | --- |
-| Interactive, UI,<br />or foreground |2 seconds |Linear |maxAttempt<br />deltaBackoff |3<br />500 ms |Attempt 1 - delay 500 ms<br />Attempt 2 - delay 500 ms<br />Attempt 3 - delay 500 ms |
-| Background<br />or batch |30 seconds |Exponential |maxAttempt<br />deltaBackoff |5<br />4 seconds |Attempt 1 - delay ~3 sec<br />Attempt 2 - delay ~7 sec<br />Attempt 3 - delay ~15 sec |
+| 대화형, UI<br />또는 포그라운드 |2초 |선형 |maxAttempt<br />deltaBackoff |3<br />500 ms |시도 1 - 지연 시간 500 ms<br />시도 2 - 지연 시간 500 ms<br />시도 3 - 지연 시간 500 ms |
+| 백그라운드<br />또는 일괄 처리 |30초 |지수 |maxAttempt<br />deltaBackoff |5<br />4초 |시도 1 - 3초 지연<br />시도 2 - 7초 지연<br />시도 3 - 15초 지연 |
 
-### Telemetry
-Retry attempts are logged to a **TraceSource**. You must configure a **TraceListener** to capture the events and write them to a suitable destination log. You can use the **TextWriterTraceListener** or **XmlWriterTraceListener** to write the data to a log file, the **EventLogTraceListener** to write to the Windows Event Log, or the **EventProviderTraceListener** to write trace data to the ETW subsystem. You can also configure auto-flushing of the buffer, and the verbosity of events that will be logged (for example, Error, Warning, Informational, and Verbose). For more information, see [Client-side Logging with the .NET Storage Client Library](http://msdn.microsoft.com/library/azure/dn782839.aspx).
+### 원격 분석
+다시 시도 횟수는 **TraceSource**에 기록됩니다. 이벤트를 캡처하여 적합한 대상 로그에 기록하려면 **TraceListener** 를 구성해야 합니다.  **TextWriterTraceListener** 또는 **XmlWriterTraceListener** 를 사용해 데이터를 로그 파일에 기록하고, **EventLogTraceListener** 를 사용해 Windows 이벤트 로그에 기록하며, **EventProviderTraceListener** 를 사용해 추적 데이터를 ETW 하위 시스템에 기록할 수 있습니다. 또한 버퍼의 자동 플러시 및 로그할 이벤트의 자세한 정보(예; 오류, 경고, 정보 및 자세한 정보 표시)를 구성할 수도 있습니다. 자세한 내용은 [.NET 저장소 클라이언트 라이브러리를 사용한 클라이언트측 로깅](http://msdn.microsoft.com/library/azure/dn782839.aspx)을 참조하세요.
 
-Operations can receive an **OperationContext** instance, which exposes a **Retrying** event that can be used to attach custom telemetry logic. For more information, see [OperationContext.Retrying Event](http://msdn.microsoft.com/library/microsoft.windowsazure.storage.operationcontext.retrying.aspx).
+작업은 **OperationContext** 인스턴스를 수신해 사용자 지정 원격 분석 논리를 추가하는 데 사용할 수 있는 **Retrying** 이벤트를 표시할 수 있습니다.  자세한 내용은 [OperationContext.Retrying Event](http://msdn.microsoft.com/library/microsoft.windowsazure.storage.operationcontext.retrying.aspx)를 참조하세요.
 
-### Examples
-The following code example shows how to create two **TableRequestOptions** instances with different retry settings; one for interactive requests and one for background requests. The example then sets these two retry policies on the client so that they apply for all requests, and also sets the interactive strategy on a specific request so that it overrides the default settings applied to the client.
+### 예제
+다음 코드 예제는 서로 다른 다시 시도 설정을 사용하여 대화형 요청과 백그라운드 요청에 대해 각각 하나씩 두 개의 **TableRequestOptions** 인스턴스를 만드는 방법을 보여줍니다. 이 예제에서는 클라이언트에서 이러한 두 다시 시도 정책을 설정하여 모든 요청에 적용하고 특정 요청에서 대화형 전략을 설정하여 클라이언트에 적용된 기본 설정을 재정의합니다. 
 
 ```csharp
 using System;
@@ -198,32 +199,33 @@ namespace RetryCodeSamples
 }
 ```
 
-### More information
-* [Azure Storage Client Library Retry Policy Recommendations](https://azure.microsoft.com/blog/2014/05/22/azure-storage-client-library-retry-policy-recommendations/)
-* [Storage Client Library 2.0 – Implementing Retry Policies](http://gauravmantri.com/2012/12/30/storage-client-library-2-0-implementing-retry-policies/)
+### 자세한 정보
+* [Azure 저장소 클라이언트 라이브러리다시 시도 정책 권장 사항](https://azure.microsoft.com/blog/2014/05/22/azure-storage-client-library-retry-policy-recommendations/)
+* [저장소 클라이언트 라이브러리 2.0 – 다시 시도 정책 구현](http://gauravmantri.com/2012/12/30/storage-client-library-2-0-implementing-retry-policies/)
 
-## SQL Database using Entity Framework 6 retry guidelines
-SQL Database is a hosted SQL database available in a range of sizes and as both a standard (shared) and premium (non-shared) service. Entity Framework is an object-relational mapper that enables .NET developers to work with relational data using domain-specific objects. It eliminates the need for most of the data-access code that developers usually need to write.
+## Entity Framework 6을 사용하는 SQL 데이터베이스 다시 시도 지침
+SQL 데이터베이스는 다양한 크기와 표준(공유) 서비스 및 프리미엄(비공유) 서비스로 사용할 수 있는 호스팅되는 SQL 데이터베이스입니다. Entity Framework는 .NET 개발자가 도메인별 개체를 사용해 관계형 데이터로 작업할 수 있는 개체 관계형 매퍼입니다. 여기서는 개발자가 일반적으로 작성해야 하는 대부분의 데이터 액세스 코드가 필요하지 않습니다. 
 
-### Retry mechanism
-Retry support is provided when accessing SQL Database using Entity Framework 6.0 and higher through a mechanism called [Connection Resiliency / Retry Logic](http://msdn.microsoft.com/data/dn456835.aspx). A full specification is available in the [.NET Entity Framework wiki](https://entityframework.codeplex.com/wikipage?title=Connection%20Resiliency%20Spec) on Codeplex. The main features of the retry mechanism are:
+### 다시 시도 메커니즘
+다시 시도는 [연결 복원 / 다시 시도 논리](http://msdn.microsoft.com/data/dn456835.aspx)라는 메커니즘을 통해 Entity Framework 6.0 이상을 사용하는 SQL 데이터베이스에 액세스할 때 지원됩니다. 전체 사양은 Codeplex의 [.NET Entity Framework wiki](https://entityframework.codeplex.com/wikipage?title=Connection%20Resiliency%20Spec)에서 다운로드할 수 있습니다. 다시 시도 메커니즘의 주요 기능은 다음과 같습니다. 
 
-* The primary abstraction is the **IDbExecutionStrategy** interface. This interface:
-  * Defines synchronous and asynchronous **Execute*** methods.
-  * Defines classes that can be used directly or can be configured on a database context as a default strategy, mapped to provider name, or mapped to a provider name and server name. When configured on a context, retries occur at the level of individual database operations, of which there might be several for a given context operation.
-  * Defines when to retry a failed connection, and how.
-* It includes several built-in implementations of the **IDbExecutionStrategy** interface:
-  * Default - no retrying.
-  * Default for SQL Database (automatic) - no retrying, but inspects exceptions and wraps them with suggestion to use the SQL Database strategy.
-  * Default for SQL Database - exponential (inherited from base class) plus SQL Database detection logic.
-* It implements an exponential back-off strategy that includes randomization.
-* The built-in retry classes are stateful and are not thread safe. However, they can be reused after the current operation is completed.
-* If the specified retry count is exceeded, the results are wrapped in a new exception. It does not bubble up the current exception.
+•	기본 추상화는 **IDbExecutionStrategy** 인터페이스입니다. 이 인터페이스는 다음을 수행합니다.
+  o	동기 및 비동기 **Execute*** 메서드를 정의합니다.
+  o	직접 사용하거나 데이터베이스 컨텍스트에서 기본 전략으로 구성하거나, 공급자 이름에 매핑하거나, 공급자 이름 및 서버 이름에 매핑할 수 있는 클래스를 정의합니다. 컨텍스트에서 구성할 경우 다시 시도는 지정된 컨텍스트 작업에 대해 여러 개가 있을 수 있는 개별 데이터베이스 작업 수준에서 수행됩니다.
+  o	실패한 연결을 다시 시도할 시기와 방법을 정의합니다.
+ •	여기에는 다음과 같은 **IDbExecutionStrategy** 인터페이스의 여러 가지 기본 제공 구현이 포함됩니다.
+  o	기본값 - 다시 시도를 수행하지 않습니다.
+  o	SQL 데이터베이스(자동)의 기본값 - 다시 시도하지 않지만 예외를 검사하고 SQL 데이터베이스 전략을 사용하는 제안으로 래핑합니다.
+  o	SQL 데이터베이스의 기본값 - 지수(기본 클래스에서 상속) 및 SQL 데이터베이스 검색 논리
+•	불규칙을 포함한 지수 백오프 전략을 구현합니다.
+•	기본 제공 다시 시도 클래스는 상태 저장 클래스이며 스레드로부터 안전하지 않습니다. 그러나 현재 작업이 완료된 후에는 다시 사용할 수 있습니다.
+•	지정된 다시 시도 횟수가 초과되면 결과는 새 예외에 래핑되며, 현재 예외를 버블 업하지 않습니다.
 
-### Policy configuration
-Retry support is provided when accessing SQL Database using Entity Framework 6.0 and higher. Retry policies are configured programmatically. The configuration cannot be changed on a per-operation basis.
 
-When configuring a strategy on the context as the default, you specify a function that creates a new strategy on demand. The following code shows how you can create a retry configuration class that extends the **DbConfiguration** base class.
+### 정책 구성
+다시 시도는 Entity Framework 6.0 이상을 사용하는 SQL 데이터베이스에 액세스할 때 지원됩니다. 다시 시도 정책은 프로그래밍 방식으로 구성됩니다. 구성은 작업 단위로 변경할 수 없습니다. 
+
+컨텍스트에서 기본값으로 전략을 구성하는 경우 필요에 따라 새 전략을 만드는 함수를 지정합니다. 다음 코드는 **DbConfiguration** 기본 클래스를 확장하는 다시 시도 구성 클래스를 만드는 방법을 보여줍니다. 
 
 ```csharp
 public class BloggingContextConfiguration : DbConfiguration
@@ -237,19 +239,19 @@ public class BloggingContextConfiguration : DbConfiguration
 }
 ```
 
-You can then specify this as the default retry strategy for all operations using the **SetConfiguration** method of the **DbConfiguration** instance when the application starts. By default, EF will automatically discover and use the configuration class.
+그 다음 응용 프로그램이 시작될 때 **DbConfiguration** 인스턴스의 **SetConfiguration** 메서드를 사용하여 모든 작업에 대해 기본 다시 시도 전략으로 지정할 수 있습니다. 기본적으로 EF는 구성 클래스를 자동으로 검색하고 사용합니다. 
 
     DbConfiguration.SetConfiguration(new BloggingContextConfiguration());
 
-You can specify the retry configuration class for a context by annotating the context class with a **DbConfigurationType** attribute. However, if you have only one configuration class, EF will use it without the need to annotate the context.
+컨텍스트 클래스에 **DbConfigurationType** 특성으로 주석을 추가하여 컨텍스트에 대한 다시 시도 구성 클래스를 지정할 수 있습니다. 그러나 구성 클래스가 하나만 있는 경우, EF는 컨텍스트에 주석을 추가할 필요 없이 해당 클래스를 사용합니다. 
 
     [DbConfigurationType(typeof(BloggingContextConfiguration))]
     public class BloggingContext : DbContext
     { ...
 
-If you need to use different retry strategies for specific operations, or disable retries for specific operations, you can create a configuration class that allows you to suspend or swap strategies by setting a flag in the **CallContext**. The configuration class can use this flag to switch strategies, or disable the strategy you provide and use a default strategy. For more information, see [Suspend Execution Strategy](http://msdn.microsoft.com/dn307226#transactions_workarounds) in the page Limitations with Retrying Execution Strategies (EF6 onwards).
+특정 작업에 다른 다시 시도 전략을 사용해야 하거나 특정 작업에 대해 다시 시도를 비활성화해야 하는 경우, **CallContext**에서 플래그를 설정하여 전략을 일시 중단하거나 교환할 수 있는 구성 클래스를 만들 수 있습니다. 구성 클래스는 이 플래그를 이용하여 전략을 전환학거나 제공된 전략을 사용하지 않도록 설정하고 기본 전략을 사용할 수 있습니다. 자세한 내용은 다시 시도 실행 전략의 제힌 시힝(EF6 이상) 페이지에서 [실행 전략 일시 중단](http://msdn.microsoft.com/dn307226#transactions_workarounds)을 참조하세요.
 
-Another technique for using specific retry strategies for individual operations is to create an instance of the required strategy class and supply the desired settings through parameters. You then invoke its **ExecuteAsync** method.
+개별 작업에 특정 다시 시도 전략을 사용하기 위한 다른 기법은 필요한 전략 클래스의 인스턴스를 만들고 매개 변수를 통해 원하는 설정을 제공하는 것입니다. 그런 다음 **ExecuteAsync** 메서드를 호출합니다.
 
     var executionStrategy = new SqlAzureExecutionStrategy(5, TimeSpan.FromSeconds(4));
     var blogs = await executionStrategy.ExecuteAsync(
@@ -263,36 +265,37 @@ Another technique for using specific retry strategies for individual operations 
         new CancellationToken()
     );
 
-The simplest way to use a **DbConfiguration** class is to locate it in the same assembly as the **DbContext** class. However, this is not appropriate when the same context is required in different scenarios, such as different interactive and background retry strategies. If the different contexts execute in separate AppDomains, you can use the built-in support for specifying configuration classes in the configuration file or set it explicitly using code. If the different contexts must execute in the same AppDomain, a custom solution will be required.
+**DbConfiguration** 클래스를 사용하는 가장 간단한 방법은 **DbContext** 클래스와 동일한 어셈블리에 배치하는 것입니다. 그러나 다양한 대화형 및 백그라운드 다시 시도 전략과 같이 서로 다른 시나리오에서 동일한 컨텍스트가 필요한 경우에는 적합하지 않습니다. 다른 컨텍스트가 별도의 AppDomains에서 실행되는 경우, 기본 제공 지원을 사용하여 구성 파일에서 구성 클래스를 지정하거나 코드를 사용해 명시적으로 설정할 수 있습니다. 동일한 AppDomain에서 서로 다른 컨텍스트를 실행해야 하는 경우에는 사용자 지정 솔루션이 필요합니다.
 
-For more information, see [Code-Based Configuration (EF6 onwards)](http://msdn.microsoft.com/data/jj680699.aspx).
+자세한 내용은 [코드 기반 구성(EF6 이상)](http://msdn.microsoft.com/data/jj680699.aspx)을 참조하세요. 
 
-The following table shows the default settings for the built-in retry policy when using EF6.
+다음 표는 EF6를 사용하는 경우 기본 제공 다시 시도 정책의 기본 설정을 보여줍니다. 
 
 ![Retry guidance table](./images/retry-service-specific/RetryServiceSpecificGuidanceTable4.png)
 
-### Retry usage guidance
-Consider the following guidelines when accessing SQL Database using EF6:
+### 다시 시도 사용 지침
+EF6을 사용하는 SQL 데이터베이스에 액세스하는 경우 다음 지침을 고려합니다. 
 
-* Choose the appropriate service option (shared or premium). A shared instance may suffer longer than usual connection delays and throttling due to the usage by other tenants of the shared server. If predictable performance and reliable low latency operations are required, consider choosing the premium option.
-* A fixed interval strategy is not recommended for use with Azure SQL Database. Instead, use an exponential back-off strategy because the service may be overloaded, and longer delays allow more time for it to recover.
-* Choose a suitable value for the connection and command timeouts when defining connections. Base the timeout on both your business logic design and through testing. You may need to modify this value over time as the volumes of data or the business processes change. Too short a timeout may result in premature failures of connections when the database is busy. Too long a timeout may prevent the retry logic working correctly by waiting too long before detecting a failed connection. The value of the timeout is a component of the end-to-end latency, although you cannot easily determine how many commands will execute when saving the context. You can change the default timeout by setting the **CommandTimeout** property of the **DbContext** instance.
-* Entity Framework supports retry configurations defined in configuration files. However, for maximum flexibility on Azure you should consider creating the configuration programmatically within the application. The specific parameters for the retry policies, such as the number of retries and the retry intervals, can be stored in the service configuration file and used at runtime to create the appropriate policies. This allows the settings to be changed within requiring the application to be restarted.
+•	적절한 서비스 옵션(공유 또는 프리미엄)을 선택합니다. 공유 인스턴스는 공유 서버의 다른 테넌트도 사용하기 때문에 일반적인 연결 지연 및 제한보다 더 길게 영향을 받을 수 있습니다. 예측 가능한 성능 및 대기 시간이 짧은 안정적인 작업이 필요한 경우에는 프리미엄 옵션의 선택을 고려합니다.
+•	고정 간격 전략은 Azure SQL 데이터베이스에 권장되지 않습니다. 대신에 서비스가 오버로드될 수 있고 지연 시간이 길어지면 복구에 더 많은 시간이 걸릴 수 있으므로 지수 백오프 전략을 사용하는 것이 좋습니다.
+•	연결을 정의할 때 연결 및 명령 제한 시간에 적합한 값을 선택합니다. 제한 시간은 비즈니스 논리 디자인 및 테스트를 기반으로 합니다. 시간이 지나면서 데이터 양이나 비즈니스 프로세스가 변경됨에 따라 이 값을 수정해야 할 수 있습니다. 제한 시간이 너무 짧으면 데이터베이스가 사용 중일 때 조기에 연결 오류가 발생할 수 있습니다. 반대로 제한 시간이 너무 길면 실패한 연결을 감지하기까지 너무 오래 기다려서 다시 시도 논리가 올바르게 작동하지 못할 수 있습니다. 제한 시간 값은 종단 간 대기 시간의 구성 요소이지만, 컨텍스트를 저장할 때 실행될 명령 수는 쉽게 확인할 수 없습니다. **CommandTimeout** 인스턴스의 **DbContext** 속성을 설정하면 기본 제한 시간을 변경할 수 있습니다.
+•	Entity Framework는 구성 파일에 정의된 다시 시도 구성을 지원합니다. 그러나 Azure에서 유연성을 최대화하려면 응용 프로그램 내에서 프로그래밍 방식으로 구성을 만드는 것을 고려해야 합니다. 다시 시도 횟수 및 다시 시도 간격과 같이 다시 시도 정책을 위한 특정 매개 변수는 서비스 구성 파일에 저장하여 런타임에 적절한 정책을 만드는 데 사용할 수 있습니다. 이렇게 하면 다시 시작해야 하는 응용 프로그램 내에서 설정을 변경할 수 있습니다.
 
-Consider starting with following settings for retrying operations. You cannot specify the delay between retry attempts (it is fixed and generated as an exponential sequence). You can specify only the maximum values, as shown here; unless you create a custom retry strategy. These are general purpose settings, and you should monitor the operations and fine tune the values to suit your own scenario.
 
-| **Context** | **Sample target E2E<br />max latency** | **Retry policy** | **Settings** | **Values** | **How it works** |
+다시 시도 작업의 경우 다음 설정을 사용해 시작하는 것이 좋습니다. 다시 시도 룃수 사이에는 지연을 지정할 수 없습니다(지연은 고정되며 지수 시퀀스로 생성). 다음과 같이 사용자 지정 다시 시도 전략을 만들지 않는 경우 최대값만 지정할 수 있습니다. 이러한 설정은 범용이므로 작업을 모니터링하고 고유한 시나리오에 맞게 값을 미세 조정해야 합니다. 
+
+| **컨텍스트** | **샘플 대상 E2E<br />최대 대기 시간** | **다시 시도 정책** | **설정** | **값** | **작동 방법** |
 | --- | --- | --- | --- | --- | --- |
-| Interactive, UI,<br />or foreground |2 seconds |Exponential |MaxRetryCount<br />MaxDelay |3<br />750 ms |Attempt 1 - delay 0 sec<br />Attempt 2 - delay 750 ms<br />Attempt 3 – delay 750 ms |
-| Background<br /> or batch |30 seconds |Exponential |MaxRetryCount<br />MaxDelay |5<br />12 seconds |Attempt 1 - delay 0 sec<br />Attempt 2 - delay ~1 sec<br />Attempt 3 - delay ~3 sec<br />Attempt 4 - delay ~7 sec<br />Attempt 5 - delay 12 sec |
+| 대화형, UI<br />또는 포그라운드 |2초 |지수 |MaxRetryCount<br />MaxDelay |3<br />750 ms |시도 1 - 0초 지연<br />시도 2 - 750 ms 지연<br />시도 3 - 750 ms 지연 |
+| 백그라운드<br />또는 일괄 처리 |30초 |지수 |MaxRetryCount<br />MaxDelay |5<br />12초 |시도 1 - 0초 지연<br />시도 2 - 1초 지연<br />시도 3 - 3초 지연<br />시도 4 - 7초 지연<br />시도 5 - 12초 지연 |
 
-> [!NOTE]
-> The end-to-end latency targets assume the default timeout for connections to the service. If you specify longer connection timeouts, the end-to-end latency will be extended by this additional time for every retry attempt.
+> [!참고]
+> 종단 간 대기 시간 대상은 서비스에 대한 연결의 기본 제한 시간을 가정합니다. 연결 제한 시간을 더 길게 지정하면 종단 간 대기 시간이 다시 시도마다 이 추가 시간만큼 연장됩니다. 
 >
 >
 
-### Examples
-The following code example defines a simple data access solution that uses Entity Framework. It sets a specific retry strategy by defining an instance of a class named **BlogConfiguration** that extends **DbConfiguration**.
+### 예제
+다음 코드 예제는 Entity Framework를 사용하는 간단한 데이터 액세스 솔루션을 정의합니다. 이 코드는 **DbConfiguration**을 확장하는 **BlogConfiguration**이라는 클래스 인스턴스를 정의하여 특정한 다시 시도 전략을 설정합니다. 
 
 ```csharp
 using System;
@@ -337,23 +340,23 @@ namespace RetryCodeSamples
 }
 ```
 
-More examples of using the Entity Framework retry mechanism can be found in [Connection Resiliency / Retry Logic](http://msdn.microsoft.com/data/dn456835.aspx).
+Entity Framework 다시 시도 메커니즘 사용에 대한 더 많은 예제는 [연결 복원 / 다시 시도 논리](http://msdn.microsoft.com/data/dn456835.aspx)에서 확인할 수 있습니다.
 
-### More information
-* [Azure SQL Database Performance and Elasticity Guide](http://social.technet.microsoft.com/wiki/contents/articles/3507.windows-azure-sql-database-performance-and-elasticity-guide.aspx)
+### 자세한 정보
+* [Azure SQL 데이터베이스 성능 및 탄력성 가이드](http://social.technet.microsoft.com/wiki/contents/articles/3507.windows-azure-sql-database-performance-and-elasticity-guide.aspx)
 
-## SQL Database using ADO.NET retry guidelines
-SQL Database is a hosted SQL database available in a range of sizes and as both a standard (shared) and premium (non-shared) service.
+## ADO.NET을 사용하는 SQL 데이터베이스 다시 시도 지침
+SQL 데이터베이스는 다양한 크기와 표준(공유) 서비스 및 프리미엄(비공유) 서비스로 사용할 수 있는 호스팅되는 SQL 데이터베이스입니다. 
 
-### Retry mechanism
-SQL Database has no built-in support for retries when accessed using ADO.NET. However, the return codes from requests can be used to determine why a request failed. The page [Azure SQL Database Throttling](http://msdn.microsoft.com/library/dn338079.aspx) explains how throttling can prevent connections, the return codes for specific situations, and how you can handle these and retry operations.
+### 다시 시도 메커니즘
+SQL 데이터베이스는 ADO.NET을 사용해 액세스를 하는 경우 다시 시도에 대한기본 제공 지원을 제공하지 않습니다. 그러나 요청에서 반환된 코드는 요청이 실패한 이유를 확인하는 데 사용할 수 있습니다. [Azure SQL 데이터베이스 제한](http://msdn.microsoft.com/library/dn338079.aspx) 페이지에는 제한으로 연결을 방지하는 방법, 특정 상황에 대한 반환 코드, 이러한 코드 및 다시 시도 작업을 처리하는 방법이 설명되어 있습니다. 
 
-You can use the Transient Fault Handling Application Block (Topaz) with the Nuget package EnterpriseLibrary.TransientFaultHandling.Data (class **SqlAzureTransientErrorDetectionStrategy**) to implement a retry mechanism for SQL Database.
+Nuget 패키지 EnterpriseLibrary.TransientFaultHandling.Data(클래스**SqlAzureTransientErrorDetectionStrategy**)에서 일시적 오류 처리 응용 프로그램 블록(Topaz)을 사용하여 SQL 데이터베이스를 위한 다시 시도  메커니즘을 구현할 수 있습니다. 
 
-The block also provides the **ReliableSqlConnection** class, which implements the old ADO.NET 1.0 API (**IDbConnection** instead of **DbConnection**) and performs retries and connection management internally. While convenient, this requires you to use a different set of methods for invoking operations with retries, and so is not a simple direct replacement. It does not support asynchronous execution, which is recommended when implementing and using Azure services. In addition, because this class uses ADO.NET 1.0, it does not benefit from the recent improvements and updates to ADO.NET.
+또한 이 블록은 기존의 ADO.NET 1.0 API(**DbConnection 대신에 IDbConnection**)를 구현하고 다시 시도 및 연결 관리를 내부적으로 수행하는**ReliableSqlConnection**클래스를 제공합니다. 이 클래스는 편리하기는 하지만 다시 시도로 작업을 호출하기 위해 다양한 메서드 집합을 사용해야 하므로 간단하고 직접적인 대체가 아닙니다. 또한 이 클래스는 Azure 서비스를 구현하고 사용할 때 권장되는 비동기 실행을 지원하지 않습니다. 게다가 이 클래스는 ADO.NET 1.0을 사용하기 때문에 ADO.NET의 최근 개선된 기능 및 업데이트의 이점을 사용할 수 없습니다. 
 
-### Policy configuration (SQL Database using ADO.NET)
-The Transient Fault Handling Application Block supports both file-based and programmatic configuration. In general, you should use programmatic configuration for maximum flexibility (see the notes in the following section for more information). The following code, which would be executed once at application startup, creates and populates a **RetryManager** with a list of four retry strategies suitable for use with Azure SQL Database. It also sets the default strategies for the **RetryManager**. These are the strategies that will be used for connections and commands if an alternative is not specified when creating a connection or command.
+### 정책 구성(ADO.NET을 사용하는 SQL 데이터베이스)
+일시적 오류 처리 응용 프로그램 블록은 파일 기반 구성과 프로그래밍 방식 구성을 모두 지원합니다. 일반적으로 유연성을 최대화하기 위해서는 프로그래밍 방식 구성을 사용해야 합니다(자세한 내용은 다음 섹션의 참고를 참조). 응용 프로그램이 시작될 때 한 번 실행되는 다음 코드는 **RetryManager** 를 만들고 Azure SQL 데이터베이스에서 사용하는 데 적합한 4개의 다시 시도 전략 목록으로 채웁니다. 또한 **RetryManager**를 위한 기본 전략을 설정합니다. 기본 전략은 연결 또는 명령을 만들 때 대체 전략을 지정하지 않은 경우에 연결 및 명령에 사용됩니다. 
 
 ```csharp
 RetryManager.SetDefault(new RetryManager(
@@ -387,40 +390,47 @@ RetryManager.SetDefault(new RetryManager(
         }));
 ```
 
-For information about how you can use the retry policies you have configured when you access Azure SQL Database, see the [Examples](#examples) section below.
+Azure SQL 데이터베이스에 액세스할 때 구성한 다시 시도 정책을 사용하는 방법에 대한 자세한 내용은 아래 [예제](#examples) 섹션을 참조하세요. 
 
-Default strategies for the Transient Fault Handling Application Block are shown in the section [Transient Fault Handling Application Block (Topaz) strategies](#transient-fault-handling-application-block-topaz-strategies) at the end of this guidance.
+일시적 오류 처리 응용 프로그램 블록에 대한 기본 전략은 본 지침의 끝에 있는 [일시적 오류 처리 응용 프로그램 블록(Topaz) 전략](#transient-fault-handling-application-block-topaz-strategies) 섹션에 나와 있습니다. 
 
-### Retry usage guidance
-Consider the following guidelines when accessing SQL Database using ADO.NET:
+### 다시 시도 사용 지침
+ADO.NET을 사용해 SQL 데이터베이스에 액세스하는 경우 다음 지침을 고려합니다. 
 
-* Choose the appropriate service option (shared or premium). A shared instance may suffer longer than usual connection delays and throttling due to the usage by other tenants of the shared server. If more predictable performance and reliable low latency operations are required, consider choosing the premium option.
-* Ensure that you perform retries at the appropriate level or scope to avoid non-idempotent operations causing inconsistency in the data. Ideally, all operations should be idempotent so that they can be repeated without causing inconsistency. Where this is not the case, the retry should be performed at a level or scope that allows all related changes to be undone if one operation fails; for example, from within a transactional scope. For more information, see [Cloud Service Fundamentals Data Access Layer – Transient Fault Handling](http://social.technet.microsoft.com/wiki/contents/articles/18665.cloud-service-fundamentals-data-access-layer-transient-fault-handling.aspx#Idempotent_Guarantee).
-* A fixed interval strategy is not recommended for use with Azure SQL Database except for interactive scenarios where there are only a few retries at very short intervals. Instead, consider using an exponential back-off strategy for the majority of scenarios.
-* Choose a suitable value for the connection and command timeouts when defining connections. Too short a timeout may result in premature failures of connections when the database is busy. Too long a timeout may prevent the retry logic working correctly by waiting too long before detecting a failed connection. The value of the timeout is a component of the end-to-end latency; it is effectively added to the retry delay specified in the retry policy for every retry attempt.
-* Close the connection after a certain number of retries, even when using an exponential back off retry logic, and retry the operation on a new connection. Retrying the same operation multiple times on the same connection can be a factor that contributes to connection problems. For an example of this technique, see [Cloud Service Fundamentals Data Access Layer – Transient Fault Handling](http://social.technet.microsoft.com/wiki/contents/articles/18665.cloud-service-fundamentals-data-access-layer-transient-fault-handling.aspx).
-* When connection pooling is in use (the default) there is a chance that the same connection will be chosen from the pool, even after closing and reopening a connection. If this is the case, a technique to resolve it is to call the **ClearPool** method of the **SqlConnection** class to mark the connection as not reusable. However, you should do this only after several connection attempts have failed, and only when encountering the specific class of transient failures such as SQL timeouts (error code -2) related to faulty connections.
-* If the data access code uses transactions initiated as **TransactionScope** instances, the retry logic should reopen the connection and initiate a new transaction scope. For this reason, the retryable code block should encompass the entire scope of the transaction.
-* The Transient Fault Handling Application Block supports retry configurations entirely defined in configuration files. However, for maximum flexibility on Azure you should consider creating the configuration programmatically within the application. The specific parameters for the retry policies, such as the number of retries and the retry intervals, can be stored in the service configuration file and used at runtime to create the appropriate policies. This allows the settings to be changed within requiring the application to be restarted.
+•	적절한 서비스 옵션(공유 또는 프리미엄)을 선택합니다. 공유 인스턴스는 공유 서버의 다른 테넌트도 사용하기 때문에 일반적인 연결 지연 및 제한보다 더 길게 영향을 받을 수 있습니다. 예측 가능한 성능 및 대기 시간이 짧은 안정적인 작업이 추가로 필요한 경우에는 프리미엄 옵션의 선택을 고려합니다.
 
-Consider starting with following settings for retrying operations. These are general purpose settings, and you should monitor the operations and fine tune the values to suit your own scenario.
+•	적절한 수준 또는 범위에서 다시 시도를 수행하여 데이터 불일치를 발생시키는 비멱등 작업을 방지해야 합니다. 이상적으로는 불일치를 발생시키지 않고 반복할 수 있도록 모든 작업이 멱등이어야 합니다. 그렇지 않으면 예를 들어 트랜잭션 범위 내에서 한 작업이 실패할 경우 관련된 모든 변경 사항을 실행 취소할 수 있는 수준 또는 범위에서 다시 시도를 수행해야 합니다. 자세한 내용은 [클라우드 서비스의 기본 데이터 액세스 계층 – 일시적 오류 처리](http://social.technet.microsoft.com/wiki/contents/articles/18665.cloud-service-fundamentals-data-access-layer-transient-fault-handling.aspx#Idempotent_Guarantee)를 참조하세요.
 
-| **Context** | **Sample target E2E<br />max latency** | **Retry strategy** | **Settings** | **Values** | **How it works** |
+•	고정 간격 전략은 매우 짧은 간격으로 몇 번의 다시 시도만 수행되는 대화형 시나리오를 제외하고 Azure SQL 데이터베이스에서 권장되지 않습니다. 대신에 대부분의 시나리오에 지수 백오프 전략을 사용하는 것을 고려합니다.
+
+•	연결을 정의할 때 연결 및 명령 제한 시간에 적합한 값을 선택합니다. 제한 시간이 너무 짧으면 데이터베이스가 사용 중일 때 조기에 연결 오류가 발생할 수 있습니다. 반대로 제한 시간이 너무 길면 실패한 연결을 감지하기까지 너무 오래 기다려서 다시 시도 논리가 올바르게 작동하지 못할 수 있습니다. 제한 시간 값은 종단 간 대기 시간의 구성 요소이지므로 모든 다시 시도에 대한 다시 시도 정책에 지정된 다시 시도 지연에 효과적으로 추가됩니다.
+
+•	지수 백오프 다시 시도 로직을 사용하는 경우에도 특정 횟수의 다시 시도 후에는 연결을 닫고 새로운 연결에서 작업을 다시 시도합니다. 동일한 연결에서 동일한 작업을 여러 번 다시 시도하면 연결 문제를 야기하는 요인이 될 수 있습니다. 이 기술에 대한 예는 [클라우드 서비스의 기본 데이터 액세스 계층 – 일시적 오류 처리](http://social.technet.microsoft.com/wiki/contents/articles/18665.cloud-service-fundamentals-data-access-layer-transient-fault-handling.aspx)를 참조하세요.
+
+•	연결 풀링을 사용 중인 경우(기본값) 연결을 닫았다가 다시 연 이후에도 풀에서 동일한 연결을 선택할 수 있습니다. 이 경우 문제를 해결하는 방법은 **SqlConnection** 클래스의 **ClearPool** 메서드를 호출하여 연결을 재사용할 수 없음으로 표시하는 것입니다. 그러나 이 방법은 여러 번의 연결 시도가 실패한 이후에만 수행하고 오류가 발생한 연결과 관련된 SQL 제한 시간(오류 코드 -2)과 같은 특정 클래스의 일시적 오류가 발생하는 경우에만 수행해야 합니다.
+
+•	데이터 액세스 코드가 **TransactionScope** 인스턴스로 시작된 트랜잭션을 사용하는 경우, 다시 시도 논리에서 연결을 다시 열고 새로운 트랜잭션 범위를 시작해야 합니다. 이러한 이유로 다시 시도가 가능한 코드 블록은 트랜잭션의 전체 범위를 포함해야 합니다.
+
+•	일시적 오류 처리 응용 프로그램 블록은 구성 파일에 정의된 다시 시도 구성 전체를 지원합니다. 그러나 Azure에서 유연성을 최대화하려면 응용 프로그램 내에서 프로그래밍 방식으로 구성을 만드는 것을 고려해야 합니다. 다시 시도 횟수 및 다시 시도 간격과 같이 다시 시도 정책을 위한 특정 매개 변수는 서비스 구성 파일에 저장하여 런타임에 적절한 정책을 만드는 데 사용할 수 있습니다. 이렇게 하면 다시 시작해야 하는 응용 프로그램 내에서 설정을 변경할 수 있습니다.
+
+다시 시도 작업의 경우 다음 설정을 사용해 시작하는 것이 좋습니다. 이러한 설정은 범용이므로 작업을 모니터링하고 고유한 시나리오에 맞게 값을 미세 조정해야 합니다. 
+
+| **컨텍스트** | **샘플 대상 E2E<br />최대 대기 시간** | **다시 시도 전략** | **설정** | **값** | **작동 방법** |
 | --- | --- | --- | --- | --- | --- |
-| Interactive, UI,<br />or foreground |2 sec |FixedInterval |Retry count<br />Retry interval<br />First fast retry |3<br />500 ms<br />true |Attempt 1 - delay 0 sec<br />Attempt 2 - delay 500 ms<br />Attempt 3 - delay 500 ms |
-| Background<br />or batch |30 sec |ExponentialBackoff |Retry count<br />Min back-off<br />Max back-off<br />Delta back-off<br />First fast retry |5<br />0 sec<br />60 sec<br />2 sec<br />false |Attempt 1 - delay 0 sec<br />Attempt 2 - delay ~2 sec<br />Attempt 3 - delay ~6 sec<br />Attempt 4 - delay ~14 sec<br />Attempt 5 - delay ~30 sec |
+| 대화형, UI<br />또는 포그라운드 |2초 |FixedInterval |다시 시도 횟수<br />다시 시도 간격 <br />첫 번째 빠른 다시 시도 |3<br />500 ms<br />true |시도 1 - 0초 지연<br />시도 2 - 500 ms 지연<br />시도 3 - 500 ms 지연 |
+| 백그라운드<br />또는 일괄 처리 |30초 |ExponentialBackoff |다시 시도 횟수<br />최소 백오프<br />최대 백오프<br />델타 백오프<br />첫 번째 빠른 다시 시도 |5<br />0초<br />60초<br />2초<br />false |시도 1 - 0초 지연<br />시도 2 - 2초 지연<br />시도 3 - 6초 지연<br />시도 4 - 14초 지연<br />시도 5 - 30초 지연 |
 
-> [!NOTE]
-> The end-to-end latency targets assume the default timeout for connections to the service. If you specify longer connection timeouts, the end-to-end latency will be extended by this additional time for every retry attempt.
+> [!참고]
+> 종단 간 대기 시간 대상은 서비스에 대한 연결의 기본 제한 시간을 가정합니다. 연결 제한 시간을 더 길게 지정하면 종단 간 대기 시간이 다시 시도마다 이 추가 시간만큼 연장됩니다. 
 >
 >
 
-### Examples
-This section describes how you can use the Transient Fault Handling Application Block to access Azure SQL Database using a set of retry policies you have configured in the **RetryManager** (as shown in the previous section [Policy configuration](#policy-configuration). The simplest approach to using the block is through the **ReliableSqlConnection** class, or by calling the extension methods such as **OpenWithRetry** on a connection (see [The Transient Fault Handling Application Block](http://msdn.microsoft.com/library/hh680934.aspx) for more information).
+### 예제
+이 섹션에서는 일시적인 오류 처리 응용 프로그램 블록을 사용하여 **RetryManager** (이전의 [정책 구성](#policy-configuration)참조)에서 구성한 다시 시도 정책 집합으로 Azure SQL 데이터베이스에 액세스하는 방법을 설명합니다. 블록을 사용하는 가장 간단한 방법은 **ReliableSqlConnection** 클래스를 사용하거나 연결에서 **OpenWithRetry** 같은 확장 메서드를 호출(자세한 내용은 [일시적 오류 처리 응용 프로그램 블록](http://msdn.microsoft.com/library/hh680934.aspx) 참조)하는 것입니다. 
 
-However, in the current version of the Transient Fault Handling Application Block these approaches do not indigenously support asynchronous operations against SQL Database. Good practice demands that you use only asynchronous techniques to access Azure services such as SQL Database, and so you should consider the following techniques to use the Transient Fault Handling Application Block with SQL Database.
+그러나 현재 버전의 일시적 오류 처리 응용 프로그램 블록에서는 이러한 접근이 SQL 데이터베이스에 대한 비동기 작업을 기본적으로 지원하지 않습니다. 비동기 기법만 사용하여 SQL 데이터베이스와 같은 Azure 서비스에 액세스하는 것이 좋으므로  SQL 데이터베이스에서 일시적 오류 처리 응용 프로그램 블록을 사용하려면 다음과 같은 기법을 고려해야 합니다. 
 
-You can use the simplified asynchronous support in version 5 of the C# language to create asynchronous versions of the methods provided by the block. For example, the following code shows how you might create an asynchronous version of the **ExecuteReaderWithRetry** extension method. The changes and additions to the original code are highlighted. The source code for Topaz is available on Codeplex at [Transient Fault Handling Application Block ("Topaz")](http://topaz.codeplex.com/SourceControl/latest).
+버전 5의 C# 언어에서 간단한 비동기 지원을 사용하여 블록이 제공하는 메서드의 비동기 버전을 만들 수 있습니다. 예를 들어 다음 코드는 **ExecuteReaderWithRetry** 확장 메서드의 비동기 버전을 만드는 방법을 보여줍니다. 원래 코드에 대한 변경 사항 및 추가 사항은 강조 표시됩니다. Topaz에 대한 소스 코드는 Codeplex의 [일시적 오류 처리 응용 프로그램 블록("Topaz")](http://topaz.codeplex.com/SourceControl/latest).
 
 ```csharp
 public async static Task<SqlDataReader> ExecuteReaderWithRetryAsync(this SqlCommand command, RetryPolicy cmdRetryPolicy,
@@ -450,7 +460,7 @@ RetryPolicy conRetryPolicy)
 }
 ```
 
-This new asynchronous extension method can be used in the same way as the synchronous versions included in the block.
+이 새로운 비동기 확장 메서드는 블록에 포함된 동기 버전과 동일한 방식으로 사용할 수 있습니다. 
 
 ```csharp
 var sqlCommand = sqlConnection.CreateCommand();
@@ -464,50 +474,51 @@ using (var reader = await sqlCommand.ExecuteReaderWithRetryAsync(retryPolicy))
 }
 ```
 
-However, this approach deals only with individual operations or commands, and not with blocks of statements where there can be properly defined transactional boundaries. In addition, it does not address the situation of removing faulty connections from the connection pool so that they are not selected for subsequent attempts. A synchronous example of resolving these issues can be found in [Cloud Service Fundamentals Data Access Layer – Transient Fault Handling](http://social.technet.microsoft.com/wiki/contents/articles/18665.cloud-service-fundamentals-data-access-layer-transient-fault-handling.aspx#Timeouts_amp_Connection_Management). In addition to retrying arbitrary sequences of database instructions, it clears the connection pool to remove invalid connections, and instruments the entire process. While the code shown in this example is synchronous, it is relatively easy to convert it to asynchronous code.
+그러나 이러한 접근은 개별 작업이나 명령만 처리하며 적절하게 정의된 트랜잭션 경계일 수 있는 문의 블록은 처리하지 않습니다. 또한 이후 시도에서 선택되지 않도록 연결 풀에서 오류가 발생한 연결을 제거하는 상황은 해결하지 못합니다. 이러한 문제를 해결하는 동기 예제는 [클라우드 서비스의 기본 데이터 액세스 계층 – 일시적 오류 처리](http://social.technet.microsoft.com/wiki/contents/articles/18665.cloud-service-fundamentals-data-access-layer-transient-fault-handling.aspx#Timeouts_amp_Connection_Management)에서 확인하실 수 있습니다. 이 방식은 데이터베이스 명령의 임의 시퀀스를 다시 시도할 뿐만 아니라 연결 풀을 지워 잘못된 연결을 제거하고 전체 프로세스를 계측합니다. 이 예제에에 제시된 코드는 동기이지만 비교적 쉽게 비동기 코드로 변환할 수 있습니다.
 
-### More information
-For detailed information about using the Transient Fault Handling Application Block, see:
+### 자세한 정보
+일시적 오류 처리 응용 프로그램 블록의 사용에 관한 자세한 내용은 다음을 참조하세요. 
 
-* [Using the Transient Fault Handling Application Block with SQL Azure](http://msdn.microsoft.com/library/hh680899.aspx)
-* [Perseverance, Secret of All Triumphs: Using the Transient Fault Handling Application Block](http://msdn.microsoft.com/library/dn440719.aspx)
-* [Cloud Service Fundamentals Data Access Layer – Transient Fault Handling](http://social.technet.microsoft.com/wiki/contents/articles/18665.cloud-service-fundamentals-data-access-layer-transient-fault-handling.aspx)
+* [SQL Azure에서 일시적 오류 처리 응용 프로그램 블록 사용](http://msdn.microsoft.com/library/hh680899.aspx)
+* [인내, 모든 승리의 비결: 일시적 오류 처리 응용 프로그램 블록의 사용](http://msdn.microsoft.com/library/dn440719.aspx)
+* [클라우드 서비스의 기본 데이터 액세스 계층 – 일시적 오류 처리](http://social.technet.microsoft.com/wiki/contents/articles/18665.cloud-service-fundamentals-data-access-layer-transient-fault-handling.aspx)
 
-For general guidance on getting the most from SQL Database, see [Azure SQL Database Performance and Elasticity Guide](http://social.technet.microsoft.com/wiki/contents/articles/3507.windows-azure-sql-database-performance-and-elasticity-guide.aspx).
+SQL 데이터베이스를 최대한 활용하기 위한 일반적인 지침은 [Azure SQL 데이터베이스 성능 및 탄력성 가이드](http://social.technet.microsoft.com/wiki/contents/articles/3507.windows-azure-sql-database-performance-and-elasticity-guide.aspx)를 참조하세요.
 
 
-## Service Bus retry guidelines
-Service Bus is a cloud messaging platform that provides loosely coupled message exchange with improved scale and resiliency for components of an application, whether hosted in the cloud or on-premises.
+## 서비스 버스 다시 시도 지침
+서비스 버스는 클라우드에서 또는 온 프레미스에서 호스팅되는지에 관계 없이 응용 프로그램 구성 요소에 향상된 확장성과 복원력으로 소결합된 메시지 교환을 제공하는 클라우드 메시징 플랫폼입니다. 
 
-### Retry mechanism
-Service Bus implements retries using implementations of the [RetryPolicy](http://msdn.microsoft.com/library/microsoft.servicebus.retrypolicy.aspx) base class. All of the Service Bus clients expose a **RetryPolicy** property that can be set to one of the implementations of the **RetryPolicy** base class. The built-in implementations are:
+### 다시 시도 메커니즘
+서비스 버스는 [RetryPolicy](http://msdn.microsoft.com/library/microsoft.servicebus.retrypolicy.aspx) 기본 클래스의 구현을 사용해 다시 시도를 구현합니다. 모든 서비스 버스 클라이언트는 **RetryPolicy** 기본 클래스의 구현 중 하나로 설정할 수 있는 **RetryPolicy** 속성을 표시합니다. 기본 제공 구현은 다음과 같습니다. 
 
-* The [RetryExponential Class](http://msdn.microsoft.com/library/microsoft.servicebus.retryexponential.aspx). This exposes properties that control the back-off interval, the retry count, and the **TerminationTimeBuffer** property that is used to limit the total time for the operation to complete.
-* The [NoRetry Class](http://msdn.microsoft.com/library/microsoft.servicebus.noretry.aspx). This is used when retries at the Service Bus API level are not required, such as when retries are managed by another process as part of a batch or multiple step operation.
+* [RetryExponential 클래스](http://msdn.microsoft.com/library/microsoft.servicebus.retryexponential.aspx). 이 클래스는 백오프 간격, 다시 시도 횟수, 작업이 완료되는 총 시간을 제한하는 데 사용되는 **TerminationTimeBuffer** 속성을 제어하는 속성을 표시합니다.
 
-Service Bus actions can return a range of exceptions, as listed in [Appendix: Messaging Exceptions](http://msdn.microsoft.com/library/hh418082.aspx). The list provides information about which if these indicate that retrying the operation is appropriate. For example, a [ServerBusyException](http://msdn.microsoft.com/library/microsoft.servicebus.messaging.serverbusyexception.aspx) indicates that the client should wait for a period of time, then retry the operation. The occurrence of a **ServerBusyException** also causes Service Bus to switch to a different mode, in which an extra 10-second delay is added to the computed retry delays. This mode is reset after a short period.
+* [NoRetry 클래스](http://msdn.microsoft.com/library/microsoft.servicebus.noretry.aspx). 이 클래스는 일괄 처리 또는 다단계 작업의 일환으로 다른 프로세스가 다시 시도를 관리하는 경우처럼 서비스 버스 API 수준에서 다시 시도가 필요하지 않을 때 사용됩니다.
 
-The exceptions returned from Service Bus expose the **IsTransient** property that indicates if the client should retry the operation. The built-in **RetryExponential** policy relies on the **IsTransient** property in the **MessagingException** class, which is the base class for all Service Bus exceptions. If you create custom implementations of the **RetryPolicy** base class you could use a combination of the exception type and the **IsTransient** property to provide more fine-grained control over retry actions. For example, you could detect a **QuotaExceededException** and take action to drain the queue before retrying sending a message to it.
+서비스 버스 작업은 [부록: 메시징 예외](http://msdn.microsoft.com/library/hh418082.aspx)에 나열된 다양한 예외를 반환할 수 있습니다. 목록에는 어떤 경우에 작업 다시 시도가 적절한지를 표시하는 정보가 나와 있습니다. 예를 들어 [ServerBusyException](http://msdn.microsoft.com/library/microsoft.servicebus.messaging.serverbusyexception.aspx)은 클라이언트가 일정 시간 동안 대기한 후 작업을 다시 시도해야 한다는 것을 나타냅니다. **ServerBusyException**이 발생하면 서비스 버스가 다른 모드로 전환되기 때문에 계산된 다시 시도 지연 시간에 10초가 더 추가될 수 있습니다. 이 모드는 잠시 후 다시 설정됩니다. 
 
-### Policy configuration
-Retry policies are set programmatically, and can be set as a default policy for a **NamespaceManager** and for a **MessagingFactory**, or individually for each messaging client. To set the default retry policy for a messaging session you set the **RetryPolicy** of the **NamespaceManager**.
+서비스 버스에서 반환된 예외는 클라이언트가 작업을 다시 시도해야 할지 여부를 나타내는 **IsTransient** 속성을 표시합니다. 기본 제공  **RetryExponential** 정책은 모든 서비스 버스 예외에 대한 기본 클래스인  **MessagingException** 클래스의 **IsTransient** 속성을 사용합니다.  **RetryPolicy** 기본 클래스의 사용자 지정 구현을 만드는 경우, 예외 유형과 **IsTransient** 속성의 조합을 사용하여 다시 시도 작업을 더 세부적으로 제어할 수 있습니다. 예를 들어 **QuotaExceededException** 을 검색하고 메시지 전송을 다시 시도하기 전에 큐를 비우는 조치를 취할 수 있습니다. 
+
+### 정책 구성
+다시 시도 정책은 프로그래밍 방식으로 설정되며 **NamespaceManager** 및 **MessagingFactory**에 대한 기본 정책으로 설정하거나 각 메시징 클라이언트에 대해 개별적으로 설정할 수 있습니다. 메시징 세션에서 기본 다시 시도 정책을 설정하려면 **NamespaceManager**의 **NamespaceManager**를 설정합니다. 
 
     namespaceManager.Settings.RetryPolicy = new RetryExponential(minBackoff: TimeSpan.FromSeconds(0.1),
                                                                  maxBackoff: TimeSpan.FromSeconds(30),
                                                                  maxRetryCount: 3);
 
-Note that this code uses named parameters for clarity. Alternatively you can omit the names because none of the parameters is optional.
+이 코드는 명확성을 위해 명명된 매개 변수를 사용합니다. 또는 매개 변수가 선택 사항이 아니기 때문에 이름을 생략할 수 있습니다. 
 
     namespaceManager.Settings.RetryPolicy = new RetryExponential(TimeSpan.FromSeconds(0.1),
                      TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5), 3);
 
-To set the default retry policy for all clients created from a messaging factory, you set the **RetryPolicy** of the **MessagingFactory**.
+메시징 팩터리에서 만든 모든 클라이언트에 대한 기본 다시 시도 정책을 설정하려면 **MessagingFactory**의 **RetryPolicy**를 설정합니다. 
 
     messagingFactory.RetryPolicy = new RetryExponential(minBackoff: TimeSpan.FromSeconds(0.1),
                                                         maxBackoff: TimeSpan.FromSeconds(30),
                                                         maxRetryCount: 3);
 
-To set the retry policy for a messaging client, or to override its default policy, you set its **RetryPolicy** property using an instance of the required policy class:
+메시징 클라이언트에 대한 다시 시도 정책을 설정하거나 기본 정책을 재정의하려면 필요한 정책 클래스의 인스턴스를 사용하여 **RetryPolicy** 속성을 설정합니다. 
 
 ```csharp
 client.RetryPolicy = new RetryExponential(minBackoff: TimeSpan.FromSeconds(0.1),
@@ -515,23 +526,22 @@ client.RetryPolicy = new RetryExponential(minBackoff: TimeSpan.FromSeconds(0.1),
                                             maxRetryCount: 3);
 ```
 
-The retry policy cannot be set at the individual operation level. It applies to all operations for the messaging client.
-The following table shows the default settings for the built-in retry policy.
+다시 시도 정책은 개별 작업 수준에서 설정할 수 없습니다. 그리고 메시징 클라이언트의 모든 작업에 적용됩니다. 다음 표는 기본 제공 다시 시도 정책의 기본 설정을 보여줍니다. 
 
 ![Retry guidance table](./images/retry-service-specific/RetryServiceSpecificGuidanceTable7.png)
 
-### Retry usage guidance
-Consider the following guidelines when using Service Bus:
+### 다시 시도 사용 지침
+서비스 버스를 사용할 때는 다음 지침을 고려합니다. 
 
-* When using the built-in **RetryExponential** implementation, do not implement a fallback operation as the policy reacts to Server Busy exceptions and automatically switches to an appropriate retry mode.
-* Service Bus supports a feature called Paired Namespaces, which implements automatic failover to a backup queue in a separate namespace if the queue in the primary namespace fails. Messages from the secondary queue can be sent back to the primary queue when it recovers. This feature helps to address transient failures. For more information, see [Asynchronous Messaging Patterns and High Availability](http://msdn.microsoft.com/library/azure/dn292562.aspx).
+* 기본 제공 **RetryExponential** 구현을 사용할 때는 정책이 서버 사용 중 예외에 반응하고 적절한 다시 시도 모드로 자동 전환되기 때문에 폴백 작업을 구현하지 않습니다.
+* 서비스 버스는 기본 네임스페이스의 큐가 실패할 경우 별도의 네임스페이스에 있는 백업 큐로 자동 장애 조치(failover)를 구현하는 쌍을 이루는 네임스페이스라는 기능을 지원합니다. 기본 큐가 복구되면 보조 큐의 메시지를 기본 큐로 다시 전송할 수 있습니다. 이 기능은 일시적 오류를 해결하는 데 도움이 됩니다. 자세한 내용은 [비동기 메시징 패턴 및 고가용성](http://msdn.microsoft.com/library/azure/dn292562.aspx)을 참조하세요.
 
-Consider starting with following settings for retrying operations. These are general purpose settings, and you should monitor the operations and fine tune the values to suit your own scenario.
+다시 시도 작업의 경우 다음 설정을 사용해 시작하는 것이 좋습니다. 이러한 설정은 범용이므로 작업을 모니터링하고 고유한 시나리오에 맞게 값을 미세 조정해야 합니다. 
 
 ![Retry guidance table](./images/retry-service-specific/RetryServiceSpecificGuidanceTable8.png)
 
-### Telemetry
-Service Bus logs retries as ETW events using an **EventSource**. You must attach an **EventListener** to the event source to capture the events and view them in Performance Viewer, or write them to a suitable destination log. You could use the [Semantic Logging Application Block](http://msdn.microsoft.com/library/dn775006.aspx) to do this. The retry events are of the following form:
+### 원격 분석
+서비스 버스는 **EventSource**를 사용해 다시 시도를 ETW 이벤트로 로그합니다. 이벤트를 캡처하여 성능 뷰어에서 보거나 적합한 대상 로그에 기록하려면 **EventListener**를 이벤트 소스에 연결해야 합니다. 이런 연결을 위해 [의미 체계 로깅 응용 프로그램 블록](http://msdn.microsoft.com/library/dn775006.aspx)을 사용할 수 있습니다. 다시 시도 이벤트는 다음과 같은 형식입니다.
 
 ```text
 Microsoft-ServiceBus-Client/RetryPolicyIteration
@@ -546,12 +556,15 @@ lastExceptionType="Microsoft.ServiceBus.Messaging.MessagingCommunicationExceptio
 exceptionMessage="The remote name could not be resolved: 'retry-tests.servicebus.windows.net'.TrackingId:6a26f99c-dc6d-422e-8565-f89fdd0d4fe3,TimeStamp:9/5/2014 10:00:13 PM"
 ```
 
-### Examples
-The following code example shows how to set the retry policy for:
+### 예제
+다음 코드 예제는 다음에 대해 다시 시도 정책을 설정하는 방법을 보여줍니다. 
 
-* A namespace manager. The policy applies to all operations on that manager, and cannot be overridden for individual operations.
-* A messaging factory. The policy applies to all clients created from that factory, and cannot be overridden when creating individual clients.
-* An individual messaging client. After a client has been created, you can set the retry policy for that client. The policy applies to all operations on that client.
+•	네임스페이스 관리자. 정책은 해당 관리자의 모든 작업에 적용되며 개별 작업에 대해 재정의할 수 없습니다.
+
+•	메시징 팩터리. 정책은 해당 팩터리에서 만든 모든 클라이언트에 적용되며 개별 클라이언트를 만들 때 재정의할 수 없습니다.
+
+•	개별 메시징 클라이언트. 클라이언트를 만든 후 해당 클라이언트에 대한 다시 시도 정책을 설정할 수 있습니다. 정책은 해당 클라이언트의 모든 작업에 적용됩니다.
+
 
 ```csharp
 using System;
@@ -639,21 +652,21 @@ namespace RetryCodeSamples
 }
 ```
 
-### More information
-* [Asynchronous Messaging Patterns and High Availability](http://msdn.microsoft.com/library/azure/dn292562.aspx)
+### 자세한 정보
+* [비동기 메시징 패턴 및 고가용성](http://msdn.microsoft.com/library/azure/dn292562.aspx)
 
-## Azure Redis Cache retry guidelines
-Azure Redis Cache is a fast data access and low latency cache service based on the popular open source Redis Cache. It is secure, managed by Microsoft, and is accessible from any application in Azure.
+## Azure Redis Cache 다시 시도 지침
+Azure Redis Cache는 널리 사용되는 오픈 소스 Redis Cache 기반의 캐시 서비스로 데이터 액세스 속도가 빠르고 대기 시간이 짧습니다. Azure Redis Cache는 Microsoft에 의해 관리되어 안전하며 Azure의 모든 응용 프로그램에서 액세스가 가능합니다.
 
-The guidance in this section is based on using the StackExchange.Redis client to access the cache. A list of other suitable clients can be found on the [Redis website](http://redis.io/clients), and these may have different retry mechanisms.
+이 섹션의 지침은 StackExchange.Redis 클라이언트를 사용하여 캐시에 액세스하는 경우를 기준으로 합니다. 다른 적합한 클라이언트의 목록은 [Redis 웹 사이트](http://redis.io/clients)에서 확인할 수 있으며, 클라이언트마다 다시 시도 메커니즘이 다를 수 있습니다. 
 
-Note that the StackExchange.Redis client uses multiplexing through a single connection. The recommended usage is to create an instance of the client at application startup and use this instance for all operations against the cache. For this reason, the connection to the cache is made only once, and so all of the guidance in this section is related to the retry policy for this initial connection—and not for each operation that accesses the cache.
+StackExchange.Redis 클라이언트는 단일 연결을 통해 멀티플렉싱을 사용합니다. 권장되는 사용법은 응용 프로그램 시작 시 클라이언트의 인스턴스를 만들고 캐시에 대한 모든 작업에 이 인스턴스를 사용하는 것입니다. 이러한 이유로 인해 캐시에 대한 연결은 한 번만 이루어지므로 이 섹션의 모든 지침은 캐시에 액세스하는 각 작업이 아니라 이러한 초기 연결에 대한 다시 시도 정책과 관련이 있습니다. 
 
-### Retry mechanism
-The StackExchange.Redis client uses a connection manager class that is configured through a set of options. These options include a **ConnectRetry** property that specifies the number of times a failed connection to the cache will be retried. However, the retry policy in used only for the initial connect action, and it does not wait between retries.
+### 다시 시도 메커니즘
+StackExchange.Redis 클라이언트는 옵션 집합을 통해 구성되는 연결 관리자 클래스를 사용합니다. 이러한 옵션에는 캐시에 대한 연결 실패가 다시 시도되는 횟수를 지정하는 **ConnectRetry** 속성이 포함됩니다. 그러나 다시 시도 정책은 초기 연결 작업에만 사용되며 다시 시도 사이에서 대기하지 않습니다. 
 
-### Policy configuration
-Retry policies are configured programmatically by setting the options for the client before connecting to the cache. This can be done by creating an instance of the **ConfigurationOptions** class, populating its properties, and passing it to the **Connect** method.
+### 정책 구성
+다시 시도 정책은 캐시에 연결하기 전에 클라이언트에 대한 옵션을 설정하여 프로그래밍 방식으로 구성됩니다. 구성은 **ConfigurationOptions** 클래스의 인스턴스를 만들고 해당 속성을 채운 후 **Connect** 메서드에 전달하여 수행할 수 있습니다. 
 
 ```csharp
 var options = new ConfigurationOptions { EndPoints = { "localhost" },
@@ -662,41 +675,44 @@ var options = new ConfigurationOptions { EndPoints = { "localhost" },
 ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(options, writer);
 ```
 
-Note that the **ConnectTimeout** property specifies the maximum waiting time in milliseconds), not the delay between retries.
+**ConnectTimeout** 속성은 다시 시도 간의 지연이 아니라 최대 대기 시간을 밀리초 단위로 지정합니다. 
 
-Alternatively, you can specify the options as a string, and pass this to the **Connect** method.
+또는 옵션을 문자열로 지정하고 이를 **Connect** 메서드에 전달할 수 있습니다
 
 ```csharp
     var options = "localhost,connectRetry=3,connectTimeout=2000";
     ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(options, writer);
 ```
 
-It is also possible to specify options directly when you connect to the cache.
+또한 캐시에 연결할 때 옵션을 직접 지정할 수도 있습니다. 
 
 ```csharp
 var conn = ConnectionMultiplexer.Connect("redis0:6380,redis1:6380,connectRetry=3");
 ```
 
-The following table shows the default settings for the built-in retry policy.
+다음 표는 기본 제공 다시 시도 정책의 기본 설정을 보여줍니다. 
 
-| **Context** | **Setting** | **Default value**<br />(v 1.0.331) | **Meaning** |
+| **컨텍스트** | **설정g** | **기본값**<br />(v 1.0.331) | **의미** |
 | --- | --- | --- | --- |
-| ConfigurationOptions |ConnectRetry<br /><br />ConnectTimeout<br /><br />SyncTimeout |3<br /><br />Maximum 5000 ms plus SyncTimeout<br />1000 |The number of times to repeat connect attempts during the initial connection operation.<br />Timeout (ms) for connect operations. Not a delay between retry attempts.<br />Time (ms) to allow for synchronous operations. |
+| ConfigurationOptions |ConnectRetry<br /><br />ConnectTimeout<br /><br />SyncTimeout |3<br /><br />최대 5000 ms + SyncTimeout<br />1000 |초기 연결 작업 중 연결 시도를 반복하는 횟수입니다.<br />연결 작업에 대한 제한 시간(ms)입니다. 다시 시도 사이에 지연은 없습니다.<br />동기 작업을 허용하는 시간(ms)입니다. |
 
-> [!NOTE]
-> SyncTimeout contributes to the end-to-end latency of an operation. However, in general, using synchronous operations is not recommended. For more information see [Pipelines and Multiplexers](http://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/PipelinesMultiplexers.md).
+> [!참고]
+> SyncTimeout은 작업의 종단 간 대기 시간에 영향을 줍니다. 그러나 일반적으로 동기 작업을 사용하는 것을 권장하지 않습니다. 자세한 내용은 [파이프라인 및 멀티플렉서](http://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/PipelinesMultiplexers.md)를 참조하세요.
 >
 >
 
-### Retry usage guidance
-Consider the following guidelines when using Azure Redis Cache:
+### 다시 시도 사용 지침
+Azure Redis Cache를 사용할 때는 다음 지침을 고려합니다. 
 
-* The StackExchange Redis client manages its own retries, but only when establishing a connection to the cache when the application first starts. You can configure the connection timeout and the number of retry attempts to establish this connection, but the retry policy does not apply to operations against the cache.
-* The retry mechanism has no delay between retry attempts. It simply retries a failed connection after the specified connection timeout expires, and for the specified number of times.
-* Instead of using a large number of retry attempts, consider falling back by accessing the original data source instead.
+•	StackExchange Redis 클라이언트는 고유한 다시 시도를 관리하는 가운데 응용 프로그램이 처음 시작되어 캐시에 대한 연결을 설정할 때만 관리합니다. 이 연결을 설정하기 위해 연결 제한 시간과 다시 시도 횟수를 구성할 수 있지만, 다시 시도 정책은 캐시에 대한 작업에 적용되지 않습니다.
 
-### Telemetry
-You can collect information about connections (but not other operations) using a **TextWriter**.
+•	다시 시도 메커니즘에는 다시 시도 사이의 지연이 없습니다. 지정된 연결 제한 시간이 만료된 후 지정된 횟수만큼 실패한 연결을 다시 시도할 뿐입니다.
+
+•	다시 시도 횟수를 많이 사용하는 대신 원래 데이터 소스에 액세스하여 폴백하는 것을 고려합니다.
+
+
+### 원격 분석
+**TextWriter**를 사용해 다른 작업이 아닌 연결에 대한 정보를 수집할 수 있습니다. 
 
 ```csharp
 var writer = new StringWriter();
@@ -704,7 +720,7 @@ var writer = new StringWriter();
 ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(options, writer);
 ```
 
-An example of the output this generates is shown below.
+생성되는 출력의 예는 다음과 같습니다. 
 
 ```text
 localhost:6379,connectTimeout=2000,connectRetry=3
@@ -724,10 +740,11 @@ retrying; attempts left: 2...
 ...
 ```
 
-### Examples
-The following code example shows how you can configure the connection timeout setting and the number of retries when initializing the StackExchange.Redis client to access Azure Redis Cache at application startup. Note that the connection timeout is the period of time that you are willing to wait for connection to the cache; it is not the delay between retry attempts.
+### 예제
+다음 코드는 StackExchange.Redis 클라이언트를 초기화하여 응용 프로그램 시작 시 Azure Redis Cache에 액세스할 때 연결 제한 시간 설정과 다시 시도 횟수를 구성하는 방법을 보여줍니다. 연결 제한 시간은 캐시에 연결될 때까지 기다려야 하는 시간이며 다시 시도 사이의 지연 시간이 아닙니다. 
 
-This example shows how to set the configuration using an instance of the **ConfigurationOptions**.
+
+다음 예는 **ConfigurationOptions**의 인스턴스를 사용해 구성을 설정하는 방법을 보여줍니다. 
 
 ```csharp
 using System;
@@ -771,7 +788,7 @@ namespace RetryCodeSamples
 }
 ```
 
-This example shows how to set the configuration by specifying the options as a string.
+다음 예는 옵션을 문자열로 지정하여 구성을 설정하는 방법을 보여줍니다. 
 
 ```csharp
 using System.Collections.Generic;
@@ -809,28 +826,28 @@ namespace RetryCodeSamples
 }
 ```
 
-For more examples, see [Configuration](http://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Configuration.md#configuration) on the project website.
+더 많은 예는 프로젝트 웹 사이트의 [구성](http://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Configuration.md#configuration)을 참조하세요.
 
-### More information
-* [Redis website](http://redis.io/)
+### 자세한 정보
+* [Redis 웹 사이트](http://redis.io/)
 
-## DocumentDB retry guidelines
-DocumentDB is a fully-managed document database-as-a-service with rich query and indexing capabilities over a schema-free JSON data model. It offers configurable and reliable performance, native JavaScript transactional processing, and is built for the cloud with elastic scale.
+## DocumentDB 다시 시도 지침
+DocumentDB는 스키마 없는 JSON 데이터 모델에 대해 풍부한 쿼리 및 인덱싱 기능으로 완전히 관리되는 문서 DaaS(Database-as-a-Service)입니다. DocumentDB는 구성 가능하고 안정적인 성능과 네이티브 JavaScript 트랜잭션 처리를 제공하며 탄력적인 확장성으로 클라우드에 맞게 구축됩니다. 
 
-### Retry mechanism
-The `DocumentClient` class automatically retries failed attempts. To set the number of retries and the maximum wait time, configure [ConnectionPolicy.RetryOptions]. Exceptions that the client raises are either beyond the retry policy or are not transient errors.
+### 다시 시도 메커니즘
+`DocumentClient` 클래스는 실패한 작업을 자동으로 다시 시도합니다. 다시 시도 횟수와 최대 대기 시간을 설정하려면 [ConnectionPolicy.RetryOptions]을 구성합니다. 클라이언트에서 발생하는 예외는 다시 시도 정책의 범위를 벗어나거나 일시적 오류가 아닙니다. 
 
-If DocumentDB throttles the client, it returns an HTTP 429 error. Check the status code in the `DocumentClientException`.
+DocumentDB가 클라이언트를 제한하는 경우 HTTP 429 오류가 반환됩니다. `DocumentClientException`의 상태 코드를 확인합니다. 
 
-### Policy configuration
-The following table shows the default settings for the `RetryOptions` class.
+### 정책 구성
+다음 표에는 `RetryOptions` 클래스의 기본 설정을 보여줍니다. 
 
-| Setting | Default value | Description |
+| 설정 | 기본값 | 설명 |
 | --- | --- | --- |
-| MaxRetryAttemptsOnThrottledRequests |9 |The maximum number of retries if the request fails because DocumentDB applied rate limiting on the client. |
-| MaxRetryWaitTimeInSeconds |30 |The maximum retry time in seconds. |
+| MaxRetryAttemptsOnThrottledRequests |9 |DocumentDB가 클라이언트에 요청률 제한을 적용하기 때문에 요청이 실패하는 경우의 최대 다시 시도 횟수입니다. |
+| MaxRetryWaitTimeInSeconds |30 |초 단위의 최대 다시 시도 시간입니다. |
 
-### Example
+### 예제
 ```csharp
 DocumentClient client = new DocumentClient(new Uri(endpoint), authKey); ;
 var options = client.ConnectionPolicy.RetryOptions;
@@ -838,10 +855,10 @@ options.MaxRetryAttemptsOnThrottledRequests = 5;
 options.MaxRetryWaitTimeInSeconds = 15;
 ```
 
-### Telemetry
-Retry attempts are logged as unstructured trace messages through a .NET **TraceSource**. You must configure a **TraceListener** to capture the events and write them to a suitable destination log.
+### 원격 분석
+다시 시도 횟수는 .NET **TraceSource**를 통해 구조화되지 않은 추적 메시지로 로그됩니다. 이벤트를 캡처하여 적합한 대상 로그에 기록하려면 **TraceListener**를 구성해야 합니다. 
 
-For example, if you add the following to your App.config file, traces will be generated in a text file in the same location as the executable:
+예를 들어 App.config 파일에 다음을 추가하는 경우, 추적 메시지는 실행 파일과 동일한 위치에 텍스트 파일 형식으로  생성됩니다. 
 
 ```
 <configuration>
@@ -861,23 +878,23 @@ For example, if you add the following to your App.config file, traces will be ge
 ```
 
 
-## Azure Search retry guidelines
-Azure Search can be used to add powerful and sophisticated search capabilities to a website or application, quickly and easily tune search results, and construct rich and fine-tuned ranking models.
+## Azure Search 다시 시도 지침
+Azure Search를 사용하면 강력하고 정교한 검색 기능을 웹 사이트 또는 응용 프로그램에 추가하고, 검색 결과를 신속하고 쉽게 조정하며, 풍부하고 미세 조정된 순위 모델을 생성할 수 있습니다. 
 
-### Retry mechanism
-Retry behavior in the Azure Search SDK is controlled by the `SetRetryPolicy` method on the [SearchServiceClient] and [SearchIndexClient] classes. The default policy retries with exponential backoff when Azure Search returns a 5xx or 408 (Request Timeout) response.
+### 다시 시도 메커니즘
+Azure Search SDK의 다시 시도 동작은 [SearchServiceClient](https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.search.searchserviceclient?redirectedfrom=MSDN&view=azuresearch-3.0.2#microsoft_azure_search_searchserviceclient) 및 [SearchIndexClient](https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.search.searchindexclient?redirectedfrom=MSDN&view=azuresearch-3.0.2#microsoft_azure_search_searchindexclient) 클래스의 `SetRetryPolicy` 메서드로 제어합니다. 기본 정책은 Azure Search가 5xx 또는 408 (Request Timeout) 응답을 반환할 때 지수 백오프를 사용해 다시 시도하는 것입니다. 
 
-### Telemetry
-Trace with ETW or by registering a custom trace provider. For more information, see the [AutoRest documentation][autorest].
+### 원격 분석 
+ETW를 사용하거나 사용자 지정 추적 공급자를 등록하여 추적합니다. 자세한 내용은 [AutoRest documentation][autorest]를 참조하세요.
 
-## Azure Active Directory retry guidelines
-Azure Active Directory (AD) is a comprehensive identity and access management cloud solution that combines core directory services, advanced identity governance, security, and application access management. Azure AD also offers developers an identity management platform to deliver access control to their applications, based on centralized policy and rules.
+## Azure Redis Directory 다시 시도 지침
+Azure Active Directory(AD)는 핵심 디렉터리 서비스, 고급 ID 관리, 보안 및 응용 프로그램 액세스 관리를 결합하는 포괄적인 ID 및 액세스 관리 클라우드 솔루션입니다. 또한 Azure AD는 중앙 집중식 정책 및 규칙에 따라 응용 프로그램에 대한 액세스를 제어할 수 있도록 개발자에게 ID 관리 플랫폼을 제공합니다.
 
-### Retry mechanism
-There is no built-in retry mechanism for Azure Active Directory in the Active Directory Authentication Library (ADAL). You can use the Transient Fault Handling Application Block to implement a retry strategy that contains a custom detection mechanism for the exceptions returned by Active Directory.
+### 다시 시도 메커니즘
+ADAL(Active Directory 인증 라이브러리)에는 Azure Active Directory를 위한 기본 제공 다시 시도 메커니즘이 없습니다. 일시적 오류 처리 응용 프로그램 블록을 사용해 Active Directory가 반환한 예외에 대한 사용자 지정 검색 메커니즘을 포함하는 다시 시도 전략을 구현할 수 있습니다. 
 
-### Policy configuration (Azure Active Directory)
-When using the Transient Fault Handling Application Block with Azure Active Directory you create a **RetryPolicy** instance based on a class that defines the detection strategy you want to use.
+### 정책 구성(Azure Active Directory)
+Azure Active Directory에서 일시적 오류 처리 응용 프로그램 블록을 사용할 때는 사용할 검색 전략을 정의하는 클래스를 기반으로 **RetryPolicy** 인스턴스를 만듭니다. 
 
 ```csharp
 var policy = new RetryPolicy<AdalDetectionStrategy>(new ExponentialBackoff(retryCount: 5,
@@ -886,32 +903,34 @@ var policy = new RetryPolicy<AdalDetectionStrategy>(new ExponentialBackoff(retry
                                                                      deltaBackoff: TimeSpan.FromSeconds(2)));
 ```
 
-You then call the **ExecuteAction** or **ExecuteAsync** method of the retry policy, passing in the operation you want to execute.
+그런 다음 다시 시도 정책의 **ExecuteAction** 또는 **ExecuteAsync** 메서드를 호출하여 실행하려는 작업에 전달합니다. 
 
 ```csharp
 var result = await policy.ExecuteAsync(() => authContext.AcquireTokenAsync(resourceId, clientId, uc));
 ```
 
-The detection strategy class receives exceptions when a failure occurs, and must detect whether this is likely to be a transient fault or a more permanent failure. Typically it will do this by examining the exception type and status code. For example, a Service Unavailable response indicates that a retry attempt should be made. The Transient Fault Handling Application Block does not include a detection strategy class that is suitable for use with the ADAL client, but an example of a custom detection strategy is provided in the [Examples](#examples) section below. Using a custom detection strategy is no different from using one supplied with the block.
+검색 전략 클래스는 오류 발생 시 예외를 수신하고 일시적 오류일 가능성이 높은지 아니면 더 영구적인 오류인지를 감지해야 합니다. 일반적으로 예외 유형 및 상태 코드를 검사하여 이 작업을 수행합니다. 예를 들어 서비스를 사용할 수 없음(Service Unavailable) 응답은 다시 시도가 필요하다는 것을 나타냅니다. 일시적 오류 처리 응용 프로그램 블록에는 ADAL 클라이언트에서 사용하는 데 적합한 검색 전략 클래스가 포함되어 있지 않으며, 사용자 지정 검색 전략의 예는 아래의 [예제](#examples) 섹션에 제공합니다. 사용자 지정 검색 전략의 사용은 블록과 함께 제공되는 전략과 다르지 않습니다. 
 
-Default strategies for the Transient Fault Handling Application Block are shown in the section [Transient Fault Handling Application Block (Topaz) strategies](#transient-fault-handling-application-block-topaz-strategies) at the end of this guidance.
+일시적 오류 처리 응용 프로그램 블록에 대한 기본 전략은 본 지침의 끝에 있는 [일시적 오류 처리 응용 프로그램 블록(Topaz) 전략](#transient-fault-handling-application-block-topaz-strategies) 섹션에 나와 있습니다. 
 
-### Retry usage guidance
-Consider the following guidelines when using Azure Active Directory:
+### 다시 시도 사용 지침
+Azure Active Directory를 사용할 때는 다음 지침을 고려합니다. 
 
-* If you are using the REST API for Azure Active Directory, you should retry the operation only if the result is an error in the 5xx range (such as 500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable, and 504 Gateway Timeout). Do not retry for any other errors.
-* If you are using the Active Directory Authentication Library (ADAL), HTTP codes are not readily accessible. You will need to create a custom detection strategy that includes logic to check the properties of the ADAL-specific exceptions. See the [Examples](#examples) section below.
-* An exponential back-off policy is recommended for use in batch scenarios with Azure Active Directory.
+•	Azure Active Directory에 REST API를 사용하고 있는 경우, 결과가 5xx 범위의 오류(500 내부 서버 오류, 502 잘못된 게이트웨이, 503 서비스를 사용할 수 없음, 504 게이트웨이 시간 초과)인 경우에만 작업을 다시 시도해야 합니다. 다른 어떤 오류에 대해서도 다시 시도를 해서는 안 됩니다.
 
-Consider starting with following settings for retrying operations. These are general purpose settings, and you should monitor the operations and fine tune the values to suit your own scenario.
+•	ADAL(Active Directory 인증 라이브러리)을 사용하고 있는 경우 HTTP 코드에 쉽게 액세스할 수 없습니다. 따라서 ADAL 관련 예외의 속성을 확인하는 논리가 포함된 사용자 지정 검색 전략을 만들어야 합니다. 아래 [예제](#examples) 섹션을 참조하세요.
 
-| **Context** | **Sample target E2E<br />max latency** | **Retry strategy** | **Settings** | **Values** | **How it works** |
+•	Azure Active Directory의 일괄 처리 시나리오에는 지수 백오프 정책을 사용하는 것이 좋습니다.
+
+다시 시도 작업의 경우 다음 설정을 사용해 시작하는 것이 좋습니다. 이러한 설정은 범용이므로 작업을 모니터링하고 고유한 시나리오에 맞게 값을 미세 조정해야 합니다. 
+
+| **컨텍스트** | **샘플 대상 E2E<br />최대 대기 시간** | **다시 시도 전략** | **설정** | **값** | **작동 방법** |
 | --- | --- | --- | --- | --- | --- |
-| Interactive, UI,<br />or foreground |2 sec |FixedInterval |Retry count<br />Retry interval<br />First fast retry |3<br />500 ms<br />true |Attempt 1 - delay 0 sec<br />Attempt 2 - delay 500 ms<br />Attempt 3 - delay 500 ms |
-| Background or<br />batch |60 sec |ExponentialBackoff |Retry count<br />Min back-off<br />Max back-off<br />Delta back-off<br />First fast retry |5<br />0 sec<br />60 sec<br />2 sec<br />false |Attempt 1 - delay 0 sec<br />Attempt 2 - delay ~2 sec<br />Attempt 3 - delay ~6 sec<br />Attempt 4 - delay ~14 sec<br />Attempt 5 - delay ~30 sec |
+| 대화형, UI<br />또는 포그라운드 |2초 |FixedInterval |다시 시도 횟수<br />다시 시도 간격<br />첫 번째 빠른 다시 시도 |3<br />500 ms<br />true |시도 1 - 0초 지연<br />시도 2 - 500 ms 지연<br />시도 3 - 500 ms 지연 |
+| 백그라운드 또는<br />일괄 처리 |60초 |ExponentialBackoff |다시 시도 횟수<br />최소 백오프<br />최대 백오프<br />델타 백오프<br />첫 번째 빠른 다시 시도 |5<br />0초<br />60초<br />2초<br />false |시도 1 - 0초 지연<br />시도 2 - 2초 지연<br />시도 3 - 6초 지연<br />시도 4 - 14초 지연<br />시도 5 - 30초 지연 |
 
-### Examples
-The following code example shows how you can use the Transient Fault Handling Application Block (Topaz) to define a custom transient error detection strategy suitable for use with the ADAL client. The code creates a new **RetryPolicy** instance based on a custom detection strategy of type **AdalDetectionStrategy**, as defined in the code listing below. Custom detection strategies for Topaz implement the **ITransientErrorDetectionStrategy** interface and return true if a retry should be attempted, or **false** if the failure appears to be non-transient and a retry should not be attempted.
+### 예제
+다음 코드 예제는 일시적 오류 처리 응용 프로그램 블록(Topaz)을 사용해 ADAL 클라이언트에서 사용하는 데 적합한 사용자 지정 일시적 오류 검색 전략을 정의하는 방법을 보여줍니다. 이 코드는 아래 코드 목록에 정의된 대로 **AdalDetectionStrategy** 형식의 사용자 지정 검색 전략에 따라 새로운**RetryPolicy** 인스턴스를 만듭니다. Topaz에 대한 사용자 지정 검색 전략은 **ITransientErrorDetectionStrategy** 인터페이스를 구현하고 다시 시도를 수행해야 하는 경우 true를 반환하거나 오류가 일시적이지 않은 것으로 나타나 다시 시도를 수행하지 않아야 하는 경우 **false**를 반환합니다. 
 
     using System;
     using System.Linq;
@@ -1006,41 +1025,57 @@ The following code example shows how you can use the Transient Fault Handling Ap
         }
     }
 
-For information about retrying Active Directory Graph API operations and the error codes returned see:
+Active Directory Graph API 작업 다시 시도 및 반환된 오류 코드에 대한 자세한 내용은 다음을 참조하세요. 
 
-* [Code Sample: Retry Logic](http://msdn.microsoft.com/library/azure/dn448547.aspx)
-* [Azure AD Graph Error Codes](http://msdn.microsoft.com/library/azure/hh974480.aspx)
+* [코드 샘플: 다시 시도 논리](http://msdn.microsoft.com/library/azure/dn448547.aspx)
+* [Azure AD Graph 오류 코드](http://msdn.microsoft.com/library/azure/hh974480.aspx)
 
-### More information
-* [Implementing a Custom Detection Strategy](http://msdn.microsoft.com/library/hh680940.aspx) (Topaz)
-* [Implementing a Custom Retry Strategy](http://msdn.microsoft.com/library/hh680943.aspx) (Topaz)
-* [Token Issuance and Retry Guidelines](http://msdn.microsoft.com/library/azure/dn168916.aspx)
+### 자세한 정보
+* [사용자 지정 검색 전략 구현](http://msdn.microsoft.com/library/hh680940.aspx) (Topaz)
+* [사용자 지정 다시 시도 전략 구현](http://msdn.microsoft.com/library/hh680943.aspx) (Topaz)
+* [토큰 발급 및 다시 시도 지침](http://msdn.microsoft.com/library/azure/dn168916.aspx)
 
-## General REST and retry guidelines
-Consider the following when accessing Azure or third party services:
+## 일반 REST 및 다시 시도 지침
+Azure 또는 타사 서비스에 액세스할 때는 다음을 고려합니다. 
 
-* Use a systematic approach to managing retries, perhaps as reusable code, so that you can apply a consistent methodology across all clients and all solutions.
-* Consider using a retry framework such as the Transient Fault Handling Application Block to manage retries if the target service or client has no built-in retry mechanism. This will help you implement a consistent retry behavior, and it may provide a suitable default retry strategy for the target service. However, you may need to create custom retry code for services that have non-standard behavior, that do not rely on exceptions to indicate transient failures, or if you want to use a **Retry-Response** reply to manage retry behavior.
-* The transient detection logic will depend on the actual client API you use to invoke the REST calls. Some clients, such as the newer **HttpClient** class, will not throw exceptions for completed requests with a non-success HTTP status code. This improves performance but prevents the use of the Transient Fault Handling Application Block. In this case you could wrap the call to the REST API with code that produces exceptions for non-success HTTP status codes, which can then be processed by the block. Alternatively, you can use a different mechanism to drive the retries.
-* The HTTP status code returned from the service can help to indicate whether the failure is transient. You may need to examine the exceptions generated by a client or the retry framework to access the status code or to determine the equivalent exception type. The following HTTP codes typically indicate that a retry is appropriate:
-  * 408 Request Timeout
-  * 500 Internal Server Error
-  * 502 Bad Gateway
-  * 503 Service Unavailable
-  * 504 Gateway Timeout
-* If you base your retry logic on exceptions, the following typically indicate a transient failure where no connection could be established:
-  * WebExceptionStatus.ConnectionClosed
-  * WebExceptionStatus.ConnectFailure
-  * WebExceptionStatus.Timeout
-  * WebExceptionStatus.RequestCanceled
-* In the case of a service unavailable status, the service might indicate the appropriate delay before retrying in the **Retry-After** response header or a different custom header (as in the DocumentDB service). Services might also send additional information as custom headers, or embedded in the content of the response. The Transient Fault Handling Application Block cannot use the standard or any custom “retry-after” headers.
-* Do not retry for status codes representing client errors (errors in the 4xx range) except for a 408 Request Timeout.
-* Thoroughly test your retry strategies and mechanisms under a range of conditions, such as different network states and varying system loadings.
+•	재사용 가능한 코드로 다시 시도를 관리하는 체계적인 접근을 사용해 모든 클라이언트 및 모든 솔루션에 일관된 방법론을 적용할 수 있도록 합니다.
 
-### Retry strategies
-The following are the typical types of retry strategy intervals:
+•	대상 서비스 또는 클라이언트에 기본 제공 다시 시도 메커니즘이 없는 경우, 일시적 오류 처리 응용 프로그램 블록과 같은 다시 시도 프레임워크를 사용해 다시 시도를 관리하는 것이 좋습니다. 그러면 일관된 다시 시도 동작을 구현하는 데 도움이 되며  대상 서비스에 적합한 기본 다시 시도 전략을 제공할 수 있습니다. 그러나 비표준 동작을 사용하는 서비스, 일시적 오류를 표시하는 데 예외를 사용하지 않는 서비스 또는 **Retry-Response** 회신을 사용해 다시 시도 작업을 관리하려는 경우 사용자 지정 다시 시도 코드를 만들어야 할 수 있습니다.
 
-* **Exponential**: A retry policy that performs a specified number of retries, using a randomized exponential back off approach to determine the interval between retries. For example:
+•	일시적 검색 논리는 REST 호출에 사용하는 실제 클라이언트 API에 따라 달라집니다. 최신 **HttpClient** 클래스와 같은 일부 클라이언트는 성공이 아닌 HTTP 상태 코드를 사용해 완료된 요청에 대한 예외를 발생시키지 않습니다. 따라서 성능은 향상되지만 일시적 오류 처리 응용 프로그램 블록을 사용할 수 없게 됩니다. 이 경우 성공이 아닌 HTTP 상태 코드에 대한 예외를 생성하는 코드를 사용해 REST API에 대한 호출을 래핑한 다음 블록에서 처리할 수 있습니다. 또는  다른 메커니즘을 사용해 다시 시도를 실행할 수 있습니다.
+
+•	서비스에서 반환된 HTTP 상태 코드는 오류가 일시적인지 여부를 나타내는 데 도움이 될 수 있습니다. 상태 코드에 액세스하거나 해당하는 예외 유형을 확인하기 위해 클라이언트 또는 다시 시도 프레임워크에서 생성된 예외를 검사해야 할 수 있습니다. 다음 HTTP 코드는 일반적으로 다시 시도가 적합함을 나타냅니다.
+
+o	408 요청 시간 초과
+
+o	500 내부 서버 오류
+
+o	502 잘못된 게이트웨이
+
+o	503 서비스를 사용할 수 없음
+
+o	504 게이트웨이 시간 초과
+
+•	다시 시도 논리가 예외를 기반으로 하는 경우, 다음은 일반적으로 연결을 설정할 수 없는 일시적 오류를 나타냅니다.
+
+o	WebExceptionStatus.ConnectionClosed
+
+o	WebExceptionStatus.ConnectFailure
+
+o	WebExceptionStatus.Timeout
+
+o	WebExceptionStatus.RequestCanceled
+
+•	서비스를 사용할 수 없음 상태의 경우, 서비스는 **Retry-After** 응답 헤더 또는 다른 사용자 지정 헤더(예: DocumentDB 서비스)에서 다시 시도를 수행하기 전에 해당되는 지연 시간을 나타낼 수 있습니다. 또한 서비스는 추가 정보를 사용자 지정 헤더로 전송하거나 응답 내용에 포함시킬 수 있습니다. 일시적 오류 처리 응용 프로그램 블록은 표준 또는 사용자 지정 "retry-after" 헤더를 사용할 수 없습니다.
+
+•	408 요청 시간 초과를 제외한 클라이언트 오류(4xx 범위의 오류)를 나타내는 상태 코드에 대해서는 다시 시도를 수행하지 않습니다. 
+
+•	서로 다른 네트워크 상태 및 다양한 시스템 부하와 같은 다양한 조건에서 다시 시도 전략 및 메커니즘을 철저하게 테스트합니다.
+
+### 다시 시도 전략
+다음은 다시 시도 전략 간격의 일반적인 유형입니다. 
+
+* **지수**: 지정된 횟수만큼 다시 시도를 수행하고 임의 지정된 지수 백오프 방법을 사용하여 다시 시도 사이의 간격을 결정하는 다시 시도 정책입니다. 예:
 
         var random = new Random();
 
@@ -1050,28 +1085,28 @@ The following are the typical types of retry strategy intervals:
         var interval = (int)Math.Min(checked(this.minBackoff.TotalMilliseconds + delta),
                        this.maxBackoff.TotalMilliseconds);
         retryInterval = TimeSpan.FromMilliseconds(interval);
-* **Incremental**: A retry strategy with a specified number of retry attempts and an incremental time interval between retries. For example:
+        
+* **증분**: 다시 시도 횟수가 지정되고 다시 시도 사이의 간격이 증분되는 다시 시도 전략입니다. 예:
 
         retryInterval = TimeSpan.FromMilliseconds(this.initialInterval.TotalMilliseconds +
                        (this.increment.TotalMilliseconds * currentRetryCount));
-* **LinearRetry**: A retry policy that performs a specified number of retries, using a specified fixed time interval between retries. For example:
+* **LinearRetry**: 다시 시도 사이의 지정된 고정 시간 간격을 사용해 지정된 횟수만큼 다시 시도를 수행하는 다시 시도 정책입니다. 예:
 
         retryInterval = this.deltaBackoff;
 
-### More information
-* [Circuit breaker strategies](http://msdn.microsoft.com/library/dn589784.aspx)
+### 자세한 정보
+* [회로 차단기 전략](http://msdn.microsoft.com/library/dn589784.aspx)
 
-## Transient Fault Handling Application Block (Topaz) strategies
-The Transient Fault Handling Application Block has the following default strategies.
+## 일시적 오류 처리 응용 프로그램 블록(Topax) 전략
+일시적 오류 처리 응용 프로그램 블록에는 다음과 같은 기본 전략이 있습니다. 
 
-| **Strategy** | **Setting** | **Default value** | **Meaning** |
+| **전략** | **설정** | **기본값** | **의미** |
 | --- | --- | --- | --- |
-| **Exponential** |retryCount<br />minBackoff<br /><br />maxBackoff<br /><br />deltaBackoff<br /><br />fastFirstRetry |10<br />1 second<br /><br />30 seconds<br /><br />10 seconds<br /><br />true |The number of retry attempts.<br />The minimum back-off time. The higher of this value or the computed back-off will be used as the retry delay.<br />The minimum back-off time. The lower of this value or the computed back-off will be used as the retry delay.<br />The value used to calculate a random delta for the exponential delay between retries.<br />Whether the first retry attempt will be made immediately. |
-| **Incremental** |retryCount<br />initialInterval<br />increment<br /><br />fastFirstRetry<br /> |10<br />1 second<br />1 second<br /><br />true |The number of retry attempts.<br />The initial interval that will apply for the first retry.<br />The incremental time value that will be used to calculate the progressive delay between retries.<br />Whether the first retry attempt will be made immediately. |
-| **Linear (fixed interval)** |retryCount<br />retryInterval<br />fastFirstRetry<br /> |10<br />1 second<br />true |The number of retry attempts.<br />The delay between retries.<br />Whether first retry attempt will be made immediately. |
+| **지수** |retryCount<br />minBackoff<br /><br />maxBackoff<br /><br />deltaBackoff<br /><br />fastFirstRetry |10<br />1초<br /><br />30초<br /><br />10초<br /><br />true |다시 시도 횟수입니다.<br />최소 백오프 시간입니다. 이 값 또는 계산된 백오프보다 높은 값은 다시 시도 지연 시간으로 사용됩니다.<br />최소 백오프 시간입니다. 이 값 또는 계산된 백오프보다 낮은 값은 다시 시도 지연 시간으로 사용됩니다.<br />다시 시도 사이의 지수 지연 시간에 대한 임의 델타 값을 계산하는 데 사용되는 값입니다.<br />첫 번째 다시 시도가 즉시 수행되는지 여부입니다. |
+| **증분** |retryCount<br />initialInterval<br />increment<br /><br />fastFirstRetry<br /> |10<br />1초<br />1초<br /><br />true |다시 시도 횟수입니다.<br />첫 번째 다시 시도에 적용될 초기 간격입니다.<br />다시 시도 사이의 점진적 지연 시간을 계산하는 데 사용될 증분 시간 값입니다.<br />첫 번째 다시 시도가 즉시 수행되는지 여부입니다. |
+| **선형(고정 간격)** |retryCount<br />retryInterval<br />fastFirstRetry<br /> |10<br />1초<br />true |다시 시도 횟수입니다.<br />다시 시도 사이의 지연 시간입니다.<br />첫 번째 다시 시도가 즉시 수행되는지 여부입니다. |
 
-For examples of using the Transient Fault Handling Application Block, see the Examples sections earlier in this guidance for Azure SQL Database using ADO.NET and Azure Active Directory.
-
+일시적 오류 처리 응용 프로그램 블록을 사용하는 예제는 이 지침의 앞 부분에서 ADO.NET을 사용하는 Azure SQL 데이터베이스 및 Azure Active Directory에 대한 예제 섹션을 참조하세요.
 <!-- links -->
 
 [autorest]: https://github.com/Azure/autorest/tree/master/docs
