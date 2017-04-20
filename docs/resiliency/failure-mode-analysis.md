@@ -10,147 +10,147 @@ ms.custom: resiliency
 
 pnp.series.title: Design for Resiliency
 ---
-# Failure mode analysis
+# 장애 모드 분석
 [!INCLUDE [header](../_includes/header.md)]
 
-Failure mode analysis (FMA) is a process for building resiliency into a system, by identifying possible failure points in the system. The FMA should be part of the architecture and design phases, so that you can build failure recovery into the system from the beginning.
+장애 모드 분석(Failure Mode Analysis, FMA)은 시스템의 예상 장애 지점을 식별하여 시스템에 복원력을 구축하는 프로세스입니다. FMA는 아키텍처 및 디자인 단계의 일부가 되어야 하며, 처음부터 장애 복원 기능을 시스템에 구축할 수 있도록 해야 합니다.
 
-Here is the general process to conduct an FMA:
+일반적인 FMA 수행 절차는 다음과 같습니다.
 
-1. Identify all of the components in the system. Include external dependencies, such as as identity providers, third-party services, and so on.   
-2. For each component, identify potential failures that could occur. A single component may have more than one failure mode. For example, you should consider read failures and write failures separately, because the impact and possible mitigations will be different.
-3. Rate each failure mode according to its overall risk. Consider these factors:  
+1. 시스템의 모든 구성 요소를 식별합니다. ID 제공업체, 타사 서비스 등 외부 종속성을 포함시킵니다.  
+2. 각 구성 요소에 대해 발생 가능한 잠재적 장애를 식별합니다. 단일 구성 요소에 하나 이상의 고장 모드가 있을 수 있습니다. 예를 들어 읽기 오류와 쓰기 오류를 별도로 고려해야 하는데, 그 이유는 영향과 가능한 완화 조치가 다르기 때문입니다.
+3. 전체적 위험도에 따라 각 장애 모드를 평가합니다. 아래 요소들을 고려합니다.
 
-   * What is the likelihood of the failure. Is it relatively common? Extrememly rare? You don't need exact numbers; the purpose is to help rank the priority.
-   * What is the impact on the application, in terms of availability, data loss, monetary cost, and business disruption?
-4. For each failure mode, determine how the application will respond and recover. Consider tradeoffs in cost and application complexity.   
+   * 장애 가능성이 어느 정도입니까? 비교적 일반적인 것입니까? 매우 드문 것입니까? 정확한 수치가 필요하지는 않으며, 그 목적은 우선순위를 정하는 데 도움을 주는 것입니다.
+   * 가용성, 데이터 손실, 금전적 비용, 비즈니스 중단 측면에서 응응 프로그램에 대한 영향이 무엇입니까?
+4. 각 장애 모드에 대해 응용 프로그램의 대응 및 복구 방법을 결정합니다. 비용 및 응용 프로그램의 복잡성 측면에서 장단점을 고려합니다.   
 
-As a starting point for your FMA process, this article contains a catalog of potential failure modes and their mitigations. The catalog is organized by technology or Azure service, plus a general category for application-level design. The catalog is not exhaustive, but covers many of the core Azure services.
+FMA 프로세스의 출발점으로서 본 문서에는 잠재적 장애 모드와 해당 완화책 카탈로그가 포함되어 있습니다. 카탈로그는 기술 또는 Azure 서비스별로 구성되며 응용 프로그램 수준의 설계에 대한 일반 범주도 포함되어 있습니다. 카탈로그에 모든 내용이 포함된 것은 아니며, 많은 핵심적 Azure 서비스를 다룹니다.
 
-## App Service
-### App Service app shuts down.
-**Detection**. Possible causes:
+## 앱 서비스
+### 앱 서비스 응용 프로그램이 종료됨.
+**검색**. 예상 원인:
 
-* Expected shutdown
+* 예상된 종료
 
-  * An operator shuts down the application; for example, using the Azure portal.
-  * The app was unloaded because it was idle. (Only if the `Always On` setting is disabled.)
-* Unexpected shutdown
+  * 운영자가 예를 들어 Azure 포털을 통해서 응용 프로그램을 종료합니다.
+  * 응용 프로그램이 유휴 상태여서 언로드되었습니다. (`Always On` 설정이 비활성화된 경우에만 해당됩니다.)
+* 예상치 못한 종료
 
-  * The app crashes.
-  * An App Service VM instance becomes unavailable.
+  * 응용 프로그램의 작동이 중단됩니다.
+  * 앱 서비스 VM 인스턴스가 사용할 수 없는 상태가 됩니다.
 
-Application_End logging will catch the app domain shutdown (soft process crash) and is the only way to catch the application domain shutdowns.
+Application_End 로깅이 앱 도메인 종료(소프트 프로세스 크래시)를 포착하며, 이것이 응용 프로그램 도메인 종료를 포착하는 유일한 방법입니다.
 
-**Recovery**
+**복구**
 
-* If the shutdown was expected, use the application's shutdown event to shut down gracefully. For example, in ASP.NET, use the `Application_End` method.
-* If the application was unloaded while idle, it is automatically restarted on the next request. However, you will incur the "cold start" cost.
-* To prevent the application from being unloaded while idle, enable the `Always On` setting in the web app. See [Configure web apps in Azure App Service][app-service-configure].
-* To prevent an operator from shutting down the app, set a resource lock with `ReadOnly` level. See [Lock resources with Azure Resource Manager][rm-locks].
-* If the app crashes or an App Service VM becomes unavailable, App Service automatically restarts the app.
+* 종료가 예상되었으면, 응용 프로그램의 종료 이벤트를 사용하여 안정적으로 종료하십시오. 예를 들어 ASP.NET에서는 `Application_End` 메서드를 사용합니다.
+* 유휴 상태에서 응용 프로그램이 언로드되었을 경우 다음 요청 시 자동으로 다시 시작됩니다. 하지만 "콜드 부팅" 비용이 발생합니다.
+* 유휴 상태에서 응용 프로그램이 언로드되는 것을 방지하려면 웹 앱에서 `Always On` 설정을 활성화하십시오.  [Azure App Service에서 웹 앱 구성][app-service-configure]을 참조하십시오.
+* 운영자가 앱을 종료하는 것을 방지하기 위해 리소스 잠금을 `ReadOnly` 수준으로 설정하십시오. [Azure Resource Manager로 리소스 잠금][rm-locks]을 참조하십시오.
+* 앱 작동이 중단하거나 앱 서비스 VM이 사용할 수 없는 상태가 되면 App Service가 해당 앱을 자동으로 다시 시작합니다.
 
-**Diagnostics**. Application logs and web server logs. See [Enable diagnostics logging for web apps in Azure App Service][app-service-logging].
+**진단**. 응용 프로그램 로그 및 웹 서버 로그. [Azure App Service에서 웹 앱의 진단 로깅 활성화][app-service-logging]를 참조하십시오.
 
-### A particular user repeatedly makes bad requests or overloads the system.
-**Detection**. Authenticate users and include user ID in application logs.
+### 특정 사용자가 반복하여 불량 요청을 하거나 시스템 과부하를 야기함.
+**검색**. 사용자를 인증하고 사용자 ID를 응용 프로그램 로그에 포함시킵니다.
 
-**Recovery**
+**복구**
 
-* Use [Azure API Management][api-management] to throttle requests from the user. See [Advanced request throttling with Azure API Management][api-management-throttling]
-* Block the user.
+* [Azure API Management][api-management]를 사용하여 해당 사용자의 요청을 제한합니다. [Azure API Management로 고급 요청 제한][api-management-throttling]
+* 사용자를 차단합니다.
 
-**Diagnostics**. Log all authentication requests.
+**진단**. 모든 인증 요청을 기록합니다.
 
-### A bad update was deployed.
-**Detection**. Monitor the application health through the Azure Portal (see [Monitor Azure web app performance][app-insights-web-apps]) or implement the [health endpoint monitoring pattern][health-endpoint-monitoring-pattern].
+### 불량 업데이트가 배포되었음.
+**검색**. Azure 포털을 통해 응용 프로그램 상태를 모니터링하거나 (참조: [Azure 웹 앱 성능 모니터링][app-insights-web-apps]) 또는 [상태 끝점 모니터링 패턴][health-endpoint-monitoring-pattern]을 구현하십시오.
 
-**Recovery**. Use multiple [deployment slots][app-service-slots] and roll back to the last-known-good deployment. For more information, see [Basic web application][ra-web-apps-basic].
+**복구**. 여러 [배포 슬롯][app-service-slots]을 사용하고, 마지막으로 성공한 배포로 롤백합니다. 자세한 내용은 [기본 웹 응용 프로그램][ra-web-apps-basic]을 참조하십시오.
 
 ## Azure Active Directory
-### OpenID Connect (OIDC) authentication fails.
-**Detection**. Possible failure modes include:
+### OpenID Connect (OIDC) 인증 실패.
+**검색**. 예상 장애 모드의 예를 들면 다음과 같습니다.
 
-1. Azure AD is not available, or cannot be reached due to a network problem. Redirection to the authentication endpoint fails, and the OIDC middleware throws an exception.
-2. Azure AD tenant does not exist. Redirection to the authentication endpoint returns an HTTP error code, and the OIDC middleware throws an exception.
-3. User cannot authenticate. No detection strategy is necessary; Azure AD handles login failures.
+1. Azure AD를 사용할 수 없거나, 또는 네트워크 문제로 인하여 도달할 수 없습니다. 인증 끝점으로 리디렉션이 실패하고, OIDC 미들웨어가 예외를 나타냅니다. 
+2. Azure AD 테넌트가 없습니다. 인증 끝점으로 리디렉션하면 HTTP 오류 코드가 반환되고, OIDC 미들웨어가 예외를 나타냅니다.
+3. 사용자가 인증할 수 없습니다. 검색 전략이 필요하지 않으며, Azure AD가 로그인 오류를 처리합니다.
 
-**Recovery**
+**복구**
 
-1. Catch unhandled exceptions from the middleware.
-2. Handle `AuthenticationFailed` events.
-3. Redirect the user to an error page.
-4. User retries.
+1. 미들웨어에서 미처리 예외를 포착합니다.
+2. `AuthenticationFailed` 이벤트를 처리합니다.
+3. 사용자를 오류 페이지로 리디렉션합니다.
+4. 사용자가 다시 시도합니다.
 
 ## Azure Search
-### Writing data to Azure Search fails.
-**Detection**. Catch `Microsoft.Rest.Azure.CloudException` errors.
+### Azure Search에 대한 데이터 쓰기가 실패함.
+**검색**. `Microsoft.Rest.Azure.CloudException` 오류를 포착합니다.
 
-**Recovery**
+**복구**
 
-The [Search .NET SDK][search-sdk] automatically retries after transient failures. Any exceptions thrown by the client SDK should be treated as non-transient errors.
+일시적 장애 후에 [Search .NET SDK][search-sdk]가 자동으로 재시도를 수행합니다. 클라이언트 SDK가 나타내는 모든 예외는 일시적이 아닌 오류로 취급해야 합니다.
 
-The default retry policy uses exponential back-off. To use a different retry policy, call `SetRetryPolicy` on the `SearchIndexClient` or `SearchServiceClient` class. For more information, see [Automatic Retries][auto-rest-client-retry].
+기본 재시도 정책은 지수 백오프를 사용합니다. 다른 재시도 정책을 사용하려면 `SetRetryPolicy`를 `SearchIndexClient` 또는 `SearchServiceClient` 클래스에서 호출하십시오. 자세한 내용은 [자동 재시도][auto-rest-client-retry]를 참조하십시오.
 
-**Diagnostics**. Use [Search Traffic Analytics][search-analytics].
+**진단**. [검색 트래픽 분석][search-analytics]을 참조하십시오.
 
-### Reading data from Azure Search fails.
-**Detection**. Catch `Microsoft.Rest.Azure.CloudException` errors.
+### Azure Search에서 데이터 읽기가 실패함.
+**검색**. `Microsoft.Rest.Azure.CloudException` 오류를 포착합니다.
 
-**Recovery**
+**복구**
 
-The [Search .NET SDK][search-sdk]  automatically retries after transient failures. Any exceptions thrown by the client SDK should be treated as non-transient errors.
+일시적 장애 후에 [Search .NET SDK][search-sdk]가 자동으로 재시도를 수행합니다. 클라이언트 SDK가 나타내는 모든 예외는 일시적이 아닌 오류로 취급해야 합니다.
 
-The default retry policy uses exponential back-off. To use a different retry policy, call `SetRetryPolicy` on the `SearchIndexClient` or `SearchServiceClient` class. For more information, see [Automatic Retries][auto-rest-client-retry].
+기본 재시도 정책은 지수 백오프를 사용합니다. 다른 재시도 정책을 사용하려면 `SetRetryPolicy`를 `SearchIndexClient` 또는 `SearchServiceClient` 클래스에서 호출하십시오. 자세한 내용은 [자동 재시도][auto-rest-client-retry]를 참조하십시오.
 
-**Diagnostics**. Use [Search Traffic Analytics][search-analytics].
+**진단**. [검색 트래픽 분석][search-analytics]을 참조하십시오.
 
 ## Cassandra
-### Reading or writing to a node fails.
-**Detection**. Catch the exception. For .NET clients, this will typically be `System.Web.HttpException`. Other client may have other exception types.  For more information, see [Cassandra error handling done right](http://www.datastax.com/dev/blog/cassandra-error-handling-done-right).
+### 노드에 읽기 쓰기 실패.
+**검색**. 예외를 포착합니다. .NET 클라이언트의 경우 일반적 예외는 `System.Web.HttpException`입니다. 다른 클라이언트에는 다른 예외 유형이 있을 수 있습니다. 자세한 내용은 [Cassandra의 올바른 오류 처리](http://www.datastax.com/dev/blog/cassandra-error-handling-done-right)를 참조하십시오.
 
-**Recovery**
+**복구**
 
-* Each [Cassandra client](https://wiki.apache.org/cassandra/ClientOptions) has its own retry policies and capabilities. For more information, see [Cassandra error handling done right][cassandra-error-handling].
-* Use a rack-aware deployment, with data nodes distributed across the fault domains.
-* Deploy to multiple regions with local quorum consistency. If a non-transient failure occurs, fail over to another region.
+* 각 [Cassandra 클라이언트](https://wiki.apache.org/cassandra/ClientOptions)는 자체 재시도 정책과 기능을 가지고 있습니다. 자세한 내용은 [Cassandra의 올바른 오류 처리][cassandra-error-handling]를 참조하십시오.
+* 데이터 노드가 장애 도메인들에 걸쳐 분산된 랙 인식형 배포를 사용합니다.
+* 로컬 쿼림 일관성이 있는 여러 지역에 배포합니다. 일시적이 아닌 장애가 발생할 경우 다른 지역으로 장애 조치를 합니다.
 
-**Diagnostics**. Application logs
+**진단**. 응용 프로그램 로그
 
-## Cloud Service
-### Web or worker roles are unexpectedly being shut down.
-**Detection**. The [RoleEnvironment.Stopping][RoleEnvironment.Stopping] event is fired.
+## 클라우드 서비스
+### 웹 역할 또는 작업자 역할이 예상치 못하게 종료됨.
+**검색**. [RoleEnvironment.Stopping][RoleEnvironment.Stopping] 이벤트가 발생합니다.
 
-**Recovery**. Override the [RoleEntryPoint.OnStop][RoleEntryPoint.OnStop] method to gracefully clean up. For more information, see [The Right Way to Handle Azure OnStop Events][onstop-events] (blog).
+**복구**. [RoleEntryPoint.OnStop][RoleEntryPoint.OnStop] 메서드를 무시하고 안정적으로 정리합니다. 자세한 내용은 [Azure OnStop 이벤트를 처리하는 올바른 방법][onstop-events] (블로그)을 참조하십시오.
 
 ## DocumentDB
-### Reading data from DocumentDB fails.
-**Detection**. Catch `System.Net.Http.HttpRequestException` or `Microsoft.Azure.Documents.DocumentClientException`.
+### DocumentDB에서 데이터 읽기가 실패함.
+**검색**. `System.Net.Http.HttpRequestException` 또는 `Microsoft.Azure.Documents.DocumentClientException`을 포착합니다.
 
-**Recovery**
+**복구**
 
-* The SDK automatically retries failed attempts. To set the number of retries and the maximum wait time, configure `ConnectionPolicy.RetryOptions`. Exceptions that the client raises are either beyond the retry policy or are not transient errors.
-* If DocumentDB throttles the client, it returns an HTTP 429 error. Check the status code in the `DocumentClientException`. If you are getting error 429 consistently, consider increasing the throughput value of the DocumentDB collection.
-* Replicate the DocumentDB database across two or more regions. All replicas are readable. Using the client SDKs, specify the `PreferredLocations` parameter. This is an ordered list of Azure regions. All reads will be sent to the first available region in the list. If the request fails, the client will try the other regions in the list, in order. For more information, see [Developing with multi-region DocumentDB accounts][docdb-multi-region].
+* SDK가 실패한 시도를 자동으로 재시도합니다. 재시도 횟수와 최대 대기 시간을 설정하려면 `ConnectionPolicy.RetryOptions`를 구성합니다. 클라이언트가 제기하는 예외는 재시도 정책을 벗어나거나 일시적 오류가 아닙니다.
+* DocumentDB가 클라이언트를 제한할 경우 HTTP 429 오류를 반환합니다. `DocumentClientException`에서 상태 코드를 확인합니다. 오류 429가 지속적으로 발생하면 DocumentDB 컬렉션의 처리량 값을 높이는 것을 고려하십시오.
+* DocumentDB 데이터베이스를 두 개 이상의 지역에 복제합니다. 모든 복제본은 읽을 수 있습니다. 클라이언트 SDK를 사용하여 `PreferredLocations` 매개 변수를 지정합니다. 이는 순서가 정해진 Azure 지역 목록입니다. 모든 읽은 내용이 목록의 첫 번째 사용 가능한 지역으로 전송됩니다. 요청이 실패할 경우 클라이언트가 목록의 다른 지역들을 순차적으로 시도합니다. 자세한 내용은 [다중 지역 DocumentDB 계정으로 개발][docdb-multi-region]을 참조하십시오.
 
-**Diagnostics**. Log all errors on the client side.
+**진단**. 클라이언트 측에 모든 오류를 기록합니다.
 
-### Writing data to DocumentDB fails.
-**Detection**. Catch `System.Net.Http.HttpRequestException` or `Microsoft.Azure.Documents.DocumentClientException`.
+### DocumentDB에 데이터 쓰기가 실패함.
+**검색**. `System.Net.Http.HttpRequestException` 또는 `Microsoft.Azure.Documents.DocumentClientException`을 포착합니다.
 
-**Recovery**
+**복구**
 
-* The SDK automatically retries failed attempts. To set the number of retries and the maximum wait time, configure `ConnectionPolicy.RetryOptions`. Exceptions that the client raises are either beyond the retry policy or are not transient errors.
-* If DocumentDB throttles the client, it returns an HTTP 429 error. Check the status code in the `DocumentClientException`. If you are getting error 429 consistently, consider increasing the throughput value of the DocumentDB collection.
-* Replicate the DocumentDB database across two or more regions. If the primary region fails, another region will be promoted to write. You can also trigger a failover manually. The SDK does automatic discovery and routing, so application code continues to work after a failover. During the failover period (typically minutes), write operations will have higher latency, as the SDK finds the new write region.
-  For more information, see [Developing with multi-region DocumentDB accounts][docdb-multi-region].
-* As a fallback, persist the document to a backup queue, and process the queue later.
+* SDK가 실패한 시도를 자동으로 재시도합니다. 재시도 횟수와 최대 대기 시간을 설정하려면 `ConnectionPolicy.RetryOptions`를 구성합니다. 클라이언트가 제기하는 예외는 재시도 정책을 벗어나거나 일시적 오류가 아닙니다.
+* DocumentDB가 클라이언트를 제한할 경우 HTTP 429 오류를 반환합니다. `DocumentClientException`에서 상태 코드를 확인합니다. 오류 429가 지속적으로 발생하면 DocumentDB 컬렉션의 처리량 값을 높이는 것을 고려하십시오.
+* DocumentDB 데이터베이스를 두 개 이상의 지역에 복제합니다. 기본 지역에 장애가 발생하면 다른 지역이 쓸 수 있는 상태가 됩니다. 또한 수동으로 장애 조치를 트리거할 수도 있습니다. SDK가 자동 복구 및 라우팅을 수행하므로, 장애 조치 후에 응용 프로그램 코드가 계속 작동합니다. 장애 조치 기간(일반적으로 수분) 동안 에는 SDK가 새로운 쓰기 지역을 찾으므로 쓰기 작업의 대기 시간이 높습니다. 
+  자세한 내용은 [다중 지역 DocumentDB 계정으로 개발][docdb-multi-region]을 참조하십시오.
+* 대체 수단으로서 문서를 백업 큐에 유지하고 큐를 나중에 처리합니다.
 
-**Diagnostics**. Log all errors on the client side.
+**진단**. 클라이언트 측에 모든 오류를 기록합니다.
 
 ## Elasticsearch
-### Reading data from Elasticsearch fails.
-**Detection**. Catch the appropriate exception for the particular [Elasticsearch client][elasticsearch-client] being used.
+### Elasticsearch에서 데이터 읽기가 실패함.
+**검색**. Catch the appropriate exception for the particular [Elasticsearch client][elasticsearch-client] being used.
 
 **Recovery**
 
@@ -162,7 +162,7 @@ For more information, see [Running Elasticsearch on Azure][elasticsearch-azure].
 **Diagnostics**. You can use monitoring tools for Elasticsearch, or log all errors on the client side with the payload. See the 'Monitoring' section in [Running Elasticsearch on Azure][elasticsearch-azure].
 
 ### Writing data to Elasticsearch fails.
-**Detection**. Catch the appropriate exception for the particular [Elasticsearch client][elasticsearch-client] being used.  
+**검색**. Catch the appropriate exception for the particular [Elasticsearch client][elasticsearch-client] being used.  
 
 **Recovery**
 
@@ -175,7 +175,7 @@ For more information, see [Running Elasticsearch on Azure][elasticsearch-azure].
 
 ## Queue storage
 ### Writing a message to Azure Queue storage fails consistently.
-**Detection**. After *N* retry attempts, the write operation still fails.
+**검색**. After *N* retry attempts, the write operation still fails.
 
 **Recovery**
 
@@ -185,7 +185,7 @@ For more information, see [Running Elasticsearch on Azure][elasticsearch-azure].
 **Diagnostics**. Use [storage metrics][storage-metrics].
 
 ### The application cannot process a particular message from the queue.
-**Detection**. Application specific. For example, the message contains invalid data, or the business logic fails for some reason.
+**검색**. Application specific. For example, the message contains invalid data, or the business logic fails for some reason.
 
 **Recovery**
 
@@ -200,7 +200,7 @@ Consider using Azure Service Bus Messaging queues, which provides a [dead-letter
 
 ## Redis Cache
 ### Reading from the cache fails.
-**Detection**. Catch `StackExchange.Redis.RedisConnectionException`.
+**검색**. Catch `StackExchange.Redis.RedisConnectionException`.
 
 **Recovery**
 
@@ -210,7 +210,7 @@ Consider using Azure Service Bus Messaging queues, which provides a [dead-letter
 **Diagnostics**. Use [Redis Cache diagnostics][redis-monitor].
 
 ### Writing to the cache fails.
-**Detection**. Catch `StackExchange.Redis.RedisConnectionException`.
+**검색**. Catch `StackExchange.Redis.RedisConnectionException`.
 
 **Recovery**
 
@@ -221,7 +221,7 @@ Consider using Azure Service Bus Messaging queues, which provides a [dead-letter
 
 ## SQL Database
 ### Cannot connect to the database in the primary region.
-**Detection**. Connection fails.
+**검색**. Connection fails.
 
 **Recovery**
 
@@ -233,7 +233,7 @@ Prerequisite: The database must be configured for active geo-replication. See [S
 The replica uses a different connection string, so you will need to update the connection string in your application.
 
 ### Client runs out of connections in the connection pool.
-**Detection**. Catch `System.InvalidOperationException` errors.
+**검색**. Catch `System.InvalidOperationException` errors.
 
 **Recovery**
 
@@ -244,7 +244,7 @@ The replica uses a different connection string, so you will need to update the c
 **Diagnostics**. Application logs.
 
 ### Database connection limit is reached.
-**Detection**. Azure SQL Database limits the number of concurrent workers, logins, and sessions. The limits depend on the service tier. For more information, see [Azure SQL Database resource limits][sql-db-limits].
+**검색**. Azure SQL Database limits the number of concurrent workers, logins, and sessions. The limits depend on the service tier. For more information, see [Azure SQL Database resource limits][sql-db-limits].
 
 To detect these errors, catch `System.Data.SqlClient.SqlException` and check the value of `SqlException.Number` for the SQL error code. For a list of relevant error codes, see [SQL error codes for SQL Database client applications: Database connection error and other issues][sql-db-errors].
 
@@ -257,7 +257,7 @@ To detect these errors, catch `System.Data.SqlClient.SqlException` and check the
 
 ## Service Bus Messaging
 ### Reading a message from a Service Bus queue fails.
-**Detection**. Catch exceptions from the client SDK. The base class for Service Bus exceptions is [MessagingException][sb-messagingexception-class]. If the error is transient, the `IsTransient` property is true.
+**검색**. Catch exceptions from the client SDK. The base class for Service Bus exceptions is [MessagingException][sb-messagingexception-class]. If the error is transient, the `IsTransient` property is true.
 
 For more information, see [Service Bus messaging exceptions][sb-messaging-exceptions].
 
@@ -267,7 +267,7 @@ For more information, see [Service Bus messaging exceptions][sb-messaging-except
 2. Messages that cannot be delivered to any receiver are placed in a *dead-letter queue*. Use this queue to see which messages could not be received. There is no automatic cleanup of the dead-letter queue. Messages remain there until you explicitly retrieve them. See [Overview of Service Bus dead-letter queues][sb-dead-letter-queue].
 
 ### Writing a message to a Service Bus queue fails.
-**Detection**. Catch exceptions from the client SDK. The base class for Service Bus exceptions is [MessagingException][sb-messagingexception-class]. If the error is transient, the `IsTransient` property is true.
+**검색**. Catch exceptions from the client SDK. The base class for Service Bus exceptions is [MessagingException][sb-messagingexception-class]. If the error is transient, the `IsTransient` property is true.
 
 For more information, see [Service Bus messaging exceptions][sb-messaging-exceptions].
 
@@ -284,7 +284,7 @@ For more information, see [Service Bus messaging exceptions][sb-messaging-except
      For more information, see [GeoReplication sample][sb-georeplication-sample] and [Best practices for insulating applications against Service Bus outages and disasters](/azure/service-bus-messaging/service-bus-outages-disasters/).
 
 ### Duplicate message.
-**Detection**. Examine the `MessageId` and `DeliveryCount` properties of the message.
+**검색**. Examine the `MessageId` and `DeliveryCount` properties of the message.
 
 **Recovery**
 
@@ -297,7 +297,7 @@ For more information, see [Service Bus messaging exceptions][sb-messaging-except
 **Diagnostics**. Log duplicated messages.
 
 ### The application cannot process a particular message from the queue.
-**Detection**. Application specific. For example, the message contains invalid data, or the business logic fails for some reason.
+**검색**. Application specific. For example, the message contains invalid data, or the business logic fails for some reason.
 
 **Recovery**
 
@@ -312,7 +312,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 
 ## Service Fabric
 ### A request to a service fails.
-**Detection**. The service returns an error.
+**검색**. The service returns an error.
 
 **Recovery**
 
@@ -323,7 +323,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 **Diagnostics**. Application log
 
 ### Service Fabric node is shut down.
-**Detection**. A cancellation token is passed to the service's `RunAsync` method. Service Fabric cancels the task before shutting down the node.
+**검색**. A cancellation token is passed to the service's `RunAsync` method. Service Fabric cancels the task before shutting down the node.
 
 **Recovery**. Use the cancellation token to detect shutdown. When Service Fabric requests cancellation, finish any work and exit `RunAsync` as quickly as possible.
 
@@ -331,7 +331,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 
 ## Storage
 ### Writing data to Azure Storage fails
-**Detection**. The client receives errors when writing.
+**검색**. The client receives errors when writing.
 
 **Recovery**
 
@@ -345,7 +345,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 **Diagnostics**. Use [storage metrics][storage-metrics].
 
 ### Reading data from Azure Storage fails.
-**Detection**. The client receives errors when reading.
+**검색**. The client receives errors when reading.
 
 **Recovery**
 
@@ -357,7 +357,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 
 ## Virtual Machine
 ### Connection to a backend VM fails.
-**Detection**. Network connection errors.
+**검색**. Network connection errors.
 
 **Recovery**
 
@@ -370,7 +370,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 **Diagnostics**. Log events at service boundaries.
 
 ### VM instance becomes unavailable or unhealthy.
-**Detection**. Configure a Load Balancer [health probe][lb-probe] that signals whether the VM instance is healthy. The probe should check whether critical functions are responding correctly.
+**검색**. Configure a Load Balancer [health probe][lb-probe] that signals whether the VM instance is healthy. The probe should check whether critical functions are responding correctly.
 
 **Recovery**. For each application tier, put multiple VM instances into the same availability set, and place a load balancer in front of the VMs. If the health probe fails, the Load Balancer stops sending new connections to the unhealthy instance.
 
@@ -379,7 +379,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 * Configure your monitoring system to monitor all of the health monitoring endpoints.
 
 ### Operator accidentally shuts down a VM.
-**Detection**. N/A
+**검색**. N/A
 
 **Recovery**. Set a resource lock with `ReadOnly` level. See [Lock resources with Azure Resource Manager][rm-locks].
 
@@ -387,13 +387,13 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 
 ## WebJobs
 ### Continuous job stops running when the SCM host is idle.
-**Detection**. Pass a cancellation token to the WebJob function. For more information, see [Graceful shutdown][web-jobs-shutdown].
+**검색**. Pass a cancellation token to the WebJob function. For more information, see [Graceful shutdown][web-jobs-shutdown].
 
 **Recovery**. Enable the `Always On` setting in the web app. For more information, see [Run Background tasks with WebJobs][web-jobs].
 
 ## Application design
 ### Application can't handle a spike in incoming requests.
-**Detection**. Depends on the application. Typical symptoms:
+**검색**. Depends on the application. Typical symptoms:
 
 * The website starts returning HTTP 5xx error codes.
 * Dependent services, such as database or storage, start to throttle requests. Look for HTTP errors such as HTTP 429 (Too Many Requests), depending on the service.
@@ -411,7 +411,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 **Diagnostics**. Use [App Service diagnostic logging][app-service-logging]. Use a service such as [Azure Log Analytics][azure-log-analytics], [Application Insights][app-insights], or [New Relic][new-relic] to help understand the diagnostic logs.
 
 ### One of the operations in a workflow or distributed transaction fails.
-**Detection**. After *N* retry attempts, it still fails.
+**검색**. After *N* retry attempts, it still fails.
 
 **Recovery**
 
@@ -422,7 +422,7 @@ For more information, see [Overview of Service Bus dead-letter queues][sb-dead-l
 **Diagnostics**. Log all operations (successful and failed), including compensating actions. Use correlation IDs, so that you can track all operations within the same transaction.
 
 ### A call to a remote service fails.
-**Detection**. HTTP error code.
+**검색**. HTTP error code.
 
 **Recovery**
 
