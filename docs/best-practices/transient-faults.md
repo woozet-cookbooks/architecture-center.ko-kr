@@ -9,98 +9,160 @@ ms.author: pnp
 
 pnp.series.title: Best Practices
 ---
-# Transient fault handling
+# 일시적 오류 처리
 
 [!INCLUDE [header](../_includes/header.md)]
 
-All applications that communicate with remote services and resources must be sensitive to transient faults. This is especially the case for applications that run in the cloud, where the nature of the environment and connectivity over the Internet means these types of faults are likely to be encountered more often. Transient faults include the momentary loss of network connectivity to components and services, the temporary unavailability of a service, or timeouts that arise when a service is busy. These faults are often self-correcting, and if the action is repeated after a suitable delay it is likely succeed.
+원격 서비스 및 리소스와 통신하는 모든 응용 프로그램은 일시적인 오류에 민감해야 합니다. 인터넷의 환경 및 연결성으로 인해 이러한 유형의 오류가 더 자주 발생하기 쉬운 클라우드에서 실행되는 응용 프로그램의 경우 특히 그러합니다. 일시적인 오류에는 구성 요소 및 서비스에 대한 네트워크 연결이 잠시 해제되거나, 일시적으로 서비스를 사용할 수 없거나, 서비스가 많을 때 발생하는 시간 초과가 포함됩니다. 이러한 오류는 종종 자체 수정되며 적절한 지연 후 작업이 반복되면 성공할 가능성이 큽니다. 
 
-This document covers general guidance for transient fault handling. For information about handling transient faults when using Microsoft Azure services, see [Azure service-specific retry guidelines](./retry-service-specific.md).
+이 문서는 일시적 오류 처리에 대한 일반적인 지침을 다루고 있습니다. Microsoft Azure 서비스를 사용할 때 일시적인 오류 처리에 대한 자세한 내용은 [Azure 서비스에 특정한 재시도 가이드라인](./retry-service-specific.md)을 참조하십시오.
 
-## Why do transient faults occur in the cloud?
-Transient faults can occur in any environment, on any platform or operating system, and in any kind of application. In solutions that run on local, on-premises infrastructure, performance and availability of the application and its components is typically maintained through expensive and often under-used hardware redundancy, and components and resources are located close to each another. While this makes a failure less likely, it can still result in transient faults - and even an outage through unforeseen events such as external power supply or network issues, or other disaster scenarios.
+## 클라우드에서 일시적인 오류가 발생하는 이유는 무엇입니까?
+일시적 오류는 모든 환경, 플랫폼 또는 운영 체제 및 모든 종류의 응용 프로그램에서 발생할 수 있습니다. 로컬, 사내 구축형 인프라에서 실행되는 솔루션에서 일반적으로 응용 프로그램과 해당 구성 요소의 성능 및 가용성은 비용이 많이 들고 자주 사용되지 않는 하드웨어 중복을 통해 유지되며 구성 요소와 리소스가 서로 가깝게 배치됩니다. 그 결과 오류가 발생할 확률이 낮아지지만 그래도 일시적 오류가 발생하거나 심지어 외부 전원 공급이나 네트워크 문제 또는 기타 재난 시나리오와 같은 예기치 못한 이벤트에 의해 중단될 수 있습니다. 
 
-Cloud hosting, including private cloud systems, can offer a higher overall availability by using shared resources, redundancy, automatic failover, and dynamic resource allocation across a huge number of commodity compute nodes. However, the nature of these environments can mean that transient faults are more likely to occur. There are several reasons for this:
+사설 클라우드 시스템을 비롯한 클라우드 호스팅은 엄청난 수의 일반 컴퓨팅 노드에서 공유 리소스, 중복성, 자동 장애 조치 및 동적 리소스 할당을 사용하여 전반적인 가용성을 높일 수 있습니다. 그러나 이러한 환경의 특성은 일시적인 오류가 발생할 가능성이 높다는 것을 의미할 수 있습니다. 이에 대한 몇 가지 이유를 살펴보면 다음과 같습니다. 
 
-* Many resources in a cloud environment are shared, and access to these resources is subject to throttling in order to protect the resource. Some services will refuse connections when the load rises to a specific level, or a maximum throughput rate is reached, in order to allow processing of existing requests and to maintain performance of the service for all users. Throttling helps to maintain the quality of service for neighbors and other tenants using the shared resource.
-* Cloud environments are built using vast numbers of commodity hardware units. They deliver performance by dynamically distributing the load across multiple computing units and infrastructure components, and deliver reliability by automatically recycling or replacing failed units. This dynamic nature means that transient faults and temporary connection failures may occasionally occur.
-* There are often more hardware components, including network infrastructure such as routers and load balancers, between the application and the resources and services it uses. This additional infrastructure can occasionally introduce additional connection latency and transient connection faults.
-* Network conditions between the client and the server may be variable, especially when communication crosses the Internet. Even in on-premises locations, very heavy traffic loads may slow communication and cause intermittent connection failures.
+•	클라우드 환경의 많은 리소스가 공유되며 이러한 리소스에 대한 액세스는 리소스를 보호하기 위해 제한될 수 있습니다. 일부 서비스는 부하가 특정 레벨까지 상승하거나 최대 처리량 속도에 도달하면 연결을 거부하여 기존 요청을 처리하고 모든 사용자에 대해 서비스의 성능을 유지합니다. 사용량 제한은 공유 리소스를 사용하는 이웃 및 다른 테넌트에 대한 서비스 품질을 유지하는 데 도움이 됩니다.
 
-## Challenges
-Transient faults can have a huge impact on the perceived availability of an application, even if it has been thoroughly tested under all foreseeable circumstances. To ensure that cloud-hosted applications operate reliably, they must be able to respond to the following challenges:
+•	클라우드 환경은 방대한 상용 하드웨어 장치를 사용하여 구축됩니다. 여러 컴퓨팅 장치 및 인프라 구성 요소에 동적으로 부하를 분산시키고 성능이 저하되는 장치를 자동으로 재활용하거나 교체하여 안정성을 제공함으로써 높은 성능을 제공합니다. 이러한 동적인 특성은 때때로 일시적인 오류 및 임시 연결 오류가 발생할 수 있음을 의미합니다.
 
-* The application must be able to detect faults when they occur, and determine if these faults are likely to be transient, more long-lasting, or are terminal failures. Different resources are likely to return different responses when a fault occurs, and these responses may also vary depending on the context of the operation; for example, the response for an error when reading from storage may be different from response for an error when writing to storage. Many resources and services have well-documented transient failure contracts. However, where such information is not available, it may be difficult to discover the nature of the fault and whether it is likely to be transient.
-* The application must be able to retry the operation if it determines that the fault is likely to be transient and keep track of the number of times the operation was retried.
-* The application must use an appropriate strategy for the retries. This strategy specifies the number of times it should retry, the delay between each attempt, and the actions to take after a failed attempt. The appropriate number of attempts and the delay between each one are often difficult to determine, and vary based on the type of resource as well as the current operating conditions of the resource and the application itself.
+•	라우터 및 로드 밸런서와 같은 네트워크 인프라를 비롯하여 응용 프로그램과 리소스 및 여기에 사용되는 서비스 사이에 하드웨어 구성 요소가 더 많이 존재하는 경우가 빈번합니다. 이 추가 인프라로 인해 때로 연결 지연과 일시적인 연결 오류가 발생할 수 있습니다.
 
-## General guidelines
-The following guidelines will help you to design a suitable transient fault handing mechanism for your applications:
+•	클라이언트와 서버 간의 네트워크 조건은 특히 통신이 인터넷을 통과할 때 가변적일 수 있습니다. 사내 위치에서도 매우 많은 트래픽 로드로 인해 통신 속도가 느려지고 일시적인 연결 오류가 발생할 수 있습니다.
 
-* **Determine if there is a built-in retry mechanism:**
-  * Many services provide an SDK or client library that contains a transient fault handling mechanism. The retry policy it uses is typically tailored to the nature and requirements of the target service. Alternatively, REST interfaces for services may return information that is useful in determining whether a retry is appropriate, and how long to wait before the next retry attempt.
-  * Use the built-in retry mechanism where one is available unless you have specific and well-understood requirements that mean a different retry behavior is more appropriate.
-* **Determine if the operation is suitable for retrying**:
-  * You should only retry operations where the faults are transient (typically indicated by the nature of the error), and if there is at least some likelihood that the operation will succeed when reattempted. There is no point in reattempting operations that indicate an invalid operation such as a database update to an item that does not exist, or requests to a service or resource that has suffered a fatal error
-  * In general, you should implement retries only where the full impact of this can be determined, and the conditions are well understood and can be validated. If not, leave it to the calling code to implement retries. Remember that the errors returned from resources and services outside your control may evolve over time, and you may need to revisit your transient fault detection logic.
-  * When you create services or components, consider implementing error codes and messages that will help clients determine whether they should retry failed operations. In particular, indicate if the client should retry the operation (perhaps by returning an **isTransient** value) and suggest a suitable delay before the next retry attempt. If you build a web service, consider returning custom errors defined within your service contracts. Even though generic clients may not be able to read these, they will be useful when building custom clients.
-* **Determine an appropriate retry count and interval:**
-  * It is vital to optimize the retry count and the interval to the type of use case. If you do not retry a sufficient number of times, the application will be unable to complete the operation and is likely to experience a failure. If you retry too many times, or with too short an interval between tries, the application can potentially hold resources such as threads, connections, and memory for long periods, which will adversely affect the health of the application.
-  * The appropriate values for the time interval and the number of retry attempts depend on the type of operation being attempted. For example, if the operation is part of a user interaction, the interval should be short and only a few retries attempted to avoid making users wait for a response (which holds open connections and can reduce availability for other users). If the operation is part of a long running or critical workflow, where cancelling and restarting the process is expensive or time-consuming, it is appropriate to wait longer between attempts and retry more times.
-  * Determining the appropriate intervals between retries is the most difficult part of designing a successful strategy. Typical strategies use the following types of retry interval:
-    * **Exponential back-off**. The application waits a short time before the first retry, and then exponentially increasing times between each subsequent retry. For example, it may retry the operation after 3 seconds, 12 seconds, 30 seconds, and so on.
-    * **Incremental intervals**. The application waits a short time before the first retry, and then incrementally increasing times between each subsequent retry. For example, it may retry the operation after 3 seconds, 7 seconds, 13 seconds, and so on.
-    * **Regular intervals**. The application waits for the same period of time between each attempt. For example, it may retry the operation every 3 seconds.
-    * **Immediate retry**. Sometimes a transient fault is extremely short, perhaps caused by an event such as a network packet collision or a spike in a hardware component. In this case, retrying the operation immediately is appropriate because it may succeed if the fault has cleared in the time it takes the application to assemble and send the next request. However, there should never be more than one immediate retry attempt, and you should switch to alternative strategies, such as such as exponential back-off or fallback actions, if the immediate retry fails.
-    * **Randomization**. Any of the retry strategies listed above may include a randomization to prevent multiple instances of the client sending subsequent retry attempts at the same time. For example, one instance may retry the operation after 3 seconds, 11 seconds, 28 seconds, and so on while another instance may retry the operation after 4 seconds, 12 seconds, 26 seconds, and so on. Randomization is a useful technique that may be combined with other strategies.  
-  * As a general guideline, use an exponential back-off strategy for background operations, and immediate or regular interval retry strategies for interactive operations. In both cases, you should choose the delay and the retry count so that the maximum latency for all retry attempts is within the required end-to-end latency requirement.
-  * Take into account the combination of all the factors that contribute to the overall maximum timeout for a retried operation. These factors include the time taken for a failed connection to produce a response (typically set by a timeout value in the client) as well as the delay between retry attempts and the maximum number of retries. The total of all these times can result in very large overall operation times, especially when using an exponential delay strategy where the interval between retries grows rapidly after each failure. If a process must meet a specific service level agreement (SLA), the overall operation time, including all timeouts and delays, must be within that defined in the SLA
-  * Over-aggressive retry strategies, which have too short intervals or too may retries, can have an adverse effect on the target resource or service. This may prevent the resource or service from recovering from its overloaded state, and it will continue to block or refuse requests. This results in a vicious circle where more and more requests are sent to the resource or service, and consequently its ability to recover is further reduced.
-  * Take into account the timeout of the operations when choosing the retry intervals to avoid launching a subsequent attempt immediately (for example, if the timeout period is similar to the retry interval). Also consider if you need to keep the total possible period (the timeout plus the retry intervals) to below a specific total time. Operations that have unusually short or very long timeouts may influence how long to wait, and how often to retry the operation.
-  * Use the type of the exception and any data it contains, or the error codes and messages returned from the service, to optimize the interval and the number of retries. For example, some exceptions or error codes (such as the HTTP code 503 Service Unavailable with a Retry-After header in the response) may indicate how long the error might last, or that the service has failed and will not respond to any subsequent attempt.
-* **Avoid anti-patterns**:
-  * In the vast majority of cases, you should avoid implementations that include duplicated layers of retry code. Avoid designs that include cascading retry mechanisms, or that implement retry at every stage of an operation that involves a hierarchy of requests, unless you have specific requirements that demand this. In these exceptional circumstances, use policies that prevent excessive numbers of retries and delay periods, and make sure you understand the consequences. For example, if one component makes a request to another, which then accesses the target service, and you implement retry with a count of three on both calls there will be nine retry attempts in total against the service. Many services and resources implement a built-in retry mechanism and you should investigate how you can disable or modify this if you need to implement retries at a higher level.
-  * Never implement an endless retry mechanism. This is likely to prevent the resource or service recovering from overload situations, and cause throttling and refused connections to continue for a longer period. Use a finite number or retries, or implement a pattern such as [Circuit Breaker](http://msdn.microsoft.com/library/dn589784.aspx) to allow the service to recover.
-  * Never perform an immediate retry more than once.
-  * Avoid using a regular retry interval, especially when you have a large number of retry attempts, when accessing services and resources in Azure. The optimum approach is this scenario is an exponential back-off strategy with a circuit-breaking capability.
-  * Prevent multiple instances of the same client, or multiple instances of different clients, from sending retries at the same times. If this is likely to occur, introduce randomization into the retry intervals.
-* **Test your retry strategy and implementation:**
-  * Ensure you fully test your retry strategy implementation under as wide a set of circumstances as possible, especially when both the application and the target resources or services it uses are under extreme load. To check behavior during testing, you can:
-    * Inject transient and non-transient faults into the service. For example, send invalid requests or add code that detects test requests and responds with different types of errors. For an example using TestApi, see [Fault Injection Testing with TestApi](http://msdn.microsoft.com/magazine/ff898404.aspx) and [Introduction to TestApi – Part 5: Managed Code Fault Injection APIs](http://blogs.msdn.com/b/ivo_manolov/archive/2009/11/25/9928447.aspx).
-    * Create a mock of the resource or service that returns a range of errors that the real service may return. Ensure you cover all the types of error that your retry strategy is designed to detect.
-    * Force transient errors to occur by temporarily disabling or overloading the service if it is a custom service that you created and deployed (you should not, of course, attempt to overload any shared resources or shared services within Azure).
-    * For HTTP-based APIs, consider using the FiddlerCore library in your automated tests to change the outcome of HTTP requests, either by adding extra roundtrip times or by changing the response (such as the HTTP status code, headers, body, or other factors). This enables deterministic testing of a subset of the failure conditions, whether transient faults or other types of failure. For more information, see [FiddlerCore](http://www.telerik.com/fiddler/fiddlercore). For examples of how to use the library, particularly the **HttpMangler** class, examine the [source code for the Azure Storage SDK](https://github.com/Azure/azure-storage-net/tree/master/Test).
-    * Perform high load factor and concurrent tests to ensure that the retry mechanism and strategy works correctly under these conditions, and does not have an adverse effect on the operation of the client or cause cross-contamination between requests.
-* **Manage retry policy configurations:**
-  * A *retry policy* is a combination of all of the elements of your retry strategy. It defines the detection mechanism that determines whether a fault is likely to be transient, the type of interval to use (such as regular, exponential back-off, and randomization), the actual interval value(s), and the number of times to retry.
-  * Retries must be implemented in many places within even the simplest application, and in every layer of more complex applications. Rather than hard-coding the elements of each policy at multiple locations, consider using a central point for storing all the policies. For example, store the values such as the interval and retry count in application configuration files, read them at runtime, and programmatically build the retry policies. This makes it easier to manage the settings, and to modify and fine tune the values in order to respond to changing requirements and scenarios. However, design the system to store the values rather than rereading a configuration file every time, and ensure suitable defaults are used if the values cannot be obtained from configuration.
-  * In an Azure Cloud Services application, consider storing the values that are used to build the retry policies at runtime in the service configuration file so that they can be changed without needing to restart the application.
-  * Take advantage of built-in or default retry strategies available in the client APIs you use, but only where they are appropriate for your scenario. These strategies are typically general-purpose. In some scenarios they may be all that is required, but in other scenarios they may not offer the full range of options to suit your specific requirements. You must understand how the settings will affect your application through testing to determine the most appropriate values.
-* **Log and track transient and non-transient faults:**
-  * As part of your retry strategy, include exception handling and other instrumentation that logs when retry attempts are made. While an occasional transient failure and retry are to be expected, and do not indicate a problem, regular and increasing numbers of retries are often an indicator of an issue that may cause a failure, or is currently impacting application performance and availability.
-  * Log transient faults as Warning entries rather than Error entries so that monitoring systems do not detect them as application errors that may trigger false alerts.
-  * Consider storing a value in your log entries that indicates if the retries were caused by throttling in the service, or by other types of faults such as connection failures, so that you can differentiate them during analysis of the data. An increase in the number of throttling errors is often an indicator of a design flaw in the application or the need to switch to a premium service that offers dedicated hardware.  
-  * Consider measuring and logging the overall time taken for operations that include a retry mechanism. This is a good indicator of the overall effect of transient faults on user response times, process latency, and the efficiency of the application use cases. Also log the number of retries occurred in order to understand the factors that contributed to the response time.
-  * Consider implementing a telemetry and monitoring system that can raise alerts when the number and rate of failures, the average number of retries, or the overall times taken for operations to succeed, is increasing.
-* **Manage operations that continually fail:**
+
+## 도전 과제
+일시적 결함은 예측 가능한 모든 상황에서 철저한 테스트를 거친 경우에도 응용 프로그램의 인지된 가용성에 큰 영향을 줄 수 있습니다. 클라우드 호스팅 응용 프로그램이 안정적으로 작동하려면 다음과 같은 문제에 대처할 수 있어야 합니다. 
+
+•	응용 프로그램은 오류가 발생할 때 이를 감지할 수 있어야 하며 이러한 오류가 일시적인지, 오래 지속되는지 또는 영구적 오류인지 판단해야 합니다. 오류가 발생할 때 리소스마다 서로 다른 응답을 반환할 가능성이 있으며 이러한 응답은 작업의 컨텍스트에 따라 달라질 수 있습니다. 예를 들어 리포지토리에서 읽을 때 오류에 대한 응답이 리포지토리에 쓸 때 오류에 대한 응답과 다를 수 있습니다. 많은 리소스와 서비스에는 일시적 오류 계약이 잘 문서화되어 있습니다. 그러나 그러한 정보를 이용할 수 없는 경우, 오류의 본질과 일시성 여부를 알아 내기가 어려울 수 있습니다.
+
+•	응용 프로그램이 오류가 일시적일 것으로 판단하고 작업이 재시도된 횟수를 추적하는 경우 작업을 재시도할 수 있어야 합니다.
+
+•	응용 프로그램은 재시도에 적절한 전략을 사용해야 합니다. 이 전략은 재시도해야 하는 횟수, 각 시도 사이의 지연 및 실패한 시도 후에 취할 조치를 지정합니다. 적절한 횟수의 시도와 각 시도 사이의 지연은 결정하기 어려운 경우가 많으며 리소스 유형과 리소스 및 응용 프로그램 자체의 현재 작동 조건에 따라 매우 다릅니다.
+ 
+
+## 일반 지침
+다음 지침은 응용 프로그램에 적합한 일시적 오류 전달 메커니즘을 설계하는 데 도움이 됩니다. 
+
+* **기본 제공 재시도 메커니즘이 있는지 확인하십시오.**
+
+o	많은 서비스가 일시적 오류 처리 메커니즘을 포함하는 SDK 또는 클라이언트 라이브러리를 제공합니다. 이 서비스가 사용하는 재시도 정책은 일반적으로 대상 서비스의 특성과 요구 사항에 맞게 조정됩니다. 또는 서비스에 대한 REST 인터페이스는 재시도가 적절한지, 다음 재시도 시도를 기다리는 시간을 결정하는 데 유용한 정보를 반환할 수 있습니다.
+
+o	다른 재시도 동작이 더 적절하다는 것을 의미하는 구체적이고 잘 이해할 수 있는 요구 사항이 없으면 기본 제공 재시도 메커니즘을 사용할 수 있습니다.
+
+* **작업이 재시도에 적합한지 판별하십시오.**
+
+o	오류가 일시적이고(일반적으로 오류의 특성으로 표시됨) 작업을 재시도할 때 적어도 작업이 성공할 가능성이 어느 정도 있는 경우에만 작업을 재시도해야 합니다. 존재하지 않는 항목에 대한 데이터베이스 업데이트, 또는 치명적인 오류가 발생한 서비스나 리소스에 대한 요청과 같은 잘못된 작업으로 표시되는 것을 재시도할 필요는 없습니다.
+
+o	일반적으로 재시도는 이 작업의 전체 영향을 파악할 수 있고, 조건이 잘 이해되고 유효성을 검사할 수 있는 경우에만 실행해야 합니다. 그렇지 않은 경우 재시도를 구현하기 위해 호출 코드에 맡기십시오. 제어할 수 없는 리소스 및 서비스에서 반환된 오류는 시간이 지남에 따라 계속 변할 수 있으므로 일시적 오류 감지 로직을 다시 확인할 필요가 있을 수도 있습니다.
+
+  o	서비스 또는 구성 요소를 만들 때 클라이언트가 실패한 작업을 재시도해야 하는지 여부를 결정하는 데 도움이 되는 오류 코드와 메시지를 구현하는 것이 좋습니다. 특히, 클라이언트가 (아마도 **isTransient**값을 반환하여) 작업을 재시도해야 하는지 표시하고 다음 재시도 시도 전에 적절한 지연을 제안하십시오. 
+ 웹 서비스를 작성하는 경우 서비스 계약에 정의된 사용자 지정 오류를 반환하는 것을 고려할 필요가 있습니다. 일반 클라이언트는 이를 읽지 못할 수 있지만 사용자 지정 클라이언트를 만들 때 유용합니다.
+
+* **적절한 재시도 횟수 및 간격을 결정하십시오.**
+
+o	사용 사례 유형에 맞게 재시도 횟수와 간격을 최적화하는 것이 중요합니다. 충분한 횟수로 재시도하지 않으면 응용 프로그램이 작업을 완료할 수 없으며 오류가 발생할 가능성이 높습니다. 재시도 횟수가 너무 많거나 시도 간격이 너무 짧으면 응용 프로그램이 스레드, 연결 및 메모리와 같은 리소스를 장시간 보유하여 응용 프로그램의 상태에 나쁜 영향을 미칠 수 있습니다.
+
+o	시간 간격 및 재시도 횟수에 대한 적절한 값은 시도되는 작업의 유형에 따라 결정됩니다. 예를 들어, 작업이 사용자 상호 작용의 일부인 경우 간격을 짧게 설정하고 몇 번만 재시도하도록 함으로써 사용자가 응답 대기(연결이 유지되고 다른 사용자의 가용성이 저하될 수 있음)하지 않도록 해야 합니다. 작업이 장기 실행되거나 중요한 워크플로의 일부여서 프로세스를 취소하고 다시 시작하는 것이 비용이 많이 들거나 시간 소모가 큰 경우, 시도와 재시도 사이에 더 오래 기다리고 더 자주 재시도하는 것이 좋습니다.
+
+o	재시도 사이의 적절한 간격을 결정하는 것은 성공적인 전략을 설계하는 과정에서 가장 어려운 부분입니다. 일반적인 전략으로 다음 유형의 재시도 간격을 사용합니다.
+
+   * **지수적 백오프**. 응용 프로그램은 첫 번째 재시도하기 전에 잠시 기다린 후, 이후의 각 재시도 사이의 대기 시간을 지수적으로 연장시킵니다. 예를 들어 3초, 12초, 30초 후에 작업을 재시도할 수 있습니다.
+   
+   * **점진적 간격**. 응용 프로그램은 첫 번째 재시도하기 전에 잠시 기다린 후, 이후의 각 재시도 사이의 대기 시간을 증가적으로 연장시킵니다. 예를 들어 3초, 7초, 13초 후에 작업을 재시도할 수 있습니다.
+   
+   * **일정한 간격**. 응용 프로그램은 각 시도 사이에 동일한 시간 동안 대기합니다. 예를 들어, 3초마다 작업을 재시도할 수 있습니다.
+   
+   * **즉시 재시도**. 때로 일시적 오류는 매우 짧으며, 아마도 네트워크 패킷 충돌이나 하드웨어 구성 요소의 급상승과 같은 이벤트 때문일 수 있습니다. 이 경우 응용 프로그램을 어셈블하고 다음 요청을 보내는 데 걸리는 시간 동안 오류가 해소된다면 재시도가 성공할 수 있기 때문에 작업을 즉시 재시도하는 것이 적절합니다. 그러나 즉시 재시도를 한 번 이상 시도하지 않아야 하며 즉각적인 재시도가 실패한 경우 지수적 백오프 또는 대체 작업과 같은 대체 전략으로 전환해야 합니다.
+   
+   * **무작위화**. 위에 나열된 재시도 전략은 클라이언트의 여러 인스턴스가 이후의 재시도 시도를 동시에 보내지 않도록 무작위화를 포함할 수 있습니다. 예를 들어 한 인스턴스는 3초, 11초, 28초 후 작업을 재시도할 수 있으며 다른 인스턴스는 4초, 12초, 26초 후 작업을 재시도할 수 있습니다. 무작위화는 다른 전략과 결합할 수 있는 유용한 기술입니다. 
   
-  * There will be circumstances where the operation continues to fail at every attempt, and it is vital to consider how you will handle this situation:
-    * Although a retry strategy will define the maximum number of times that an operation should be retried, it does not prevent the application repeating the operation again, with the same number of retries. For example, if an order processing service fails with a fatal error that puts it out of action permanently, the retry strategy may detect a connection timeout and consider it to be a transient fault. The code will retry the operation a specified number of times and then give up. However, when another customer places an order, the operation will be attempted again - even though it is sure to fail every time.
-    * To prevent continual retries for operations that continually fail, consider implementing the [Circuit Breaker pattern](http://msdn.microsoft.com/library/dn589784.aspx). In this pattern, if the number of failures within a specified time window exceeds the threshold, requests are returned to the caller immediately as errors, without attempting to access the failed resource or service.
-    * The application can periodically test the service, on an intermittent basis and with very long intervals between requests, to detect when it becomes available. An appropriate interval will depend on the scenario, such as the criticality of the operation and the nature of the service, and might be anything between a few minutes and several hours. At the point where the test succeeds, the application can resume normal operations and pass requests to the newly recovered service.
-    * In the meantime, it may be possible to fall back to another instance of the service (perhaps in a different datacenter or application), use a similar service that offers compatible (perhaps simpler) functionality, or perform some alternative operations in the hope that the service will become available soon. For example, it may be appropriate to store requests for the service in a queue or data store and replay them later. Otherwise you might be able to redirect the user to an alternative instance of the application, degrade the performance of the application but still offer acceptable functionality, or just return a message to the user indicating that the application is not available at present.
-* **Other considerations**
-  
-  * When deciding on the values for the number of retries and the retry intervals for a policy, consider if the operation on the service or resource is part of a long-running or multi-step operation. It may be difficult or expensive to compensate all the other operational steps that have already succeeded when one fails. In this case, a very long interval and a large number of retries may be acceptable as long as it does not block other operations by holding or locking scarce resources.
-  * Consider if retrying the same operation may cause inconsistencies in data. If some parts of a multi-step process are repeated, and the operations are not idempotent, it may result in an inconsistency. For example, an operation that increments a value, if repeated, will produce an invalid result. Repeating an operation that sends a message to a queue may cause an inconsistency in the message consumer if it cannot detect duplicate messages. To prevent this, ensure that you design each step as an idempotent operation. For more information about idempotency, see [Idempotency Patterns](http://blog.jonathanoliver.com/2010/04/idempotency-patterns/).
-  * Consider the scope of the operations that will be retried. For example, it may be easier to implement retry code at a level that encompasses several operations, and retry them all if one fails. However, doing this may result in idempotency issues or unnecessary rollback operations.
-  * If you choose a retry scope that encompasses several operations, take into account the total latency of all of them when determining the retry intervals, when monitoring the time taken, and before raising alerts for failures.
-  * Consider how your retry strategy may affect neighbors and other tenants in a shared application, or when using shared resources and services. Aggressive retry policies can cause an increasing number of transient faults to occur for these other users and for applications that share the resources and services. Likewise, your application may be affected by the retry policies implemented by other users of the resources and services. For mission-critical applications, you may decide to use premium services that are not shared. This provides you with much more control over the load and consequent throttling of these resources and services, which can help to justify the additional cost.
+o	일반적인 지침으로, 백그라운드 작업에 대해서는 지수적 백오프 전략을 사용하고 대화형 작업에 대해서는 즉각적 또는 정기적 간격 재시도 전략을 사용하십시오. 두 경우 모두 지연 및 재시도 횟수를 선택하여 모든 재시도 횟수의 최대 지연이 필요한 종단간 지연 요구 사항 이내에 있도록 해야 합니다.
 
-## More information
-* [Azure service-specific retry guidelines](./retry-service-specific.md)
-* [The Transient Fault Handling Application Block](http://msdn.microsoft.com/library/hh680934.aspx)
-* [Circuit Breaker Pattern](http://msdn.microsoft.com/library/dn589784.aspx)
-* [Compensating Transaction Pattern](http://msdn.microsoft.com/library/dn589804.aspx)
-* [Idempotency Patterns](http://blog.jonathanoliver.com/2010/04/idempotency-patterns/)
+o	재시도된 작업에 대한 전체 최대 시간 초과에 기여하는 모든 요소를 종합적으로 고려하십시오. 이러한 요소에는 실패한 연결이 응답을 생성하는 데 걸리는 시간(대개 클라이언트의 시간 초과 값으로 설정)과 재시도 횟수와 최대 재시도 횟수 간의 지연이 포함됩니다. 이 시간을 합하면 전체 작업 시간이 매우 길어질 수 있으며, 각 실패 후에 재시도 간격이 급격하게 늘어나는 지수적 지연 전략을 사용하는 경우 특히 그렇습니다. 프로세스가 특정 서비스 수준 계약(SLA)을 충족해야 하는 경우, 모든 시간 초과 및 지연을 포함하여 전체 작업 시간은 SLA에 정의된 시간 내에 있어야 합니다.
+
+o	간격이 너무 짧거나 재시도 횟수가 너무 많은 지나치게 공격적인 재시도 전략은 대상 리소스 또는 서비스에 역효과를 줄 수 있습니다. 그렇기 때문에 리소스 또는 서비스가 오버로드된 상태에서 복구되지 않을 수 있으며 요청을 계속 차단하거나 거부할 수 있습니다. 따라서 리소스 또는 서비스로 점점 더 많은 요청이 보내지는 악순환이 발생하고 결과적으로 복구 능력이 더욱 저하됩니다.
+
+o	재시도 간격을 선택할 때 작업의 시간 종료를 고려하여 즉시 시도를 피하십시오(예: 시간 초과 기간이 재시도 간격과 유사한 경우). 또한 가능한 총 기간(시간 초과 + 재시도 간격)을 특정 총 시간보다 낮게 유지해야 하는지 고려하십시오. 시간 초과가 비정상적으로 짧거나 매우 긴 작업은 대기 시간 및 작업 재시도 빈도에 영향을 줄 수 있습니다.
+
+o	예외 유형과 이에 포함된 모든 데이터, 또는 서비스에서 반환된 오류 코드와 메시지를 사용하여 간격 및 재시도 횟수를 최적화하십시오. 예를 들어, 응답의 Retry-After 헤더와 함께 사용할 수 없는 HTTP 코드 503 서비스와 같은 일부 예외 또는 오류 코드는 오류가 지속될 수 있는 기간 또는 서비스가 실패하고 이후의 시도에 응답하지 않음을 나타낼 수 있습니다.
+
+* **반 패턴 방지**:
+
+o	대다수의 경우, 중복된 재시도 코드 계층을 포함하는 구현을 피해야 합니다. 특정한 요구 사항이 있는 경우가 아니면 계단식 재시도 메커니즘이 포함된 설계, 또는 작업의 모든 단계에서 계층화된 요청이 관련된 재시도를 구현하는 설계를 피하도록 주의하십시오. 이러한 예외적인 상황에서는 과도한 재시도 횟수 및 지연 기간을 방지하는 정책을 사용하고 결과를 이해해야 합니다. 예를 들어, 한 구성 요소가 다른 구성 요소에 요청을 보내 대상 서비스에 액세스하게 하고 두 호출에서 세 번씩 재시도를 구현하면 서비스에 대해 총 9회의 재시도가 이루어집니다. 많은 서비스와 리소스가 내장된 재시도 메커니즘을 구현하므로 더 높은 수준에서 재시도를 구현해야 하는 경우 이를 비활성화하거나 수정할 수 있는 방법을 조사해야 합니다.
+
+o	끝없는 재시도 메커니즘을 구현해서는 안 됩니다. 이로 인해 과부하 상황에서 리소스 또는 서비스가 복구되지 않고 제한 및 거부된 연결이 더 오랜 기간 지속될 수 있습니다. 유한 번호 또는 재시도를 사용하거나 [회로 차단기](http://msdn.microsoft.com/library/dn589784.aspx)와 같은 패턴을 구현하여 서비스가 복구되도록 합니다.
+
+o	즉시 재시도를 두 번 이상 수행하지 마십시오.
+
+o	Azure에서 서비스 및 리소스에 액세스할 때 재시도 횟수가 많은 경우에 특히 정기적인 재시도 간격을 사용하지 마십시오. 최적의 접근 방식은 회로 차단 기능이 있는 지수적 백오프 전략입니다.
+
+o	동일한 클라이언트의 여러 인스턴스 또는 서로 다른 클라이언트의 여러 인스턴스가 동시에 재시도를 보내지 못하도록 하십시오. 이런 상황이 발생할 가능성이 높으면 재시도 간격에 무작위화를 도입하십시오.
+
+* **재시도 전략 및 구현 테스트:**
+
+o	특히 응용 프로그램과 대상 리소스 또는 서비스가 모두 극심한 과부하 상태에 있는 경우 가능한 한 많은 상황에서 재시도 전략 구현을 완전히 테스트하십시오. 다음과 같은 방법으로 테스트 중 동작을 확인할 수 있습니다.
+ 
+   *	서비스에 일시적 및 비일시적인 오류를 주입합니다. 예를 들어, 유효하지 않은 요청을 보내거나 테스트 요청을 감지하고 다른 유형의 오류로 응답하는 코드를 추가하십시오. TestApi를 사용하는 예제는 [TestApi를 사용한 오류 주입 테스트](http://msdn.microsoft.com/magazine/ff898404.aspx) 및 [TestApi 소개 - 5 부: 관리 코드 오류 삽입 API](http://blogs.msdn.com/b/ivo_manolov/archive/2009/11/25/9928447.aspx)를 참조하십시오. 
+    
+ * 실제 서비스가 반환할 수 있는 오류 범위를 반환하는 리소스 또는 서비스에 대한 모의 개체를 만듭니다. 재시도 전략이 감지하도록 설계된 모든 유형의 오류가 다뤄지도록 하십시오.
+    
+   *	사용자가 생성하고 배포한 사용자 지정 서비스의 경우 서비스를 일시적으로 사용 중지하거나 과부하를 적용하여 일시적 오류가 발생하도록 만드십시오(물론 Azure 내에서 공유 리소스나 공유 서비스에 과부하를 주지는 않아야 합니다).
+    
+   *	HTTP 기반 API의 경우 자동 테스트에서 FiddlerCore 라이브러리를 사용하여 여분의 왕복 시간을 추가하거나 응답(예: HTTP 상태 코드, 헤더, 본문 또는 기타 인자)을 변경하는 식으로 HTTP 요청의 결과를 변경하는 것이 좋습니다. 그러면 일시적 오류 또는 다른 유형의 오류에 상관없이 오류 조건의 세부적 형태를 결정적으로 테스트할 수 있습니다. 자세한 내용은 [FiddlerCore](http://www.telerik.com/fiddler/fiddlercore)를 참조하십시오. 라이브러리, 특히 **HttpMangler** 클래스를 사용하는 방법의 예를 보려면 [Azure Storage SDK 소스 코드](https://github.com/Azure/azure-storage-net/tree/master/Test)를 확인하십시오.
+    
+  * 높은 부하 인자 및 동시 테스트를 수행하여 이러한 조건에서 재시도 메커니즘 및 전략이 올바르게 작동하고 클라이언트 작동에 악영향을 미치지 않거나 요청간에 교차 오염이 발생하지 않는지 확인하십시오.
+
+* **재시도 정책 구성 관리:**
+ 
+  * *재시도 정책* 은 재시도 전략의 모든 요소를 조합한 것입니다. 이 정책은 오류가 일시적일지 여부, 사용할 간격 유형(정기적, 지수적 백오프 및 무작위화), 실제 간격 값 및 재시도 횟수를 결정하는 감지 메커니즘을 정의합니다.
+  
+  * 	재시도는 가장 단순한 응용 프로그램과 복잡한 응용 프로그램의 모든 계층에서 여러 위치에 구현되어야 합니다. 여러 위치에서 각 정책의 요소를 하드 코딩하는 대신 중앙 지점에서 모든 정책을 저장하는 방법을 고려하십시오. 예를 들어, 간격 및 재시도 횟수 등의 값을 응용 프로그램 구성 파일에 저장하고 런타임에 읽은 다음 재시도 정책을 프로그래밍 방식으로 작성합니다. 이렇게 하면 설정을 쉽게 관리할 뿐만 아니라, 변화하는 요구 사항 및 시나리오에 대응하여 값을 수정하고 미세 조정할 수 있습니다. 그러나 매번 구성 파일을 다시 읽지 않고 값을 저장하도록 시스템을 설계하고 구성에서 값을 얻을 수 없는 경우 적합한 기본값이 사용되도록 하십시오.
+  
+  * Azure Cloud Services 응용 프로그램에서 런타임에 재시도 정책을 작성하는 데 사용되는 값을 서비스 구성 파일에 저장하여 응용 프로그램을 다시 시작하지 않고도 재시도 정책을 변경할 수 있도록 하는 것이 좋습니다.
+  
+  * 사용하는 클라이언트 API에서 이용 가능한 내장 또는 기본 재시도 전략을 활용하십시오(시나리오에 적합한 경우에만). 이러한 전략은 일반적으로 범용입니다. 시나리오에 따라 어떤 경우에는 이것만으로 충분할 수도 있지만 다른 시나리오에서는 특정 요구 사항에 맞는 모든 옵션을 제공하지 못할 수도 있습니다. 가장 적절한 값을 결정하기 위해 테스트를 통해 설정이 응용 프로그램에 미치는 영향을 이해해야 합니다.
+  
+* **일시적 및 비 일시적인 오류 기록 및 추적:**
+
+o	재시도 전략의 일환으로 예외 처리와 함께 재시도가 이루어지는 시기를 기록하는 기타 측정 수단을 포함시키십시오. 이따금 발생하는 일시적 오류 및 재시도가 예상되고 문제가 되지 않더라도 정기적이고 점차 증가하는 재시도는 실패를 유발하거나 현재 응용 프로그램 성능 및 가용성에 영향을 미치는 문제임을 나타내는 징표일 수 있습니다.
+
+o	일시적 오류를 오류 항목이 아닌 경고 항목으로 기록하여 모니터링 시스템이 잘못된 경고를 유발할 수 있는 응용 프로그램 오류로 이를 감지하지 않도록 하십시오.
+
+o	재시도가 서비스의 제한으로 인해 발생했는지 또는 연결 실패와 같은 다른 유형의 오류로 인해 발생했는지를 나타내는 값을 로그 항목에 저장하여 데이터 분석 중에 구별할 수 있도록 하십시오. 제한 오류 수의 증가는 종종 응용 프로그램의 설계 오류 또는 전용 하드웨어를 제공하는 프리미엄 서비스로 전환해야 할 필요성을 나타내는 지표입니다. 
+
+o	재시도 메커니즘이 포함된 작업에 소요되는 전체 시간을 측정하고 로깅하는 것을 고려하십시오. 이 시간은 일시적 오류가 사용자 응답 시간, 프로세스 지연 및 응용 프로그램 사용 사례의 효율성에 미치는 전반적인 영향을 보여주는 좋은 지표입니다. 또한 응답 시간에 기여한 요인을 파악할 수 있도록 발생한 재시도 횟수를 기록하십시오.
+
+o	오류의 수와 비율, 평균 재시도 횟수, 또는 작업이 성공하는 데 걸린 전체 시간이 증가하면 경보를 발생시킬 수 있는 원격 측정 및 모니터링 시스템을 구현하는 것이 좋습니다.
+
+* **지속적으로 실패하는 작업 관리:**
+  
+o	모든 시도에서 작업에 계속 실패하는 상황이 생길 수 있으므로 이 상황을 어떻게 처리할 것인지 고려하는 것이 중요합니다.
+
+    * 재시도 전략은 작업이 재시도되어야 하는 최대 횟수를 정의하지만, 응용 프로그램이 동일한 재시도 횟수로 작업을 반복하는 것을 막지는 않습니다. 예를 들어, 주문 처리 서비스에 치명적인 오류 때문에 장애가 생겨 영구적으로 작동하지 않는 경우 재시도 전략은 연결 시간 초과를 감지하여 이것을 일시적 오류로 간주할 수 있습니다. 코드는 지정된 횟수만큼 작업을 재시도하고 포기합니다. 그러나 다른 고객이 주문할 때마다 매번 작업이 중단되더라도 작업이 재시도됩니다.
+    
+    * 연속적으로 작동하지 않는 작업에 대한 지속적인 재시도를 방지하려면 [회로 차단기 패턴](http://msdn.microsoft.com/library/dn589784.aspx)의 구현을 고려하십시오. 이 패턴에서 지정된 시간 창 내에서 실패 횟수가 임계값을 초과하면 오류가 발생한 리소스 또는 서비스에 액세스하지 않고 요청이 즉시 오류로 호출자에게 반환됩니다.
+    
+    * 응용 프로그램은 간헐적으로, 그리고 요청 사이에 매우 긴 간격으로 서비스를 주기적으로 테스트하여 사용이 가능해지는 시기를 감지할 수 있습니다. 적절한 간격은 작업의 중요성과 서비스의 성격과 같은 시나리오에 따라 다르며 몇 분에서 몇 시간 사이의 값이 될 수 있습니다. 테스트가 성공한 지점에서 응용 프로그램은 정상 작업을 재개하고 새로 복구된 서비스에 요청을 전달할 수 있습니다.
+    
+    *	그 전까지는 서비스의 다른 인스턴스(다른 데이터 센터 또는 응용 프로그램)로 폴백하거나 호환 기능(더 단순할 수 있음)을 제공하는 비슷한 서비스를 사용하거나, 서비스가 곧 제공될 것이라는 기대 하에 일부 대체 작업을 수행하는 것이 가능할 수 있습니다. 예를 들어, 서비스에 대한 요청을 대기열 또는 데이터 리포지토리에 저장하고 나중에 재생하는 것이 적절할 수 있습니다. 그렇지 않으면 사용자를 응용 프로그램의 다른 인스턴스로 리디렉션하고 응용 프로그램의 성능을 저하시키지만 수용 가능한 기능을 제공하거나, 단순히 현재 응용 프로그램을 사용할 수 없다는 메시지를 사용자에게 반환할 수 있습니다.
+    
+* **기타 고려 사항**
+  
+  * 정책의 재시도 횟수와 재시도 간격에 대한 값을 결정할 때 서비스 또는 리소스에 대한 작업이 장기 실행 또는 다중 단계 작업의 일부인지 고려하십시오. 오류가 생겼을 때 이미 성공한 다른 모든 작업 단계를 보완하는 것이 어렵거나 비용이 많이들 수 있습니다. 이 경우 부족한 리소스를 유보하거나 잠시 다른 작업을 차단하지 않는 한 매우 긴 간격과 많은 재시도가 허용될 수 있습니다.
+  
+  * 동일한 작업을 재시도하면 데이터에 불일치가 발생하는지 고려하십시오. 다중 단계 프로세스의 일부가 반복되고 작업이 멱등원(idempotent)이 아닌 경우 불일치가 발생할 수 있습니다. 예를 들어 값을 증가시키는 연산을 반복하면 잘못된 결과가 생성됩니다. 대기열에 메시지를 보내는 작업을 반복하면 중복 메시지를 감지할 수 없는 경우 메시지 소비자에게 불일치가 발생할 수 있습니다. 이를 방지하려면 각 단계를 멱등원(idempotent) 작업으로 설계해야 합니다. 멱등원(idempotent)에 대한 자세한 내용은 [멱등원(idempotent) 패턴](http://blog.jonathanoliver.com/2010/04/idempotency-patterns/)을 참조하십시오.
+  
+  * 재시도될 작업의 범위를 고려하십시오. 예를 들어 여러 작업을 포함하는 수준에서 재시도 코드를 구현하고 실패한 경우 모두 재시도하는 것이 더 쉬울 수 있습니다. 그러나 이렇게 하면 멱등원(idempotent) 문제 또는 불필요한 롤백 작업이 발생할 수 있습니다.
+  
+  * 여러 작업을 포함하는 재시도 범위를 선택하는 경우 재시도 간격을 결정할 때, 수행 시간을 모니터링할 때, 그리고 오류에 대한 경고를 제기하기 전에 모든 작업의 총 지연을 고려하십시오.
+  
+  * 공유 응용 프로그램에서, 또는 공유 리소스와 서비스를 사용할 때 재시도 전략이 이웃 및 다른 테넌트에 어떤 영향을 미칠 것인지 고려하십시오. 공격적인 재시도 정책은 이러한 다른 사용자에 대해, 그리고 리소스와 서비스를 공유하는 응용 프로그램에 대해 일시적 오류를 증가시킬 수 있습니다. 마찬가지로 응용 프로그램은 리소스 및 서비스의 다른 사용자가 구현한 재시도 정책의 영향을 받을 수 있습니다. 미션 크리티컬 응용 프로그램의 경우 공유되지 않는 전용 서비스의 사용을 결정할 수 있습니다. 이렇게 하면 이러한 리소스와 서비스에 대한 로드와 결과적인 제한을 훨씬 더 수월하게 제어해 추가 비용을 정당화할 수 있습니다.
+
+## 자세한 정보
+* [Azure 서비스에 특정한 재시도 가이드라인](./retry-service-specific.md)
+* [일시적 오류 처리 응용 프로그램 블록](http://msdn.microsoft.com/library/hh680934.aspx)
+* [회로 차단기 패턴](http://msdn.microsoft.com/library/dn589784.aspx)
+* [보상 트랜잭션 패턴](http://msdn.microsoft.com/library/dn589804.aspx)
+* [멱등원(idempotent) 패턴](http://blog.jonathanoliver.com/2010/04/idempotency-patterns/)
 
