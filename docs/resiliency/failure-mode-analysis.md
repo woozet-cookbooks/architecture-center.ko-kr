@@ -150,290 +150,290 @@ Application_End 로깅이 앱 도메인 종료(소프트 프로세스 크래시)
 
 ## Elasticsearch
 ### Elasticsearch에서 데이터 읽기가 실패함.
-**검색**. Catch the appropriate exception for the particular [Elasticsearch client][elasticsearch-client] being used.
+**검색**. 사용 중인 특정 [Elasticsearch 클라이언트][elasticsearch-client]의 해당 예외를 포착합니다.
 
 **복구**
 
-* Use a retry mechanism. Each client has its own retry policies.
-* Deploy multiple Elasticsearch nodes and use replication for high availability.
+* 재시도 메커니즘을 사용합니다. 각 클라이언트는 자체 재시도 정책을 가지고 있습니다.
+* 여러 Elasticsearch 노드를 배포하고 고가용성을 위해 복제를 사용합니다.
 
-For more information, see [Running Elasticsearch on Azure][elasticsearch-azure].
+자세한 내용은 [Azure에서 Elasticsearch 실행하기][elasticsearch-azure]를 참조하십시오.
 
-**진단**. You can use monitoring tools for Elasticsearch, or log all errors on the client side with the payload. See the 'Monitoring' section in [Running Elasticsearch on Azure][elasticsearch-azure].
+**진단**. Elasticsearch에 대한 모니터링 도구를 사용하거나, 또는 모든 오류를 페이로드가 있는 클라이언트 측에 로깅합니다. [Azure에서 Elasticsearch 실행하기][elasticsearch-azure]에서 '모니터링' 섹션을 참조하십시오.
 
-### Writing data to Elasticsearch fails.
-**검색**. Catch the appropriate exception for the particular [Elasticsearch client][elasticsearch-client] being used.  
-
-**복구**
-
-* Use a retry mechanism. Each client has its own retry policies.
-* If the application can tolerate a reduced consistency level, consider writing with `write_consistency` setting of `quorum`.
-
-For more information, see [Running Elasticsearch on Azure][elasticsearch-azure].
-
-**진단**. You can use monitoring tools for Elasticsearch, or log all errors on the client side with the payload. See the 'Monitoring' section in [Running Elasticsearch on Azure][elasticsearch-azure].
-
-## Queue storage
-### Writing a message to Azure Queue storage fails consistently.
-**검색**. After *N* retry attempts, the write operation still fails.
+### Elasticsearch에 데이터 쓰기가 실패함.
+**검색**. 사용 중인 특정 [Elasticsearch 클라이언트][elasticsearch-client]의 해당 예외를 포착합니다.  
 
 **복구**
 
-* Store the data in a local cache, and forward the writes to storage later, when the service becomes available.
-* Create a secondary queue, and write to that queue if the primary queue is unavailable.
+* 재시도 메커니즘을 사용합니다. 각 클라이언트는 자체 재시도 정책을 가지고 있습니다.
+* 응용 프로그램이 축소된 일관성 수준을 허용할 수 없다면, `quorum`의 `write_consistency` 설정으로 쓰는 것을 고려하십시오.
 
-**진단**. Use [storage metrics][storage-metrics].
+자세한 내용은 [Azure에서 Elasticsearch 실행하기][elasticsearch-azure]를 참조하십시오.
 
-### The application cannot process a particular message from the queue.
-**검색**. Application specific. For example, the message contains invalid data, or the business logic fails for some reason.
+**진단**. Elasticsearch에 대한 모니터링 도구를 사용하거나, 또는 모든 오류를 페이로드가 있는 클라이언트 측에 로깅합니다. [Azure에서 Elasticsearch 실행하기][elasticsearch-azure]에서 '모니터링' 섹션을 참조하십시오.
 
-**복구**
-
-Move the message to a separate queue. Run a separate process to examine the messages in that queue.
-
-Consider using Azure Service Bus Messaging queues, which provides a [dead-letter queue][sb-dead-letter-queue] functionality for this purpose.
-
-> [!NOTE]
-> If you are using Storage queues with WebJobs, the WebJobs SDK provides built-in poison message handling. See [How to use Azure queue storage with the WebJobs SDK][sb-poison-message].
-
-**진단**. Use application logging.
-
-## Redis Cache
-### Reading from the cache fails.
-**검색**. Catch `StackExchange.Redis.RedisConnectionException`.
+## 큐 저장소
+### Azure 큐 저장소에 메시지는 쓰는 작업이 계속 실패함.
+**검색**. *N* 회 재시도를 수행한 후에도 쓰기 작업이 여전히 실패합니다.
 
 **복구**
 
-1. Retry on transient failures. Azure Redis cache supports built-in retry through See [Redis Cache retry guidelines][redis-retry].
-2. Treat non-transient failures as a cache miss, and fall back to the original data source.
+* 데이터를 로컬 캐시에 저장하고, 서비스가 사용 가능한 상태가 되면 나중에 쓰기 내용을 저장소로 전달합니다.
+* 보조 큐를 만들고, 기본 큐를 사용할 수 없게 되면 보조 큐에 쓰기를 수행합니다.
 
-**진단**. Use [Redis Cache diagnostics][redis-monitor].
+**진단**. [저장소 메트릭][storage-metrics]을 사용하십시오.
 
-### Writing to the cache fails.
-**검색**. Catch `StackExchange.Redis.RedisConnectionException`.
-
-**복구**
-
-1. Retry on transient failures. Azure Redis cache supports built-in retry through See [Redis Cache retry guidelines][redis-retry].
-2. If the error is non-transient, ignore it and let other transactions write to the cache later.
-
-**진단**. Use [Redis Cache diagnostics][redis-monitor].
-
-## SQL Database
-### Cannot connect to the database in the primary region.
-**검색**. Connection fails.
+### 응용 프로그램이 큐의 특정 메시지를 처리할 수 없습니다.
+**검색**. 응용 프로그램별로 다릅니다. 예를 들어 메시지에 유효하지 않은 데이터가 포함되어 있거나, 어떠한 이유로 비즈니스 논리가 실패합니다.
 
 **복구**
 
-Prerequisite: The database must be configured for active geo-replication. See [SQL Database Active Geo-Replication][sql-db-replication].
+메시지를 별도 큐로 이동합니다. 별도 프로세스를 실행하여 큐에 있는 메시지를 검사합니다.
 
-* For queries, read from a secondary replica.
-* For inserts and updates, manually fail over to a secondary replica. See [Initiate a planned or unplanned failover for Azure SQL Database][sql-db-failover].
+이 목적으로 [배달 못 한 편지 큐][sb-dead-letter-queue] 기능을 제공하는 Azure Service Bus 메시징 큐의 사용을 고려하십시오.
 
-The replica uses a different connection string, so you will need to update the connection string in your application.
+> [!참고]
+> 웹 작업에 저장소 큐를 사용하고 있을 경우, 웹 작업 SDK가 포이즌 메시지 큐를 기본으로 제공합니다. [웹 작업 SDK로 Azure 큐 저장소를 사용하는 방법][sb-poison-message]을 참조하십시오.
 
-### Client runs out of connections in the connection pool.
-**검색**. Catch `System.InvalidOperationException` errors.
+**진단**. 응용 프로그램 로깅을 사용합니다.
 
-**복구**
-
-* Retry the operation.
-* As a mitigation plan, isolate the connection pools for each use case, so that one use case can't dominate all the connections.
-* Increase the maximum connection pools.
-
-**진단**. Application logs.
-
-### Database connection limit is reached.
-**검색**. Azure SQL Database limits the number of concurrent workers, logins, and sessions. The limits depend on the service tier. For more information, see [Azure SQL Database resource limits][sql-db-limits].
-
-To detect these errors, catch `System.Data.SqlClient.SqlException` and check the value of `SqlException.Number` for the SQL error code. For a list of relevant error codes, see [SQL error codes for SQL Database client applications: Database connection error and other issues][sql-db-errors].
-
-**복구**. These errors are considered transient, so retrying may resolve the issue. If you consistently hit these errors, consider scaling the database.
-
-**진단**. - The [sys.event_log][sys.event_log] query returns successful database connections, connection failures, and deadlocks.
-
-* Create an [alert rule][azure-alerts] for failed connections.
-* Enable [SQL Database auditing][sql-db-audit] and check for failed logins.
-
-## Service Bus Messaging
-### Reading a message from a Service Bus queue fails.
-**검색**. Catch exceptions from the client SDK. The base class for Service Bus exceptions is [MessagingException][sb-messagingexception-class]. If the error is transient, the `IsTransient` property is true.
-
-For more information, see [Service Bus messaging exceptions][sb-messaging-exceptions].
+## Redis 캐시
+### 캐시에서 읽기 실패.
+**검색**. `StackExchange.Redis.RedisConnectionException`을 포착합니다.
 
 **복구**
 
-1. Retry on transient failures. See [Service Bus retry guidelines][sb-retry].
-2. Messages that cannot be delivered to any receiver are placed in a *dead-letter queue*. Use this queue to see which messages could not be received. There is no automatic cleanup of the dead-letter queue. Messages remain there until you explicitly retrieve them. See [Overview of Service Bus dead-letter queues][sb-dead-letter-queue].
+1. 일시적 장애 시 재시도를 수행합니다. Azure Redis 캐시는 기본으로 재시도 기능을 지원합니다. [Redis 캐시 재시도 지침][redis-retry]을 참조하십시오.
+2. 일시적이 아닌 장애는 캐시 미스(Cache Miss)로 취급하고, 원래 데이터 소스로 대체됩니다.
 
-### Writing a message to a Service Bus queue fails.
-**검색**. Catch exceptions from the client SDK. The base class for Service Bus exceptions is [MessagingException][sb-messagingexception-class]. If the error is transient, the `IsTransient` property is true.
+**진단**. [Redis 캐시 진단][redis-monitor]을 사용합니다.
 
-For more information, see [Service Bus messaging exceptions][sb-messaging-exceptions].
-
-**복구**
-
-1. The Service Bus client automatically retries after transient errors. By default, it uses exponential back-off. After the maximum retry count or maximum timeout period, the client throws an exception. For more information, see [Service Bus retry guidelines][sb-retry].
-2. If the queue quota is exceeded, the client throws [QuotaExceededException][QuotaExceededException]. The exception message gives more details. Drain some messages from the queue before retrying, and consider using the Circuit Breaker pattern to avoid continued retries while the quota is exceeded. Also, make sure the [BrokeredMessage.TimeToLive] property is not set too high.
-3. Within a region, resiliency can be improved by using [partitioned queues or topics][sb-partition]. A non-partitioned queue or topic is assigned to one messaging store. If this messaging store is unavailable, all operations on that queue or topic will fail. A partitioned queue or topic is partitioned across multiple messaging stores.
-4. For additional resiliency, create two Service Bus namespaces in different regions, and replicate the messages. You can use either active replication or passive replication.
-
-   * Active replication: The client sends every message to both queues. The receiver listens on both queues. Tag messages with a unique identifier, so the client can discard duplicate messages.
-   * Passive replication: The client sends the message to one queue. If there is an error, the client falls back to the other queue. The receiver listens on both queues. This approach reduces the number of duplicate messages that are sent. However, the receiver must still handle duplicate messages.
-
-     For more information, see [GeoReplication sample][sb-georeplication-sample] and [Best practices for insulating applications against Service Bus outages and disasters](/azure/service-bus-messaging/service-bus-outages-disasters/).
-
-### Duplicate message.
-**검색**. Examine the `MessageId` and `DeliveryCount` properties of the message.
+### 캐시에 쓰기 실패함.
+**검색**. `StackExchange.Redis.RedisConnectionException`을 포착합니다.
 
 **복구**
 
-* If possible, design your message processing operations to be idempotent. Otherwise, store message IDs of messages that are already processed, and check the ID before processing a message.
-* Enable duplicate detection, by creating the queue with `RequiresDuplicateDetection` set to true. With this setting, Service Bus automatically deletes any message that is sent with the same `MessageId` as a previous message.  Note the following:
+1. 일시적 장애 시 재시도를 수행합니다. Azure Redis 캐시는 기본으로 재시도 기능을 지원합니다. [Redis 캐시 재시도 지침][redis-retry]을 참조하십시오.
+2. 오류가 일시적인 것이 아니면 무시하고 다른 트랜잭션으로 하여금 나중에 캐시에 기록하도록 합니다.
 
-  * This setting prevents duplicate messages from being put into the queue. It doesn't prevent a receiver from processing the same message more than once.
-  * Duplicate detection has a time window. If a duplicate is sent beyond this window, it won't be detected.
+**진단**. [Redis 캐시 진단][redis-monitor]을 사용합니다.
 
-**진단**. Log duplicated messages.
-
-### The application cannot process a particular message from the queue.
-**검색**. Application specific. For example, the message contains invalid data, or the business logic fails for some reason.
+## SQL 데이터베이스
+### 기본 지역의 데이터베이스에 연결할 수 없음.
+**검색**. 연결이 실패합니다.
 
 **복구**
 
-There are two failure modes to consider.
+선행 요구 사항: 데이터베이스에 활성 지리적 복제가 구성되어 있어야 합니다. [SQL 데이터베이스 활성 지리적 복제][sql-db-replication]를 참조하십시오.
 
-* The receiver detects the failure. In this case, move the message to the dead-letter queue. Later, run a separate process to examine the messages in the dead-letter queue.
-* The receiver fails in the middle of processing the message &mdash; for example, due to an unhandled exception. To handle this case, use `PeekLock` mode. In this mode, if the lock expires, the message becomes available to other receivers. If the message exceeds the maximum delivery count or the time-to-live, the message is automatically moved to the dead-letter queue.
+* 쿼리의 경우 보조 복제본에서 읽습니다.
+* 삽입 및 업데이트의 경우 수동으로 보조 복제본으로 장애 조치를 취합니다. [Azure SQL Database에 대해 계획된 또는 계획되지 않은 장애 조치 시작][sql-db-failover]을 참조하십시오.
 
-For more information, see [Overview of Service Bus dead-letter queues][sb-dead-letter-queue].
+복제본은 다른 연결 문자열을 사용하므로 응용 프로그램의 연결 문자열을 업데이트해야 합니다.
 
-**진단**. Whenever the application moves a message to the dead-letter queue, write an event to the application logs.
-
-## Service Fabric
-### A request to a service fails.
-**검색**. The service returns an error.
+### 연결 풀에서 클라이언트의 연결이 소진됨.
+**검색**. `System.InvalidOperationException` 오류를 포착합니다.
 
 **복구**
 
-* Locate a proxy again (`ServiceProxy` or `ActorProxy`) and call the service/actor method again.
-* **Stateful service**. Wrap operations on reliable collections in a transaction. If there is an error, the transaction will be rolled back. The request, if pulled from a queue, will be processed again.
-* **Stateless service**. If the service persists data to an external store, all operations need to be idempotent.
+* 작업을 다시 시도합니다.
+* 완화 계획으로서 각 사용 건에 대해 연결 풀을 격리함으로써 하나의 사용 건이 전체 연결을 지배할 수 없도록 합니다.
+* 최대 연결 풀의 수를 늘립니다.
 
-**진단**. Application log
+**진단**. 응용 프로그램 로그.
 
-### Service Fabric node is shut down.
-**검색**. A cancellation token is passed to the service's `RunAsync` method. Service Fabric cancels the task before shutting down the node.
+### 데이터베이스 연결 제한에 도달함.
+**검색**. Azure SQL Database는 동시 작업자, 로그인 및 세션의 수를 제한합니다. 이 제한은 서비스 계층에 따라 다릅니다. 자세한 내용은 [Azure SQL Database 리소스 제한][sql-db-limits]을 참조하십시오.
 
-**복구**. Use the cancellation token to detect shutdown. When Service Fabric requests cancellation, finish any work and exit `RunAsync` as quickly as possible.
+이들 오류를 검색하려면 `System.Data.SqlClient.SqlException` 을 포착하고 SQL 오류 코드에서 `SqlException.Number`의 값을 확인합니다. 해당 오류 코드 목록은 [SQL 데이터베이스 클라이언트 응용 프로그램의 SQL 오류 코드: 데이터베이스 연결 오류 및 기타 문제][sql-db-errors]를 참조하십시오.
 
-**진단**. Application logs
+**복구**. 이들 오류는 일시적인 것으로 간주되므로 재시도를 하면 문제가 해결될 수 있습니다. 이들 오류가 지속적으로 발생하면 데이터베이스 확장을 고려하십시오.
 
-## Storage
-### Writing data to Azure Storage fails
-**검색**. The client receives errors when writing.
+**진단**. - [sys.event_log][sys.event_log] 쿼리가 성공적 데이터베이스 연결, 연결 실패 및 교착 상태 정보를 반환합니다.
 
-**복구**
+* 실패한 연결에 대해 [알림 규칙][azure-alerts]을 만듭니다.
+* [SQL 데이터베이스 감사][sql-db-audit]를 활성화하고 실패한 로그인을 확인합니다.
 
-1. Retry the operation, to recover from transient failures. The [retry policy][Storage.RetryPolicies] in the client SDK handles this automatically.
-2. Implement the Circuit Breaker pattern to avoid overwhelming storage.
-3. If N retry attempts fail, perform a graceful fallback. For example:
+## Service Bus 메시징
+### Service Bus 큐의 메시지 읽기 실패.
+**검색**. 클라이언트 SDK의 예외를 포착합니다. Service Bus 예외의 기본 클래스는 [MessagingException][sb-messagingexception-class]입니다. 오류가 일시적이면 `IsTransient` 속성이 true입니다.
 
-   * Store the data in a local cache, and forward the writes to storage later, when the service becomes available.
-   * If the write action was in a transactional scope, compensate the transaction.
-
-**진단**. Use [storage metrics][storage-metrics].
-
-### Reading data from Azure Storage fails.
-**검색**. The client receives errors when reading.
+자세한 내용은 [Service Bus 메시징 예외][sb-messaging-exceptions]를 참조하십시오.
 
 **복구**
 
-1. Retry the operation, to recover from transient failures. The [retry policy][Storage.RetryPolicies] in the client SDK handles this automatically.
-2. For RA-GRS storage, if reading from the primary endpoint fails, try reading from the secondary endpoint. The client SDK can handle this automatically. See [Azure Storage replication][storage-replication].
-3. If *N* retry attempts fail, take a fallback action to degrade gracefully. For example, if a product image can't be retrieved from storage, show a generic placeholder image.
+1. 일시적 장애 시 재시도를 수행합니다. [Service Bus 재시도 지침][sb-retry]을 참조하십시오.
+2. 수신기에 전달할 수 없는 메시지는 *배달 못 한 편지 큐* 에 넣습니다. 이 큐를 사용하여 어떤 메시지를 수신할 수 없었는지 확인합니다. 배달 못 한 편지 큐의 자동 정리 기능은 없습니다. 해당 메시지들이 확실하게 수신될 때까지 거기에 계속 유지됩니다. [Service Bus 배달 못 한 편지 큐][sb-dead-letter-queue]를 참조하십시오.
 
-**진단**. Use [storage metrics][storage-metrics].
+### Service Bus 큐에 메시지 쓰기 실패.
+**검색**. 클라이언트 SDK의 예외를 포착합니다. Service Bus 예외의 기본 클래스는 [MessagingException][sb-messagingexception-class]입니다. 오류가 일시적이면 `IsTransient` 속성이 true입니다.
 
-## Virtual Machine
-### Connection to a backend VM fails.
-**검색**. Network connection errors.
+자세한 내용은 [Service Bus 메시징 예외][sb-messaging-exceptions]를 참조하십시오.
 
 **복구**
 
-* Deploy at least two backend VMs in an availability set, behind a load balancer.
-* If the connection error is transient, sometimes TCP will successfully retry sending the message.
-* Implement a retry policy in the application.
-* For persistent or non-transient errors, implement the [Circuit Breaker][circuit-breaker] pattern.
-* If the calling VM exceeds its network egress limit, the outbound queue will fill up. If the outbound queue is consistently full, consider scaling out.
+1. 일시적 오류 후에 Service Bus 클라이언트가 자동으로 재시도를 수행합니다. 기본적으로 지수 백오프를 사용합니다. 최다 재시도 횟수 또는 최대 시간 초과 기간이 경과하고 나면 클라이언트가 예외를 발생시킵니다. 자세한 내용은 [Service Bus 재시도 지침][sb-retry]을 참조하십시오.
+2. 큐 할당량이 초과하면 클라이언트가 [QuotaExceededException][QuotaExceededException]을 발생시킵니다. 예외 메시지가 보다 자세한 정보를 제공합니다. 재시도 전에 큐에서 일부 메시지를 배출하고, 할당량이 초과할 때 지속적 재시도를 방지하기 위해 회로 차단기를 사용하는 것을 고려하십시오. 또한 [BrokeredMessage.TimeToLive] 속성을 너무 높게 설정하지 않도록 하십시오.
+3. [분할된 큐 또는 주제][sb-partition]를 사용하면 한 지역 내에서 복원력이 향상될 수 있습니다. 분할되지 않은 큐나 주제는 하나의 메시징 스토어에 할당됩니다. 이 메시징 스토어를 사용할 수 없으며, 해당 큐나 주제의 모든 작업이 실패합니다. 분할된 큐나 주제가 여러 메시징 스토어에 걸쳐 분할됩니다.
+4. 추가적인 복원력을 확보하려면 다른 지역에 두 개의 Service Bus 네임스페이스를 만들어 메시지를 복제합니다. 액티브 복제 또는 패시브 복제를 사용할 수 있습니다.
 
-**진단**. Log events at service boundaries.
+   * 액티브 복제: 클라이언트가 모든 메시지를 양쪽 큐에 전송합니다. 수신기는 양쪽 대기열에서 모두 수신합니다. 클라이언트가 중복 메시지를 버릴 수 있도록 고유한 식별자로 메시지에 태그를 지정합니다.
+   * 패시브 복제: 클라이언트가 메시지를 하나의 큐에 전송합니다. 오류가 발생하면 클라이언트가 다른 큐로 전환합니다. 수신기가 양쪽 대기열에서 모두 수신합니다. 이 접근법은 전송되는 중복 메시지의 수를 줄여줍니다. 하지만 여전히 수신기가 중복 메시지를 처리해야 합니다.
 
-### VM instance becomes unavailable or unhealthy.
-**검색**. Configure a Load Balancer [health probe][lb-probe] that signals whether the VM instance is healthy. The probe should check whether critical functions are responding correctly.
+     자세한 내용은 [GeoReplication 샘플][sb-georeplication-sample] 및 [Service Bus 중단 및 재해로부터 응용 프로그램을 분리하는 모범 사례](/azure/service-bus-messaging/service-bus-outages-disasters/)를 참조하십시오.
 
-**복구**. For each application tier, put multiple VM instances into the same availability set, and place a load balancer in front of the VMs. If the health probe fails, the Load Balancer stops sending new connections to the unhealthy instance.
-
-**진단**. - Use Load Balancer [log analytics][lb-monitor].
-
-* Configure your monitoring system to monitor all of the health monitoring endpoints.
-
-### Operator accidentally shuts down a VM.
-**검색**. N/A
-
-**복구**. Set a resource lock with `ReadOnly` level. See [Lock resources with Azure Resource Manager][rm-locks].
-
-**진단**. Use [Azure Activity Logs][azure-activity-logs].
-
-## WebJobs
-### Continuous job stops running when the SCM host is idle.
-**검색**. Pass a cancellation token to the WebJob function. For more information, see [Graceful shutdown][web-jobs-shutdown].
-
-**복구**. Enable the `Always On` setting in the web app. For more information, see [Run Background tasks with WebJobs][web-jobs].
-
-## Application design
-### Application can't handle a spike in incoming requests.
-**검색**. Depends on the application. Typical symptoms:
-
-* The website starts returning HTTP 5xx error codes.
-* Dependent services, such as database or storage, start to throttle requests. Look for HTTP errors such as HTTP 429 (Too Many Requests), depending on the service.
-* HTTP queue length grows.
+### 중복 메시지.
+**검색**. 메시지의 `MessageId` 및 `DeliveryCount` 속성을 검사합니다.
 
 **복구**
 
-* Scale out to handle increased load.
-* Mitigate failures to avoid having cascading failures disrupt the entire application. Mitigation strategies include:
+* 가능하면 메시지 처리 작업을 idempotent가 되도록 설계합니다. 그렇지 않으면 이미 처리된 메시지의 메시지 ID를 저장하고 메시지를 처리하기 전에 ID를 확인합니다.
+* `RequiresDuplicateDetection`을 true로 설정하여 큐를 생성함으로써 중복 검색을 활성화합니다. 이 설정을 통해서 Service Bus는 이전 메시지와 동일한 `MessageId`로 전송되는 모든 메시지를 자동으로 삭제합니다. 아래 내용에 유의하십시오.
 
-  * Implement the [Throttling Pattern][throttling-pattern] to avoid overwhelming backend systems.
-  * Use [queue-based load leveling][queue-based-load-leveling] to buffer requests and process them at an appropriate pace.
-  * Prioritize certain clients. For example, if the application has free and paid tiers, throttle customers on the free tier, but not paid customers. See [Priority queue pattern][priority-queue-pattern].
+  * 이 설정은 중복 메시지를 큐에 넣는 것을 방지합니다. 수신기가 동일한 메시지를 두 번 이상 처리하는 것을 방지하지는 않습니다.
+  * 중복 검색에는 시간대가 있습니다. 이 시간대를 벗어나서 중복 메시지가 전송되면 검색되지 않습니다.
 
-**진단**. Use [App Service diagnostic logging][app-service-logging]. Use a service such as [Azure Log Analytics][azure-log-analytics], [Application Insights][app-insights], or [New Relic][new-relic] to help understand the diagnostic logs.
+**진단**. 중복 메시지를 로깅합니다.
 
-### One of the operations in a workflow or distributed transaction fails.
-**검색**. After *N* retry attempts, it still fails.
-
-**복구**
-
-* As a mitigation plan, implement the [Scheduler Agent Supervisor][scheduler-agent-supervisor] pattern to manage the entire workflow.
-* Don't retry on timeouts. There is a low success rate for this error.
-* Queue work, in order to retry later.
-
-**진단**. Log all operations (successful and failed), including compensating actions. Use correlation IDs, so that you can track all operations within the same transaction.
-
-### A call to a remote service fails.
-**검색**. HTTP error code.
+### 응용 프로그램이 큐의 특정 메시지를 처리할 수 없습니다.
+**검색**. 응용 프로그램별로 다릅니다. 예를 들어 메시지에 유효하지 않은 데이터가 포함되어 있거나, 어떠한 이유로 비즈니스 논리가 실패합니다.
 
 **복구**
 
-1. Retry on transient failures.
-2. If the call fails after *N* attempts, take a fallback action. (Application specific.)
-3. Implement the [Circuit Breaker pattern][circuit-breaker] to avoid cascading failures.
+고려해야 할 장애 모드가 두 가지 있습니다.
 
-**진단**. Log all remote call failures.
+* 수신기가 장애를 감지합니다. 이 경우, 메시지를 배달 못 한 편지 큐로 이동시킵니다. 나중에 별도 프로세스를 실행하여 배달 못 한 편지 큐에 있는 메시지를 검사합니다.
+* 예를 들어 미처리 예외로 인하여 메시지 처리 중에 수신기에 장애가 발생합니다. 이 경우를 처리하려면 `PeekLock` 모드를 사용합니다. 이 모드에서는 잠금이 만료될 경우, 다른 수신기에서 메시지를 사용할 수 있습니다. 메시지가 최대 배달 횟수 또는 TTL(Time to Live)을 초과할 경우, 메시지가 배달 못 한 편지 큐로 자동으로 이동됩니다.
 
-## Next steps
-For more information about the FMA process, see [Resilience by design for cloud services][resilience-by-design-pdf] (PDF download).
+자세한 내용은 [Service Bus 배달 못 한 편지 큐 개요][sb-dead-letter-queue]를 참조하십시오.
+
+**진단**. 응용 프로그램이 메시지를 배달 못 한 편지 큐로 이동할 때마다 이벤트를 응용 프로그램 로그에 기록합니다.
+
+## 서비스 패브릭
+### 서비스 요청 실패.
+**검색**. 서비스가 오류를 반환합니다.
+
+**복구**
+
+* 프록시를 다시 찾아 (`ServiceProxy` 또는 `ActorProxy`), 서비스/행위자 메서드를 다시 호출합니다.
+* **상태 저장 서비스**. 작업들을 트랜잭션의 신뢰성 있는 컬렉션에 래핑합니다. 오류가 있으면 트랜잭션이 롤백됩니다. 요청을 큐에서 가져오면 다시 처리됩니다.
+* **상태 비저장 서비스**. 서비스가 데이터를 외부 스토어에 유지할 경우, 모든 작업이 idempotent여야 합니다.
+
+**진단**. 응용 프로그램 로그
+
+### 서비스 패브릭 노드가 종료됨.
+**검색**. 취소 토큰이 서비스의 `RunAsync` 메서드로 전달됩니다. 서비스 패브릭이 노드를 종료하기 전에 작업을 취소합니다.
+
+**복구**. 종료를 감지하기 위해 취소 토큰을 사용합니다. 서비스 패브릭이 취소를 요구하면 최대한 신속히 모든 작업을 마치고 `RunAsync`를 종료합니다.
+
+**진단**. 응용 프로그램 로그
+
+## 저장소
+### Azure 저장소에 데이터 쓰기가 실패함.
+**검색**. 쓰기 작업 중에 클라이언트가 오류를 수신합니다.
+
+**복구**
+
+1. 작업을 재시도하여 일시적 장애로부터 복구합니다. 클라이언트 SDK의 [재시도 정책][Storage.RetryPolicies]이 이를 자동으로 처리합니다.
+2. 저장소의 과부하를 방지하도록 회로 차단기 패턴을 구현합니다.
+3. N 재시도 횟수가 실패할 경우 안정적인 대체 수단을 수행합니다. 예를 들면 다음과 같습니다.
+
+   * 데이터를 로컬 캐시에 저장하고, 서비스가 사용 가능한 상태가 되면 나중에 쓰기 내용을 저장소로 전달합니다.
+   * 쓰기 작업이 트랜잭션 범위 내에 있을 경우, 트랜잭션을 보상합니다.
+
+**진단**. [저장소 메트릭][storage-metrics]을 사용하십시오.
+
+### Azure 저장소에서 데이터 읽기가 실패함.
+**검색**. 읽기 작업 중에 클라이언트가 오류를 수신합니다.
+
+**복구**
+
+1. 작업을 재시도하여 일시적 장애로부터 복구합니다. 클라이언트 SDK의 [재시도 정책][Storage.RetryPolicies]이 이를 자동으로 처리합니다.
+2. RA-GRS 저장소의 경우, 기본 끝점의 읽기가 실패한 경우 보조 끝점에서 읽기를 시도합니다. 클라이언트 SDK가 이를 자동으로 처리할 수 있습니다. [Azure Storage 복제][storage-replication]를 참조하십시오.
+3. *N* 재시도 횟수가 실패하면 대체 조치를 취하여 안정적인 기능 저하를 유도합니다. 예를 들어 저장소에서 제품 이미지를 가져올 수 없을 경우 일반 자리 표시자 이미지를 보여줍니다.
+
+**진단**. [저장소 메트릭][storage-metrics]을 사용하십시오.
+
+## 가상 컴퓨터
+### 백엔드 VM 연결 실패.
+**검색**. 네트워크 연결 오류.
+
+**복구**
+
+* 부하 분산 장치 뒤에, 적어도 두 개의 백엔드 VM을 가용성 집합에 배포합니다.
+* 연결 오류가 일시적이면, TCP가 메시지 전송 재시도를 성공적으로 수행하기도 합니다.
+* 응용 프로그램에 재시도 정책을 구현합니다.
+* 지속적 또는 일시적이 아닌 오류의 경우 [회로 차단기][circuit-breaker] 패턴을 구현합니다.
+* 호출 VM이 해당 네트워크 송신 제한을 초과할 경우 아웃바운드 큐가 채워집니다. 아웃바운드 큐가 지속적으로 가득 차면 확장을 고려하십시오.
+
+**진단**. 서비스 경계에서 이벤트를 로그하십시오
+
+### VM 인스턴스가 사용 불가 또는 비정상 상태가 됨.
+**검색**. VM 인스턴스가 정상인이 여부를 표시하는 부하 분산 장치 [상태 검색][lb-probe]을 구성합니다. 이 검색을 통해서 주요 기능이 올바로 응답하는지 여부를 확인해야 합니다.
+
+**복구**. 각 응용 프로그램 계층에 대해 여러 VM 인스턴스를 동일한 가용성 집합에 넣고, 부하 분산 장치를 VM 앞에 배치합니다. 상태 검색이 실패할 경우, 부하 분산 장치가 새로운 연결을 비정상 인스턴스에 전송하는 것을 중지합니다.
+
+**진단**. - 부하 분산 장치 [로그 분석][lb-monitor]을 사용합니다.
+
+* 모든 상태 모니터링 끝점들을 모니터링하도록 모니터링 시스템을 구성합니다.
+
+### 운영자가 실수로 VM을 종료함.
+**검색**. 해당 없음
+
+**복구**. 리소스 잠금을 `ReadOnly` 수준으로 설정합니다. [Azure Resource Manager로 리소스 잠금][rm-locks]을 참조하십시오.
+
+**진단**. [Azure 활동 로그][azure-activity-logs]를 사용합니다.
+
+## 웹 작업
+### SCM 호스트가 유휴 상태일 때 연속 작업의 실행이 중지됨.
+**검색**. 취소 토큰을 웹 작업 기능에 전달합니다. 자세한 내용은 [정상 종료][web-jobs-shutdown]를 참조하십시오.
+
+**복구**. 웹 앱에서 `Always On` 설정을 활성화합니다. 자세한 내용은 [웹 작업으로 백그라운드 작업 실행][web-jobs]을 참조하십시오.
+
+## 응용 프로그램 설계
+### 응용 프로그램이 들어오는 요청의 급증을 처리할 수 없음.
+**검색**. 응용 프로그램에 따라 다릅니다. 일반적인 증상:
+
+* 웹사이트가 HTTP 5xx 오류 코드를 반환하기 시작합니다.
+* 데이터베이스, 저장소 등 종속 서비스가 요청을 제한하기 시작합니다. 서비스에 따라 HTTP 429 (너무 많은 요청) 등 HTTP 오류를 찾습니다.
+* HTTP 큐 길이가 증가합니다.
+
+**복구**
+
+* 부하 증가를 처리하려면 확장합니다.
+* 연속 장애가 전체 응용 프로그램을 중단시키는 것을 방지하기 위해 장애를 완화합니다. 완화 전략의 예를 들면 다음과 같습니다.
+
+  * [제한 패턴][throttling-pattern]을 구현하여 백엔드 시스템의 과부하를 방지합니다.
+  * [큐 기반 부하 평준화][queue-based-load-leveling]를 사용하여 요청을 버퍼링하여 적절한 속도로 처리합니다.
+  * 특정 클라이언트들의 우선 순위를 정합니다. 예를 들어 응용 프로그램에 무료 및 유료 계층이 있을 경우, 무료 계층의 고객들은 제한하지만 유료 고객들은 제한하지 않습니다. [우선순위 큐 패턴][priority-queue-pattern]을 참조하십시오.
+
+**진단**. [앱 서비스 진단 로깅][app-service-logging]을 사용하십시오. 진단 로그를 이해하는 데 도움이 되도록 [Azure Log Analytics][azure-log-analytics], [Application Insights][app-insights] 또는 [New Relic][new-relic] 등의 서비스를 사용하십시오.
+
+### 워크플로 또는 분산 트랜잭션의 작업 중 하나가 실패함.
+**검색**. *N* 회 재시도를 수행한 후에도 여전히 실패합니다.
+
+**복구**
+
+* 완화 계획으로서 [Scheduler Agent Supervisor][scheduler-agent-supervisor] 패턴을 사용하여 전체 워크플로를 관리합니다.
+* 시간 초과 시 재시도를 수행하지 마십시오. 이 오류는 성공률이 낮습니다.
+* 나중에 재시도하기 위해 작업을 큐에 넣습니다.
+
+**진단**. 보상 작업을 포함하여 모든 작업(성공 작업 및 실패 작업)을 기록합니다. 동일 트랜잭션 내에서 모든 작업을 추적할 수 있도록 상관 관계 ID를 사용합니다.
+
+### 원격 서비스 호출 실패.
+**검색**. HTTP 오류 코드.
+
+**복구**
+
+1. 일시적 장애 시 재시도를 수행합니다.
+2. *N* 회 시도 후에 호출이 실패할 경우 대체 조치를 취합니다. (응용 프로그램별로 다름).
+3. 연속 장애를 방지하기 위해 [회로 차단기 패턴][circuit-breaker]을 구현합니다.
+
+**진단**. 모든 원격 호출 장애를 기록합니다.
+
+## 다음 단계
+FMA 프로세스에 관한 추가 정보는 [클라우드 서비스 디자인에 의한 복원력][resilience-by-design-pdf] (PDF 다운로드)을 참조하십시오.
 
 <!-- links -->
 
