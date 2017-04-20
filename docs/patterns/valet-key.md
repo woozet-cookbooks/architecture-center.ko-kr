@@ -13,53 +13,53 @@ pnp.pattern.categories: [data-management, security]
 
 ---
 
-# Valet Key
+# 발렛 키(Valet Key)
 
 [!INCLUDE [header](../_includes/header.md)]
 
-Use a token that provides clients with restricted direct access to a specific resource, in order to offload data transfer from the application. This is particularly useful in applications that use cloud-hosted storage systems or queues, and can minimize cost and maximize scalability and performance.
+응용 프로그램으로부터 데이터 전송을 떠넘기기 위해서 클라이언트에 특정 리소스에 대한 제한적 직접 액세스 권한을 제공하는 토큰을 사용합니다. 클라우드 호스트된 저장소 시스템이나 큐를 사용하는 응용 프로그램에 특히 유용하며, 비용을 최소화하고 확장성과 성능을 최대화할 수 있습니다.
 
-## Context and problem
+## 컨텍스트와 문제점
 
-Client programs and web browsers often need to read and write files or data streams to and from an application’s storage. Typically, the application will handle the movement of the data &emdash;either by fetching it from storage and streaming it to the client, or by reading the uploaded stream from the client and storing it in the data store. However, this approach absorbs valuable resources such as compute, memory, and bandwidth.
+클라이언트 프로그램과 웹 브라우저는 종종 파일이나 데이터 스트림을 응용 프로그램 저장소에서 읽고, 저장소에 쓰는 작업이 필요합니다. 일반적으로 그런 응용 프로그램은 데이터 이동을 처리합니다 -  저장소에서 데이터를 가져오거나 클라이언트에 데이터를 스트리밍하거나 업로드된 스트림을 클라이언트에서 읽고 데이터 저장소에 저장하는 방법으로. 그러나, 이 접근 방식은 계산, 메모리, 대역과 같은 소중한 리소스를 소비합니다.
 
-Data stores have the ability to handle upload and download of data directly, without requiring that the application perform any processing to move this data. But, this typically requires the client to have access to the security credentials for the store. This can be a useful technique to minimize data transfer costs and the requirement to scale out the application, and to maximize performance. It means, though, that the application is no longer able to manage the security of the data. After the client has a connection to the data store for direct access, the application can't act as the gatekeeper. It's no longer in control of the process and can't prevent subsequent uploads or downloads from the data store.
+데이터 저장소는 응용 프로그램에 데이터의 이동 처리를 수행할 것을 요구하지 않고, 데이터를 직접 업로드하고 다운로드할 수 있는 능력이 있습니다. 그러나, 일반적으로 클라이언트가 저장소에 대한 보안 자격 증명을 액세스할 것을 요구합니다.  이는 데이터 전송 비용을 최소화하는 데 유용한 기법이며, 응용 프로그램을 확장하고 성능을 최대화하기 위한 요구 사항일 수 있습니다. 그렇다 해도, 응용 프로그램이 더 이상 데이터 보안을 관리할 수 없음을 의미합니다. 클라이언트가 직접 액세스를 위해 데이터 저장소에 접속한 이후에는, 응용 프로그램이 게이터키퍼 역할을 할 수 없습니다. 더 이상 프로세스를 제어하지 못하고, 데이터 저장소에서 그 다음 업로드나 다운로드 하는 것을 막을 수 없습니다.
 
-This isn't a realistic approach in distributed systems that need to serve untrusted clients. Instead, applications must be able to securely control access to data in a granular way, but still reduce the load on the server by setting up this connection and then allowing the client to communicate directly with the data store to perform the required read or write operations.
+신뢰 받지 않는 클라이언트에 도움이 되어야 하는 분산 시스템에 현실적인 접근 방식이 아닙니다. 대신, 응용 프로그램은 데이터 액세스를 자세히 안전하게 제어할 수 있어야 하며, 이렇게 연결을 설정한 다음 클라이언트가 직접 데이터 저장소와 통신하면서 필요한 읽기 또는 쓰기 작업을 수행하게 허용함으로써 서버에 대한 부하를 계속해서 줄여야 합니다.  
 
-## Solution
+## 솔루션
 
-You need to resolve the problem of controlling access to a data store where the store can't manage authentication and authorization of clients. One typical solution is to restrict access to the data store’s public connection and provide the client with a key or token that the data store can validate.
+저장소가 클라이언트의 인증과 권한 부여를 관리할 수 없는 데이터 저장소에 대한 액세스를 제어하는 문제를 해결해야 합니다. 일반적인 해결책은 데이터 저장소의 공용 연결에 대한 액세스를 제한하고 클라이언트에 데이터 저장소가 확인할 수 있는 키 또는 토큰을 제공하는 것입니다.
 
-This key or token is usually referred to as a valet key. It provides time-limited access to specific resources and allows only predefined operations such as reading and writing to storage or queues, or uploading and downloading in a web browser. Applications can create and issue valet keys to client devices and web browsers quickly and easily, allowing clients to perform the required operations without requiring the application to directly handle the data transfer. This removes the processing overhead, and the impact on performance and scalability, from the application and the server.
+이것이 일반적으로 발렛 키라고 부르는 키 또는 토큰입니다. 발렛 키는 특정 리소스에 대한 시간 제한된 액세스를 제공하고, 저장소나 큐에 읽기와 쓰기 또는 웹 브라우저에 업로딩과 다운로딩과 같은 미리 정의된 작업 하나만 허용합니다. 응용 프로그램은 클라이언트 장치와 웹 브라우저에 대한 발렛 키를 빠르고 쉽게 만들고 발급할 수 있습니다. 이 키로 클라이언트는 응용 프로그램이 직접 데이터 전송을 처리할 것을 요구하지 않고 필요한 작업을 자신이 수행합니다. 이 경우, 응용 프로그램과 서버에서 일어나는 처리 오버헤드, 성능과 확장성에 미치는 영향을 제거합니다. 
 
-The client uses this token to access a specific resource in the data store for only a specific period, and with specific restrictions on access permissions, as shown in the figure. After the specified period, the key becomes invalid and won't allow access to the resource.
+그림과 같이, 클라이언트는 이 토큰을 사용하여 특정 기간에만, 액세스 사용 권한에 제한하여, 데이터 저장소에서 특정 리소스를 액세스합니다. 특정 기간이 지난 후, 키는 무효화되고 리소스에 대한 액세스를 허용하지 않습니다.
 
 ![Figure 1 - Overview of the pattern](./_images/valet-key-pattern.png)
 
-It's also possible to configure a key that has other dependencies, such as the scope of the data. For example, depending on the data store capabilities, the key can specify a complete table in a data store, or only specific rows in a table. In cloud storage systems the key can specify a container, or just a specific item within a container.
+데이터 범위와 같이 다른 종속성을 갖도록 키를 구성하는 것도 가능합니다. 예를 들면, 데이터 저장소 역량에 따라 키는 데이터 저장소에 완전한 표를 지정하거나 표에서 특정 행만 지정할 수 있습니다. 클라우드 저장소 시스템에서 키는 컨테이너, 즉 컨테이너 내 특정 항목을 지정할 수 있습니다.
 
-The key can also be invalidated by the application. This is a useful approach if the client notifies the server that the data transfer operation is complete. The server can then invalidate that key to prevent further.
+키는 응용 프로그램에 의해 무효화될 수도 있습니다. 클라이언트가 서버에 데이터 전송 작업이 완료되었음을 알릴 경우, 이는 유용한 접근 방식입니다. 서버는 더 이상의 진행을 막기 위해 키를 무효화시킬 수 있습니다.
 
-Using this pattern can simplify managing access to resources because there's no requirement to create and authenticate a user, grant permissions, and then remove the user again. It also makes it easy to limit the location, the permission, and the validity period&mdash;all by simply generating a key at runtime. The important factors are to limit the validity period, and especially the location of the resource, as tightly as possible so that the recipient can only use it for the intended purpose.
+이 패턴을 사용하면 사용자 생성 및 인증, 사용 권한 부여, 사용자 다시 제거에 대한 요구 사항이 없기 때문에 리소스에 대한 액세스 관리가 단순화될 수 있습니다. 장소 제한, 사용 권한, 유효 기간을 제한하는 것도 쉬워졌습니다 - 모두 런타임에 키를 생성하여 가능함. 유효 기간, 특히 리소스의 위치를, 수신자만 그 용도에 맞게 사용할 수 있도록 가능한 한 엄격히 제한하는 것은 중요한 요소입니다. 
 
-## Issues and considerations
+## 문제점 및 고려사항
 
-Consider the following points when deciding how to implement this pattern:
+이 패턴을 구현하는 방법을 결정할 때 다음 사항을 고려해야 합니다:
 
-**Manage the validity status and period of the key**. If leaked or compromised, the key effectively unlocks the target item and makes it available for malicious use during the validity period. A key can usually be revoked or disabled, depending on how it was issued. Server-side policies can be changed or, the server key it was signed with can be invalidated. Specify a short validity period to minimize the risk of allowing unauthorized operations to take place against the data store. However, if the validity period is too short, the client might not be able to complete the operation before the key expires. Allow authorized users to renew the key before the validity period expires if multiple accesses to the protected resource are required.
+**키의 유효 상태와 기간 관리y**. If leaked or compromised, the key effectively unlocks the target item and makes it available for malicious use during the validity period. A key can usually be revoked or disabled, depending on how it was issued. Server-side policies can be changed or, the server key it was signed with can be invalidated. Specify a short validity period to minimize the risk of allowing unauthorized operations to take place against the data store. However, if the validity period is too short, the client might not be able to complete the operation before the key expires. Allow authorized users to renew the key before the validity period expires if multiple accesses to the protected resource are required.
 
-**Control the level of access the key will provide**. Typically, the key should allow the user to only perform the actions necessary to complete the operation, such as read-only access if the client shouldn't be able to upload data to the data store. For file uploads, it's common to specify a key that provides write-only permission, as well as the location and the validity period. It's critical to accurately specify the resource or the set of resources to which the key applies.
+**키가 제공하는 액세스 수준 제어**. Typically, the key should allow the user to only perform the actions necessary to complete the operation, such as read-only access if the client shouldn't be able to upload data to the data store. For file uploads, it's common to specify a key that provides write-only permission, as well as the location and the validity period. It's critical to accurately specify the resource or the set of resources to which the key applies.
 
-**Consider how to control users’ behavior**. Implementing this pattern means some loss of control over the resources users are granted access to. The level of control that can be exerted is limited by the capabilities of the policies and permissions available for the service or the target data store. For example, it's usually not possible to create a key that limits the size of the data to be written to storage, or the number of times the key can be used to access a file. This can result in huge unexpected costs for data transfer, even when used by the intended client, and might be caused by an error in the code that causes repeated upload or download. To limit the number of times a file can be uploaded, where possible, force the client to notify the application when one operation has completed. For example, some data stores raise events the application code can use to monitor operations and control user behavior. However, it's hard to enforce quotas for individual users in a multi-tenant scenario where the same key is used by all the users from one tenant.
+**사용자 동작에 대한 제어 방법 고려**. Implementing this pattern means some loss of control over the resources users are granted access to. The level of control that can be exerted is limited by the capabilities of the policies and permissions available for the service or the target data store. For example, it's usually not possible to create a key that limits the size of the data to be written to storage, or the number of times the key can be used to access a file. This can result in huge unexpected costs for data transfer, even when used by the intended client, and might be caused by an error in the code that causes repeated upload or download. To limit the number of times a file can be uploaded, where possible, force the client to notify the application when one operation has completed. For example, some data stores raise events the application code can use to monitor operations and control user behavior. However, it's hard to enforce quotas for individual users in a multi-tenant scenario where the same key is used by all the users from one tenant.
 
-**Validate, and optionally sanitize, all uploaded data**. A malicious user that gains access to the key could upload data designed to compromise the system. Alternatively, authorized users might upload data that's invalid and, when processed, could result in an error or system failure. To protect against this, ensure that all uploaded data is validated and checked for malicious content before use.
+**업로드된 모든 데이터의 확인 및 선택적 삭제**. A malicious user that gains access to the key could upload data designed to compromise the system. Alternatively, authorized users might upload data that's invalid and, when processed, could result in an error or system failure. To protect against this, ensure that all uploaded data is validated and checked for malicious content before use.
 
-**Audit all operations**. Many key-based mechanisms can log operations such as uploads, downloads, and failures. These logs can usually be incorporated into an audit process, and also used for billing if the user is charged based on file size or data volume. Use the logs to detect authentication failures that might be caused by issues with the key provider, or accidental removal of a stored access policy.
+**모든 작업 감사**. Many key-based mechanisms can log operations such as uploads, downloads, and failures. These logs can usually be incorporated into an audit process, and also used for billing if the user is charged based on file size or data volume. Use the logs to detect authentication failures that might be caused by issues with the key provider, or accidental removal of a stored access policy.
 
-**Deliver the key securely**. It can be embedded in a URL that the user activates in a web page, or it can be used in a server redirection operation so that the download occurs automatically. Always use HTTPS to deliver the key over a secure channel.
+**안전한 키 전달**. It can be embedded in a URL that the user activates in a web page, or it can be used in a server redirection operation so that the download occurs automatically. Always use HTTPS to deliver the key over a secure channel.
 
-**Protect sensitive data in transit**. Sensitive data delivered through the application will usually take place using SSL or TLS, and this should be enforced for clients accessing the data store directly.
+**전송 중인 중요한 데이터 보호**. Sensitive data delivered through the application will usually take place using SSL or TLS, and this should be enforced for clients accessing the data store directly.
 
 Other issues to be aware of when implementing this pattern are:
 
