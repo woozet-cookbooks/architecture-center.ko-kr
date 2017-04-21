@@ -4,7 +4,7 @@
 ### [Which should I choose?](./identity/considerations.md)
 ### [온프레미스 AD를 Azure AD와 통합](./identity/azure-ad.md)
 ### [AD DS를 Azure로 확장](./identity/adds-extend-domain.md)
-### [Azure에 AD DS 포f스트 생성](./identity/adds-forest.md)
+### [Azure에 AD DS 포fp스트 생성](./identity/adds-forest.md)
 ### [AD FS를 Azure로 확장](./identity/adfs.md)
 
 ## [하이브리드 네트워크](./hybrid-networking/index.md)
