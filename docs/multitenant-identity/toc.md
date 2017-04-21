@@ -1,4 +1,4 @@
-# Manage Identity in Multitenant Applications
+# 다중 테넌트 응용 프로그램에서 ID 관리
 ## [소개](./index.md)
 ## [Tailspin 시나리오](./tailspin.md)
 ## [인증](./authenticate.md)
