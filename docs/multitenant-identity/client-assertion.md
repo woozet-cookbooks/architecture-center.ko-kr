@@ -11,18 +11,18 @@ pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: adfs
 pnp.series.next: key-vault
 ---
-# Use client assertion to get access tokens from Azure AD
+# Azure AD에서 액세스 토큰을 가져오기 위한 클라이언트 어설션 사용
 
-[![GitHub](../_images/github.png) Sample code][sample application]
+[![GitHub](../_images/github.png) 샘플 코드][sample application]
 
-## Background
-When using authorization code flow or hybrid flow in OpenID Connect, the client exchanges an authorization code for an access token. During this step, the client has to authenticate itself to the server.
+## 배경
+OpenID Connect에서 인증 코드 흐름 또는 하이브리드 흐름을 사용할 때, 클라이언트는 인증 코드와 액세스 토큰을 교환합니다. 이 단계에서 클라이언트는 서버에 자신을 인증해야 합니다.
 
 ![Client secret](./images/client-secret.png)
 
-One way to authenticate the client is by using a client secret. That's how the [Tailspin Surveys][Surveys] application is configured by default.
+클라이언트를 인증하는 한 가지 방법은 클라이언트 암호를 사용하는 것입니다. 이는 [Tailspin Surveys][Surveys] 응용 프로그램이 기본값으로 구성되는 방법입니다.
 
-Here is an example request from the client to the IDP, requesting an access token. Note the `client_secret` parameter.
+다음은 클라이언트에서 IDP로 액세스 토큰을 요청하는 예입니다. `client_secret` 매개변수에 주목하세요.
 
 ```
 POST https://login.microsoftonline.com/b9bd2162xxx/oauth2/token HTTP/1.1
@@ -35,14 +35,13 @@ resource=https://tailspin.onmicrosoft.com/surveys.webapi
   &code=PG8wJG6Y...
 ```
 
-The secret is just a string, so you have to make sure not to leak the value. The best practice is to keep the client secret out of source control. When you deploy to Azure, store the secret in an [app setting][configure-web-app].
+암호는 단지 문자열이므로 그 값이 유출되지 않도록 합니다. 모범 사례는 클라이언트 암호가 소스 제어를 받지 않게 하는 것입니다. Azure에 배포할 때, [앱 설정][configure-web-app]에 암호를 저장합니다.
 
-However, anyone with access to the Azure subscription can view the app settings. Further, there is always a temptation to check secrets into source control (e.g., in deployment scripts), share them by email, and so on.
+하지만, 누구나 Azure 구독을 액세스하면 앱 설정을 볼 수 있습니다. 또 소스 제어로 들어가는 암호를 확인하고 싶은 유혹(예: 배포 스크립트에서), 이메일 등에 의해 그것을 공유하고 싶은 유혹이 항상 있습니다.
 
-For additional security, you can use [client assertion] instead of a client secret. With client assertion, the client uses an X.509 certificate to prove the token request came from the client. The client certificate is installed on the web server. Generally, it will be easier to restrict access to the certificate, than to ensure that nobody inadvertently reveals a client secret. For more information about configuring certificates in a web app, see [Using Certificates in Azure Websites Applications][using-certs-in-websites]
+추가 보안을 위해서, 클라이언트 암호 대신 [클라이언트 어설션](https://tools.ietf.org/html/rfc7521) 을 사용할 수 있습니다.  클라이언트 어설션에서, 클라이언트는 토큰 요청이 클라이언트로부터 온 것임을 증명하기 위해서 Z.509 인증서를 사용합니다.  클라이언트 인증서는 웹 서버에 설치됩니다. 일반적으로, 아무도 클라이언트 암호를 무심코 폭로하지 못하게 하기보다 인증서에 대한 접근을 제한하는 것이 더 쉬울 것입니다.  웹 앱에서 인증서 구성에 대한 자세한 정보는, [Azure 웹사이트 응용 프로그램에서 인증서 사용하기][using-certs-in-websites]를 참조하세요.
 
-Here is a token request using client assertion:
-
+다음은 클라이언트 어설션을 사용한 토큰 요청입니다. 
 ```
 POST https://login.microsoftonline.com/b9bd2162xxx/oauth2/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -55,30 +54,31 @@ resource=https://tailspin.onmicrosoft.com/surveys.webapi
   &code= PG8wJG6Y...
 ```
 
-Notice that the `client_secret` parameter is no longer used. Instead, the `client_assertion` parameter contains a JWT token that was signed using the client certificate. The `client_assertion_type` parameter specifies the type of assertion &mdash; in this case, JWT token. The server validates the JWT token. If the JWT token is invalid, the token request returns an error.
+`client_secret` 매개변수가 더 이상 사용되지 않음에 주의하세요. 그 대신, `client_assertion` 매개변수가 클라이언트 인증서를 사용하여 서명된 JWT 토큰을 포함합니다. `client_assertion_type` 매개변수는 어설션 유형을 지정합니다 — 이 경우 JWT 토큰. 서버는 JWT 토큰을 확인합니다. JWT 토큰이 유효하지 않은 경우, 토큰 요청은 오류를 반환합니다.
 
-> [!NOTE]
-> X.509 certificates are not the only form of client assertion; we focus on it here because it is supported by Azure AD.
+> [!참고]
+> X.509 인증서가 클라이언트 어설션의 유일한 양식은 아닙니다; 우리가 클라이언트 어설션에 초점을 맞추는 이유는 Azure AD에서 지원하는 양식이기 때문입니다.
 > 
 > 
 
-## Using client assertion in the Surveys application
-This section shows how to configure the Tailspin Surveys application to use client assertion. In these steps, you will generate a self-signed certificate that is suitable for development, but not for production use.
+## Surveys 응용 프로그램에서 클라이언트 어설션 사용하기
+이 절에서는 클라이언트 어설션을 사용하기 위해 Tailspin Surveys 응용 프로그램을 어떻게 구성하는지 보여줍니다. 이 단계에서, 개발에 적절하지만 생산품 사용에는 부적절한 자체 서명된 인증서를 생성할 것입니다.
 
-1. Run the PowerShell script [/Scripts/Setup-KeyVault.ps1][Setup-KeyVault] as follows:
+1. 다음과 같이 PowerShell 스크립트 [/Scripts/Setup-KeyVault.ps1][Setup-KeyVault]를 실행합니다:
    
     ```
     .\Setup-KeyVault.ps -Subject [subject]
     ```
    
-    For the `Subject` parameter, enter any name, such as "surveysapp". The script generates a self-signed certificate and stores it in the "Current User/Personal" certificate store.
-2. The output from the script is a JSON fragment. Add this to the application manifest of the web app, as follows:
+Subject 매개변수에, "surveysapp"처럼, 아무 이름이나 입력합니다. 스크립트는 자체 서명된 인증서를 생성해서 "Current User/Personal" 인증서 저장소에 저장합니다.
    
-   1. Log into the [Azure management portal][azure-management-portal] and navigate to your Azure AD directory.
-   2. Click **Applications**.
-   3. Select the Surveys application.
-   4. Click **Manage Manifest** and select **Download Manifest**.
-   5. Open the manifest JSON file in a text editor. Paste the output from the script into the `keyCredentials` property. It should look similar to the following:
+2. 스크립트의 출력은 JSON 조각입니다. 이 출력을 다음과 같이 웹 앱의 응용 프로그램 매니페스트에 추가합니다:
+   
+   1. [Azure 관리 포털][azure-management-portal]에 로그인하여 Azure AD 디렉터리를 탐색합니다.
+   2. **응용 프로그램**을 클릭합니다.
+   3. Surveys 응용 프로그램을 선택합니다.
+   4. **매니페스트 관리**를 클릭하고 **매니페스트 다운로드**를 선택합니다.
+   5. 텍스트 편집기에서 매니페스트 JSON 파일을 엽니다. 스크립트의 출력을 `keyCredentials` 속성에 붙여넣습니다. 결과는 다음과 같습니다.
       
       ```    
       "keyCredentials": [
@@ -91,16 +91,18 @@ This section shows how to configure the Tailspin Surveys application to use clie
         }
       ],
       ```
-   6. Save your changes to the JSON file.
-   7. Go back to the portal. Click **Manage Manifest** > **Upload Manifest** and upload the JSON file.
-3. Run the following command to get the thumbprint of the certificate.
+   6. 변경 내용을 JSON 파일에 저장합니다.
+   7. 포털로 돌아갑니다. **매니페스트 관리** > **매니페스트 업로드**를 클릭하고 JSON 파일을 업로드합니다.
+   
+3. 인증서 지문이 표시되도록 다음 명령어를 실행합니다.
    
     ```
     certutil -store -user my [subject]
     ```
    
-    where `[subject]` is the value that you specified for Subject in the PowerShell script. The thumbprint is listed under "Cert Hash(sha1)". Remove the spaces between the hexadecimal numbers.
-4. Update your app secrets. In Solution Explorer, right-click the Tailspin.Surveys.Web project and select **Manage User Secrets**. Add an entry for "Asymmetric" under "AzureAd", as shown below:
+   여기서 [subject]는 PowerShell 스크립트에서 Subject에 지정한 값입니다. 지문은 "인증서 해시(sha1)"에 목록으로 되어 있습니다. 16진수 사이에 있는 여백을 제거합니다.
+   
+4. 4.	앱 암호를 업데이트합니다. Solution Explorer에서, Tailspin.Surveys.Web 프로젝트에서 마우스 오른쪽 단추를 클릭하고 **사용자 암호 관리**를 선택합니다. 아래와 같이 "AzureAd"에서 "비대칭" 항목을 추가합니다:
    
     ```
     {
@@ -123,10 +125,12 @@ This section shows how to configure the Tailspin Surveys application to use clie
     }
     ```
    
-    You must set `ValidationRequired` to false, because the certificate was not a signed by a root CA authority. In production, use a certificate that is signed by a CA authority and set `ValidationRequired` to true.
+   인증서가 최상위 CA 기관에서 서명한 것이 아니기 때문에 `ValidationRequired` 를 false로 설정해야 합니다. 생산품에서, CA 기관에서 서명한 인증서를 사용하고 `ValidationRequired`를 true로 설정합니다.
    
-    Also delete the entry for `ClientSecret`, because it's not needed with client assertion.
-5. In Startup.cs, locate the code that registers the `ICredentialService`. Uncomment the line that uses `CertificateCredentialService`, and comment out the line that uses `ClientCredentialService`:
+   `ClientSecret`에 대한 항목은 클라이언트 어설션에는 필요하지 않으므로 삭제합니다.
+   
+5. Startup.cs에서, `ICredentialService`를 등록하는 코드를 찾습니다. `CertificateCredentialService`를 사용한 줄에서 주석 처리를 제거하고,`ClientCredentialService`를 사용한 줄을 주석으로 처리합니다 :
+
    
     ```csharp
     // Uncomment this:
@@ -135,9 +139,9 @@ This section shows how to configure the Tailspin Surveys application to use clie
     //services.AddSingleton<ICredentialService, ClientCredentialService>();
     ```
 
-At run time, the web application reads the certificate from the certificate store. The certificate must be installed on the same machine as the web app.
+실행 시간에 웹 응용 프로그램이 인증서 저장소에서 인증서를 읽습니다.  인증서가 웹 앱과 같은 컴큐터에 설치되어야 합니다.
 
-[**Next**][key vault]
+[**다음**][key vault]
 
 <!-- Links -->
 [configure-web-app]: /azure/app-service-web/web-sites-configure/
