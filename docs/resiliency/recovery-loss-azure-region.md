@@ -8,60 +8,60 @@ ms.date: 08/18/2016
 ms.author: pnp
 ---
 [!INCLUDE [header](../_includes/header.md)]
-# Azure resiliency technical guidance: recovery from a region-wide service disruption
-Azure is divided physically and logically into units called regions. A region consists of one or more datacenters in close proximity. At the time of this writing, Azure has twenty-four regions around the world.
+# Azure 복원 기술 지침: 지역 전체 서비스 중단의 복구
+Azure는 물리적, 논리적으로 지역이라고 불리는 단위로 분할됩니다. 지역은 가까이 있는 한 개 이상의 데이터센터로 구성됩니다. 이 글을 쓰는 현재 시점에 Azure는 전 세계에 24개의 지역을 가지고 있습니다.
 
-Under rare circumstances, it is possible that facilities in an entire region can become inaccessible, for example due to network failures. Or facilities can be lost entirely, for example due to a natural disaster. This section explains the capabilities of Azure for creating applications that are distributed across regions. Such distribution helps to minimize the possibility that a failure in one region could affect other regions.
+드문 경우이지만 전체 지역에 있는 시설들이 네트워크 장애 등의 이유로 액세스가 불가능하게 될 가능성이 있습니다. 또는 자연 재해 등의 이유로 시설이 완전히 손실될 수도 있습니다. 이 섹션에서는 여러 지역에 걸쳐 분산된 응용 프로그램을 만드는 Azure 기능에 대하여 설명합니다. 이러한 배포는 한 지역의 장애가 다른 지역들에 영향을 줄 가능성을 최소화하는 데 도움을 줍니다.
 
-## Cloud services
-### Resource management
-You can distribute compute instances across regions by creating a separate cloud service in each target region, and then publishing the deployment package to each cloud service. However, note that distributing traffic across cloud services in different regions must be implemented by the application developer or with a traffic management service.
+## 클라우드 서비스
+### 자원 관리
+각 목표 지역에 별도의 클라우드 서비스를 만들어 배포 패키지를 각 클라우드 서비스에 게시함으로써 컴퓨팅 인스턴스를 여러 지역에 걸쳐 배포할 수 있습니다. 하지만 트래픽을 다른 지역의 클라우드 서비스에 걸쳐 배포하는 작업은 응용 프로그램 개발자 또는 트래픽 관리 서비스를 통해서 구현해야 합니다.
 
-Determining the number of spare role instances to deploy in advance for disaster recovery is an important aspect of capacity planning. Having a full-scale secondary deployment ensures that capacity is already available when needed; however, this effectively doubles the cost. A common pattern is to have a small, secondary deployment, just large enough to run critical services. This small secondary deployment is a good idea, both to reserve capacity, and for testing the configuration of the secondary environment.
+재해 복구를 위해 사전에 배포할 예비 역할 인스턴스의 수를 결정하는 것이 용량 계획에서 중요한 측면입니다. 완전한 규모의 보조 배포가 있다면 필요 시 용량을 사용할 준비가 된 상태이지만, 비용이 실질적으로 두 배가 됩니다. 일반적 패턴은 중요한 서비스만 실행할 수 있는 크기의 소규모 보조 배포를 보유하는 것입니다. 이 소규모 배포는 용량을 예비로 보유하고 보조 환경의 구성을 테스트하기 위한 좋은 아이디어입니다.
 
-> [!NOTE]
-> The subscription quota is not a capacity guarantee. The quota is simply a credit limit. To guarantee capacity, the required number of roles must be defined in the service model, and the roles must be deployed.
+> [!참고]
+> 가입 할당량이 용량 보증은 아닙니다. 할당량은 단순히 신용 한도입니다. 용량을 보장하려면 필요한 역할 수가 서비스 모델에 정의되어야 하고, 반드시 역할이 배포되어야 합니다.
 > 
 > 
 
-### Load Balancing
-To load balance traffic across regions requires a traffic management solution. Azure provides [Azure Traffic Manager](https://azure.microsoft.com/services/traffic-manager/). You can also take advantage of third-party services that provide similar traffic management capabilities.
+### 부하 분산
+지역 간에 트래픽을 부하를 분산하려면 트래픽 관리 솔루션이 필요합니다. Azure는 [Azure Traffic Manager](https://azure.microsoft.com/services/traffic-manager/)를 제공합니다. 유사한 트래픽 관리 기능을 제공하는 타사 서비스를 활용할 수도 있습니다.
 
-### Strategies
-Many alternative strategies are available for implementing distributed compute across regions. These must be tailored to the specific business requirements and circumstances of the application. At a high level, the approaches can be divided into the following categories:
+### 전략
+여러 지역에 걸쳐 분산형 컴퓨팅을 구현하는 데에는 많은 대안 전략을 사용할 수 있습니다. 이들은 응용 프로그램의 특정 비즈니스 요구 사항과 상황에 맞게 조정해야 합니다. 개괄적으로 접근법은 다음 범주로 구분할 수 있습니다.
 
-* **Redeploy on disaster**: In this approach the application is redeployed from scratch at the time of disaster. This is appropriate for non-critical applications that don’t require a guaranteed recovery time.
-* **Warm Spare (Active/Passive)**: A secondary hosted service is created in an alternate region, and roles are deployed to guarantee minimal capacity; however, the roles don’t receive production traffic. This approach is useful for applications that have not been designed to distribute traffic across regions.
-* **Hot Spare (Active/Active)**: The application is designed to receive production load in multiple regions. The cloud services in each region might be configured for higher capacity than required for disaster recovery purposes. Alternatively, the cloud services might scale out as necessary at the time of a disaster and failover. This approach requires substantial investment in application design, but it has significant benefits. These include low and guaranteed recovery time, continuous testing of all recovery locations, and efficient usage of capacity.
+* **재해 시 재배포**: 이 접근법에서는 재해 발생 시 응용 프로그램을 처음부터 재배포합니다. 이는 복구 시간에 대한 보장이 필요 없는 중요하지 않은 응용 프로그램에 적절합니다.
+* **웜 스패어 (액티브/패시브)**: 대체 지역에 보조 호스팅된 서비스를 만들고 최소한의 용량 보장을 위해 역할을 배포하지만, 역할들이 프로덕션 트래픽을 받지는 않습니다. 이 접근법은 여러 지역에 트래픽을 분산하도록 설계되지 않은 응용 프로그램에 유용합니다.
+* **핫 스패어 (액티브/액티브)**: 이 응용 프로그램은 여러 지역에서 프로덕션 부하를 받도록 설계됩니다. 각 지역의 클라우드 서비스들이 재해 복구 목적에 필요한 것보다 더 많은 용량으로 구성될 수도 있습니다. 또한 재해 발생 및 장애 조치 시에 필요에 따라 클라우드 서비스를 확장할 수도 있습니다. 이 접근법의 경우 응용 프로그램 설계에 상당한 투자가 필요하지만 유의미한 이점이 있습니다. 여기에는 적은 복구 시간이 보장되고, 모든 복구 지역에 대한 연속 테스트 그리고 용량의 효율적 사용 등이 포함됩니다.
 
-A complete discussion of distributed design is outside the scope of this document. For further information, see [Disaster Recovery and High Availability for Azure Applications](https://aka.ms/drtechguide).
+분산형 디자인에 대한 전체 설명은 본 문서의 범위를 벗어납니다. 자세한 내용은 [Azure 응용 프로그램의 재해 복구 및 고가용성](https://aka.ms/drtechguide)을 참조하십시오.
 
-## Virtual Machines
-Recovery of infrastructure as a service (IaaS) virtual machines (VMs) is similar to platform as a service (PaaS) compute recovery in many respects. There are important differences, however, due to the fact that an IaaS VM consists of both the VM and the VM disk.
+## 가상 컴퓨터
+서비스형 인프라(IaaS) 가상 컴퓨터(VM)의 복구는 여러 측면에서 서비스형 플랫폼(PaaS) 컴퓨팅 복구와 유사합니다. 하지만 IaaS VM이 VM과 VM 디스크로 구성된다는 사실 때문에 중요한 차이점이 있습니다.
 
-* **Use Azure Backup to create cross region backups that are application consistent**.
-  [Azure Backup](https://azure.microsoft.com/services/backup/) enables customers to create application consistent backups across multiple VM disks, and support replication of backups across regions. You can do this by choosing to geo-replicate the backup vault at the time of creation. Note that replication of the backup vault must be configured at the time of creation. It can't be set later. If a region is lost, Microsoft will make the backups available to customers. Customers will be able to restore to any of their configured restore points.
-* **Separate the data disk from the operating system disk**. An important consideration for IaaS VMs is that you cannot change the operating system disk without re-creating the VM. This is not a problem if your recovery strategy is to redeploy after disaster. However, it might be a problem if you are using the Warm Spare approach to reserve capacity. To implement this properly, you must have the correct operating system disk deployed to both the primary and secondary locations, and the application data must be stored on a separate drive. If possible, use a standard operating system configuration that can be provided on both locations. After a failover, you must then attach the data drive to your existing IaaS VMs in the secondary DC. Use AzCopy to copy snapshots of the data disk(s) to a remote site.
-* **Be aware of potential consistency issues after a geo-failover of multiple VM Disks**. VM Disks are implemented as Azure Storage blobs, and have the same geo-replication characteristic. Unless [Azure Backup](https://azure.microsoft.com/services/backup/) is used, there are no guarantees of consistency across disks, because geo-replication is asynchronous and replicates independently. Individual VM disks are guaranteed to be in a crash consistent state after a geo-failover, but not consistent across disks. This could cause problems in some cases (for example, in the case of disk striping).
+* **응용 프로그램의 일관성을 유지하는 지역간 백업을 만들려면 Azure Backup을 사용하십시오.**.
+  [Azure Backup](https://azure.microsoft.com/services/backup/)을 통해서 고객들은 여러 VM 디스크 간에 응용 프로그램의 일관성이 유지되는 백업을 생성할 수 있고, 여러 지역에 걸쳐 백업의 복제를 지원할 수 있습니다. 이 작업은 생성 시에 백업 모음의 지리적 복제를 선택하여 수행할 수 있습니다. 백업 모음의 복제는 생성 시에 구성해야 한다는 점에 유의하십시오. 나중에 설정할 수는 없습니다. 지역이 손실될 경우 Microsoft가 고객들에게 백업을 사용할 수 있게 만듭니다. 고객들은 자신들이 구성한 복원 지점으로 복원할 수 있습니다.
+* **데이터 디스크를 운영 체제 디스크로부터 분리하십시오**. IaaS VM의 중요한 고려 사항은 VM을 다시 만들지 않고서는 운영 체제 디스크를 변경할 수 없다는 것입니다. 복구 전략이 재해 후에 재배포하는 방식인 경우에는 문제가 되지 않습니다. 하지만 용량 유지를 위해 웜 스패어 접근법을 사용할 경우에는 문제가 될 수 있습니다. 이를 적절히 구현하려면, 올바른 시스템 디스크가 기본 위치와 보조 위치에 모두 배포되어 있어야 하고, 응용 프로그램 데이터가 별도 드라이브에 저장되어 있어야 합니다. 가능하면 양쪽 위치에서 제공할 수 있는 표준 운영 체제 구성을 사용하십시오. 장애 조치 이후에는 데이터 드라이브를 보조 DC의 기존 IaaS VM에 연결해야 합니다. 데이터 디스크의 스냅샷을 원격 사이트에 복사하려면 AzCopy를 사용하십시오.
+* **여러 VM 디스크의 지리적 장애 조치 이후에는 예상되는 일관성 문제에 유의하십시오**. VM 디스크는 Azure Storage Blob로 구현되며 동일한 지리적 복제 특성을 갖습니다. [Azure Backup](https://azure.microsoft.com/services/backup/)을 사용하지 않을 경우, 디스크 간 일관성을 보장할 수 없는데 그 이유는 지리적 복제가 비동기 방식이고 독립적으로 복제되기 때문입니다. 개별 VM 디스크는 지리적 장애 조치 후에 손상 방지 상태가 되도록 보장하지만, 디스크 간 일관성은 보장되지 않습니다. 따라서 일부의 경우(예: 디스크 스트라이핑)에 문제가 야기될 수 있습니다.
 
-## Storage
-### Recovery by using Geo-Redundant Storage of blob, table, queue and VM disk storage
-In Azure, blobs, tables, queues, and VM disks are all geo-replicated by default. This is referred to as Geo-Redundant Storage (GRS). GRS replicates storage data to a paired datacenter hundreds of miles apart within a specific geographic region. GRS is designed to provide additional durability in case there is a major datacenter disaster. Microsoft controls when failover occurs, and failover is limited to major disasters in which the original primary location is deemed unrecoverable in a reasonable amount of time. Under some scenarios, this can be several days. Data is typically replicated within a few minutes, although synchronization interval is not yet covered by a service level agreement.
+## 저장소
+### 지역 중복 저장소를 사용한 Blob, 표, 큐, VM 디스크 저장소 복구
+Azure에서는 기본적으로 Blob, 표, 큐, VM 디스크가 모두 지리적으로 복제됩니다. 이것을 지역 중복 저장소(Geo-Redundant Storage, GRS)라고 합니다. GRS는 저장소 데이터를 특정 지리적 지역 내에서 수백 마일 떨어져 쌍을 이루고 있는 데이터 센터에 복제합니다. GRS는 주요 데이터센터 재해가 발생할 경우 추가적인 내구성을 제공하도록 설계됩니다. 장애 조치 발생 시에 Microsoft가 통제를 하며, 장애 조치는 원래 기본 위치를 합리적 기간 내에 복구할 수 없다고 간주되는 주요 재해에 국한됩니다. 일부 시나리오에서는 복구에 며칠이 소요될 수도 있습니다. 서비스 수준 계약에 동기화 간격이 아직 명시되지 않은 경우에도 데이터는 일반적으로 몇 분 내에 복제됩니다.
 
-In the event of a geo-failover, there will be no change to how the account is accessed (the URL and account key will not change). The storage account will, however, be in a different region after failover. This could impact applications that require regional affinity with their storage account. Even for services and applications that do not require a storage account in the same datacenter, the cross-datacenter latency and bandwidth charges might be compelling reasons to move traffic to the failover region temporarily. This could factor into an overall disaster recovery strategy.
+지리적 장애 조치의 경우, 계정 액세스 방법에는 변동이 없습니다 (URL과 계정 키는 변경되지 않습니다). 하지만 장애 조치 후에는 저장소 계정이 다른 지역에 있을 것입니다. 이는 저장소 계정에 대한 지역 선호도를 요구하는 응용 프로그램에는 영향을 줄 수 있습니다. 동일한 데이터센터에서 저장소 계정을 요구하지 않는 서비스와 응용 프로그램의 경우에도, 데이터센터간 대기 시간 및 대역폭 비용 때문에 트래픽을 장애 조치 지역으로 일시적으로 전환하는 이유가 될 수 있습니다. 이 내용을 전체적 재해 복구 전략에 반영할 수 있습니다.
 
-In addition to automatic failover provided by GRS, Azure has introduced a service that gives you read access to the copy of your data in the secondary storage location. This is called Read-Access Geo-Redundant Storage (RA-GRS).
+GRS가 제공하는 자동 장애 조치 외에도, Azure는 보조 저장소 위치에 있는 데이터 복사본에 대한 읽기 액세스를 지원하는 서비스를 도입하였습니다. 이것을 읽기 액세스 지역 중복 저장소(Read-Access Geo-Redundant Storage, RA-GRS)라고 합니다.
 
-For more information about both GRS and RA-GRS storage, see [Azure Storage replication](/azure/storage/storage-redundancy/).
+GRS 및 RA-GRS 저장소에 관한 자세한 내용은 [Azure Storage 복제](/azure/storage/storage-redundancy/)를 참조하십시오.
 
-### Geo-Replication region mappings:
-It is important to know where your data is geo-replicated, in order to know where to deploy the other instances of your data that require regional affinity with your storage. For more information see [Azure Paired Regions](/azure/best-practices-availability-paired-regions).
+### 지리적 복제 지역 매핑:
+저장소에 대한 지역 선호도를 요구하는 데이터의 여타 인스턴스를 어디에 배포할지 알기 위해 데이터가 어디에 지리적으로 복제되는지 파악하는 것이 중요합니다. 자세한 내용은 [Azure 쌍으로 연결된 지역](/azure/best-practices-availability-paired-regions)을 참조하십시오.
 
-### Geo-Replication pricing:
-Geo-replication is included in current pricing for Azure Storage. This is called Geo-Redundant Storage (GRS). If you do not want your data geo-replicated you can disable geo-replication for your account. This is called Locally Redundant Storage, and it is charged at a discounted price compared to GRS.
+### 지리적 복제 가격:
+지리적 복제는 Azure Storage의 현재 가격 정책에 포함되어 있습니다. 이것을 지역 중복 저장소(GRS)라고 합니다. 데이터의 지리적 복제를 원하지 않을 경우 계정에서 지리적 복제를 사용하지 않는 것으로 설정할 수 있습니다. 이것을 로컬 중복 저장소(Locally Redundant Storage)라고 하며, 요금은 GRS에 비하여 할인된 가격을 적용합니다.
 
-### Determining if a geo-failover has occurred
-If a geo-failover occurs, this will be posted to the [Azure Service Health Dashboard](https://azure.microsoft.com/status/). Applications can implement an automated means of detecting this, however, by monitoring the geo-region for their storage account. This can be used to trigger other recovery operations, such as activation of compute resources in the geo-region where their storage moved to. You can perform a query for this from the service management API, by using [Get Storage Account Properties](https://msdn.microsoft.com/library/ee460802.aspx). The relevant properties are:
+### 지리적 장애 조치가 발생했는지 확인하는 방법
+지리적 장애 조치가 발생하면 그 내용이 [Azure 서비스 상태 대시보드](https://azure.microsoft.com/status/)에 게시됩니다. 하지만 응용 프로그램이 해당 저장소 계정에 대한 지리적 지역을 모니터링함으로써 이를 감지하는 자동화된 수단을 구현할 수 있습니다. 이 방식은 해당 저장소가 전환되는 지리적 지역에 있는 컴퓨팅 자원을 활성화하는 등 다른 복구 작업을 트리거하기 위해 사용될 수 있습니다. 서비스 관리 API에서 [저장소 계정 속성 얻기](https://msdn.microsoft.com/library/ee460802.aspx)를 사용하여 그 내용에 대한 쿼리를 수행할 수 있습니다. 해당 속성은 아래와 같습니다.
 
     <GeoPrimaryRegion>primary-region</GeoPrimaryRegion>
     <StatusOfPrimary>[Available|Unavailable]</StatusOfPrimary>
@@ -69,102 +69,102 @@ If a geo-failover occurs, this will be posted to the [Azure Service Health Dashb
     <GeoSecondaryRegion>secondary-region</GeoSecondaryRegion>
     <StatusOfSecondary>[Available|Unavailable]</StatusOfSecondary>
 
-### VM disks and geo-failover
-As discussed in the section on VM disks, there are no guarantees for data consistency across VM disks after a failover. To ensure correctness of backups, a backup product such as Data Protection Manager should be used to back up and restore application data.
+### VM 디스크 및 지리적 장애 조치
+VM 디스크에 관한 섹션에서 설명했듯이, 장애 조치 후에 VM 디스크 간에 데이터 일관성을 보장되지 않습니다. 백업의 정확성을 보장하려면 Data Protection Manager와 같은 백업 제품을 사용하여 응용 프로그램 데이터를 백업하고 복원해야 합니다.
 
-## Database
-### SQL Database
-Azure SQL Database provides two types of recovery: Geo-Restore and Active Geo-Replication.
+## 데이터베이스
+### SQL 데이터베이스
+Azure SQL Database는 두 가지 유형의 복구 즉 지리적 복원 및 활성 지리적 복제를 지원합니다.
 
-#### Geo-Restore
-[Geo-Restore](/azure/sql-database/sql-database-recovery-using-backups/#geo-restore) is also available with Basic, Standard, and Premium databases. It provides the default recovery option when the database is unavailable because of an incident in the region where your database is hosted. Similar to Point-In-Time Restore, Geo-Restore relies on database backups in geo-redundant Azure storage. It restores from the geo-replicated backup copy, and therefore is resilient to the storage outages in the primary region. For more details, see [Restore an Azure SQL Database or failover to a secondary](/azure/sql-database/sql-database-disaster-recovery/).
+#### 지리적 복원
+[지리적 복원](/azure/sql-database/sql-database-recovery-using-backups/#geo-restore)은 기본, 표준, 프리미엄 데이터베이스에서도 사용할 수 있습니다. 이는 데이터베이스가 호스팅된 지역의 사고 때문에 데이터베이스를 사용할 수 없을 때 기본 복구 옵션을 제공합니다. 지정 시간 복원과 마찬가지로, 지리적 복원도 지역 중복 Azure 저장소에 있는 데이터베이스 백업에 의존합니다. 즉 지리적으로 복제된 백업 복사본에서 복원하므로 기본 지역의 저장소 중단 시에 복원이 가능합니다. 자세한 내용은 [Azure SQL Database 복원 또는 보조 데이터베이스로 장애 조치](/azure/sql-database/sql-database-disaster-recovery/)를 참조하십시오.
 
-#### Active Geo-Replication
-[Active Geo-Replication](/azure/sql-database/sql-database-geo-replication-overview/) is available for all database tiers. It’s designed for applications that have more aggressive recovery requirements than Geo-Restore can offer. Using Active Geo-Replication, you can create up to four readable secondaries on servers in different regions. You can initiate failover to any of the secondaries. In addition, Active Geo-Replication can be used to support the application upgrade or relocation scenarios, as well as load balancing for read-only workloads. For details, see [configure Geo-Replication](/azure/sql-database/sql-database-geo-replication-portal/) and to [fail over to the secondary database](/azure/sql-database/sql-database-geo-replication-failover-portal/). Refer to [Design an application for cloud disaster recovery using Active Geo-Replication in SQL Database](/azure/sql-database/sql-database-designing-cloud-solutions-for-disaster-recovery/) and [Managing rolling upgrades of cloud applications using SQL Database Active Geo-Replication](/azure/sql-database/sql-database-manage-application-rolling-upgrade/) for details on how to design and implement applications and applications upgrade without downtime.
+#### 활성 지리적 복제
+[활성 지리적 복제](/azure/sql-database/sql-database-geo-replication-overview/)는 모든 데이터베이스 계층에서 사용할 수 있습니다. 이는 지리적 복원보다 더 적극적인 복구 요구 사항이 있는 응용 프로그램을 위해 설계되었습니다. 활성 지리적 복제를 사용하면 다른 지역에 있는 서버들에서 최대 네 개의 읽기 가능 보조 데이터베이스를 만들 수 있습니다. 그러면 임의 보조 데이터베이스로 장애 조치를 취할 수 있습니다. 또한 활성 지리적 복제는 응용 프로그램 업그레이드나 재배치 시나리오, 그리고 읽기 전용 작업 부하의 부하 분산을 지원하기 위해 사용할 수도 있습니다. 자세한 내용은 [지리적 복제 구성](/azure/sql-database/sql-database-geo-replication-portal/) 및 [보조 데이터베이스로 장애 조치](/azure/sql-database/sql-database-geo-replication-failover-portal/)를 참조하십시오. 응용 프로그램 설계 및 구현 방법과 가동 중지 없이 응응 프로그램을 업그레이드하는 방법에 관한 자세한 내용은 [SQL 데이터베이스에서 활성 지리적 복제를 통한 클라우드 재해 복구를 위한 응용 프로그램 설계](/azure/sql-database/sql-database-designing-cloud-solutions-for-disaster-recovery/) 및 [SQL 데이터베이스 활성 지리적 복제를 사용한 클라우드 응용 프로그램의 롤링 업그레이드 관리](/azure/sql-database/sql-database-manage-application-rolling-upgrade/)를 참조하십시오.
 
-### SQL Server on Virtual Machines
-A variety of options are available for recovery and high availability for SQL Server 2012 (and later) running in Azure Virtual Machines. For more information, see [High availability and disaster recovery for SQL Server in Azure Virtual Machines](/azure/virtual-machines/windows/sql/virtual-machines-windows-sql-high-availability-dr/).
+### 가상 컴퓨터의 SQL Server
+다앙한 옵션을 사용하여 Azure 가상 컴퓨터에서 실행되는 SQL Server 2012(이후 버전)의 복구 및 고가용성 확보가 가능합니다. 자세한 내용은 [Azure 가상 컴퓨터의 SQL Server를 위한 고가용성 및 재해 복구](/azure/virtual-machines/windows/sql/virtual-machines-windows-sql-high-availability-dr/)를 참조하십시오.
 
-## Other Azure platform services
-When attempting to run your cloud service in multiple Azure regions, you must consider the implications for each of your dependencies. In the following sections, the service-specific guidance assumes that you must use the same Azure service in an alternate Azure datacenter. This involves both configuration and data-replication tasks.
+## 기타 Azure 플랫폼 서비스
+여러 Azure 지역에서 클라우드 서비스를 실행할 때, 각 종속성의 영향을 고려해야 합니다. 아래 섹션에서 서비스별 지침은 대체 Azure 데이터센터에서 동일한 Azure 서비스를 사용하는 것을 가정합니다. 여기에는 구성 및 데이터 복제 작업이 포함됩니다.
 
-> [!NOTE]
-> In some cases, these steps can help to mitigate a service-specific outage rather than an entire datacenter event. From the application perspective, a service-specific outage might be just as limiting and would require temporarily migrating the service to an alternate Azure region.
+> [!참고]
+> 일부의 경우 이러한 절차가 전체 데이터센터 이벤트보다는 서비스별 중단을 완화하는 데 도움을 줄 수 있습니다. 응용 프로그램의 관점에서는 서비스별 중단이 마찬가지로 제한적일 수 있고, 서비스를 대체 Azure 지역으로 일시적으로 마이그레이션하는 것이 필요할 수 있습니다.
 > 
 > 
 
 ### Service Bus
-Azure Service Bus uses a unique namespace that does not span Azure regions. So the first requirement is to setup the necessary service bus namespaces in the alternate region. However, there are also considerations for the durability of the queued messages. There are several strategies for replicating messages across Azure regions. For the details on these replication strategies and other disaster recovery strategies, see [Best practices for insulating applications against Service Bus outages and disasters](/azure/service-bus-messaging/service-bus-outages-disasters/). For other availability considerations, see [Service Bus (Availability)](recovery-local-failures.md#other-azure-platform-services).
+Azure Service Bus는 Azure 지역들을 포괄하지 않는 고유한 네임스페이스를 사용합니다. 따라서 첫 번째 요구 사항은 대체 지역에 필요한 서비스 버스 네임스페이스를 설정하는 것입니다. 하지만 큐 메시지의 내구성도 고려합니다. Azure 지역들에 걸쳐 메시지를 복제하는 전략은 몇 가지가 있습니다. 이들 복제 전략과 다른 재해 복구 전략에 관한 자세한 내용은 [Service Bus 중단 및 재해로부터 응용 프로그램을 분리하는 모범 사례](/azure/service-bus-messaging/service-bus-outages-disasters/)를 참조하십시오. 기타 가용성 고려사항은 [Service Bus(가용성)](recovery-local-failures.md#other-azure-platform-services)를 참조하십시오.
 
-### App Service
-To migrate an Azure App Service application, such as Web Apps or Mobile Apps, to a secondary Azure region, you must have a backup of the website available for publishing. If the outage does not involve the entire Azure datacenter, it might be possible to use FTP to download a recent backup of the site content. Then create a new app in the alternate region, unless you have previously done this to reserve capacity. Publish the site to the new region, and make any necessary configuration changes. These changes could include database connection strings or other region-specific settings. If necessary, add the site’s SSL certificate and change the DNS CNAME record so that the custom domain name points to the redeployed Azure Web App URL.
+### 앱 서비스
+Azure App Service 응용 프로그램(예: Web Apps 또는 Mobile Apps)을 보조 Azure 지역으로 마이그레이션하려면 게시에 사용할 수 있는 웹사이트 백업을 가지고 있어야 합니다. 중단 대상에 전체 Azure 데이터베이스가 포함되지 않을 경우, FTP를 사용하여 사이트 콘텐츠의 최신 백업을 다운로드할 수 있습니다. 앞서 용량 할당을 위해 만들지 않았을 경우, 대체 지역에 새로운 앱을 만드십시오. 사이트를 새 지역에 게시하고, 필요한 구성 변경 작업을 수행합니다. 이러한 변경 작업에는 데이터베이스 연결 문자열 또는 기타 지역별 설정이 포함될 수 있습니다. 필요 시 사이트의 SSL 인증서를 추가하고 DNS CNAME 레코드를 변경함으로써 사용자 지정 도메인 이름이 재배포된 Azure Web App URL을 가리키도록 하십시오.
 
 ### HDInsight
-The data associated with HDInsight is stored by default in Azure Blob Storage. HDInsight requires that a Hadoop cluster processing MapReduce jobs must be co-located in the same region as the storage account that contains the data being analyzed. Provided you use the geo-replication feature available to Azure Storage, you can access your data in the secondary region where the data was replicated if for some reason the primary region is no longer available. You can create a new Hadoop cluster in the region where the data has been replicated and continue processing it. For other availability considerations, see [HDInsight (Availability)](recovery-local-failures.md#other-azure-platform-services).
+HDInsight와 관련된 데이터는 기본적으로 Azure Blob 저장소에 저장됩니다. HDInsight는 Hadoop 클러스터 처리 MapReduce 작업을 분석 대상 데이터가 포함된 저장소 계정과 동일한 영역에 공동 배치하도록 요구합니다. Azure Storage에 사용할 수 있는 지리적 복제 기능을 이용할 경우, 무슨 이유로든 기본 지역을 더 이상 사용할 수 없을 경우에 데이터가 복제된 보조 지역에 있는 데이터에 액세스할 수 있습니다. 데이터베이스를 복제했던 지역에 새 Hadoop 클러스터를 만들어 계속 처리할 수 있습니다. 기타 가용성 고려사항은 [HDInsight (가용성)](recovery-local-failures.md#other-azure-platform-services)를 참조하십시오.
 
-### SQL Reporting
-At this time, recovering from the loss of an Azure region requires multiple SQL Reporting instances in different Azure regions. These SQL Reporting instances should access the same data, and that data should have its own recovery plan in the event of a disaster. You can also maintain external backup copies of the RDL file for each report.
+### SQL 보고
+현재는 Azure 지역의 손실로부터 복구하려면 다른 Azure 지역들에 있는 여러 SQL Reporting 인스턴스가 필요합니다. SQL Reporting 인스턴스는 동일한 데이터에 액세스해야 하고, 해당 데이터는 재해 발생 시 자체 복구 계획을 가지고 있어야 합니다. 또한 각 보고서에 대해 RDL 파일의 외부 백업 복사본을 유지할 수도 있습니다. 
 
-### Media Services
-Azure Media Services has a different recovery approach for encoding and streaming. Typically, streaming is more critical during a regional outage. To prepare for this, you should have a Media Services account in two different Azure regions. The encoded content should be located in both regions. During a failure, you can redirect the streaming traffic to the alternate region. Encoding can be performed in any Azure region. If encoding is time-sensitive, for example during live event processing, you must be prepared to submit jobs to an alternate datacenter during failures.
+### 미디어 서비스
+Azure Media Services는 인코딩 및 스트리밍에 대해 다른 복구 접근법을 가지고 있습니다. 일반적으로 스트리밍은 지역 서비스 중단 시에 더욱 중요합니다. 이에 대비하려면 두 개의 다른 Azure 지역에 Media Services 계정을 가지고 있어야 합니다. 인코딩된 콘텐츠는 양쪽 지역에 모두 있어야 합니다. 장애 기간 동안 스트리밍 트래픽을 대체 지역으로 리디렉션할 수 있습니다. 인코딩은 Azure 지역에서 수행할 수 있습니다. 인코딩이 시간에 민감할 경우 (예: 라이브 이벤트 프로세싱) 장애 기간에 작업을 대체 데이터센터로 제출할 준비를 해야 합니다.
 
-### Virtual network
-Configuration files provide the quickest way to set up a virtual network in an alternate Azure region. After configuring the virtual network in the primary Azure region, [export the virtual network settings](/azure/virtual-network/virtual-networks-create-vnet-classic-portal/) for the current network to a network configuration file. In the event of an outage in the primary region, [restore the virtual network](/azure/virtual-network/virtual-networks-create-vnet-classic-portal/) from the stored configuration file. Then configure other cloud services, virtual machines, or cross-premises settings to work with the new virtual network.
+### 가상 네트워크
+구성 파일은 대체 Azure 지역에 가상 네트워크를 설치하는 가장 빠른 방법을 제공합니다. 기본 Azure 지역에 가상 네트워크를 구성한 후, 현재 네트워크의 [가상 네트워크 설정을 네트워크 구성 파일로 내보내기](/azure/virtual-network/virtual-networks-create-vnet-classic-portal/) 합니다. 기본 지역에 서비스 중단이 발생할 경우 저장된 구성 파일로부터 [가상 네트워크를 복원](/azure/virtual-network/virtual-networks-create-vnet-classic-portal/) 합니다. 그리고 나서, 새로운 가상 네트워크에서 작동할 수 있도록 여타 클라우드 서비스, 가상 컴퓨터 또는 크로스 프레미스 설정을 구성합니다.
 
-## Checklists for disaster recovery
-## Cloud Services checklist
-1. Review the Cloud Services section of this document.
-2. Create a cross-region disaster recovery strategy.
-3. Understand trade-offs in reserving capacity in alternate regions.
-4. Use traffic routing tools, such as Azure Traffic Manager.
+## 재해 복구 체크리스트
+## 클라우드 서비스 체크리스트
+1. 이 문서의 클라우드 서비스 섹션을 검토합니다.
+2. 교차 지역 재해 복구 전략을 작성합니다.
+3. 대체 지역에 용량을 보유하는 것의 장단점을 이해합니다.
+4. Azure Traffic Manager와 같은 트래픽 라우팅 도구를 사용합니다.
 
-## Virtual Machines checklist
-1. Review the Virtual Machines section of this document.
-2. Use [Azure Backup](https://azure.microsoft.com/services/backup/) to create application consistent backups across regions.
+## 가상 컴퓨터 체크리스트
+1. 이 문서의 가상 컴퓨터 섹션을 검토합니다.
+2. [Azure Backup](https://azure.microsoft.com/services/backup/)을 사용하여 지역에 걸쳐 응용 프로그램에 일관된 백업을 생성합니다.
 
-## Storage checklist
-1. Review the Storage section of this document.
-2. Do not disable geo-replication of storage resources.
-3. Understand alternate region for geo-replication in the event of failover.
-4. Create custom backup strategies for user-controlled failover strategies.
+## 저장소 체크리스트
+1. 이 문서의 저장소 섹션을 검토합니다.
+2. 저장소 리소스의 지리적 복제를 비활성화하지 마십시오.
+3. 장애 조치 시에 지리적 복제의 대체 지역에 대하여 이해합니다.
+4. 사용자가 제어하는 장애 조치 전략을 위해 사용자 지정 백업 전략을 작성합니다.
 
-## SQL Database checklist
-1. Review the SQL Database section of this document.
-2. Use [Geo-Restore](/azure/sql-database/sql-database-recovery-using-backups/#geo-restore) or [Geo-Replication](/azure/sql-database/sql-database-geo-replication-overview/) as appropriate.
+## SQL Database 체크리스트
+1. 이 문서의 SQL Database 섹션을 검토합니다.
+2. 필요 시 [지리적 복원](/azure/sql-database/sql-database-recovery-using-backups/#geo-restore) 또는 [지리적 복제](/azure/sql-database/sql-database-geo-replication-overview/)를 사용합니다.
 
-## SQL Server on Virtual Machines checklist
-1. Review the SQL Server on Virtual Machines section of this document.
-2. Use cross-region AlwaysOn Availability Groups or database mirroring.
-3. Alternately use backup and restore to blob storage.
+## 가상 컴퓨터의 SQL Server 체크리스트
+1. 이 문서에 있는 가상 컴퓨터의 SQL Server 섹션을 검토합니다.
+2. 교차 지역 AlwaysOn 가용성 그룹 또는 데이터베이스 미러링을 사용합니다.
+3. 또는 백업을 사용하여 Blob 저장소로 복원합니다.
 
-## Service Bus checklist
-1. Review the Service Bus section of this document.
-2. Configure a Service Bus namespace in an alternate region.
-3. Consider custom replication strategies for messages across regions.
+## Service Bus 체크리스트
+1. 이 문서의 Service Bus 섹션을 검토합니다.
+2. 대체 지역에 서비스 버스 네임스페이스를 구성합니다.
+3. 여러 지역에 걸친 메시지의 사용자 지정 복제 전략을 고려합니다.
 
-## App Service checklist
-1. Review the App Service section of this document.
-2. Maintain site backups outside of the primary region.
-3. If outage is partial, attempt to retrieve current site with FTP.
-4. Plan to deploy the site to new or existing site in an alternate region.
-5. Plan configuration changes for both application and DNS CNAME records.
+## App Service 체크리스트
+1. 이 문서의 App Service 섹션을 검토합니다.
+2. 기본 지역 밖에 사이트 백업을 유지합니다.
+3. 부분적 서비스 중단이 발생할 경우 FTP로 현재 사이트의 검색을 시도합니다.
+4. 사이트를 대체 지역의 새 사이트 또는 기존 사이트에 배포할 계획을 수립합니다.
+5. 응용 프로그램 및 DNS CNAME 레코드의 구성 변경 계획을 수립합니다.
 
-## HDInsight checklist
-1. Review the HDInsight section of this document.
-2. Create a new Hadoop cluster in the region with replicated data.
+## HDInsight 체크리스트
+1. 이 문서의 HDInsight 섹션을 검토합니다.
+2. 복제된 데이터를 사용하여 지역에 새로운 Hadoop 클러스터를 만듭니다.
 
-## SQL Reporting checklist
-1. Review the SQL Reporting section of this document.
-2. Maintain an alternate SQL Reporting instance in a different region.
-3. Maintain a separate plan to replicate the target to that region.
+## SQL Reporting 체크리스트
+1. 이 문서의 SQL Reporting 섹션을 검토합니다.
+2. 다른 지역에 대체 SQL Reporting 인스턴스를 유지합니다.
+3. 대상을 그 지역에 복제할 별도 계획을 유지합니다.
 
-## Media Services checklist
-1. Review the Media Services section of this document.
-2. Create a Media Services account in an alternate region.
-3. Encode the same content in both regions to support streaming failover.
-4. Submit encoding jobs to an alternate region in the event of a service disruption.
+## Media Services 체크리스트
+1. 이 문서의 Media Services 섹션을 검토합니다.
+2. 대체 지역에 Media Services 계정을 만듭니다.
+3. 스트리밍 장애 조치를 지원하기 위해 양쪽 지역에서 동일한 콘텐츠를 인코딩합니다.
+4. 서비스 중단 시 인코딩 작업을 대체 지역으로 제출합니다.
 
-## Virtual Network checklist
-1. Review the Virtual Network section of this document.
-2. Use exported virtual network settings to re-create it in another region.
+## 가상 네트워크 체크리스트
+1. 이 문서의 가상 네트워크 섹션을 검토합니다.
+2. 내보낸 가상 네트워크 설정을 사용하여 다른 지역에 가상 네트워크를 다시 만듭니다.
 
