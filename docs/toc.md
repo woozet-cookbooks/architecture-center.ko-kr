@@ -16,7 +16,7 @@
 ## [복원력 패턴](./patterns/category/resiliency.md)
 ## [보안 패턴](./patterns/category/security.md)
 
-# Best Practices
+# 모범 사례
 ## [API 설계](./best-practices/api-design.md)
 ## [API 구현](./best-practices/api-implementation.md)
 ## [자동 확장](./best-practices/auto-scaling.md)
