@@ -34,51 +34,51 @@ StorSimple은 온프레미스 응용 프로그램들을 위해 클라우드 저�
 ### Azure Backup
 Azure Backup은 Windows Server 2012 이상, Windows Server 2012 Essentials 이상, System Center 2012 Data Protection Manager 이상 버전에 있는 친숙한 백업 도구를 사용하여 클라우드 백업을 지원합니다. 이들 도구는 로컬 디스크 또는 Azure Storage에 관계 없이 백업 저장 위치와는 독립적인 백업 관리 워크플로를 제공합니다. 데이터를 클라우드에 백업하고 나면, 공인된 사용자들은 원하는 서버에 백업을 쉽게 복구할 수 있습니다.
 
-With incremental backups, only changes to files are transferred to the cloud. This helps to efficiently use storage space, reduce bandwidth consumption, and support point-in-time recovery of multiple versions of the data. You can also choose to use additional features, such as data retention policies, data compression, and data transfer throttling. Using Azure as the backup location has the obvious advantage that the backups are automatically “offsite”. This eliminates the extra requirements to secure and protect on-site backup media.
+증분 백업을 통해서 파일의 변경 내용만 클라우드로 전송됩니다. 따라서 저장소 공간을 효율적으로 사용하고, 대역폭 소비를 줄이고, 여러 데이터 버전을 지정 시간에 복구하는 것을 지원합니다. 또한 데이터 보존 정책, 데이터 압축 및 데이터 전송 제한 등 추가적인 기능을 선택할 수도 있습니다. Azure를 백업 위치로 사용하면 백업이 자동으로 "오프사이트"로 지정되는 분명한 이점이 있습니다. 그러면 온사이트 백업 미디어를 확보하여 보호해야 하는 추가적 요구 사항이 없어집니다.
 
-For more information, see [What is Azure Backup?](/azure/backup/backup-introduction-to-azure-backup/) and [Configure Azure Backup for DPM data](https://technet.microsoft.com/library/jj728752.aspx).
+자세한 내용은 [Azure Backup이 무엇입니까?](/azure/backup/backup-introduction-to-azure-backup/) 및 [DPM 데이터용 Azure Backup 구성](https://technet.microsoft.com/library/jj728752.aspx)을 참조하십시오.
 
-## Database
-You can have a disaster recovery solution for your SQL Server databases in a hybrid-IT environment by using AlwaysOn Availability Groups, database mirroring, log shipping, and backup and restore with Azure Blob storage. All of these solutions use SQL Server running on Azure Virtual Machines.
+## 데이터베이스
+AlwaysOn 가용성 그룹, 데이터베이스 미러링, 로그 전달, Azure Blob 저장소를 이용한 백업 및 복원을 사용하여 하이브리드 IT 환경에서 SQL Server 데이터베이스를 위한 재해 복구 솔루션을 보유할 수 있습니다. 이들 솔루션은 모두 Azure 가상 컴퓨터에서 실행되는 SQL Server를 이용합니다.
 
-AlwaysOn Availability Groups can be used in a hybrid-IT environment where database replicas exist both on-premises and in the cloud. This is shown in the following diagram.
+AlwaysOn 가용성 그룹은, 데이터베이스 복제본이 온프레미스 및 클라우드에 모두 있는 하이브리드 IT 환경에서 사용할 수 있습니다. 그 내용이 다음 다이어그램에 표시되어 있습니다.
 
 ![SQL Server AlwaysOn Availability Groups in a hybrid cloud architecture](./images/technical-guidance-recovery-on-premises-azure/SQL_Server_Disaster_Recovery-3.png)
 
-Database mirroring can also span on-premises servers and the cloud in a certificate-based setup. The following diagram illustrates this concept.
+데이터베이스 미러링도 온프레미스 서버와 인증서 기반 설정의 클라우드를 포함할 수 있습니다. 다음 다이어그램에서는 그 개념을 보여주고 있습니다.
 
 ![SQL Server database mirroring in a hybrid cloud architecture](./images/technical-guidance-recovery-on-premises-azure/SQL_Server_Disaster_Recovery-4.png)
 
-Log shipping can be used to synchronize an on-premises database with a SQL Server database in an Azure virtual machine.
+로그 전달은 온프레미스 데이터베이스를 Azure 가상 컴퓨터에 있는 SQL Server 데이터베이스와 동기화하는 데 사용할 수 있습니다.
 
 ![SQL Server log shipping in a hybrid cloud architecture](./images/technical-guidance-recovery-on-premises-azure/SQL_Server_Disaster_Recovery-5.png)
 
-Finally, you can back up an on-premises database directly to Azure Blob storage.
+마지막으로 온프레미스 데이터베이스를 Azure Blob 저장소에 직접 백업할 수 있습니다.
 
 ![Back up SQL Server to Azure Blob storage in a hybrid cloud architecture](./images/technical-guidance-recovery-on-premises-azure/SQL_Server_Disaster_Recovery-6.png)
 
-For more information, see [High availability and disaster recovery for SQL Server in Azure virtual machines](/azure/virtual-machines/windows/sql/virtual-machines-windows-sql-high-availability-dr/) and [Backup and restore for SQL Server in Azure virtual machines](/azure/virtual-machines/windows/sql/virtual-machines-windows-sql-backup-recovery/).
+자세한 내용은 [Azure 가상 컴퓨터의 SQL Server를 위한 고가용성 및 재해 복구](/azure/virtual-machines/windows/sql/virtual-machines-windows-sql-high-availability-dr/) 및 [Azure 가상 컴퓨터의 SQL Server를 위한 백업 및 복원](/azure/virtual-machines/windows/sql/virtual-machines-windows-sql-backup-recovery/)을 참조하십시오.
 
-## Checklists for on-premises recovery in Microsoft Azure
-### Networking
-1. Review the Networking section of this document.
-2. Use Virtual Network to securely connect on-premises to the cloud.
+## Microsoft Azure의 온프레미스 복구를 위한 체크리스트
+### 네트워킹
+1. 이 문서의 네트워킹 섹션을 검토합니다.
+2. 온프레미스를 클라우드에 안전하게 연결하기 위해 가상 네트워크를 사용합니다.
 
-### Compute
-1. Review the Compute section of this document.
-2. Relocate VMs between Hyper-V and Azure.
+### 컴퓨팅
+1. 이 문서의 컴퓨팅 섹션을 검토합니다.
+2. VM을 Hyper-V와 Azure 사이에 재배치합니다.
 
-### Storage
-1. Review the Storage section of this document.
-2. Take advantage of StorSimple services for using cloud storage.
-3. Use the Azure Backup service.
+### 저장소
+1. 이 문서의 저장소 섹션을 검토합니다.
+2. 클라우드 저장소 사용을 위해 StorSimple 서비스를 활용합니다.
+3. Azure Backup 서비스를 이용합니다.
 
-### Database
-1. Review the Database section of this document.
-2. Consider using SQL Server on Azure VMs as the backup.
-3. Set up AlwaysOn Availability Groups.
-4. Configure certificate-based database mirroring.
-5. Use log shipping.
-6. Back up on-premises databases to Azure Blob storage.
+### 데이터베이스
+1. 이 문서의 데이터베이스 섹션을 검토합니다.
+2. Azure VM의 SQL Server를 백업으로 사용하는 것을 고려합니다.
+3. AlwaysOn 가용성 그룹을 설정합니다.
+4. 인증서 기반 데이터베이스 미러링을 구성합니다.
+5. 로그 전달을 사용합니다.
+6. 온프레미스 데이터베이스를 Azure Blob 저장소에 백업합니다.
 
 
