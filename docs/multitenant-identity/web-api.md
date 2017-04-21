@@ -11,17 +11,17 @@ pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: authorize
 pnp.series.next: token-cache
 ---
-# Secure a backend web API
+# 백 엔드 웹 API의 보안 처리
 
-[![GitHub](../_images/github.png) Sample code][sample application]
+[![GitHub](../_images/github.png) 샘플 코드][sample application]
 
-The [Tailspin Surveys] application uses a backend web API to manage CRUD operations on surveys. For example, when a user clicks "My Surveys", the web application sends an HTTP request to the web API:
+[Tailspin Surveys](https://docs.microsoft.com/en-us/azure/architecture/multitenant-identity/tailspin) 응용 프로그램은 백 엔드 웹 API를 사용하여 설문조사의 CRUD 작업을 관리합니다.  예를 들어, 사용자가 "내 설문조사"를 클릭하면, 웹 응용 프로그램은 웹 API로 HTTP 요청을 보냅니다:
 
 ```
 GET /users/{userId}/surveys
 ```
 
-The web API returns a JSON object:
+웹 API가 JSON 개체를 반환합니다:
 
 ```
 {
@@ -34,59 +34,70 @@ The web API returns a JSON object:
 }
 ```
 
-The web API does not allow anonymous requests, so the web app must authenticate itself using OAuth 2 bearer tokens.
 
-> [!NOTE]
-> This is a server-to-server scenario. The application does not make any AJAX calls to the API from the browser client.
+웹 API는 익명의 요청을 허용하지 않기 때문에, 웹 앱이 직접 OAuth 2 전달자 토큰을 사용해서 인증해야 합니다.
+
+> [!참고]
+> 이 작업은 서버 간 시나리오입니다. 응용 프로그램은 브라우저 클라이언트에서 API에 어떤 AJAZ 호출도 하지 않습니다.
 > 
 > 
 
-There are two main approaches you can take:
+취할 수 있는 접근 방식이 두 가지 있습니다:
 
-* Delegated user identity. The web application authenticates with the user's identity.
-* Application identity. The web application authenticates with its client ID, using OAuth2 client credential flow.
+•	위임된 사용자 ID. 웹 응용 프로그램은 사용자 ID를 인증합니다.
 
-The Tailspin application implements delegated user identity. Here are the main differences:
+•	응용 프로그램 ID. 웹 응용 프로그램은 OAuth2 클라이언트 자격 증명 흐름을 사용하여 클라이언트 ID를 인증합니다.
 
-**Delegated user identity**
+Tailspin 응용 프로그램은 위임된 사용자 ID를 구현합니다. 주요 차이점은 다음과 같습니다:
 
-* The bearer token sent to the web API contains the user identity.
-* The web API makes authorization decisions based on the user identity.
-* The web application needs to handle 403 (Forbidden) errors from the web API, if the user is not authorized to perform an action.
-* Typically, the web application still makes some authorization decisions that affect UI, such as showing or hiding UI elements).
-* The web API can potentially be used by untrusted clients, such as a JavaScript application or a native client application.
+**위임된 사용자 ID**
 
-**Application identity**
+•	웹 API로 전송된 전달자 토큰은 사용자 ID를 포함합니다.
 
-* The web API does not get information about the user.
-* The web API cannot perform any authorization based on the user identity. All authorization decisions are made by the web application.  
-* The web API cannot be used by an untrusted client (JavaScript or native client application).
-* This approach may be somewhat simpler to implement, because there is no authorization logic in the Web API.
+•	웹 API는 사용자 ID에 근거하여 권한 부여를 결정합니다.
 
-In either approach, the web application must get an access token, which is the credential needed to call the web API.
+•	사용자가 동작 수행의 권한을 부여받지 않은 경우, 웹 응용 프로그램은 웹 API에서 발생한 403(사용 권한 없음) 오류를 처리해야 합니다. 
 
-* For delegated user identity, the token has to come from the IDP, which can issue a token on behalf of the user.
-* For client credentials, an application might get the token from the IDP or host its own token server. (But don't write a token server from scratch; use a well-tested framework like [IdentityServer3].) If you authenticate with Azure AD, it's strongly recommended to get the access token from Azure AD, even with client credential flow.
+•	일반적으로, 웹 응용 프로그램은 여전히 UI 표시 또는 숨기기와 같이 UI에 영향을 주는 권한 부여 결정을 내립니다. 
 
-The rest of this article assumes the application is authenticating with Azure AD.
+•	JavaScript 응용 프로그램 또는 네이티브 클라이언트 응용 프로그램과 같이, 웹 API는 잠재적으로 신뢰받지 않는 클라이언트에 의해 사용될 수 있습니다.
+
+
+**응용 프로그램 ID**
+
+•	웹 API는 사용자에 관한 정보를 가져오지 않습니다.
+
+•	웹 API는 사용자 ID에 근거하여 어떤 권한 부여도 수행할 수 없습니다. 모든 권한 부여는 웹 응용 프로그램에 의해 결정됩니다. 
+
+•	웹 API는 신뢰받지 않는 클라이언트에 의해 사용될 수 없습니다(JavaScript 또는 네이트브 클라이언트 응용 프로그램).
+
+•	웹 API에는 권한 부여 로직이 없기 때문에, 이 접근 방식을 구현하기가 더 간단할 수 있습니다. 
+
+어느 접근 방식이어도 웹 응용 프로그램은 웹 API 호출에 필요한 자격 증명인 액세스 토큰을 가져와야 합니다.
+
+•	위임된 사용자 ID의 경우, 토큰은 사용자 대신 토큰을 발급할 수 있는 IDP에서 와야 합니다.
+
+•	클라이언트 자격 증명의 경우, 응용 프로그램은 IDP에서 토큰을 가져오거나 자체의 토큰 서버를 호스팅할 수 있습니다. (그렇다고 사전 지식 없이 토큰 서버를 쓰지 마시고, 시험을 무난히 통과한  [IdentityServer3](https://github.com/IdentityServer/IdentityServer3)과 같은 프레임워크를 사용하세요.) Azure AD를 인증할 경우, 클라이언트 자격 증명 흐름으로 Azure AD에서 액세스 토큰을 가져올 것을 강력 추천합니다.
+
+이 문서의 나머지 부분은 응용 프로그램이 Azure AD를 인증하는 것으로 가정합니다.
 
 ![Getting the access token](./images/access-token.png)
 
-## Register the web API in Azure AD
-In order for Azure AD to issue a bearer token for the web API, you need to configure some things in Azure AD.
+## Azure AD에서 웹 API 등록
+Azure AD가 웹 API에 대한 전달자 토큰을 발급하려면, Azure AD에서 몇 가지 구성해야 합니다.
 
-1. [Register the web API in Azure AD].
-2. Add the client ID of the web app to the web API application manifest, in the `knownClientApplications` property. See [Update the application manifests].
-3. [Give the web application permission to call the web API].
+1. [Azure AD에서 웹 API 등록].
+2. 웹 앱의 클라이언트 ID를 웹 API 응용 프로그램 매니페스트에 `knownClientApplications` 속성으로 추가합니다. [U응용 프로그램 매니페스트 업데이트]를 참조하세요.
+3. [웹 응용 프로그램에 웹 API 호출 권한 부여](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/docs/running-the-app.md#give-the-web-app-permissions-to-call-the-web-api).
    
-   In the Azure Management Portal, you can set two types of permissions: "Application Permissions" for application identity (client credential flow), or "Delegated Permissions" for delegated user identity.
+   Azure 관리 포털에서 두 가지 유형의 권한을 설정할 수 있습니다. 응용 프로그램 ID에 대한 "응용 프로그램 권한" (클라이언트 자격 증명 흐름) 또는 위임된 사용자 ID에 대한 "위임된 권한".
    
    ![Delegated permissions](./images/delegated-permissions.png)
 
-## Getting an access token
-Before calling the web API, the web application gets an access token from Azure AD. In a .NET application, use the [Azure AD Authentication Library (ADAL) for .NET][ADAL].
+## 액세스 토큰 가져오기
+웹 응용 프로그램은 웹 API를 호출하기 전에 Azure AD에서 액세스 토큰을 가져옵니다. .NET 응용 프로그램에서는, [.NET용 Azure AD 인증 라이브러리(ADAL)][ADAL]를 사용합니다.
 
-In the OAuth 2 authorization code flow, the application exchanges an authorization code for an access token. The following code uses ADAL to get the access token. This code is called during the `AuthorizationCodeReceived` event.
+OAuth 2 인증 코드에서, 응용 프로그램은 인증 코드와 액세스 토큰을 교환합니다. 다음 코드는 ADAL을 사용하여 액세스 토큰을 가져옵니다. 이 코드는 `AuthorizationCodeReceived` 이벤트 중에 호출됩니다.
 
 ```csharp
 // The OpenID Connect middleware sends this event when it gets the authorization code.   
@@ -105,33 +116,39 @@ public override async Task AuthorizationCodeReceived(AuthorizationCodeReceivedCo
 }
 ```
 
-Here are the various parameters that are needed:
+다음은 코드에 필요한 여러 가지 매개변수입니다:
 
-* `authority`. Derived from the tenant ID of the signed in user. (Not the tenant ID of the SaaS provider)  
-* `authorizationCode`. the auth code that you got back from the IDP.
-* `clientId`. The web application's client ID.
-* `clientSecret`. The web application's client secret.
-* `redirectUri`. The redirect URI that you set for OpenID connect. This is where the IDP calls back with the token.
-* `resourceID`. The App ID URI of the web API, which you created when you registered the web API in Azure AD
-* `tokenCache`. An object that caches the access tokens. See [Token caching].
+* `authority`. 로그인된 사용자의 테넌트 ID에서 파생됨. (SaaS 공급자의 테넌트 ID가 아님) 
 
-If `AcquireTokenByAuthorizationCodeAsync` succeeds, ADAL caches the token. Later, you can get the token from the cache by calling AcquireTokenSilentAsync:
+* `authorizationCode`. IDP에서 되돌려받은 인증 코드 .
+
+* `clientId`. 웹 응용 프로그램의 클라이언트 ID.
+
+* `clientSecret`. 웹 응용 프로그램의 클라이언트 암호.
+
+* `redirectUri`. OpenID 연결에 설정한 리디렉션 URI. IDP가 토큰을 가지고 호출하는 곳입니다.
+
+* `resourceID`. Azure AD에서 웹 API를 등록할 때 만든 웹 API의 앱 ID URI.
+ 
+* `tokenCache`. 액세스 토큰을 캐시하는 개체. [토큰 캐싱](https://docs.microsoft.com/en-us/azure/architecture/multitenant-identity/token-cache)을 참조하세요.
+
+`AcquireTokenByAuthorizationCodeAsync` 가 성공한 경우, ADAL은 토큰을 캐시합니다. 추후, AcquireTokenSilentAsync를 호출하여 캐시에서 토큰을 가져올 수 있습니다.
 
 ```csharp
 AuthenticationContext authContext = new AuthenticationContext(authority, tokenCache);
 var result = await authContext.AcquireTokenSilentAsync(resourceID, credential, new UserIdentifier(userId, UserIdentifierType.UniqueId));
 ```
 
-where `userId` is the user's object ID, which is found in the `http://schemas.microsoft.com/identity/claims/objectidentifier` claim.
+`userId`가 사용자의 개체 ID인 경우, `http://schemas.microsoft.com/identity/claims/objectidentifier` 클레임에 존재합니다.
 
-## Using the access token to call the web API
-Once you have the token, send it in the Authorization header of the HTTP requests to the web API.
+## 액세스 토큰을 이용한 웹 API 호출
+토큰이 있으면, HTTP 요청의 인증 헤더에 담아 웹 API로 전송합니다. 
 
 ```
 Authorization: Bearer xxxxxxxxxx
 ```
 
-The following extension method from the Surveys application sets the Authorization header on an HTTP request, using the **HttpClient** class.
+다음과 같은 Surveys 응용 프로그램의 확장 메서드는 **HttpClient** 클래스를 사용하여 HTTP 요청에 있는 인증 헤더를 설정합니다.
 
 ```csharp
 public static async Task<HttpResponseMessage> SendRequestWithBearerTokenAsync(this HttpClient httpClient, HttpMethod method, string path, object requestBody, string accessToken, CancellationToken ct)
@@ -152,15 +169,15 @@ public static async Task<HttpResponseMessage> SendRequestWithBearerTokenAsync(th
 }
 ```
 
-> [!NOTE]
-> See [HttpClientExtensions.cs].
+> [!참고]
+> [HttpClientExtensions.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Common/HttpClientExtensions.cs)를 참조하세요.
 > 
 > 
 
-## Authenticating in the web API
-The web API has to authenticate the bearer token. In ASP.NET Core 1.0, you can use the [Microsoft.AspNet.Authentication.JwtBearer][JwtBearer] package. This package provides middleware that enables the application to receive OpenID Connect bearer tokens.
+## 웹 API에서 인증하기
+웹 API는 전달자 토큰을 인증해야 합니다. ASP.NET Core 1.0에서, [Microsoft.AspNet.Authentication.JwtBearer][JwtBearer] 패키지를 사용할 수 있습니다. 이 패키지는 OpenIN Connect 전달자 토큰을 받을 때 응용 프로그램을 사용하는 미들웨어를 제공합니다.
 
-Register the middleware in your web API `Startup` class.
+미들웨어를 웹 API `Startup` 클래스에 등록합니다.
 
 ```csharp
 app.UseJwtBearerAuthentication(options =>
@@ -176,20 +193,22 @@ app.UseJwtBearerAuthentication(options =>
 });
 ```
 
-> [!NOTE]
-> See [Startup.cs].
+> [!참고]
+> [Startup.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Common/HttpClientExtensions.cs)를 참조하세요.
 > 
 > 
 
-* **Audience**. Set this to the App ID URL for the web API, which you created when you registered the web API with Azure AD.
-* **Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/`.
-* **TokenValidationParameters**. For a multitenant application, set **ValidateIssuer** to false. That means the application will validate the issuer.
-* **Events** is a class that derives from **JwtBearerEvents**.
+* **Audience**. Azure AD에서 웹 API를 등록할 때 만든 웹 API의 앱 ID URI에 이 옵션을 등록합니다.
 
-### Issuer validation
-Validate the token issuer in the **JwtBearerEvents.ValidatedToken** event. The issuer is sent in the "iss" claim.
+* **Authority**. 다중 테넌트 응용 프로그램의 경우, 이 옵션을 `https://login.microsoftonline.com/common/`으로 설정합니다.
 
-In the Surveys application, the web API doesn't handle [tenant sign-up]. Therefore, it just checks if the issuer is already in the application database. If not, it throws an exception, which causes authentication to fail.
+* **TokenValidationParameters**. 다중 테넌트 응용 프로그램의 경우, **ValidateIssuer**를 false로 설정합니다. 응용 프로그램이 발급자를 확인할 것이라는 뜻입니다.
+* **Events**는 **JwtBearerEvents**에서 파생된 클래스입니다.
+
+### 발급자 확인
+**JwtBearerEvents.ValidatedToken** 이벤트에서 토큰 발급자를 확인합니다.. 발급자가 "iss" 클레임에 전송됩니다.
+
+Surveys 응용 프로그램에서, 웹 API는 [tenant sign-up](https://docs.microsoft.com/en-us/azure/architecture/multitenant-identity/signup)을 처리하지 않습니다.  따라서, 발급자가 응용 프로그램 데이터베이스에 이미 있는지 확인만 합니다. 없으면, 예외가 발생해서 인증이 실패한 것입니다.
 
 ```csharp
 public override async Task ValidatedToken(ValidatedTokenContext context)
@@ -208,31 +227,31 @@ public override async Task ValidatedToken(ValidatedTokenContext context)
 }
 ```
 
-> [!NOTE]
-> See [SurveysJwtBearerEvents.cs].
+> [!참고]
+> [SurveysJwtBearerEvents.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.WebAPI/SurveyJwtBearerEvents.cs)를 참조하세요.
 > 
 > 
 
-You can also use the **ValidatedToken** event to do [claims transformation]. Remember that the claims come directly from Azure AD, so if the web application did any claims transformations, those are not reflected in the bearer token that the web API receives.
+[클레임 변환](https://docs.microsoft.com/en-us/azure/architecture/multitenant-identity/claims#claims-transformations)을 할 때도 **ValidatedToken** 이벤트를 사용할 수 있습니다. 클레임은 Azure AD에서 직접 오는 것이고, 그래서 웹 응용 프로그램이 클레임 변환을 한 경우, 웹 API가 받는 전달자 토큰에 반영되지 않는다는 점을 기억하세요.
 
-## Authorization
-For a general discussion of authorization, see [Role-based and resource-based authorization][Authorization]. 
+## 권한 부여
+권한 부여에 대한 일반적인 논의는, [역할 기반 및 리소스 기반 권한 부여][Authorization]를 참조하세요. 
 
-The JwtBearer middleware handles the authorization responses. For example, to restrict a controller action to authenticated users, use the **[Authorize]** atrribute and specify **JwtBearerDefaults.AuthenticationScheme** as the authentication scheme:
+JwBearer 미들웨어는 권한 부여 응답을 처리합니다. 예를 들면, 컨트롤러 동작을 인증된 사용자로 제한하기 위해서, **[Authorize]** 특성을 사용하고 **JwtBearerDefaults.AuthenticationScheme**을 인증 체계로 지정합니다:
 
 ```csharp
 [Authorize(ActiveAuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 ```
 
-This returns a 401 status code if the user is not authenticated.
+이 코드는 사용자가 인증되지 않은 경우, 401 상태 코드를 반환합니다.
 
-To restrict a controller action by authorizaton policy, specify the policy name in the **[Authorize]** attribute:
+인증 정책에 따라 컨트롤러 동작을 제한하려면, **[Authorize]** 특성에 정책 이름을 지정합니다:
 
 ```csharp
 [Authorize(Policy = PolicyNames.RequireSurveyCreator)]
 ```
 
-This returns a 401 status code if the user is not authenticated, and 403 if the user is authenticated but not authorized. Register the policy on startup:
+사용자가 인증되지 않은 경우 401 상태 코드를, 사용자가 인증되었지만 권한이 없는 경우 403 상태 코드를 반환합니다. startup에 정책을 등록합니다:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -249,7 +268,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-[**Next**][token cache]
+[**다음**][token cache]
 
 <!-- links -->
 [ADAL]: https://msdn.microsoft.com/library/azure/jj573266.aspx
