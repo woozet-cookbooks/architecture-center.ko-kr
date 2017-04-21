@@ -294,39 +294,39 @@ FMA 프로세스 및 Azure의 자세한 권장 사항에 관한 내용은 [Azure
 * **분석 및 진단**. 데이터를 통합하고 나면, 문제해결 및 응용 프로그램의 전반적 상태를 보여주기 위해 분석할 수 있습니다.
 * **시각화 및 알림**. 이 단계에서는 운영자가 추세나 문제점을 신속히 찾을 수 있는 방식으로 원격 분석 데이터가 제시됩니다. 예를 들면 대시보드 또는 이메일 알림 등이 있습니다.
 
-Monitoring is different than failure detection. For example, your application might detect a transient error and retry, resulting in no downtime. But it should also log the retry operation, so that you can monitor the error rate, in order to get an overall picture of the application health. 
+모니터링은 장애 감지와는 다릅니다. 예를 들어, 응용 프로그램이 일시적 오류를 감지하고 재시도함으로써 가동 중지 시간이 발생하지 않을 수 있습니다. 하지만 재시도 작업도 기록해야 하며, 따라서 응용 프로그램의 전반적 상태를 파악하기 위해 오류 비율을 모니터링할 수 있습니다.
 
-Application logs are an important source of diagnostics data. Here are some best practices for application logging:
+응용 프로그램 로그는 진단 데이터의 중요한 소스입니다. 응용 프로그램 로깅의 모범 사례의 예를 들면 다음과 같습니다.
 
-* Log in production. Otherwise, you lose insight at the very times when you need it the most.
-* Log events at service boundaries. Include a correlation ID that flows across service boundaries. If transaction X flows through multiple services and one of them fails, the correlation ID will help you pinpoint why the transaction failed.
-* Use semantic logging, also called structured logging. Unstructured logs make it hard to automate the consumption and analysis of the log data, which is needed at cloud scale.
-* Use asynchronous logging. Otherwise, the logging system itself can cause the application to fail, by causing requests to back up, as they block waiting to write a logging event.
-* Application logging is not the same as auditing. Auditing may be done for compliance or regulatory reasons. As such, audit records must be complete, and it's not acceptible to drop any while processing transactions. If an application requires auditing, this should be kept separate from diagnostics logging. 
+* 실운영에서 로그하십시오. 그렇지 않으면 가장 필요할 때에 통찰력을 잃을 수 있습니다.
+* 서비스 경계에서 이벤트를 로그하십시오 서비스 경계를 따라 흐르는 상관 관계 ID를 포함시킵니다. 트랜잭션 X가 여러 서비스를 통해 흐르는데 그 중 하나가 실패하면, 상관 관계 ID가 트랜잭션 실패 이유를 정확히 파악하도록 도와줍니다.
+* 의미 중심 로깅(구조화된 로깅이라고도 함)을 사용하십시오. 구조화되지 않은 로그는 클라우드 규모에서 필요한 로그 데이터의 사용 및 분석의 자동화를 어렵게 합니다.
+* 비동기 로깅을 사용하십시오. 그렇지 않으면 로깅 시스템 자체가 응용 프로그램의 실패를 야기할 수 있습니다. 그 이유는 요청이 로깅 이벤트 기록 대기를 차단하므로 요청의 백업을 야기하기 때문입니다.
+* 응용 프로그램 로깅은 감사와 동일하지 않습니다. 감사는 규정 준수 또는 규제상 이유로 수행할 수 있습니다. 그러므로 감사 기록은 완전해야 하며, 트랜잭션 처리 중에 일부를 놓치는 것이 허용되지 않습니다. 응용 프로그램에 감사가 필요한 경우 기록을 진단 로깅과는 별도로 유지해야 합니다.
 
-For more information about monitoring and diagnostics, see [Monitoring and diagnostics guidance][monitoring-guidance].
+모니터링 및 진단에 관한 자세한 내용은 [모니터링 및 진단 지침][monitoring-guidance]을 참조하십시오.
 
-## Manual failure responses
-Previous sections have focused on automated recovery strategies, which are critical for high availability. However, sometimes manual intervention is needed.
+## 수동 장애 대응
+이전의 섹션에서는 고가용성을 위해 매우 중요한 자동 복구 전략에 초점을 맞추었습니다. 하지만 때로는 수동 개입이 필요할 수 있습니다.
 
-* **Alerts**. Monitor your application for warning signs that may require pro-active intervention. For example, if you see that SQL Database or DocumentDB consistently throttles your application, you might need to increase your database capacity or optimize your queries. In this example, even though the application might handle the throttling errors transparently, your telemetry should still raise an alert, so that you can follow up.  
-* **Manual failover**. Some systems cannot fail over automatically, and require a manual failover. 
-* **Operational readiness testing**. If your application fails over to a secondary region, you should perform an operational readiness test before you fail back to the primary region. The test should verify that the primary region is healthy and ready to receive traffic again.
-* **Data consistency check**. If a failure happens in a data store, there may be data inconsistencies when the store becomes available again, especially if the data was replicated. 
-* **Restoring from backup**. For example, if SQL Database experiences a regional outage, you can geo-restore the database from the latest backup.
+* **알림**. 사전에 개입을 요구하는 경호 신호를 파악하기 위해 응용 프로그램을 모니터링하십시오. 예를 들어 SQL 데이터베이스나 DocumentDB가 계속 응용 프로그램을 제한할 경우, 데이터베이스 용량을 늘리거나 쿼리를 최적화하는 것이 필요할 수 있습니다. 이 경우 응용 프로그램이 제한 오류를 투명하게 처리할 수 있지만, 여전히 원격 분석을 통해 알려줌으로써 후속 조치를 취할 수 있게 합니다.
+* **수동 장애 조치**. 일부 시스템은 자동으로 장애 조치를 수행할 수 없으므로 수동 장애 조치가 필요합니다.
+* **운영 준비 상태 테스트**. 응용 프로그램이 보조 지역으로 장애 조치된 경우, 기본 지역으로 다시 되돌리기 전에 운영 준비 상태 테스트를 수행해야 합니다. 이 테스트를 통해 기본 지역이 정상이고 다시 트래픽을 수신할 준비가 되어 있는지 확인해야 합니다.
+* **데이터 일관성 확인**. 데이터 스토어에서 장애가 발생할 경우, 스토어를 다시 사용하게 될 때 특히 데이터가 복제된 경우 데이터 불일치가 있을 수 있습니다.
+* **백업에서 복원**. 예를 들어 SQL 데이터베이스에 지역 서비스 중단이 발생한 경우, 최근 백업으로부터 데이터베이스의 지리적 복원을 수행할 수 있습니다.
 
-Document and test your disaster recovery plan. Include written procedures for any manual steps, such as manual failover, restoring data from backups, and so forth. 
+재해 복구 계획을 문서화하고 테스트하십시오. 수동 장애 조치, 백업의 데이터 복원 등 모든 수동 단계에 대한 서면 절차서를 포함시키십시오.
 
-## Summary
-This article looked at resiliency from a holistic perspective, emphasizing some of the unique challenges of the cloud. These include the distributed nature of cloud computing, the use of commodity hardware, and the presence of transience network faults.
+## 요약
+이 문서에서는 클라우드의 일부 고유한 과제를 강조하면서 전체적 관점에서 복원에 관하여 살펴보았습니다. 그 내용에는 클라우드 컴퓨팅의 분산 특성, 상용 하드웨어의 사용, 일시적 네트워크 장애의 존재 등이 포함됩니다.
 
-Here are the major points to take away from this article:
+이 문서의 주요 요점은 다음과 같습니다.
 
-* Resiliency leads to higher availability, and lower mean time to recover from failures. 
-* Achieving resiliency in the cloud requires a different set of techniques from traditional on-premises solutions. 
-* Resiliency does not happen by accident. It must be designed and built in from the start.
-* Resiliency touches every part of the application lifecycle, from planning and coding to operations.
-* Test and monitor!
+* 복원력을 통해 고가용성과 낮은 평균 고장 복구 시간을 달성할 수 있습니다.
+* 클라우드에서 복원력을 확보하려면 전통적 온프레미스 솔루션의 다양한 기법들이 필요합니다.
+* 복원력은 우연히 달성되는 것이 아닙니다. 처음부터 설계하고 구축해야 합니다.
+* 복원은 계획부터 코딩, 운영까지 응용 프로그램 수명 주기의 모든 부분과 관련됩니다.
+* 테스트와 모니터링이 필요합니다.
 
 
 <!-- links -->
