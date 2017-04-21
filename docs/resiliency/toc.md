@@ -1,4 +1,4 @@
-# Design for Resiliency
+# 복원력 설계
 ## [복원 가능한 응용 프로그램 설계](./index.md)
 ## [복원 체크리스트](../checklist/resiliency.md?toc=/azure/architecture/resiliency/toc.json)
 ## [장애 모드 분석](./failure-mode-analysis.md)
