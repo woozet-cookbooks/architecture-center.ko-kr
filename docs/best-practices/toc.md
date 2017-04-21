@@ -1,4 +1,4 @@
-# Best Practices
+# 모범 사례
 ## [API 설계](./api-design.md)
 ## [API 구현](./api-implementation.md)
 ## [자동 확장](./auto-scaling.md)
