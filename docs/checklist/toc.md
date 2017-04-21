@@ -1,4 +1,4 @@
 # Design Review Checklists
-## [Availability](./availability.md)
-## [Resiliency](./resiliency.md)
-## [Scalability](./scalability.md)
+## [가용성](./availability.md)
+## [복원력](./resiliency.md)
+## [확장성](./scalability.md)
