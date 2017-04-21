@@ -11,7 +11,7 @@ pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: app-roles
 pnp.series.next: web-api
 ---
-# R역할 기반 및 리소스 기반 인증
+# 역할 기반 및 리소스 기반 인증
 
 [![GitHub](../_images/github.png) 샘플 코드][sample application]
 
