@@ -24,11 +24,11 @@ pnp.series.title: Azure for AWS Professionals
 AWS 사용자를 위한 Azure의 개요를 보려면, [AWS 전문가를 위한 Azure 소개](index.md)를 참조하세요.
 
 
-## Marketplace
+## 마켓플레이스
 
 | 하위 범주        | AWS 서비스     | Azure 서비스                                                 | 설명                                                                                                                                  |
 |-------------|-----------------|---------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| Marketplace | AWS Marketplace | [Azure Marketplace](https://azure.microsoft.com/marketplace/) | Easy-to-deploy and automatically configured third-party applications, including single virtual machine or multiple virtual machine solutions. |
+| 마켓플레이스 | AWS 마켓플레이스 | [Azure 마켓플레이스](https://azure.microsoft.com/marketplace/) | 단일 가상 컴퓨터 또는 여러 가상 컴퓨터 솔루션을 포함하여, 배포하기 쉬운 자동으로 구성된 타사의 응용 프로그램. |
 
 
 ## 계산 서비스
@@ -126,7 +126,7 @@ SimpleDB
 | **&nbsp;**                                                |                    | [Video API](https://www.microsoft.com/cognitive-services/en-us/video-api)                                                                                      | Intelligent video processing produces stable video output, detects motion, creates intelligent thumbnails, detects and tracks faces.                          |
 
 
-## Internet of things (IoT)
+## 사물 인터넷 (IoT) 서비스
 
 | 하위 범주               | AWS 서비스                                                                            | Azure 서비스                                                                                                                                    | 설명                                                                                                                                                       |
 |--------------------|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
