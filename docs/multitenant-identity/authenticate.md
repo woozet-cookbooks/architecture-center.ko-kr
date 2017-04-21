@@ -11,40 +11,46 @@ pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: tailspin
 pnp.series.next: claims
 ---
-# Authenticate using Azure AD and OpenID Connect
+# Azure AD와 OpenID Connect를 사용한 인증
 
-[![GitHub](../_images/github.png) Sample code][sample application]
+[![GitHub](../_images/github.png) 샘플 코드][sample application]
 
-The Surveys application uses the OpenID Connect (OIDC) protocol to authenticate users with Azure Active Directory (Azure AD). The Surveys application is built with ASP.NET Core 1.0, which has built-in middleware for OIDC. The following diagram shows what happens when the user signs in, at a high level.
+Survey 응용 프로그램은 Azure Active Directory가 있는 사용자를 인증하기 위해서 OpenID Connect (OIDC) 프로토콜을 사용합니다. Survey 응용 프로그램은 OIDC에 대한 기본 미들웨어가 있는 ASP.NET Core 1.0으로 구성됩니다. 다음 다이어그램은 사용자가 상위 수준에서 로그인할 때 일어나는 작업을 보여줍니다. 
 
 ![Authentication flow](./images/auth-flow.png)
 
-1. The user clicks the "sign in" button in the app. This action is handled by an MVC controller.
-2. The MVC controller returns a **ChallengeResult** action.
-3. The middleware intercepts the **ChallengeResult** and creates a 302 response, which redirects the user to the Azure AD sign-in page.
-4. The user authenticates with Azure AD.
-5. Azure AD sends an ID token to the application.
-6. The middleware validates the ID token. At this point, the user is now authenticated inside the application.
-7. The middleware redirects the user back to application.
+1.	사용자는 앱에서 "로그인" 단추를 클릭합니다. 이 동작은 MVC 컨트롤러에서 처리합니다.
+2. MVC 컨트롤러는 **ChallengeResult** 동작을 반환합니다.
+3. 미들웨어가 **ChallengeResult** 를 가로채어 302 응답을 만들어서 사용자를 Azure AD 로그인 페이지로 리디렉션합니다.
+4.	사용자는 Azure AD로 인증합니다.
+5.	Azure AD는 응용 프로그램에 ID 토큰을 전송합니다.
+6.	미들웨어는 ID 토큰을 확인합니다. 이 시점에 사용자는 응용 프로그램 안에서 인증되었습니다.
+7.	미들웨어는 사용자를 응용 프로그램으로 리디렉션합니다.
 
-## Register the app with Azure AD
-To enable OpenID Connect, the SaaS provider registers the application inside their own Azure AD tenant.
 
-To register the application, follow the steps in [Integrating Applications with Azure Active Directory](/azure/active-directory/active-directory-integrating-applications/), in the section [Adding an Application](/azure/active-directory/active-directory-integrating-applications/#adding-an-application).
+## Azure AD로 앱 등록
+OpenID Connect를 사용하기 위해서, SaaS 공급자는 자체 Azure AD 테넌트 안에 응용 프로그램을 등록합니다.
 
-In the **Configure** page:
+응용 프로그램을 등록하려면 [응용 프로그램 추가하기](/azure/active-directory/active-directory-integrating-applications/#adding-an-application) 절에 있는 [응용 프로그램과 Azure Active Directory 통합하기](/azure/active-directory/active-directory-integrating-applications/)를 참조하세요.
 
-* Note the client ID.
-* Under **Application is Multi-Tenant**, select **Yes**.
-* Set **Reply URL** to a URL where Azure AD will send the authentication response. You can use the base URL of your app.
-  * Note: The URL path can be anything, as long as the host name matches your deployed app.
-  * You can set multiple reply URLs. During development, you can use a `localhost` address, for running the app locally.
-* Generate a client secret: Under **keys**, click on the drop down that says **Select duration** and pick either 1 or 2 years. The key will be visible when you click **Save**. Be sure to copy the value, because it's not shown again when you reload the configuration page.
+**구성** 페이지에서:
 
-## Configure the auth middleware
-This section describes how to configure the authentication middleware in ASP.NET Core 1.0 for multitenant authentication with OpenID Connect.
+* 클라이언트 ID 참조.
 
-In your startup class, add the OpenID Connect middleware:
+* **응용 프로그램이 다중 테넌트입니다**에서 **예**를 선택합니다.
+
+* **회신 URL**을 Azure AD가 인증 응답을 보내개 될 URL로 설정합니다. 사용자 앱의 기본 URL을 사용할 수 있습니다.
+  
+  * 참고: 호스트 이름이 사용자가 배포한 앱과 일치하기만 하면 URL 경로는 무엇이든 가능합니다.
+  
+  * 사용자는 다중 회신 URL을 설정할 수 있습니다. 개발하는 동안, 로컬로 앱을 실행하기 위해서 사용자는 `로컬 호스트` 주소를 사용할 수 있습니다.
+
+* 클라이언트 암호를 생성합니다: **키**에서 **기간 선택**이라는 드롭다운을 클릭하고 1 또는 2 년 중 하나를 선택합니다. **저장**을 클릭하면 키가 보입니다. 구성 페이지를 재로드하면 그 값이 다시 보이지 않기 때문에 반드시 복사해둡니다.
+
+## 인증 미들웨어 구성
+이 절은 다중 테넌트 인증에 대한 ASP.NET Core 1.0에서 OpenID Connect로 인증 미들웨어를 구성하는 방법에 대해 설명합니다.
+
+사용자의 시작 클래스에 OpenID Connect 미들웨어를 추가합니다. 
 
 ```csharp
 app.UseOpenIdConnectAuthentication(options =>
@@ -64,24 +70,30 @@ app.UseOpenIdConnectAuthentication(options =>
 });
 ```
 
-> [!NOTE]
-> See [Startup.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Startup.cs).
+> [!참고]
+> [Startup.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Startup.cs)를 참조하세요.
 > 
 > 
 
-For more information about the startup class, see [Application Startup](https://docs.asp.net/en/latest/fundamentals/startup.html) in the ASP.NET Core 1.0 documentation.
+시작 클래스에 대한 자세한 내용은 ASP.NET Core 1.0 문서에서 [응용 프로그램 시작](https://docs.asp.net/en/latest/fundamentals/startup.html)을 참조하세요.
 
-Set the following middleware options:
+다음의 미들웨어 옵션을 설정합니다:
 
-* **ClientId**. The application's client ID, which you got when you registered the application in Azure AD.
-* **Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/`. This is the URL for the Azure AD common endpoint, which enables users from any Azure AD tenant to sign in. For more information about the common endpoint, see [this blog post](http://www.cloudidentity.com/blog/2014/08/26/the-common-endpoint-walks-like-a-tenant-talks-like-a-tenant-but-is-not-a-tenant/).
-* In **TokenValidationParameters**, set **ValidateIssuer** to false. That means the app will be responsible for validating the issuer value in the ID token. (The middleware still validates the token itself.) For more information about validating the issuer, see [Issuer validation](claims.md#issuer-validation).
-* **CallbackPath**. Set this equal to the path in the Reply URL that you registered in Azure AD. For example, if the reply URL is `http://contoso.com/aadsignin`, **CallbackPath** should be `aadsignin`. If you don't set this option, the default value is `signin-oidc`.
-* **PostLogoutRedirectUri**. Specify a URL to redirect users after the sign out. This should be a page that allows anonymous requests &mdash; typically the home page.
-* **SignInScheme**. Set this to `CookieAuthenticationDefaults.AuthenticationScheme`. This setting means that after the user is authenticated, the user claims are stored locally in a cookie. This cookie is how the user stays logged in during the browser session.
-* **Events.** Event callbacks; see [Authentication events](#authentication-events).
+* **ClientId**. Azure AD에서 응용 프로그램을 등록할 때 받은 응용 프로그램의 클라이언트 ID입니다.
 
-Also add the Cookie Authentication middleware to the pipeline. This middleware is responsible for writing the user claims to a cookie, and then reading the cookie during subsequent page loads.
+* **Authority**. 다중 테넌트 응용 프로그램의 경우, 이 옵션을 https://login.microsoftonline.com/common/으로 설정합니다. Azure AD 공통 끝점에 대한 이 URL에서는, 어떤 Azure AD 테넌트의 사용자들도 로그인할 수 있습니다. 공통 끝점에 대한 자세한 정보는 [이 블로그 포스트](http://www.cloudidentity.com/blog/2014/08/26/the-common-endpoint-walks-like-a-tenant-talks-like-a-tenant-but-is-not-a-tenant/)를 참조하세요.
+
+* **TokenValidationParameters**에서 **ValidateIssuer** 를 false로 설정합니다. 이것은 앱이 ID 토큰에서 발급자 값을 확인해야 함을 의미합니다. (미들웨어는 계속해서 토큰 그 자체를 확인합니다.) 발급자 확인에 관한 자세한 정보는 [발급자 확인](claims.md#issuer-validation)을 참조하세요.
+
+* **CallbackPath**. 이 옵션을 Azure AD에 등록한 회신 URL에 있는 경로와 동일하게 설정합니다. 예를 들면, 회신 URL이 `http://contoso.com/aadsignin`인 경우, **CallbackPath**는 `aadsignin`이어야 합니다. 이 옵션을 설정하지 않은 경우, 기본값은 `signin-oidc`입니다.
+
+* **PostLogoutRedirectUri**. 로그아웃 후 사용자를 리디렉션할 URL을 지정합니다. URL은 익명 요청을 허용하는 페이지여야 합니다 - 일반적으로 홈페이지.
+
+* **SignInScheme**. 이 옵션을 `CookieAuthenticationDefaults.AuthenticationScheme`.으로 설정합니다. 이 설정은 사용자 인증 후 사용자 클레임이 쿠키에 로컬로 저장됨을 의미합니다. 이 쿠키 때문에 사용자가 브라우저 세션에서 로그인을 유지할 수 있습니다.
+
+* **Events.** 이벤트 호출; [인증 이벤트](#authentication-events)를 참고하세요.
+
+쿠키 인증 미들웨어 또한 파이프라인에 추가합니다. 이 미들웨어는 쿠키에 사용자 클레임을 쓴 다음, 후속 페이지가 로드될 때 쿠키를 읽는 일을 합니다.
 
 ```csharp
 app.UseCookieAuthentication(options =>
@@ -92,8 +104,8 @@ app.UseCookieAuthentication(options =>
 });
 ```
 
-## Initiate the authentication flow
-To start the authentication flow in ASP.NET MVC, return a **ChallengeResult** from the contoller:
+## 인증 흐름 초기화
+ASP.NET MVC에서 인증 흐름을 시작하려면, 컨트롤러에서 **ChallengeResult**를 반환합니다:
 
 ```csharp
 [AllowAnonymous]
@@ -109,58 +121,65 @@ public IActionResult SignIn()
 }
 ```
 
-This causes the middleware to return a 302 (Found) response that redirects to the authentication endpoint.
+이 코드는 미들웨어로 하여금 인증 끝점으로 리디렉션한 302(찾음) 응답을 반환하게 합니다.
 
-## User login sessions
-As mentioned, when the user first signs in, the Cookie Authentication middleware writes the user claims to a cookie. After that, HTTP requests are authenticated by reading the cookie.
+## 사용자 로그인 세션
+앞서 언급했듯이, 사용자가 처음 로그인하면 쿠키 인증 미들웨어가 사용자 클레임을 쿠키에 씁니다. 그런 다음, 쿠키 읽기에 의해 HTTP 요청이 인증됩니다.
 
-By default, the cookie middleware writes a [session cookie][session-cookie], which gets deleted once the user closes the browser. The next time the user next visits the site, they will have to sign in again. However, if you set **IsPersistent** to true in the **ChallengeResult**, the middleware writes a persistent cookie, so the user stays logged in after closing the browser. You can configure the cookie expiration; see [Controlling cookie options][cookie-options]. Persistent cookies are more convenient for the user, but may be inappropriate for some applications (say, a banking application) where you want the user to sign in every time.
+기본값으로, 쿠키 미들웨어는 [세션 쿠키][session-cookie]에 쓰는데, 이 값은 사용자가 브라우저를 닫으면 지워집니다. 다음에 사이트를 방문할 때 사용자는 다시 로그인해야 합니다. 그러나, 사용자가 **ChallengeResult**에서 **IsPersistent** 를 true로 설정할 경우, 미들웨어는 영구적 쿠키에 쓰기 때문에 브라우저를 닫은 후에도 사용자는 로그인 상태를 유지합니다.  사용자는 쿠키 만료를 구성할 수 있습니다; [쿠키 옵션 제어하기][cookie-options]를 참조하세요. 영구적 쿠키는 사용자에게 더 편리하지만, 사용자가 매번 로그인하기를 원하는 일부 응용 프로그램에는(은행 응용 프로그램 같은) 부적절할 수 있습니다.
 
-## About the OpenID Connect middleware
-The OpenID Connect middleware in ASP.NET hides most of the protocol details. This section contains some notes about the implementation, that may be useful for understanding the protocol flow.
+## OpenID Connect 미들웨어에 대하여
+ASP.NET의 OpenID Connect 미들웨어는 대부분의 프로토콜 세부 정보를 숨깁니다. 이 절은 구현에 대한 참고 사항 일부를 포함하고 있으며, 이는 프로토콜 흐름을 이해하는 데 유용할 수 있습니다.
 
-First, let's examine the authentication flow in terms of ASP.NET (ignoring the details of the OIDC protocol flow between the app and Azure AD). The following diagram shows the process.
+첫째, ASP.NET 관점에서(앱과 Azure AD 간에 OIDC 프로토콜 흐름에 관한 세부 정보를 무시하고) 인증 흐름을 검토해봅시다. 다음 다이어그램은 그 프로세스를 보여줍니다.
 
 ![Sign-in flow](./images/sign-in-flow.png)
 
-In this diagram, there are two MVC controllers. The Account controller handles sign-in requests, and the Home controller serves up the home page.
+다이어그램에는 두 개의 MVC 컨트롤러가 있습니다. 계정 컨트롤러는 로그인 요청을 처리하고, Home 컨트롤러는 홈페이지를 준비합니다.
 
-Here is the authentication process:
+다음은 인증 프로세스입니다:
 
-1. The user clicks the "Sign in" button, and the browser sends a GET request. For example: `GET /Account/SignIn/`.
-2. The account controller returns a `ChallengeResult`.
-3. The OIDC middleware returns an HTTP 302 response, redirecting to Azure AD.
-4. The browser sends the authentication request to Azure AD
-5. The user signs in to Azure AD, and Azure AD sends back an authentication response.
-6. The OIDC middleware creates a claims principal and passes it to the Cookie Authentication middleware.
-7. The cookie middleware serializes the claims principal and sets a cookie.
-8. The OIDC middleware redirects to the application's callback URL.
-9. The browser follows the redirect, sending the cookie in the request.
-10. The cookie middleware deserializes the cookie to a claims principal and sets `HttpContext.User` equal to the claims principal. The request is routed to an MVC controller.
+1. 사용자가 "로그인" 단추를 클릭하면 브라우저는 GET 요청을 보냅니다. 예: `GET /Account/SignIn/`.
+2. 계정 컨트롤러는 `ChallengeResult`를 반환합니다.
+3.	OIDC 미들웨어는 Azure AD로 리디렉션하면서 HTTP 302 응답을 반환합니다. 
+4.	브라우저는 Azure AD에 인증 요청을 보냅니다.
+5.	사용자가 Azure AD에 로그인하고 Azure AD가 인증 응답을 되돌려보냅니다.
+6.	OIDC 미들웨어는 클레임 주체를 만들어서 쿠키 인증 미들웨어에 전달합니다.
+7.	쿠키 미들웨어는 클레임 주체를 직렬화하고 쿠키를 설정합니다.
+8.	OIDC 미들웨어는 응용 프로그램의 호출 URL로 리디렉션합니다.
+9.	브라우저는 리디렉션을 뒤따르고, 요청에 쿠키를 넣어 전송합니다.
+10. 쿠키 미들웨어는 쿠키를 클레임 주체로 역직렬화하고 `HttpContext.User`를 클레임 주체와 동일하게 설정합니다. 요청이 MVC 컨트롤러로 경로 설정되었습니다.
 
-### Authentication ticket
-If authentication succeeds, the OIDC middleware creates an authentication ticket, which contains a claims principal that holds the user's claims. You can access the ticket inside the **AuthenticationValidated** or **TicketReceived** event.
+### 인증 티켓
+인증이 성공한 경우, OIDC 미들웨어는 인증 티켓을 만드는데, 인증 티켓은 사용자 클레임을 보유한 클레임 주체를 포함하고 있습니다. 사용자는 **AuthenticationValidated** 또는 **TicketReceived** 이벤트에서 티켓을 액세스할 수 있습니다.
 
-> [!NOTE]
-> Until the entire authentication flow is completed, `HttpContext.User` still holds an anonymous principal,  *not* the authenticated user. The anonymous principal has an empty claims collection. After authentication completes and the app redirects, the cookie middleware deserializes the authentication cookie and sets `HttpContext.User` to a claims principal that represents the authenticated user.
+> [!참고]
+> 전체 인증 흐름이 완료될 때까지, `HttpContext.User` 는 인증된 사용자가 아닌 익명 계정을 계속 보유하고 있습니다. 익명 계정은 빈 클레임 컬렉션을 갖고 있습니다. 인증이 완료되고 앱이 리디렉션된 후, 쿠키 미들웨어는 인증 쿠키를 역직렬화하고 `HttpContext.User`를 인증된 사용자를 나타내는 클레임 주체로 설정합니다.
 > 
 > 
 
-### Authentication events
-During the authentication process, the OpenID Connect middleware raises a series of events:
+### 인증 이벤트
+인증 프로세스 중에, OpenID Connect 미들웨어가 연속 이벤트를 발생시킵니다.
 
-* **RedirectToAuthenticationEndpoint**. Called right before the middleware redirects to the authentication endpoint. You can use this event to modify the redirect URL; for example, to add request parameters. See [Adding the admin consent prompt](signup.md#adding-the-admin-consent-prompt) for an example.
-* **AuthorizationResponseReceived**. Called after the middleware receives the authentication response from the identity provider (IDP), but before the middleware validates the response.  
-* **AuthorizationCodeReceived**. Called with the authorization code.
-* **TokenResponseReceived**. Called after the middleware gets an access token from the IDP. Applies only to authorization code flow.
-* **AuthenticationValidated**. Called after the middleware validates the ID token. At this point, the application has a set of validated claims about the user. You can use this event to perform additional validation on the claims, or to transform claims. See [Working with claims](claims.md).
-* **UserInformationReceived**. Called if the middleware gets the user profile from the user info endpoint. Applies only to authorization code flow, and only when `GetClaimsFromUserInfoEndpoint = true` in the middleware options.
-* **TicketReceived**. Called when authentication is completed. This is the last event, assuming that authentication succeeds. After this event is handled, the user is signed into the app.
-* **AuthenticationFailed**. Called if authentication fails. Use this event to handle authentication failures &mdash; for example, by redirecting to an error page.
+* **RedirectToAuthenticationEndpoint**. 미들웨어가 인증 끝점으로 리디렉션되기 직전에 호출됩니다. 리디렉션 URL을 수정하기 위해서 이 이벤트를 사용할 수 있습니다; 예를 들면 요청 매개변수를 추가하기 위해서. 예를 보려면 [관리자 동의 확인 프롬프트 추가하기](signup.md#adding-the-admin-consent-prompt)를 참조하세요.
 
-To provide callbacks for these events, set the **Events** option on the middleware. There are two different ways to declare the event handlers: Inline with lambdas, or in a class that derives from **OpenIdConnectEvents**.
+* **AuthorizationResponseReceived**. 미들웨어가 ID 공급자에서(IDP) 인증 응답을 받은 후에, 단, 미들웨어가 그 응답을 확인하기 전에 호출됩니다. 
 
-Inline with lambdas:
+* **AuthorizationCodeReceived**. 인증 코드를 가지고 호출됩니다.
+
+* **TokenResponseReceived**. 미들웨어가 IDP에서 액세스 토큰을 받은 후 호출됩니다. 인증 코드 흐름에만 적용됩니다.
+
+* **AuthenticationValidated**. 미들웨어가 ID 토큰을 확인한 후 호출됩니다. 이 시점에 응용 프로그램은 사용자에 대해서 확인된 클레임 집합을 갖습니다. 사용자는 클레임을 추가로 확인하거나 클레임을 변환하는 데 이 이벤트를 사용할 수 있습니다. [클레임 작업](claims.md)을 참조하세요.
+
+* **UserInformationReceived**. 미들웨어가 사용자 정보 끝점에서 사용자 프로필을 받은 경우 호출됩니다. 인증 코드 흐름에만 적용되고, 또 미들웨어 옵션에서 `GetClaimsFromUserInfoEndpoint = true`일 때만 적용됩니다.
+
+* **TicketReceived**. 인증이 완료될 때 호출됩니다. 그 인증이 성공한다고 가정하면, 이것이 마지막 이벤트입니다. 이 이벤트가 처리되고 나면 사용자는 앱에 로그인됩니다.
+
+* **AuthenticationFailed**. 인증이 실패할 경우 호출됩니다. 인증 실패를 처리하기 위해서 이 이벤트를 사용합니다 - 예를 들면, 오류 페이지으로 리디렉션 하는 방법으로.
+
+이 이벤트에 대한 호출을 제공하기 위해서, 미들웨어에서 **Events** 옵션을 설정합니다. 이벤트 처리기를 선언하는 2가지 방법이 있습니다: 람다를 따라 선언하는 방법 또는 **OpenIdConnectEvents**에서 파생된 클래스에서 선언하는 방법.
+
+람다를 따라:
 
 ```csharp
 app.UseOpenIdConnectAuthentication(options =>
@@ -201,31 +220,38 @@ app.UseOpenIdConnectAuthentication(options =>
 });
 ```
 
-The second approach is recommended if your event callbacks have any substantial logic, so they don't clutter your startup class. Our reference implementation uses this approach; see [SurveyAuthenticationEvents.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs).
+두 번째 접근 방식은 이벤트 호출의 논리가 충분해서 시작 클래스를 어지럽히지 않을 경우에 추천합니다. 우리의 참조 구현은 이 접근 방식을 사용합니다; [SurveyAuthenticationEvents.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs)를 참조하세요.
 
-### OpenID connect endpoints
-Azure AD supports [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html), wherein the identity provider (IDP) returns a JSON metadata document from a [well-known endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig). The metadata document contains information such as:
+### OpenID connect 끝점
+Azure AD는 [OpenID Connect 검색](https://openid.net/specs/openid-connect-discovery-1_0.html)을 지원하는데, 여기에서 ID 공급자(IDP)는 [잘 알려진 끝점](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig)에서 JSON 메타데이터 문서를 반환합니다. 메타데이터 문서에는 다음과 같은 정보가 있습니다:
 
-* The URL of the authorization endpoint. This is where the app redirects to authenticate the user.
-* The URL of the "end session" endpoint, where the app goes to log out the user.
-* The URL to get the signing keys, which the client uses to validate the OIDC tokens that it gets from the IDP.
+•	인증 끝점의 URL. 이 URL은 앱이 사용자를 인증하기 위해 리디렉션하는 곳입니다.
 
-By default, the OIDC middleware knows how to fetch this metadata. Set the **Authority** option in the middleware, and the middleware constructs the URL for the metadata. (You can override the metadata URL by setting the **MetadataAddress** option.)
+•	앱이 사용자를 로그아웃하기 위해서 가는 "세션 종료" 끝점의 URL입니다.
 
-### OpenID connect flows
-By default, the OIDC middleware uses hybrid flow with form post response mode.
+•	서명 키를 받는 URL로, 고객이 IDP로부터 받은 OIDC 토큰을 확인하기 위해서 사용합니다.
 
-* *Hybrid flow* means the client can get an ID token and an authorization code in the same round-trip to the authorization server.
-* *Form post reponse mode* means the authorization server uses an HTTP POST request to send the ID token and authorization code to the app. The values are form-urlencoded (content type = "application/x-www-form-urlencoded").
 
-When the OIDC middleware redirects to the authorization endpoint, the redirect URL includes all of the query string parameters needed by OIDC. For hybrid flow:
+기본값으로, OIDC 미들웨어는 이 메타데이터를 가져오는 방법을 알고 있습니다. 미들웨어에서 **인증기관** 옵션을 설정하면, 미들웨어는 메타데이터에 대한 URL을 생성합니다. (사용자는 **MetadataAddress** 옵션을 설정하여 메타데이터 URL을 재정의할 수 있습니다.)
 
-* client_id. This value is set in the **ClientId** option
-* scope = "openid profile", which means it's an OIDC request and we want the user's profile.
-* response_type  = "code id_token". This specifies hybrid flow.
-* response_mode = "form_post". This specifies form post response.
+### OpenID connect 흐름
+기본값으로, OIDC 미들웨어는 하이브리드 흐름을 폼 게시 응답 모드에서 사용합니다.
 
-To specify a different flow, set the **ResponseType** property on the options. For example:
+* *하이브리드 흐름*이란 클라이언트가 인증 서버와 같은 왕복 시간으로 ID 토큰과 인증 코드를 받는 것을 의미합니다.
+
+* *폼 게시 응답 모드*란 인증 서버가 HTTP POST 요청을 사용하여 ID 토큰과 인증 코드를 앱에 전송하는 것을 의미합니다. 그 값은 form-urlencoded (콘텐츠 형식 = "application/x-www-form-urlencoded")입니다.
+
+OIDC 미들웨어가 인증 끝점으로 리디렉션할 때, 리디렉션 URL은 OIDC에 필요한 모든 쿼리 문자열 매개변수를 포함합니다. 하이브리드 흐름의 경우:
+
+•	client_id.. 이 값은 **ClientId** 옵션에서 설정됩니다.
+
+•	scope = "openid profile"은 OIDC 요청이고 사용자 프로필을 원한다는 뜻입니다.
+
+•	response_type = "code id_token". 하이브리드 흐름을 지정합니다.
+
+•	response_mode = "form_post". 폼 게시 응답을 지정합니다.
+
+다른 흐름을 지정하려면, 옵션에서 **ResponseType** 속성을 설정합니다.  예:
 
 ```csharp
 app.UseOpenIdConnectAuthentication(options =>
@@ -236,7 +262,7 @@ app.UseOpenIdConnectAuthentication(options =>
 }
 ```
 
-[**Next**][claims]
+[**다음**][claims]
 
 [claims]: claims.md
 [cookie-options]: https://docs.asp.net/en/latest/security/authentication/cookie.html#controlling-cookie-options
