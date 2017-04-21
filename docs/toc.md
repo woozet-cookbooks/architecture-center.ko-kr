@@ -34,7 +34,7 @@
 ## [복원력 체크리스트](./checklist/resiliency.md)
 ## [확장성 체크리스트](./checklist/scalability.md)
 
-# Design for Resiliency
+# 복원력 설계
 ## [복원가능한 응용 프로그램 설계](./resiliency/index.md)
 ## [복원력 체크리스트](./checklist/resiliency.md)
 ## [장애 모드 분석](./resiliency/failure-mode-analysis.md)
