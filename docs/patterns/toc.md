@@ -1,4 +1,4 @@
-# [Cloud Design Patterns](./index.md)
+# [클라우드 설계 패턴](./index.md)
 
 ## Categories
 ### [가용성](./category/availability.md)
