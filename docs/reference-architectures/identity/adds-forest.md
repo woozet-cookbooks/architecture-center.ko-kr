@@ -135,13 +135,17 @@ Active Directory별 보안 고려사항을 확인하려면 [Active Directory를 
 5. 시뮬레이션된 온-프레미스 구성을 사용하는 경우에는 인바운드 트러스트 관계를 설정합니다.
    
    a.	점프 박스에 연결합니다. (*ra-adtrust-security-rg* 리소스 그룹의 *ra-adtrust-mgmt-vm1*). ID *testuser*, 암호 *AweS0me@PW*로 로그인 합니다.
+   
    b.	점프 박스에서 *contoso.com* 도메인(온-프레미스 도메인) 내 첫 번째 VM에서 RDP 세션을 엽니다. 이 VM의 IP 주소는 192.168.0.4입니다. ID는 *contoso\testuser*이고 암호는 *AweS0me@PW*입니다.
-   c. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 인바운드 트러스트를 생성합니다.
+   
+   c. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 인바운드 트러스트를 생성합니다.
 
 6. 귀하의 온-프레미스 인프라를 사용한다면,
    
    a. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드합니다.
+   
    b. 스크립트를 수정하고 변수 `$TrustedDomainName`의 값을 귀하의 도메인 이름으로 대체합니다.
+   
    c. 스크립트를 실행합니다.
 
 7. 점프박스로부터 *treyresearch.com* 도메인(클라우드 도메인)의 첫 번째 VM에 접속합니다. 이 VM의 IP 주소는 10.0.4.4입니다. ID는 *treyresearch\testuser*이고 암호는 AweS0me@PW입니다.
