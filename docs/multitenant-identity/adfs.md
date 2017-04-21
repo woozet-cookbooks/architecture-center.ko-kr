@@ -18,18 +18,18 @@ pnp.series.next: client-assertion
 ## 개요
 Azure Active Directory(Azure AD)는 Office365 및 Dynamics CRM Online 고객뿐만 아니라 Azure AD 고객들이 로그인하기 쉽습니다. 하지만 회사 인트라넷에서 사내 Active Directory를 사용하는 고객은 어떨까요?
 
-한 가지 옵션은 고객들이 [Azure AD Connect]를 사용해서 사내 AD와 Azure AD를 동기화하는 것입니다. 그러나, 어떤 고객은 회사의 IT 정책이나 다른 이유 때문에 이 방법을 사용하지 못할 수 있습니다. 그런 경우, 또 다른 옵션은 Active Directory Federation Services (AD FS)를 통해서 연동하는 것입니다.
+한 가지 옵션은 고객들이 [Azure AD Connect](https://docs.microsoft.com/en-us/azure/active-directory/active-directory-aadconnect/)를 사용해서 사내 AD와 Azure AD를 동기화하는 것입니다. 그러나, 어떤 고객은 회사의 IT 정책이나 다른 이유 때문에 이 방법을 사용하지 못할 수 있습니다. 그런 경우, 또 다른 옵션은 Active Directory Federation Services (AD FS)를 통해서 연동하는 것입니다.
 
 이 시나리오를 사용하기 위해서:
 
 * 고객은 인터넷에 연결된 AD FS 팜을 갖고 있어야 합니다.
 * SaaS 공급자는 자체 AD FS 팜을 배포합니다.
-* 고객과 SaaS 공급자는 [연동 신뢰(federation trust)]를 설정합니다. 이 작업은 수동식 프로세스입니다.
+* 고객과 SaaS 공급자는 [연동 신뢰(federation trust)](https://technet.microsoft.com/library/cc770993(v=ws.11).aspx)를 설정합니다. 이 작업은 수동식 프로세스입니다.
 
 신뢰 관계에는 3가지 주요 역할이 있습니다:
 
-* 고객의 AD FS는 [계정 파트너]로서 고객 AD의 사용자를 인증하고 사용자 클레임으로 보안 토큰을 만듭니다.
-* SaaS 공급자의 AD FS는 [리소스 파트너]이며, 계정 파트너를 신뢰하고 사용자 클레임을 수신합니다.
+* 고객의 AD FS는 [계정 파트너](https://technet.microsoft.com/library/cc731141(v=ws.11).aspx)로서 고객 AD의 사용자를 인증하고 사용자 클레임으로 보안 토큰을 만듭니다.
+* SaaS 공급자의 AD FS는 [리소스 파트너](https://technet.microsoft.com/library/cc731141(v=ws.11).aspx)이며, 계정 파트너를 신뢰하고 사용자 클레임을 수신합니다.
 * SaaS 공급자의 AD FS에서 응용 프로그램은 신뢰 당사자(RP) 자격으로 구성됩니다. 
   
   ![Federation trust](./images/federation-trust.png)
@@ -57,13 +57,13 @@ ASP.NET 4와 WS-Federation을 사용한 예를 보려면, [active-directory-dotn
 | 클레임 | 설명 |
 | --- | --- |
 | aud |대상. 클레임이 발급된 대상인 응용 프로그램. |
-| authenticationinstant |[인증 인스턴트]. 인증이 발생한 시간. |
+| authenticationinstant |[인증 인스턴트](https://msdn.microsoft.com/library/system.security.claims.claimtypes.authenticationinstant(v=vs.110).aspx). 인증이 발생한 시간. |
 | c_hash |코드 해시 값. 이 값은 토큰 콘텐츠의 해시입니다. |
-| exp |[만료 시간]. 시간이 지나 토큰이 더 이상 수락되지 않는 시간. |
+| exp |[만료 시간](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-4.1.). 시간이 지나 토큰이 더 이상 수락되지 않는 시간. |
 | iat |발급된 때. 토큰이 발급된 시간. |
 | iss |발급자. 이 클레임 값은 항상 리소스 파트너의 AD FS입니다. |
 | name |사용자 이름. 예: `john@corp.fabrikam.com`. |
-| nameidentifier |[이름 식별자]. 토큰이 발급된 주체의 이름에 대한 식별자. |
+| nameidentifier |[이름 식별자](https://msdn.microsoft.com/library/system.security.claims.claimtypes.nameidentifier(v=vs.110).aspx). 토큰이 발급된 주체의 이름에 대한 식별자. |
 | nonce |임시 세션. 재생 공격을 예방하기 위해서 AD FS에 의해 생성된 고유 값. |
 | upn |사용자 계정 이름(UPN). 예: john@corp.fabrikam.com |
 | pwd_exp |암호 만료 기간. 사용자 암호 또는 PIN 같은 유사한 인증 암호가 만료될 때까지의 기간(초 단위). |
@@ -85,7 +85,7 @@ SaaS 공급자는 사내에 또는 AzureVM에 AD FS를 배포할 수 있습니�
 Azure에서 유사한 토콜로지를 설정하기 위해서는 가상 네트워크, NSG, azure VM, 가용성 세트의 사용이 필요합니다. 더 자세한 정보는, [가상 컴퓨터에 Windows Server Active Directory 배포를 위한 지침][active-directory-on-azure]을 참조하세요.
 
 ## AD FS와 연동하여 OpenID Connect 인증 구성
-SaaS 공급자는 응용 프로그램과 AD FS 사이에 OpenID Connect를 사용해야 합니다. 그렇게 하려면, AD FS에 응용 프로그램 그룹을 추가합니다. "AD FS에서 OpenId Connect 표지에 대한 웹 앱 설정하기"의 [블로그 포스트]에서 자세한 지침을 볼 수 있습니다. 
+SaaS 공급자는 응용 프로그램과 AD FS 사이에 OpenID Connect를 사용해야 합니다. 그렇게 하려면, AD FS에 응용 프로그램 그룹을 추가합니다. "AD FS에서 OpenId Connect 표지에 대한 웹 앱 설정하기"의 [블로그 포스트](http://www.cloudidentity.com/blog/2015/08/21/OPENID-CONNECT-WEB-SIGN-ON-WITH-ADFS-IN-WINDOWS-SERVER-2016-TP3/)에서 자세한 지침을 볼 수 있습니다. 
 
 다음, OpenID Connect 미들웨어 구성. 메타데이터 끝점은 `https://domain/adfs/.well-known/openid-configuration`이고, 도메인은 SaaS 공급자의 AD FS 도메인입니다.
 
@@ -129,7 +129,7 @@ Set-ADFSClaimsProviderTrust -TargetName "name" -OrganizationalAccountSuffix @("s
 
 여기서 "name"은 클레임 공급자 트러스트의 식별 이름이고, "suffix"는 고객 AD의 UPN 접미사입니다(예: "corp.fabrikam.com").
 
-이러한 구성에서, 최종 사용자가 자기 조직에서 쓰는 계정을 입력하면, AD FS는 그에 대응하는 클레임 공급자를 자동으로 선택합니다. "특정 이메일 접미사 사용을 위한 ID 공급자 구성" 절에서 [AD FS 로그인 페이지 사용자 지정하기]를 참조하세요.
+이러한 구성에서, 최종 사용자가 자기 조직에서 쓰는 계정을 입력하면, AD FS는 그에 대응하는 클레임 공급자를 자동으로 선택합니다. "특정 이메일 접미사 사용을 위한 ID 공급자 구성" 절에서 [AD FS 로그인 페이지 사용자 지정하기](https://technet.microsoft.com/library/dn280950.aspx)를 참조하세요.
 
 ## AD FS 계정 파트너 구성
 고객은 다음을 수행해야 합니다:
