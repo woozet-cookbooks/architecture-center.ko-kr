@@ -138,6 +138,7 @@ Active Directory별 보안 고려사항을 확인하려면 [Active Directory를 
    
    b.	점프 박스에서 *contoso.com* 도메인(온-프레미스 도메인) 내 첫 번째 VM에서 RDP 세션을 엽니다. 이 VM의 IP 주소는 192.168.0.4입니다. ID는 *contoso\testuser*이고 암호는 *AweS0me@PW*입니다.
    
+   
    c. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 인바운드 트러스트를 생성합니다.
 
 6. 귀하의 온-프레미스 인프라를 사용한다면,
