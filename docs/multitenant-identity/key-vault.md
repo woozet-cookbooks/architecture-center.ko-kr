@@ -12,7 +12,7 @@ pnp.series.prev: client-assertion
 ---
 # 응용 프로그램 암호 보호를 위한 Azure 주요 자격 증명 모음 사용
 
-[![GitHub](../_images/github.png) Sample code][sample application]
+[![GitHub](../_images/github.png) 샘플 코드][sample application]
 
 일반적으로 중요하고 보호해야 할 응용 프로그램 설정이 있습니다. 예를 들면:
 
