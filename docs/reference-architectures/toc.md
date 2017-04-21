@@ -33,5 +33,5 @@
 ## [관리 웹 응용 프로그램](./managed-web-app/index.md)
 ### [기본 웹 응용 프로그램](./managed-web-app/basic-web-app.md)
 ### [향상된 확장성](./managed-web-app/scalable-web-app.md)
-### [여러 지역에서 실행](./managed-web-app/multi-region-web-app.md)
+### [ek지역에서 실행](./managed-web-app/multi-region-web-app.md)
 
