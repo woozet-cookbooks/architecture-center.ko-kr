@@ -11,661 +11,438 @@ ms.author: pnp
 pnp.series.title: Azure for AWS Professionals
 ---
 
-# Introduction to Microsoft Azure accounts, platform, and services for AWS experts
+# AWS 전문가를 위한 Microsoft Azure 계정과 플랫폼 및 서비스 소개
 
-This article helps Amazon Web Services (AWS) experts understand the basics of Microsoft Azure accounts, platform, and services. It also covers key similarities and differences between the AWS and Azure platforms.
+이 문서는 Amazon Web Services (AWS) 전문가들이 Microsoft Azure 계정과 플랫폼 및 서비스를 이해하는데 도움이 됩니다. 또한 AWS와 Azure 플랫폼의 주요 유사점과 차이점을 다룹니다.
 
-You'll learn:
+문서를 통해 다음 내용을 익힐 수 있습니다:
 
-* How accounts and resources are organized in Azure.
-* How available solutions are structured in Azure.
-* How the major Azure services differ from AWS services.
+•	Azure에서 계정과 리소스가 구성되는 방법.
 
- Azure and AWS built their capabilities independently over time so that each has important implementation and design differences.
+•	Azure에서 유용한 솔루션이 구조화된 방법.
 
-## Overview
+•	Azure의 주요 서비스와 AWS 서비스의 다른 점.
 
-Like AWS, Microsoft Azure is built around a core set of compute, storage,
-database, and networking services. In many cases, both platforms offer a basic
-equivalence between the products and services they offer. Both AWS and Azure
-allow you to build highly available solutions based on Windows or Linux hosts. So, if you're used to development using Linux and OSS technology, both platforms
-can do the job.
 
-While the capabilities of both platforms are similar, the resources that provide
-those capabilities are often organized differently. Exact one-to-one
-relationships between the services required to build a solution are not always
-clear. There are also cases where a particular service might be offered on one
-platform, but not the other. See [charts of comparable Azure and AWS services](services.md).
+Azure와 AWS가 점차 독립적으로 각자의 기능을 빌드함에 따라 중요한 구현 및 설계의 차이점을 갖게 되었습니다. 
 
-## Accounts and subscriptions
+## 개요
 
-Azure services can be purchased using several pricing options, depending on your
-organization's size and needs. See the [pricing
-overview](https://azure.microsoft.com/pricing/) page for details.
+Microsoft Azure는 AWS와 마찬가지로 계산, 저장소, 데이터베이스, 네트워킹의 주요 서비스로 구성되었습니다. 대체로 두 플랫폼은 제품과 서비스에서 기본적으로 동일한 기능을 제공합니다. AWS와 Azure 모두 Windows와 Linux 호스트 기반에서 고가용성의 솔루션을 구성할 수 있습니다. 따라서, Linux와 OSS 기술을 사용하여 개발에 참여할 경우, 두 플랫폼 모두 성공할 수 있습니다.
 
-[Azure
-subscriptions](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-infrastructure-subscription-accounts-guidelines/)
-are a grouping of resources with an assigned owner responsible for billing and
-permissions management. Unlike AWS, where any resources created under the AWS
-account are tied to that account, subscriptions exist independently of their
-owner accounts, and can be reassigned to new owners as needed.
+두 플랫폼의 기능은 유사하나, 그 기능을 제공하는 리소스는 종종 다르게 구성됩니다. 솔루션 빌드에 필요한 서비스들 사이에 정확한 일대일 관계가 항상 명확한 것은 아닙니다. 또한 특정 서비스가 한 플랫폼에서는 제공되지만 다른 쪽에서는 제공되지 않을 수도 있습니다. [Azure와 AWS 서비스의 비교표](services.md)를 참조하세요.
+
+## 계정 및 구독
+
+Azure 서비스는 자기 조직의 규모와 요구에 따라 몇 가지 가격 옵션으로 구매할 수 있습니다. 자세한 내용은 [가격 개요](https://azure.microsoft.com/pricing/) 페이지를 참조하세요.
+
+[Azure 구독](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-infrastructure-subscription-accounts-guidelines/)
+은 청구와 사용 권한을 관리하도록 지정된 소유자로 리소스를 그룹화한 개념입니다. AWS 계정에서 만들어진 리소스와 그 계정에 고정적인 AWS와 달리, 구독은 그 소유자의 계정과 독립해서 존재하고, 필요한 경우 새 소유자에 재지정될 수 있습니다.
 
 ![Comparison of structure and ownership of AWS accounts and Azure subscriptions](./images/azure-aws-account-compare.png "Comparison of structure and ownership of AWS accounts and Azure subscriptions")
-<br/>*Comparison of structure and ownership of AWS accounts and Azure subscriptions*
+<br/>*AWS 계정과 Azure 구독의 구조 및 소유권 비교*
 <br/><br/>
 
-Subscriptions are assigned three types of administrator accounts:
+구독에는 3가지 종류의 관리자 계정이 지정됩니다:
 
--   **Account Administrator** - The subscription owner and the
-    account billed for the resources used in the subscription. The account
-    administrator can only be changed by transferring ownership of the
-    subscription.
+-   **계정 관리자** - 구독 소유자와 구독에 사용된 리소스에 대금 청구된 계정. 계정 관리자는 구독 소유권을 전환함으로써 변경할 수 있습니다.
 
--   **Service Administrator** - This account has rights to create and manage
-    resources in the subscription, but is not responsible for billing. By
-    default, the account administrator and service administrator are assigned to
-    the same account. The account administrator can assign a separate user to
-    the service administrator account for managing the technical and operational
-    aspects of a subscription. There is only one service administrator per
-    subscription.
+-   **서비스 관리자** - 이 계정은 구독에서 리소스를 만들고 관리할 권한이 있으나, 청구 권한은 없습니다.  기본적으로, 계정 관리자와 서비스 관리자는 같은 계정에 지정됩니다. 계정 관리자는 구독의 기술적, 운영적 측면을 관리하는 서비스 관리자 계정에 별도의 사용자를 지정할 수 있습니다.  구독마다 서비스 관리자가 단 한 명 있습니다.
 
--   **Co-administrator** - There can be multiple co-administrator accounts
-    assigned to a subscription. Co-administrators cannot change the service
-    administrator, but otherwise have full control over subscription resources
-    and users.
+-   **공동관리자** - 구독에 복수의 공동관리자 계정들이 지정될 수 있습니다.  공동관리자들은 서비스 관리자를 바꿀 수 없지만, 이를 제외하고 구독 리소스와 사용자들을 전면적으로 통제합니다. 
 
-Below the subscription level user roles and individual permissions can also be assigned to specific resources, similarly to how permissions are granted to IAM users and groups in AWS. In Azure all user accounts are associated with either a Microsoft Account or Organizational Account (an account managed through an Azure Active Directory).
+AWS에서 IAM 사용자와 그룹에 사용 권한이 부여되는 것과 유사하게, 구독 등급 하에서도 사용자 역할과 개별적인 사용 권한은 특정 리소스에 지정될 수 있습니다.  Azure의 모든 사용자 계정은 Microsoft 계정이나 조직 계정(Azure Active Directory를 통해 관리되는 계정) 중 하나와 관련되어있습니다.
 
-Like AWS accounts, subscriptions have default service quotas and limits. For a
-full list of these limits, see [Azure subscription and service limits, quotas,
-and
-constraints](https://azure.microsoft.com/documentation/articles/azure-subscription-service-limits/).
-These limits can be increased up to the maximum by [filing a support request in
-the management
-portal](https://blogs.msdn.microsoft.com/girishp/2015/09/20/increasing-core-quota-limits-in-azure/).
+AWS 계정과 마찬가지로 구독에도 기본 서비스 할당량과 제한이 있습니다. 이 제한들의 전체 목록을 보려면 [Azure 구독 및 서비스 제한, 할당량, 제약 조건](https://azure.microsoft.com/documentation/articles/azure-subscription-service-limits/)을 참조하세요. 이 제한들은
+These limits can be increased up to the maximum by [관리 포털에서 지원 요청 정리하기](https://blogs.msdn.microsoft.com/girishp/2015/09/20/increasing-core-quota-limits-in-azure/)에 의해 최대로 증가할 수 있습니다.
 
-### See also
+### 참고 항목
 
--   [How to add or change Azure administrator
-    roles](https://azure.microsoft.com/documentation/articles/billing-add-change-azure-subscription-administrator/)
+-   [Azure 관리자 역할 추가 또는 변경하기](https://azure.microsoft.com/documentation/articles/billing-add-change-azure-subscription-administrator/)
 
--   [How to download your Azure billing invoice and daily usage
-    data](https://azure.microsoft.com/documentation/articles/billing-download-azure-invoice-daily-usage-date/)
+-   [Azure 청구서 및 일일 사용 데이터 다운로드하기](https://azure.microsoft.com/documentation/articles/billing-download-azure-invoice-daily-usage-date/)
 
-## Resource management
+## 리소스 관리
 
-The term "resource" in Azure is used in the same way as in AWS, meaning any
-compute instance, storage object, networking device, or other entity you can
-create or configure within the platform.
+Azure에서 "리소스"는 AWS에서와 마찬가지로 계산 인스턴스, 저장소 개체, 네트워킹 장치 또는 플랫폼에서 만들거나 구성할 수 있는 기타 항목을 의미합니다.
 
-Azure resources are deployed and managed using one of two models: [Azure
-Resource Manager, or the older Azure [classic deployment model](/azure/azure-resource-manager/resource-manager-deployment-model).
-Any new resources are created using the Resource Manager model.
+Azure 리소스는 둘 중 한 모델을 사용하여 배포 또는 관리됩니다: Azure 리소스 관리자 또는 오래된 Azure [클래식 배포 모델](/azure/azure-resource-manager/resource-manager-deployment-model). 새 리소스는 리소스 관리자 모델을 사용하여 만듭니다.
 
-### Resource groups
+### 리소스 그룹
 
-Both Azure and AWS have entities called "resource groups" that organize resources such as VMs, storage, and virtual networking devices. However, [Azure resource groups](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-infrastructure-resource-groups-guidelines/) are not directly comparable to AWS resource groups.
+Azure와 AWS는 모두 VM, 저장소, 가상 네트워킹 장치 등 리소스를 구성하는 "리소스 그룹"이라는 항목을 갖고 있습니다. 그러나, [Azure 리소스 그룹](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-infrastructure-resource-groups-guidelines/)은 AWS 리소스 그룹과 직접 비교할 수 없습니다.
 
-While AWS allows a resource to be tagged into multiple resource groups, an Azure
-resource is always associated with one resource group. A resource created in one
-resource group can be moved to another group, but can only be in one resource
-group at a time. Resource groups are the fundamental grouping used by Azure
-Resource Manager.
+AWS에서 리소스는 다중의 리소스 그룹으로 태그가 지정될 수 있지만, Azure 리소스는 항상 한 리소스 그룹과만 관련이 있습니다. 한 리소스 그룹에서 만들어진 리소스는 다른 그룹으로 옮겨갈 수 있지만 한 시점에 한 리소스 그룹에만 있을 수 있습니다. 리소스 그룹은 Azure 리소스 관리자에서 사용하는 기본적인 그룹입니다.
 
-Resources can also be organized using
-[tags](https://azure.microsoft.com/documentation/articles/resource-group-using-tags/).
-Tags are key-value pairs that allow you to group resources across your
-subscription irrespective of resource group membership.
+리소스는
+[태그](https://azure.microsoft.com/documentation/articles/resource-group-using-tags/)를 사용해서 구성할 수도 있습니다. 태그는 리소스 그룹 자격과 관계 없이 구독 중 리소스를 그룹으로 묶을 수 있는 키-값 쌍입니다.
 
-### Management interfaces
+### 관리 인터페이스
 
-Azure offers several ways to manage your resources:
+Azure는 리소스를 관리하는 방법들을 제공합니다.
 
--   [Web
-    interface](https://azure.microsoft.com/documentation/articles/resource-group-portal/).
-    Like the AWS Dashboard, the Azure portal provides a full web-based
-    management interface for Azure resources.
+-   [웹 인터페이스.](https://azure.microsoft.com/documentation/articles/resource-group-portal/).
+    AWS 대시보드와 같이 Azure 포털은 Azure 리소스에 완전한 웹 기반 관리 인터페이스를 제공합니다.
 
 -   [REST
     API](https://azure.microsoft.com/documentation/articles/resource-manager-rest-api/).
-    The Azure Resource Manager REST API provides programmatic access to most of
-    the features available in the Azure portal.
+    Azure 리소스 관리자 REST API는 Azure 포털에서 사용할 수 있는 대부분의 기능에 대한 프로그램 방식 액세스를 제공합니다.
 
--   [Command
-    Line](https://azure.microsoft.com/documentation/articles/xplat-cli-azure-resource-manager/).
-    The Azure CLI tool provides a command-line interface capable of creating and
-    managing Azure resources. Azure CLI is available for [Windows, Linux, and
-    Mac OS](https://github.com/azure/azure-xplat-cli).
+-   [명령줄](https://azure.microsoft.com/documentation/articles/xplat-cli-azure-resource-manager/).
+    TAzure CLI 도구는 Azure 자원을 만들고 관리할 수 있는 명령줄 인터페이스를 제공합니다. Azure CLI는 [Windows, Linux, and
+    Mac OS](https://github.com/azure/azure-xplat-cli)에서 사용할 수 있습니다.
 
 -   [PowerShell](https://azure.microsoft.com/documentation/articles/powershell-azure-resource-manager/).
-    The Azure modules for PowerShell allow you to execute automated management
-    tasks using a script. PowerShell is available for [Windows, Linux, and Mac
-    OS](https://github.com/PowerShell/PowerShell).
+    Azure에서 PowerShell 모듈을 사용하면 스크립트로 자동 관리 작업을 실행할 수 있습니다. PowerShell은 [Windows, Linux, and Mac
+    OS](https://github.com/PowerShell/PowerShell)에서 사용할 수 있습니다.
 
--   [Templates](https://azure.microsoft.com/documentation/articles/resource-group-authoring-templates/).
-    Azure Resource Manager templates provide similar JSON template-based
-    resource management capabilities to the AWS CloudFormation service.
+-   [템플릿](https://azure.microsoft.com/documentation/articles/resource-group-authoring-templates/).
+   Azure 리소스 관리자 템플릿은 AWS CloudFormation 서비스와 비슷한 JSON 템플릿 기반의 리소스 관리 기능을 제공합니다.
+   
+이 인터페이스들에서 리소스 그룹은 Azure 리소스가 생성, 배포, 수정되는 작업의 중심이 됩니다. 이는 CloudFormation 배포 중 AWS 리소스를 그룹화할 때 "스택"이 하는 역할과 비슷합니다.
 
-In each of these interfaces, the resource group is central to how Azure
-resources get created, deployed, or modified. This is similar to the role a
-"stack" plays in grouping AWS resources during CloudFormation deployments.
+이 인터페이스들의 구문과 구조는 AWS와 다르지만, 비슷한 기능을 제공합니다. Azure에서는 [Hashicorp's
+Terraform](https://www.terraform.io/docs/providers/azurerm/) 및 [Netflix
+Spinnaker](http://www.spinnaker.io/)와 같이 AWS에서 사용된 타사의 여러 관리 도구도 사용할 수 있습니다.
 
-The syntax and structure of these interfaces are different from their AWS
-equivalents, but they provide comparable capabilities. In addition, many third
-party management tools used on AWS, like [Hashicorp's
-Terraform](https://www.terraform.io/docs/providers/azurerm/) and [Netflix
-Spinnaker](http://www.spinnaker.io/), are also available on Azure.
+### 참고 항목
 
-### See also
+-   [Azure 리소스 그룹 지침](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-infrastructure-resource-groups-guidelines/)
 
--   [Azure resource group
-    guidelines](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-infrastructure-resource-groups-guidelines/)
+## 지역 및 영역 (고가용성)
 
-## Regions and zones (high availability)
+AWS에서 가용성은 가용 영역이라는 개념에 중점을 둡니다. Azure에서 장애 도메인과 가용성 집합은 모두 고가용성 솔루션을 빌드하는 것과 관련이 있습니다. 쌍을 이루는 지역은 재해 복구 기능을 추가로 제공합니다.
 
-In AWS, availability centers around the concept of Availability Zones. In Azure,
-fault domains and availability sets are all involved in building highly
-available solutions. Paired regions provide additional disaster recovery
-capabilities.
+### 가용 영역, Azure 장애 도메인, 가용성 집합
 
-### Availability Zones, Azure fault domains, and availability sets
+AWS에서 지역은 둘 이상의 가용 영역으로 분할됩니다. 가용 영역은 지역 내에 물리적으로 격리된 데이터센터에 해당합니다. 가용 영역들을 구분하기 위해서 응용 프로그램 서버를 배치한 경우, 한 영역에 영향을 주는 하드웨어 또는 연결 중단은 다른 영역에 호스팅된 서버에 영향을 미치지 않습니다.
 
-In AWS, a region is divided into two or more Availability Zones. An Availability
-Zone corresponds with a physically isolated datacenter in the geographic region.
-If you deploy your application servers to separate Availability Zones, a
-hardware or connectivity outage affecting one zone does not impact any servers
-hosted in other zones.
-
-In Azure, a [fault
-domain](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/)
-defines a group of VMs that shares a physical power source and network switch.
-You use [availability
-sets](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-manage-availability/)
-to spread VMs across multiple fault domains. When instances are assigned to the
-same availability set, Azure distributes them evenly across several fault
-domains. If a power failure or network outage occurs in one fault domain, at
-least some of the set's VMs are in another fault domain and unaffected by the
-outage.
+IAzure에서, [장애 도메인](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/)
+은 물리적 전원과 네트워크 스위치를 공유하는 VM 그룹의 범위를 규정합니다. VM을 여러 장애 도메인에 VM을 분배하려면 [가용성 세트](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-manage-availability/)를 사용합니다. 인스턴스들이 같은 가용성 세트에 할당되면, Azure는 그 인스턴스들을 몇몇 장애 도메인에 골고루 배분합니다.  장애 도메인 한 곳에서 정전이나 네트워크 중단이 발생한 경우, 적어도 그 세트의 VM 일부가 다른 장애 도메인에 있어야 그러한 중단에 영향을 받지 않습니다.
 
 ![AWS Availability Zones comparison to Azure fault domains and availability sets](./images/zone-fault-domains.png "AWS Availability Zones compared with Azure fault domains and availability sets")
-<br/>*AWS Availability Zones compared with Azure fault domains and availability sets*
+<br/>*AWS 가용 영역과 Azure 장애 도메인 및 가용성 세트 비교*
 <br/><br/>
 
-Availability sets should be organized by the instance's role in your application
-to ensure one instance in each role is operational. For example, in a standard
-three-tier web application, you would want to create a separate availability set
-for front-end, application, and data instances.
+인스턴스가 그 역할에 맞게 운영되려면, 해당 인스턴스가 응용 프로그램에서 차지하는 역할에 따라 가용성 세트를 구성해야 합니다.  예를 들면, 표준 3층(three-tier) 웹 응용 프로그램에서 프런트 엔드, 응용 프로그램, 데이터 인스턴스에 대한 별도의 가용성 세트를 만들고자 할 수 있습니다.
 
 ![Azure availability sets for each application role](./images/three-tier-example.png "Availability sets for each application role")
-<br/>*Azure availability sets for each application role*
+<br/>*각 응용 프로그램 역할에 대한 Azure 가용성 세트*
 <br/><br/>
 
-When VM instances are added to availability sets, they are also assigned an
-[update
-domain](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/).
-An update domain is a group of VMs that are set for planned maintenance events
-at the same time. Distributing VMs across multiple update domains ensures that
-planned update and patching events affect only a subset of these VMs at any
-given time.
+VM 인스턴스가 가용성 세트가 추가되면,
+[업데이트 도메인](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/).
+도 할당됩니다. 업데이트 도메인은 계획된 유지관리 이벤트들에 동시에 설정된 VM 그룹입니다. VM을 여러 업데이트 도메인에 배분하면 계획된 업데이트와 패치 이벤트는 어느 때든 이 VM들의 하위 집합에만 영향을 미칩니다. 
 
-### Paired regions
+### 쌍을 이루는 지역
 
-In Azure, you use [paired
-regions](https://azure.microsoft.com/documentation/articles/best-practices-availability-paired-regions/)
-to support redundancy across two predefined geographic regions, ensuring that
-even if an outage affects an entire Azure region, your solution is still
-available.
+Azure에서, 중단이 전체 Azure 지역에 영향을 미치더라도 솔루션을 계속 이용할 수 있고, 미리 정해진 두 지역 간에 중복을 지원하기 위해서는 [쌍을 이루는 지역](https://azure.microsoft.com/documentation/articles/best-practices-availability-paired-regions/)을 이용합니다.
 
-Unlike AWS Availability Zones, which are physically separate datacenters but may
-be in relatively nearby geographic areas, paired regions are usually separated
-by at least 300 miles. This is intended to ensure larger scale disasters only impact one of the regions in the pair. Neighboring pairs can be set to sync
-database and storage service data, and are configured so that platform updates
-are rolled out to only one region in the pair at a time.
+데이터센터가 물리적으로 구분되었으나 지리적으로 비교적 가까운 지역에 있는 AWS 가용 영역과는 달리, 지역 쌍은 최소 300마일 떨어져 있습니다. 이는 대규모 재해가 일어났을 때 쌍을 이룬 지역 중 한 곳에만 영향을 주게 하기 위함입니다. 인접한 쌍은 데이터베이스와 저장소 서비스 데이터를 동기화하도록 설정할 수 있고, 또 플랫폼 업데이트가 한번에 지역 쌍 중 한 곳으로만 옮겨지도록 구성할 수 있습니다. 
 
-Azure [geo-redundant
-storage](https://azure.microsoft.com/documentation/articles/storage-redundancy/#geo-redundant-storage)
-is automatically backed up to the appropriate paired region. For all other
-resources, creating a fully redundant solution using paired regions means
-creating a full copy of your solution in both regions.
+Azure [지역 중복 저장소](https://azure.microsoft.com/documentation/articles/storage-redundancy/#geo-redundant-storage)
+는 적절한 지역 쌍으로 자동 백업됩니다. 다른 모든 리소스의 경우, 쌍을 이루는 지역을 사용한 완전한 중복 솔루션의 생성은 두 지역에서 전체 복제된 솔루션의 생성을 의미합니다.
 
-### See also
+### 참고 항목
 
--   [Regions and availability for virtual machines in
-    Azure](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-regions-and-availability/)
+-   [Azure에서 가상 컴퓨터의 지역 및 가용성](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-regions-and-availability/)
 
--   [Disaster recovery and high availability for applications built on Microsoft
-    Azure](https://azure.microsoft.com/documentation/articles/resiliency-disaster-recovery-high-availability-azure-applications/)
+-   [Micresoft Azure에 빌드된 응용 프로그램의 재해 복구 및 고가용성](https://azure.microsoft.com/documentation/articles/resiliency-disaster-recovery-high-availability-azure-applications/)
 
--   [Planned maintenance for Linux virtual machines in
-    Azure](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-planned-maintenance/)
+-   [Azure에서 Linux 가상 컴퓨터의 계획된 유지 관리](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-planned-maintenance/)
 
-## Services
+## 서비스
 
-Consult the [complete AWS and Azure service comparison matrix](https://aka.ms/azure4aws-services) for a full listing of how all services map between platforms.
+모든 서비스가 플랫폼에서 어떻게 관련이 있는지에 대한 전체 목록을 보려면 [AWS와 Azure 서비스의 전체 비교표](https://aka.ms/azure4aws-services) 를 참조하세요.
 
-Not all Azure products and
-services are available in all regions. Consult the [Products by
-Region](https://azure.microsoft.com/regions/services/) page for details. You can find the uptime guarantees and downtime credit policies for each Azure
-product or service on the [Service Level
-Agreements](https://azure.microsoft.com/support/legal/sla/) page.
+모든 지역에서 Azure 제품 및 서비스를 모두 이용할 수 있는 것은 아닙니다. 자세한 내용은 [지역별 제품](https://azure.microsoft.com/regions/services/) 페이지를 참조하세요. Azure 제품 또는 서비스에 대한 가동 시간 보장률과 가동중지 시간 신용정책은 [서비스 수준 계약](https://azure.microsoft.com/support/legal/sla/) 페이지에서 참조할 수 있습니다.
 
-The following sections provide a brief explanation of how commonly used features and services differ between the AWS and Azure platforms.
+다음 절에서는 공통으로 사용되는 기능과 서비스가 AWS와 Azure 플렛폼에서 어떻게 다른지 간략하게 설명합니다. 
 
-### Compute services
+### 계산 서비스
 
-#### EC2 Instances and Azure virtual machines
+#### EC2 인스턴스와 Azure 가상 컴퓨터
 
-Although AWS instance types and Azure virtual machine sizes breakdown in a
-similar way, there are differences in the RAM, CPU, and storage capabilities.
+AWS 인스턴스 종류와 Azure 가상 컴퓨터 크기가 비슷한 방식으로 분할된다고 하더라도, RAM, CPU, 저장소 기능에서는 차이가 납니다.
 
--   [Amazon EC2 Instance Types](https://aws.amazon.com/ec2/instance-types/)
+-   [Amazon EC2 인스턴스 유형](https://aws.amazon.com/ec2/instance-types/)
 
--   [Sizes for virtual machines in Azure
-    (Windows)](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/)
+-   [Azure에서 가상 컴퓨터의 크기 (Windows)](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/)
 
--   [Sizes for virtual machines in Azure
-    (Linux)](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
+-   [Azure에서 가상 컴퓨터의 크기 (Linux)](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
 
-Unlike AWS' hourly billing, Azure on-demand VMs are billed by the minute.
+AWS의 시간당 청구와 달리, Azure의 주문형 VM은 분 단위로 청구됩니다.
 
-Azure has no equivalent to EC2 Spot Instances, Reserved Instances, or Dedicated
-Hosts.
+Azure는 EC2 스팟 인스턴스(Spot Instances), 예약 인스턴스(Reserved Instances), 전용 호스트(Dedicated Hosts)와 같지 않습니다.
 
-#### EBS and Azure Storage for VM disks
+#### EBS 및 VM 디스크에 대한 Azure 저장소
 
-Durable data storage for Azure VMs is provided by [data
-disks](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-about-disks-vhds/)
-residing in blob storage. This is similar to how EC2 instances store disk
-volumes on Elastic Block Store (EBS). [Azure temporary
-storage](https://blogs.msdn.microsoft.com/mast/2013/12/06/understanding-the-temporary-drive-on-windows-azure-virtual-machines/)
-also provides VMs the same low-latency temporary read-write storage as EC2
-Instance Storage (also called ephemeral storage).
+Azure VM에 대한 지속형 데이터 저장소는 블롭 저장소에 상주하는 [데이터 디스크](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-about-disks-vhds/)
+에 의해 제공됩니다. 이는 EC2 인스턴스가 Elastic Block Store(EBS)에 디스크 볼륨을 저장하는 방법과 비슷합니다. [Azure 임시 저장소](https://blogs.msdn.microsoft.com/mast/2013/12/06/understanding-the-temporary-drive-on-windows-azure-virtual-machines/)
+또한 EC2 인스턴스 저장소와 동일한 짧은 대기시간의 임시 읽기-쓰기 저장소(사용 후 삭제 저장소라고도 함)를 VM에 제공합니다.
 
-Higher performance disk IO is supported using [Azure premium
-storage](https://docs.microsoft.com/azure/storage/storage-premium-storage).
-This is similar to the Provisioned IOPS storage options provided by AWS.
+고성능 디스크 IO 는 [Azure 프리미엄 저장소](https://docs.microsoft.com/azure/storage/storage-premium-storage)를 통해 지원됩니다. 이는 AWS에서 제공되는 프로비저닝된 IOPS 저장소와 비슷합니다.
 
-#### Lambda, Azure Functions, Azure Web-Jobs, and Azure Logic Apps
+#### 람다, Azure 함수, Azure 웹 작업, Azure 논리 앱
 
-[Azure Functions](https://azure.microsoft.com/services/functions/) is the
-primary equivalent of AWS Lambda in providing serverless, on-demand code.
-However, Lambda functionality also overlaps with other Azure services:
+[Azure 함수](https://azure.microsoft.com/services/functions/)는 서버를 사용하지 않는 주문형 코드를 제공하는 데 있어서 AWS 람다와 기본적으로 같습니다.  그러나, 람다 기능 또한 다른 Azure 서비스와 겹칩니다:
 
--   [WebJobs](https://azure.microsoft.com/documentation/articles/web-sites-create-web-jobs/) - allow you to create scheduled or continuously running background tasks.
+-   [웹작업](https://azure.microsoft.com/documentation/articles/web-sites-create-web-jobs/) - 예약된 또는 계속 실행되는 백그라운드 작업을 만들 수 있습니다.
 
--   [Logic Apps](https://azure.microsoft.com/services/logic-apps/) - provides communications, integration, and business rule management services.
+-   [논리 앱](https://azure.microsoft.com/services/logic-apps/) - 의사소통, 통합, 비즈니스 규칙 관리 서비스를 제공합니다.
 
-#### Autoscaling, Azure VM scaling, and Azure App Service Autoscale
+#### 자동 크기 조정, Azure VM 크기 조정, Azure 앱 서비스 자동 크기 조정
 
-Autoscaling in Azure is handled by two services:
+Azure의 자동 크기 조정은 두 가지 서비스에 따라 처리됩니다:
 
--   [VM scale
-    sets](https://azure.microsoft.com/documentation/articles/virtual-machine-scale-sets-overview/) - allow you to deploy and manage an identical set of VMs. The number of
-    instances can autoscale based on performance needs.
+-   [VM 크기 집합](https://azure.microsoft.com/documentation/articles/virtual-machine-scale-sets-overview/) - VM 중 동일한 세트를 배포하고 관리할 수 있습니다.  인스턴스 개수는 성능 요구를 기반으로 하여 자동 크기가 조정될 수 있습니다.
 
--   [App Service
-    Autoscale](https://azure.microsoft.com/documentation/articles/web-sites-scale/) - provides the capability to autoscale Azure App Service solutions.
+-   [App 서비스 자동 크기 조절](https://azure.microsoft.com/documentation/articles/web-sites-scale/) -Azure 앱 서비스 솔루션을 자동 크기 조정하는 기능을 제공합니다.
 
 
-#### Container Service
-The [Azure Container Service](https://docs.microsoft.com/azure/container-service/container-service-intro) supports Docker containers managed through Docker Swarm, Kubernetes, or DC/OS.
+#### 컨테이너 서비스
+[Azure 컨테이너 서비스](https://docs.microsoft.com/azure/container-service/container-service-intro)는 Docker Swarm, Kubernetes, DC/OS를 통해 관리되는 Docker 컨테이너를 지원합니다.
 
-#### Other compute services 
+#### 기타 계산 서비스
 
 
-Azure offers several compute services that do not have direct equivalents in
-AWS:
+Azure는 AWS에서 직접 대응하는 것이 없는 몇 가지 계산 서비스를 제공합니다:
 
--   [Azure
-    Batch](https://azure.microsoft.com/documentation/articles/batch-technical-overview/) - allows you to manage compute-intensive work across a scalable collection
-    of virtual machines.
+-   [Azure 일괄 처리](https://azure.microsoft.com/documentation/articles/batch-technical-overview/) - 확장 가능한 가상 컴퓨터들에서 계산 집약적 작업을 관리할 수 있습니다.
 
--   [Service
-    Fabric](https://azure.microsoft.com/documentation/articles/service-fabric-overview/) - platform for developing and hosting scalable
-    [microservice](https://azure.microsoft.com/documentation/articles/service-fabric-overview-microservices/)
-    solutions.
+-   [서비스 패브릭](https://azure.microsoft.com/documentation/articles/service-fabric-overview/) - 확장 가능한
+    [마이크로서비스](https://azure.microsoft.com/documentation/articles/service-fabric-overview-microservices/)솔루션을 개발하고 관리하기 위한 플랫폼.
+    
+#### 참고 항목
 
-#### See also
+-   [포털을 사용하여 Azure에서 Linux VM 만들기](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-quick-create-portal/)
 
--   [Create a Linux VM on Azure using the
-    Portal](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-quick-create-portal/)
+-   [Azure 참조 아키텍처: Azure에서 Linux VM 실행하기](https://azure.microsoft.com/documentation/articles/guidance-compute-single-vm-linux/)
 
--   [Azure Reference Architecture: Running a Linux VM on
-    Azure](https://azure.microsoft.com/documentation/articles/guidance-compute-single-vm-linux/)
+-   [Azure 앱 서비스에서 Node.js 웹 앱 시작하기](https://azure.microsoft.com/documentation/articles/app-service-web-nodejs-get-started/)
 
--   [Get started with Node.js web apps in Azure App
-    Service](https://azure.microsoft.com/documentation/articles/app-service-web-nodejs-get-started/)
+-   [Azure 참조 아키텍처: 기본적인 웹 응용 프로그램](https://azure.microsoft.com/documentation/articles/guidance-web-apps-basic/)
 
--   [Azure Reference Architecture: Basic web
-    application](https://azure.microsoft.com/documentation/articles/guidance-web-apps-basic/)
+-   [첫 번째 Azure 함수 만들기](https://azure.microsoft.com/documentation/articles/functions-create-first-azure-function/)
 
--   [Create your first Azure
-    Function](https://azure.microsoft.com/documentation/articles/functions-create-first-azure-function/)
+### 저장소
 
-### Storage
+#### S3/EBS/EFS와 Azure 저장소
 
-#### S3/EBS/EFS and Azure Storage
+AWS 플랫폼에서 클라우드 저장소는 주로 3가지 서비스로 나뉩니다:
 
-In the AWS platform, cloud storage is primarily broken down into three services:
+-   **단순 저장소 서비스 (S3)** - 기본 개체 저장소. 데이터를 인터넷 접근 가능한 API를 통해서 이용 가능하게 합니다.
 
--   **Simple Storage Service (S3)** - basic object storage. Makes data available
-    through an Internet accessible API.
+-   **Elastic 블록 저장소 (EBS)** - 단일 VM에서 접근하기 위한 블록 수준의 저장소.
 
--   **Elastic Block Storage (EBS)** - block level storage, intended for access
-    by a single VM.
+-   **Elastic 파일 시스템 (EFS)** - 수천 개의 EC2 인스턴스에 대한 공유 저장소로 사용하고자 한 파일 저장소.
 
--   **Elastic File System (EFS)** - file storage meant for use as shared storage
-    for up to thousands of EC2 instances.
+Azure 저장소에서, 반드시 구독해야 하는 [저장소 계정](https://azure.microsoft.com/documentation/articles/storage-create-storage-account/)
+을 이용하여 다음과 같은 저장소 서비스를 만들고 관리할 수 있습니다:
 
-In Azure Storage, subscription-bound [storage
-accounts](https://azure.microsoft.com/documentation/articles/storage-create-storage-account/)
-allow you to create and manage the following storage services:
+-   [Blob 저장소](https://azure.microsoft.com/documentation/articles/storage-create-storage-account/) - 문서, 미디어 파일, 응용 프로그램 설치 관리자와 같은 모든 형식의 텍스트 또는 이진 데이터를 저장합니다. Blob 저장소를 개인 액세스용으로 설정하거나 콘텐츠를 인터넷에 공개적으로 공유할 수 있습니다. Blob 저장소는 AWS S3 및 EBS와 동일한 목적으로 사용됩니다.
 
--   [Blob
-    storage](https://azure.microsoft.com/documentation/articles/storage-create-storage-account/) - stores any type of text or binary data, such as a document, media file, or
-    application installer. You can set Blob storage for private access or share
-    contents publicly to the Internet. Blob storage serves the same purpose as
-    both AWS S3 and EBS.
+-   [테이블 저장소](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-table-storage/) - 구조화된 데이터세트를 저장합니다. 테이블 저장소는 다량의 데이터를 신속하게 개발하고 빠르게 액세스할 수 있는 NoSQL 키-특성 데이터 저장소입니다.  AWS의 심플DB(SympleDB) 및 다이나포DB(DynamoDB) 서비스와 유사함.
 
--   [Table
-    storage](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-table-storage/) - stores structured datasets. Table storage is a NoSQL key-attribute data
-    store that allows for rapid development and fast access to large quantities
-    of data. Similar to AWS' SimpleDB and DynamoDB services.
+-   [큐 저장소](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-queues/) - 클라우드 서비스의 구성요소들에서 워크플로 처리 및 통신을 위한 메시지를 전송합니다. 
 
--   [Queue
-    storage](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-queues/) - provides messaging for workflow processing and for communication between
-    components of cloud services.
+-   [파일 저장소](https://azure.microsoft.com/documentation/articles/storage-java-how-to-use-file-storage/) - 표준 서버 메시지 블록(SMB) 프로토콜을 사용하여 레거시 응용 프로그램을 위한 공유 저장소를 제공합니다.   파일 저장소는 AWS 플랫폼의 EFS와 유사하게 사용됩니다. 
 
--   [File
-    storage](https://azure.microsoft.com/documentation/articles/storage-java-how-to-use-file-storage/) - offers shared storage for legacy applications using the standard server
-    message block (SMB) protocol. File storage is used in a similar manner to
-    EFS in the AWS platform.
+#### Glacier와 Azure 저장소
 
-#### Glacier and Azure Storage
+Azure 저장소는 AWS의 장기 보존 Glacier 저장소와 동일한 기능을 제공하지 않습니다.  자주 액세스 하지 않는 수명이 긴 데이터의 경우 Azure는 [Azure cool blob 저장소 계층](https://azure.microsoft.com/documentation/articles/storage-blob-storage-tiers/)을 제공합니다. Cool 저장소는 표준 blob 저장소보다 싸고 성능이 낮은 스토리지를 제공하는데 이는 AWS의 S3에 필적합니다 - 빈번하지 않은 액세스.
 
-Azure Storage does not offer a direct equivalent to AWS' long-term archival
-Glacier storage. For data that is infrequently accessed and long-lived Azure
-offers the [Azure cool blob storage
-tier](https://azure.microsoft.com/documentation/articles/storage-blob-storage-tiers/).
-Cool storage provides cheaper, lower performance storage than standard blob
-storage and is comparable to AWS' S3 - Infrequent Access.
+#### 참고 항목
 
-#### See also
+-   [Microsoft Azure 저장소 성능 및 확장성 점검표](https://azure.microsoft.com/documentation/articles/storage-performance-checklist/)
 
--   [Microsoft Azure Storage Performance and Scalability
-    Checklist](https://azure.microsoft.com/documentation/articles/storage-performance-checklist/)
+-   [Azure 저장소 보안 지침](https://azure.microsoft.com/documentation/articles/storage-security-guide/)
 
--   [Azure Storage security
-    guide](https://azure.microsoft.com/documentation/articles/storage-security-guide/)
+-   [패턴 및 실례 콘텐츠 전송망(CDN) 지침](https://azure.microsoft.com/documentation/articles/best-practices-cdn/)
 
--   [Patterns & Practices: Content Delivery Network (CDN)
-    guidance](https://azure.microsoft.com/documentation/articles/best-practices-cdn/)
+### 네트워킹
 
-### Networking
+#### Elastic 부하 분산, Azure 부하 분산 장치, Azure 응용 프로그램 게이트웨이
 
-#### Elastic Load Balancing, Azure Load Balancer, and Azure Application Gateway
+두 가지 Elastic 부하 분산 서비스에 상응하는 Azure 기능:
+-   [부하 분산 장치](https://azure.microsoft.com/documentation/articles/load-balancer-overview/) - AWS의 클래식 부하 분산 장치와 같은 기능을 제공하며, 네트워크 수준에서 여러 VM을 위하여 트래픽을 배분합니다.  장애조치 기능도 제공합니다.
 
-The Azure equivalents of the two Elastic Load Balancing services are:
+-   [응용 프로그램 게이트웨이](https://azure.microsoft.com/documentation/articles/application-gateway-introduction/) - AWS 응용 프로그램 부하 분산 장치와 비교할만한 응용 프로그램 수준의 규칙 기반 라우팅을 제공합니다.
 
--   [Load
-    Balancer](https://azure.microsoft.com/documentation/articles/load-balancer-overview/) - provides the same capabilities as the AWS Classic Load Balancer, allowing
-    you to distribute traffic for multiple VMs at the network level. It also
-    provides failover capability.
+#### 라우트 53, Azure DNS, Azure 트래픽 관리자
 
--   [Application
-    Gateway](https://azure.microsoft.com/documentation/articles/application-gateway-introduction/) - offers application-level rule-based routing comparable to the AWS
-    Application Load Balancer.
+AWS에서, 라우트 53은 DNS 이름 관리와 DNS 수준의 트래픽 라우팅, 장애조치 서비스를 제공합니다.  Azure에서 이는 두 가지 서비스를 통해서 처리됩니다.
 
-#### Route 53, Azure DNS, and Azure Traffic Manager
+-   [Azure DNS](https://azure.microsoft.com/documentation/services/dns/) - 도메인 및 DNS 관리 기능을 제공합니다.
 
-In AWS, Route 53 provides both DNS name management and DNS-level traffic routing
-and failover services. In Azure this is handled through two services:
+-   [트래픽 관리자](https://azure.microsoft.com/documentation/articles/traffic-manager-overview/) - DNS 수준의 트래픽 라우팅, 부하 분산, 장애조치 기능을 제공합니다.
 
--   [Azure DNS](https://azure.microsoft.com/documentation/services/dns/) - provides domain and DNS management.
+#### 직접 연결 및 Azure ExpressRoute
 
--   [Traffic
-    Manager](https://azure.microsoft.com/documentation/articles/traffic-manager-overview/) - provides DNS level traffic routing, load balancing, and failover
-    capabilities.
-
-#### Direct Connect and Azure ExpressRoute
-
-Azure provides similar site-to-site dedicated connections through its
+Azure는
 [ExpressRoute](https://azure.microsoft.com/documentation/services/expressroute/)
-service. ExpressRoute allows you to connect your local network directly to Azure
-resources using a dedicated private network connection. Azure also offers more
-conventional [site-to-site VPN
-connections](https://azure.microsoft.com/documentation/articles/vpn-gateway-howto-site-to-site-resource-manager-portal/)
-at a lower cost.
+서비스를 통해서 사이트 간 전용 연결을 제공합니다. ExpressRoute를 이용할 경우 전용 개인 네트워크 연결을 통해서 Azure 리소스에 로컬 네트워크를 직접 연결할 수 있습니다. Azure는 보다 전통적인 [사이트 간 VPN 연결](https://azure.microsoft.com/documentation/articles/vpn-gateway-howto-site-to-site-resource-manager-portal/)을 낮은 비용으로 제공합니다.
 
-#### See also
+#### 참고 항목
 
--   [Create a virtual network using the Azure
-    portal](https://azure.microsoft.com/documentation/articles/virtual-networks-create-vnet-arm-pportal/)
+-   [Azure 포털을 사용한 가상 컴퓨터 만들기 ](https://azure.microsoft.com/documentation/articles/virtual-networks-create-vnet-arm-pportal/)
 
--   [Plan and design Azure Virtual
-    Networks](https://azure.microsoft.com/documentation/articles/virtual-network-vnet-plan-design-arm/)
+-   [Azure 가상 네트워크의 계획 및 설계](https://azure.microsoft.com/documentation/articles/virtual-network-vnet-plan-design-arm/)
 
--   [Azure Network Security Best
-    Practices](https://azure.microsoft.com/documentation/articles/azure-security-network-security-best-practices/)
+-   [Azure 네트워크 보안 모범 사례](https://azure.microsoft.com/documentation/articles/azure-security-network-security-best-practices/)
 
-### Database services
+### 데이터베이스 서비스
 
-#### RDS and Azure SQL Database service
+#### RDS 및 Azure SQL 데이터베이스 서비스
 
-AWS and Azure have different approaches on relational database offerings in the
-cloud. AWS' Relational Database Service (RDS) supports creating instances using
-several different database engines, such as Oracle and MySQL.
+AWS와 Azure는 클라우드에서 관계형 데이터베이스 제품에 대한 접근법이 다릅니다.  AWS의 관계형 데이터베이스 서비스(RDS)는 Oracle과 MySQL 등 여러 다양한 데이터베이스 엔진을 사용하여 인스턴스 만들기를 지원합니다.
 
-[SQL
-Database](https://azure.microsoft.com/documentation/articles/sql-database-technical-overview/)
-is Azure's cloud database offering. It provides highly scalable relational data
-storage, through a managed service. SQL Database uses its own engine, and does
-not support the creation of other database types. Other database engines such as
-[SQL
-Server](https://azure.microsoft.com/services/virtual-machines/sql-server/),
-[Oracle](https://azure.microsoft.com/campaigns/oracle/), or
-[MySQL](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-classic-mysql-2008r2/)
-can be deployed using Azure VM Instances.
+[SQL 데이터베이스](https://azure.microsoft.com/documentation/articles/sql-database-technical-overview/)는 Azure의 클라우드 데이터베이스 제품입니다. 이 제품은 관리 서비스를 통해서 확장성이 뛰어난 관계형 데이터 저장소를 제공합니다. SQL 데이터베이스는 자체 엔진을 사용하고, 다른 종류의 데이터베이스의 생성을 지원하지 않습니다.
+SQL 서버](https://azure.microsoft.com/services/virtual-machines/sql-server/), [Oracle](https://azure.microsoft.com/campaigns/oracle/),
+[MySQL](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-classic-mysql-2008r2/)등 다른 데이터베이스 엔진은 Azure VM 인스턴스를 써서 배포될 수 있습니다.
 
-Costs for AWS RDS are determined by the amount of hardware resources that your
-instance uses, like CPU, RAM, storage, and network bandwidth. In the SQL
-Database service, cost depends on your database size, concurrent connections,
-and throughput levels.
+AWS RDS 비용은 CPU, RAM, 저장소, 네트워크 대역폭 등 인스턴스가 사용하는 하드웨어 리소스의 수량에 따라 결정됩니다.  SQL 데이터베이스 서비스에서 비용은 데이터베이스 크기, 동시 연결, 처리량 수준에 따라 달라집니다. 
 
-#### See also
+#### 참고 항목
 
--   [Azure SQL Database
-    Tutorials](https://azure.microsoft.com/documentation/articles/sql-database-explore-tutorials/)
+-   [Azure SQL 데이터베이스 Database 지침서](https://azure.microsoft.com/documentation/articles/sql-database-explore-tutorials/)
 
--   [Configure geo-replication for Azure SQL Database with the Azure
-    portal](https://azure.microsoft.com/documentation/articles/sql-database-geo-replication-portal/)
+-   [Azure 포털로 Azure SQL 데이터베이스의 지역 복제 구성하기 ](https://azure.microsoft.com/documentation/articles/sql-database-geo-replication-portal/)
 
--   [Introduction to DocumentDB: A NoSQL JSON
-    Database](https://azure.microsoft.com/documentation/articles/documentdb-introduction/)
+-   [DocumentDB 소개: NoSQL JSON 데이터베이스](https://azure.microsoft.com/documentation/articles/documentdb-introduction/)
 
--   [How to use Azure Table storage from
-    Node.js](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-table-storage/)
+-   [Node.js에서 Azure 데이블 저장소를 사용하는 방법](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-table-storage/)
 
-### Security and identity
+### 보안 및 신원확인
 
-#### Directory service and Azure Active Directory
+#### 디렉터리 서비스와 Azure Active Directory
 
-Azure splits up directory services into the following offerings:
+Azure는 디렉터리 서비스를 다음 제품들로 나눕니다.
 
 -   [Azure Active
-    Directory](https://azure.microsoft.com/documentation/articles/active-directory-whatis/) - cloud based directory and identity management service.
+    Directory](https://azure.microsoft.com/documentation/articles/active-directory-whatis/) - 클라우드 기반의 디렉터리 및 신원확인 관리 서비스.
 
 -   [Azure Active Directory
-    B2B](https://azure.microsoft.com/documentation/articles/active-directory-b2b-collaboration-overview/) - enables access to your corporate applications from partner-managed
-    identities.
+    B2B](https://azure.microsoft.com/documentation/articles/active-directory-b2b-collaboration-overview/) - 파트너-관리 신원확인을 통해서 회사의 응용 프로그램을 액세스할 수 있습니다. 
 
 -   [Azure Active Directory
-    B2C](https://azure.microsoft.com/documentation/articles/active-directory-b2c-overview/) - service offering support for single sign-on and user management for
-    consumer facing applications.
+    B2C](https://azure.microsoft.com/documentation/articles/active-directory-b2c-overview/) - 소비자가 직접 대면하는 응용 프로그램에 대한 싱글 사인 온과 사용자 관리에 필요한 서비스 제공 지원.
 
 -   [Azure Active Directory Domain
-    Services](https://azure.microsoft.com/documentation/articles/active-directory-ds-overview/) - hosted domain controller service, allowing Active Directory compatible
-    domain join and user management functionality.
+    Services](https://azure.microsoft.com/documentation/articles/active-directory-ds-overview/) - 도메인 컨트롤러 서비스를 관리하며, Active Directory와 호환되는 도메인 가입 및 사용자 관리 기능을 허용합니다.
 
-#### Web application firewall
+#### 웹 응용 프로그램 방화벽
 
-In addition to the [Application Gateway Web Application
-Firewall](https://azure.microsoft.com/documentation/articles/application-gateway-webapplicationfirewall-overview/),
-you can also [use web application
-firewalls](https://azure.microsoft.com/documentation/articles/application-gateway-webapplicationfirewall-overview/)
-from third-party vendors like [Barracuda
-Networks](https://azure.microsoft.com/marketplace/partners/barracudanetworks/waf/).
+In addition to the [응용 프로그램 게이트웨이 웹 응용 프로그램 방화벽](https://azure.microsoft.com/documentation/articles/application-gateway-webapplicationfirewall-overview/)뿐만 아니라, [Barracuda
+Networks](https://azure.microsoft.com/marketplace/partners/barracudanetworks/waf/)와 같은 타 공급업체의 [웹 응용 프로그램 방화벽](https://azure.microsoft.com/documentation/articles/application-gateway-webapplicationfirewall-overview/)을 사용할 수 있습니다.
 
-#### See also
+#### 참고 항목
 
--   [Getting started with Microsoft Azure
-    security](https://azure.microsoft.com/documentation/articles/azure-security-getting-started/)
+-   [Microsoft Azure 보안 시작하기](https://azure.microsoft.com/documentation/articles/azure-security-getting-started/)
 
--   [Azure Identity Management and access control security best
-    practices](https://azure.microsoft.com/documentation/articles/azure-security-identity-management-best-practices/)
+-   [Azure 신원확인 관리 및 출입 통제 보안의 모범 사례](https://azure.microsoft.com/documentation/articles/azure-security-identity-management-best-practices/)
 
-### Application and messaging services
+### 응용 프로그램 및 메시징 서비스
 
-#### Simple Email Service
+#### 심플 이메일 서비스
 
-AWS provides the Simple Email Service (SES) for sending notification,
-transactional, or marketing emails. In Azure, third-party solutions like
-[Sendgrid](https://sendgrid.com/partners/azure/) provide email services.
+AWS는 알림, 업무상 또는 마케팅 이메일을 전송하기 위한 심플 이메일 서비스(SES)를 제공합니다. Azure에서,
+[Sendgrid](https://sendgrid.com/partners/azure/)와 같은 타사 솔루션이 이메일 서비스를 제공합니다.
 
-#### Simple Queueing Service
+#### 심플 큐 서비스
 
-AWS Simple Queueing Service (SQS) provides a messaging system for connecting
-applications, services, and devices within the AWS platform. Azure has two
-services that provide similar functionality:
+AWS 심플 큐 서비스(SQS)는 AWS 플랫폼에서 응용 프로그램, 서비스, 장치를 연결하기 위한 메시징 시스템을 제공합니다. Azure에는 비슷한 기능을 제공하는 두 가지 서비스가 있습니다. 
 
--   [Queue
-    storage](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-queues/) - a cloud messaging service that allows communication between application
-    components within the Azure platform.
+-   [큐 저장소](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-queues/) - Azure 플랫폼에서 응용 프로그램 구성요소들 사이에 통신을 할 수 있는 클라우드 메시징 서비스.
 
--   [Service
-    Bus](https://azure.microsoft.com/en-us/services/service-bus/) - a more robust messaging system for connecting applications, services, and
-    devices. Using the related [Service Bus
-    relay](https://docs.microsoft.com/en-us/azure/service-bus-relay/relay-what-is-it),
-    Service Bus can also connect to remotely hosted applications and services.
+-   [서비스 버스](https://azure.microsoft.com/en-us/services/service-bus/) - 응용 프로그램, 서비스, 장치를 연결하기 위한 보다 강력한 메시징 시스템. 관련된 [서비스 버스 릴레이](https://docs.microsoft.com/en-us/azure/service-bus-relay/relay-what-is-it)를 사용하여, 서비스 버스가 원격 관리되는 응용 프로그램 및 서비스에 연결될 수도 있습니다.
 
-#### Device Farm
+#### 디바이스 팜(Device Farm)
 
-The AWS Device Farm provides cross-device testing services. In Azure, [Xamarin
-Test Cloud](https://www.xamarin.com/test-cloud) provides similar cross-device
-front-end testing for mobile devices.
+AWS 디바이스 팜은 장치 간 시험 서비스를 제공합니다. Azure에서, [Xamarin 시험 클라우드](https://www.xamarin.com/test-cloud)는 모바일 장치에 대하여 비슷한 장치 간 프런트 엔드 시험을 제공합니다.
 
-In addition to front-end testing, the [Azure DevTest
-Labs](https://azure.microsoft.com/services/devtest-lab/) provides back end
-testing resources for Linux and Windows environments.
+In addition to front-end testing, the [Azure DevTest 랩](https://azure.microsoft.com/services/devtest-lab/)은 프런트 엔드 시험뿐만 아니라 Linux와 Windows 환경에 대한 백 엔드 시험 리소스를 제공합니다.
 
-#### See also
+#### 참고 항목
 
--   [How to use Queue storage from
-    Node.js](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-queues/)
+-   [Node.js에서 큐 저장소를 사용하는 방법](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-queues/)
 
--   [How to use Service Bus
-    queues](https://azure.microsoft.com/documentation/articles/service-bus-nodejs-how-to-use-queues/)
+-   [서비스 버스 큐 사용 방법](https://azure.microsoft.com/documentation/articles/service-bus-nodejs-how-to-use-queues/)
 
-### Analytics and big data
+### 분석 및 빅 데이터
 
-[The Cortana Intelligence
-Suite](https://azure.microsoft.com/suites/cortana-intelligence-suite/) is
-Azure's package of products and services designed to capture, organize, analyze,
-and visualize large amounts of data. The Cortana suite consists of the following
-services:
+[Cortana 인텔리전스 도구 모음](https://azure.microsoft.com/suites/cortana-intelligence-suite/)은 많은 데이터를 포착, 구성, 분석, 시각화하도록 설계된 Azure의 제품 및 서비스 패키지입니다. Cortana 도구 모음은 다음 서비스들로 구성됩니다:
 
--   [HDInsight](https://azure.microsoft.com/documentation/services/hdinsight/) - managed Apache distribution that includes Hadoop, Spark, Storm, or HBase.
+-   [HDInsight](https://azure.microsoft.com/documentation/services/hdinsight/) - Hadoop, Spark, Storm, HBase를 포함하는 관리형 Apache 배포판입니다.
 
--   [Data
-    Factory](https://azure.microsoft.com/documentation/services/data-factory/) - provides data orchestration and data pipeline functionality.
+-   [데이터 팩토리](https://azure.microsoft.com/documentation/services/data-factory/) - 데이터 통제(orchestration) 및 데이터 파이프라인 기능을 제공합니다.
 
--   [SQL Data
-    Warehouse](https://azure.microsoft.com/documentation/services/sql-data-warehouse/) - large-scale relational data storage.
+-   [SQL 데이터 웨어하우스](https://azure.microsoft.com/documentation/services/sql-data-warehouse/) - 대규모 관계형 데이터 저장소.
 
--   [Data Lake
-    Store](https://azure.microsoft.com/documentation/services/data-lake-store/) - large-scale storage optimized for big data analytics workloads.
+-   [데이터 레이크 저장소](https://azure.microsoft.com/documentation/services/data-lake-store/) - 빅 데이터 분석 작업에 최적화된 대규모 저장소.
 
--   [Machine
-    Learning](https://azure.microsoft.com/documentation/services/machine-learning/) - used to build and apply predictive analytics on data.
+-   [기계 학습](https://azure.microsoft.com/documentation/services/machine-learning/) - 데이터에 대한 예측 분석을 빌드하고 적용하는 데 사용됨.
 
--   [Stream
-    Analytics](https://azure.microsoft.com/documentation/services/stream-analytics/) - real-time data analysis.
+-   [스트림 분석](https://azure.microsoft.com/documentation/services/stream-analytics/) - 실시간 데이터 분석.
 
--   [Data Lake
-    Analytics](https://azure.microsoft.com/documentation/articles/data-lake-analytics-overview/) - large-scale analytics service optimized to work with Data Lake Store
+-   [데이터 레이크 분석](https://azure.microsoft.com/documentation/articles/data-lake-analytics-overview/) - 데이터 레이크 저장소와 작업할 수 있도록 최적화된 대규모 분석 서비스
 
--   [PowerBI](https://powerbi.microsoft.com/) - used to power data
-    visualization.
+-   [PowerBI](https://powerbi.microsoft.com/) - 전원 데이터 시각화에 사용됨.
 
-#### See also
+#### 참고 항목
 
--   [Cortana Intelligence Gallery](https://gallery.cortanaintelligence.com/)
+-   [Cortana 인텔리전스 갤러리](https://gallery.cortanaintelligence.com/)
 
--   [Understanding Microsoft big data
-    solutions](https://msdn.microsoft.com/library/dn749804.aspx)
+-   [Microsoft 빅 데이터 솔루션 이해하기](https://msdn.microsoft.com/library/dn749804.aspx)
 
--   [Azure Data Lake & Azure HDInsight
-    Blog](https://blogs.msdn.microsoft.com/azuredatalake/)
+-   [Azure 데이터 레이크 & Azure HDInsight 블로그](https://blogs.msdn.microsoft.com/azuredatalake/)
 
-### Internet of Things
+### 사물 인터넷
 
-#### See also
+#### 참고 항목
 
--   [Get started with Azure IoT
-    Hub](https://azure.microsoft.com/documentation/articles/iot-hub-csharp-csharp-getstarted/)
+-   [Azure IoT 허브 시작하기](https://azure.microsoft.com/documentation/articles/iot-hub-csharp-csharp-getstarted/)
 
--   [Comparison of IoT Hub and Event
-    Hubs](https://azure.microsoft.com/documentation/articles/iot-hub-compare-event-hubs/)
+-   [IoT 허브와 이벤트 허브 비교](https://azure.microsoft.com/documentation/articles/iot-hub-compare-event-hubs/)
 
-### Mobile services
+### 모바일 서비스
 
-#### Notifications
+#### 알림
 
 Notification Hubs do not support sending SMS or email messages, so third-party
 services are needed for those delivery types.
 
-#### See also
+#### 참고 항목
 
--   [Create an Android
-    app](https://azure.microsoft.com/documentation/articles/app-service-mobile-android-get-started/)
+-   [Android 앱 만들기](https://azure.microsoft.com/documentation/articles/app-service-mobile-android-get-started/)
 
--   [Authentication and Authorization in Azure Mobile
-    Apps](https://azure.microsoft.com/documentation/articles/app-service-mobile-auth/)
+-   [Azure 모바일 앱의 인증 및 권한 부여](https://azure.microsoft.com/documentation/articles/app-service-mobile-auth/)
 
--   [Sending push notifications with Azure Notification
-    Hubs](https://azure.microsoft.com/documentation/articles/notification-hubs-android-push-notification-google-fcm-get-started/)
+-   [Azure 알림 허브로 푸시 알림 전송](https://azure.microsoft.com/documentation/articles/notification-hubs-android-push-notification-google-fcm-get-started/)
 
-### Management and monitoring
+### 관리 및 모니터링
 
-#### See also
--   [Monitoring and diagnostics
-    guidance](https://azure.microsoft.com/documentation/articles/best-practices-monitoring/)
+#### 참고 항목
 
--   [Best practices for creating Azure Resource Manager
-    templates](https://azure.microsoft.com/documentation/articles/resource-manager-template-best-practices/)
+-   [모니터링 및 진단 지침](https://azure.microsoft.com/documentation/articles/best-practices-monitoring/)
 
--   [Azure Resource Manager Quickstart
-    templates](https://azure.microsoft.com/documentation/templates/)
+-   [Azure 리소스 관리자 템플릿 작성에 대한 모범 사례](https://azure.microsoft.com/documentation/articles/resource-manager-template-best-practices/)
+
+-   [Azure 리소스 관리자 빠른 시작 템플릿](https://azure.microsoft.com/documentation/templates/)
 
 
-## Next steps
+## 다음 단계
 
--   [Complete AWS and Azure service comparison
-    matrix](https://aka.ms/azure4aws-services)
+-   [AWS와 Azure 서비스 전체 비교표](https://aka.ms/azure4aws-services)
 
--   [Interactive Azure Platform Big
-    Picture](http://azureplatform.azurewebsites.net/)
+-   [대화형 Azure 플랫폼 빅 픽처](http://azureplatform.azurewebsites.net/)
 
--   [Get started with Azure](https://azure.microsoft.com/get-started/)
+-   [Azure 시작하기](https://azure.microsoft.com/get-started/)
 
--   [Azure solution
-    architectures](https://azure.microsoft.com/solutions/architecture/)
+-   [Azure 솔루션 아키텍처](https://azure.microsoft.com/solutions/architecture/)
 
--   [Azure Reference
-    Architectures](https://azure.microsoft.com/documentation/articles/guidance-architecture/)
+-   [Azure 참조 아키텍처](https://azure.microsoft.com/documentation/articles/guidance-architecture/)
 
--   [Patterns & Practices: Azure
-    Guidance](https://azure.microsoft.com/documentation/articles/guidance/)
+-   [패턴 및 실례 Azure 지침](https://azure.microsoft.com/documentation/articles/guidance/)
 
--   [Free Online Course: Microsoft Azure for AWS
-    Experts](http://aka.ms/azureforaws)
+-   [무료 온라인 과정 AWS 전문가를 위한 Microsoft Azure](http://aka.ms/azureforaws)
