@@ -91,208 +91,208 @@ Azure에서 [서비스 수준 계약][sla] (SLA)은 가동 시간과 연결성�
 
 SLA를 정의할 때 고려해야 할 기타 몇 가지 고려사항이 있습니다.
 
-* To achieve four 9's (99.99%), you probably can't rely on manual intervention to recover from failures. The application must be self-diagnosing and self-healing. 
-* Beyond four 9's, it is challenging to detect outages quickly enough to meet the SLA.
-* Think about the time window that your SLA is measured against. The smaller the window, the tighter the tolerances. It probably doesn't make sense to define your SLA in terms of hourly or daily uptime. 
+* 네 개의 9(99.99%)를 달성하려면 아마도 장애 복구를 위해 수동 개입에 의존할 수는 없을 것입니다. 응용 프로그램이 자가 진단을 하고 자가 복구를 수행해야 합니다.
+* 네 개의 9를 넘어서면 SLA를 충족하기 위해 충분히 신속하게 중단을 감지하는 것이 어렵습니다.
+* SLA를 측정하는 시간대를 생각해보십시오. 시간대가 작을수록 허용 범위가 더 작아집니다. 시간별 또는 일별 가동 시간 측면에서 SLA를 정의하는 것이 의미가 없을 수도 있습니다. 
 
-### Composite SLAs
-Consider an App Service web app that writes to Azure SQL Database. At the time of this writing, these Azure services have the following SLAs:
+### 복합 SLA
+Azure SQL 데이터베이스에 작성하는 앱 서비스 웹 응용 프로그램을 생각해보십시오. 작성 시점에 이들 Azure 서비스는 아래와 같은 SLA를 가지고 있습니다.
 
-* App Service Web Apps = 99.95%
-* SQL Database = 99.99%
+* 앱 서비스 웹 응용 프로그램 = 99.95%
+* SQL 데이터베이스 = 99.99%
 
 ![Composite SLA](./images/sla1.png)
 
-What is the maximum downtime you would expect for this application? If either service fails, the whole application fails. In general, the probability of each service failing is independent, so the composite SLA for this application is 99.95% x 99.99% = 99.94%. That's lower than the individual SLAs, which isn't surprising, because an application that relies on multiple services has more potential failure points. 
+이 응용 프로그램에서 기대할 수 있는 최대 가동 중지 시간은 얼마일까요? 어느 한 서비스에 장애가 발생하면 전체 응용 프로그램에 장애가 발생합니다. 일반적으로 각 서비스의 장애 발생 가능성은 독립적이므로 이 응용 프로그램의 복합 SLA는 99.95% x 99.99% = 99.94%입니다. 이는 개별 SLA보다 낮은데, 그 이유는 여러 서비스에 의존하는 응용 프로그램은 잠재적 장애 지점이 더 많기 때문입니다.
 
-On the other hand, you can improve the composite SLA by creating independent fallback paths. For example, if SQL Database is unavailable, put transactions into a queue, to be processed later.
+한편, 독립적 대체 경로를 만들어서 복합 SAL를 향상할 수 있습니다. 예를 들어 SQL 데이터베이스를 사용할 수 없을 경우, 트랜잭션을 큐에 넣어 나중에 처리하도록 합니다.
 
 ![Composite SLA](./images/sla2.png)
 
-With this design, the application is still available even if it can't connect to the database. However, it fails if the database and the queue both fail at the same time. The expected percentage of time for a simultaneous failure is 0.0001 × 0.001, so the composite SLA for this combined path is  
+이와 같이 설계하면 응용 프로그램이 데이터베이스에 연결할 수 없을 경우에도 계속 이용할 수 있습니다. 하지만 데이터베이스와 큐가 모두 동시에 실패하면 장애가 발생합니다. 동시 장애가 발생할 예상 비율은 0.0001 × 0.001이므로 결합된 경로의 복합 SLA는 다음과 같습니다.
 
-* Database OR queue = 1.0 &minus; (0.0001 &times; 0.001) = 99.99999%
+* 데이터베이스 또는 큐 = 1.0 &minus; (0.0001 &times; 0.001) = 99.99999%
 
-The total composite SLA is:
+총 복합 SLA:
 
-* Web app AND (database OR queue) = 99.95% &times; 99.99999% = ~99.95%
+* 웹 응용 프로그램 그리고 (데이터베이스 또는 큐) = 99.95% &times; 99.99999% = ~99.95%
 
-But there are tradeoffs to this approach. The application logic is more complex, you are paying for the queue, and there may be data consistency issues to consider.
+하지만 이러한 접근법에는 장단점이 있습니다. 응용 프로그램 논리가 더 복잡하고, 큐에 대한 비용도 지불하며, 고려해야 할 데이터 일관성 문제도 있을 수 있습니다.
 
-**SLA for multi-region deployments**. Another HA technique is to deploy the application in more than one region, and use Azure Traffic Manager to fail over if the application fails in one region. For a two-region deployment, the composite SLA is calculated as follows. 
+**다중 지역 배포의 SLA**. 또 하나의 HA 기법은 응용 프로그램을 두 개 이상의 지역에 배포하고, 한 지역에서 응용 프로그램이 실패할 경우 장애 조치를 위해 Azure Traffic Manager를 사용하는 것입니다. 2지역 배포의 경우 복합 SLA는 다음과 같이 계산합니다.
 
-Let *N* be the composite SLA for the application deployed in one region. The expected chance that the application will fail in both regions at the same time is (1 &minus; N) &times; (1 &minus; N). Therefore,
+*N* 을 한 지역에 배포되는 응용 프로그램의 SLA라고 하겠습니다. 양쪽 지역에서 동시에 응용 프로그램이 실패할 가능성은 (1 &minus; N) &times; (1 &minus; N)입니다. 그러므로,
 
-* Combined SLA for both regions = 1 &minus; (1 &minus; N)(1 &minus; N) = N + (1 &minus; N)N
+* 양쪽 지역의 결합 SLA = 1 &minus; (1 &minus; N)(1 &minus; N) = N + (1 &minus; N)N
 
-Finally, you must factor in the [SLA for Traffic Manager][tm-sla]. As of when this article was written, the SLA for Traffic Manager SLA is 99.99%.
+마지막으로 [Traffic Manager의 SLA][tm-sla]를 고려해야 합니다. 본 기사의 작성 시점에 Traffic Manager의 SLA는 99.99%입니다.
 
-* Composite SLA = 99.99% &times; (combined SLA for both regions)
+* 복합 SLA = 99.99% &times; (양쪽 지역의 결합 SLA)
 
-A further detail is that failing over is not instantaneous, which can result in some downtime during a failover. See [Traffic Manager endpoint monitoring and failover][tm-failover].
+자세히 설명하자면 장애 조치가 즉시 이루어지는 것이 아니기 때문에 장애 조치 시에 약간의 가동 중지 시간이 발생할 수 있습니다. [Traffic Manager 끝점 모니터링 및 장애 조치][tm-failover]를 참조하십시오.
 
-The calculated SLA number is a useful baseline, but it doesn't tell the whole story about availability. Often, an application can degrade gracefully when a non-critical path fails. Consider an application that shows a catalog of books. If the application can't retrieve the thumbnail image for the cover, it might show a placeholder image. In that case, failing to get the image does not reduce the application's uptime, although it affects the user experience.  
+계산된 SLA는 유용한 기준선이 되지만, 가용성에 관한 전체 내용을 말해주지는 않습니다. 중요하지 않은 경로가 실패하면 응용 프로그램 기능이 안정적으로 저하될 수 있습니다. 책 카탈로그를 보여주는 응용 프로그램을 생각해보십시오. 응용 프로그램이 커버의 미리 보기 이미지를 검색할 수 없을 경우 자리 표시자 이미지를 보여줄 수 있습니다. 이 경우, 이미지 가져오기가 실패해도 사용자 경험에는 영향을 주지만 응용 프로그램의 가동 시간을 줄이지는 않습니다.
 
-## Designing for resiliency
-During the design phase, you should perform a failure mode analysis (FMA). The goal of an FMA is to identify possible points of failure, and define how the application will respond to those failures.
+## 복원력 설계
+디자인 단계에서 장애 모드 분석(FMA)을 수행해야 합니다. FMA의 목표는 예상 장애 지점을 식별하고 응용 프로그램의 장애 대응 방법을 정의하는 것입니다.
 
-* How will the application detect this type of failure?
-* How will the application respond to this type of failure?
-* How will you log and monitor this type of failure? 
+* 응용 프로그램이 어떻게 장애 유형을 감지할까요?
+* 응용 프로그램이 어떻게 그 장애 유형에 대응할까요?
+* 그 장애 유형을 어떻게 기록하고 모니터링할까요?
 
-For more information about the FMA process, with specific recommendations for Azure, see [Azure resiliency guidance: Failure mode analysis][fma].
+FMA 프로세스 및 Azure의 자세한 권장 사항에 관한 내용은 [Azure 복원 지침: 장애 모드 분석][fma]을 참조하십시오.
 
-### Example of identifying failure modes and detection strategy
-**Failure point:** Call to an external web service / API.
+### 장애 모드 식별 및 감지 전략의 예
+**장애 지점:** 외부 웹 서비스 / API로 호출.
 
-| Failure mode | Detection strategy |
+| 장애 모드 | 감지 전략 |
 | --- | --- |
-| Service is unavailable |HTTP 5xx |
-| Throttling |HTTP 429 (Too Many Requests) |
-| Authentication |HTTP 401 (Unauthorized) |
-| Slow response |Request times out |
+| 서비스를 사용할 수 없음 |HTTP 5xx |
+| 제한 |HTTP 429 (너무 많은 요청) |
+| 인증 |HTTP 401 (인증 받지 않음) |
+| 느린 응답 |요청 시간 초과 |
 
-## Resiliency strategies
-This section provides a survey of some common resiliency strategies. Most of these are not limited to a particular technology. The descriptions in this section are meant to summarize the general idea behind each technique, with links to further reading.
+## 복원 전략
+이 섹션에서는 일부 일반적인 복원 전략에 관한 조사 내용을 제시합니다. 그 전략의 대부분은 특정 기술에 국한되지 않습니다. 이 섹션의 내용은 각 기법 이면의 일반적 아이디어 및 추가로 읽을 자료를 요약하여 설명합니다.
 
-### Retry transient failures
-Transient failures can be caused by momentary loss of network connectivity, a dropped database connection, or a timeout when a service is busy. Often, a transient failure can be resolved simply by retrying the request. For many Azure services, the client SDK implements automatic retries, in a way that is transparent to the caller; see [Retry service specific guidance][retry-service-specific guidance].
+### 일시적 장애의 재시도
+일시적 장애는 순간적인 네트워크 연결 끊김, 데이터베이스 연결 끊김 또는 서비스를 사용 중일 때 시간 초과로 인하여 발생할 수 있습니다. 일시적 장애는 간단히 요청을 재시도함으로써 해결되는 경우가 많습니다. 많은 Azure 서비스의 경우 호출자에게 투명한 방식으로 클라이언트 SDK가 자동으로 재시도를 수행합니다. 관련 내용은 [서비스별 재시도 지침][retry-service-specific guidance]을 참조하십시오.
 
-Each retry attempt adds to the total latency. Also, too many failed requests can cause a bottleneck, as pending requests accumulate in the queue. These blocked requests might hold critical system resources such as memory, threads, database connections, and so on, which can cause cascading failures. To avoid this, increase the delay between each retry attempt, and limit the total number of failed requests.
+각각의 재시도는 전체 대기 시간을 증가시킵니다. 또한 실패한 요청이 너무 많으면 큐에 대기 중인 요청이 누적되어 병목 현상이 야기됩니다. 이렇게 차단된 요청은 메모리, 스레드, 데이터베이스 연결 등 중요한 시스템 자원을 붙들고 있어서 연속적인 장애를 유발할 수 있습니다. 이를 방지하려면 각 재시도 간의 대기 시간을 증가시켜 실패한 요청의 총 수를 제한해야 합니다.
 
 ![Composite SLA](./images/retry.png)
 
-For more information, see [Retry Pattern][retry-pattern].
+자세한 내용은 [재시도 패턴][retry-pattern]을 참조하십시오.
 
-### Load balance across instances
-For scalability, a cloud application should be able to scale out by adding more instances. This approach also improves resiliency, because unhealthy instances can be taken out of rotation.  
+### 인스턴스 간 부하 분산
+확장성의 경우 클라우드 응용 프로그램이 인스턴스 추가를 통한 수평 확장이 가능해야 합니다. 또한 이러한 접근법은 복원력도 향상시키는데 그 이유는 비정상적 인스턴스는 로테이션에서 제외할 수 있기 때문입니다.
 
-For example:
+예제:
 
-* Put two or more VMs behind a load balancer. The load balancer distributes traffic to all the VMs. See [Running multiple VMs on Azure for scalability and availability][ra-multi-vm].
-* Scale out an Azure App Service app to multiple instances. App Service automatically load balances across instances. See [Basic web application][ra-basic-web].
-* Use [Azure Traffic Manager][tm] to distribute traffic across a set of endpoints.
+* 부하 분산 장치 뒤에 두 개 이상의 VM을 두십시오. 부하 분산 장치가 트래픽을 모든 VM에 분산시킵니다. 관련 내용은 [확장성 및 가용성을 위해 Azure에서 다수의 VM 실행][ra-multi-vm] 을 참조하십시오.
+* Azure App Service 앱을 여러 인스턴스로 확장하십시오. App Service는 자동으로 인스턴스 간 부하 분산을 수행합니다. [기본 웹 응용 프로그램][ra-basic-web]을 참조하십시오.
+* 끝점 집합에 걸쳐 트래픽을 배분하려면 [Azure Traffic Manager][tm]를 사용하십시오.
 
-### Replicate data
-Replicating data is a general strategy for handling non-transient failures in a data store. Many storage technologies provide built-in replication, including Azure SQL Database, DocumentDB, and Apache Cassandra.  
+### 데이터 복제
+데이터 복제는 일시적이 아닌 데이터 저장소의 장애를 처리하는 일반적인 전략입니다. 많은 저장소 기술이 Azure SQL Database, DocumentDB, Apache Cassandra 등 복제 기능을 기본으로 제공합니다.
 
-It's important consider both the read and write paths. Depending on the storage technology, you might have multiple writable replicas, or a single writable replica and multiple read-only replicas. 
+읽기 및 쓰기 경로를 모두 고려하는 것이 중요합니다. 저장소 기술에 따라 기록이 가능한 여러 복제본이 있거나 또는 한 개의 기록 가능 복제본과 여러 개의 읽기 전용 복제본이 있을 수 있습니다.
 
-For highest availability, replicas can be placed in multiple regions. However, this increases the latency to replicate the data. Typically, replicating across regions is done asynchronously, which implies an eventual consistency model and potential data loss if a replica fails. 
+최고의 가용성을 얻으려면 복제본을 여러 지역에 배치해야 합니다. 하지만 그렇게 하면 데이터 복제 대기 시간이 증가합니다. 일반적으로 지역 간 복제는 비동기식으로 수행되므로 궁극적인 일관성 모델을 의미하며 복제에 실패할 경우 데이터가 손실될 가능성이 있습니다.
 
-### Degrade gracefully
-If a service fails and there is no failover path, the application may be able to degrade gracefully, in a way that still provides an acceptable user experience. For example:
+### 안정적 기능 저하
+서비스가 실패하고 장애 조치 경로가 없을 경우, 응용 프로그램은 여전히 수용 가능한 사용자 환경을 제공하면서 안정적으로 기능이 저하될 수 있습니다. 예를 들면 다음과 같습니다.
 
-* Put a work item on a queue, to be executed later. 
-* Return an estimated value 
-* Use locally cached data. 
-* Show the user an error message. (This option is better than having the application stop responding to requests.)
+* 작업 항목을 큐에 넣어 나중에 실행되도록 합니다.
+* 추정값을 반환합니다.
+* 로컬로 캐시된 데이터를 사용합니다.
+* 사용자에게 오류 메시지를 표시합니다. (이 옵션은 응용 프로그램이 요청에 대한 대응을 중지하는 것보다 낫습니다.)
 
-### Throttle high-volume users
-Sometimes a small number of users create excessive load. That can have an impact on other users, reducing the overall availability of your application.
+### 대용량 사용자의 제한
+때로는 소수의 사용자가 과도한 부하를 야기할 때가 있습니다. 그러면 다른 사용자들에게 영향을 줄 수 있고, 응용 프로그램의 전반적 가용성을 떨어뜨립니다.
 
-When a single client makes an excessive number of requests, the application might throttle the client for a certain period of time. During the throttling period, the application refuses some or all of the requests from that client (depending on the exact throttling strategy). The threshold for throttling might depend on the customer's service tier. 
+단일 클라이언트가 지나치게 많은 요청을 하면, 응용 프로그램이 해당 클라이언트를 일정 기간 제한할 수도 있습니다. 제한 기간 동안 (정확한 제한 전략에 따라) 응용 프로그램이 그 클라이언트의 일부 또는 전체 요청을 거절합니다. 제한 임계값은 고객의 서비스 계층에 따라 달라질 수 있습니다.
 
-Throttling does not imply the client was necessarily acting maliciously. It just means the client exceeded their service quota.  In some cases, a consumer might consistently exceed their quota or otherwise behave badly. In that case, you might go further and block the user. Typically, this is done by blocking an API key or an IP address range.
+제한을 하는 것이 반드시 클라이언트가 악의적 행위를 했다는 것을 의미하지는 않습니다. 단순히 클라이언트가 서비스 할당량을 초과했음을 의미하는 것입니다. 일부의 경우 고객이 지속적으로 할당량을 초과했거나, 불량한 행위를 했을 가능성이 있습니다. 그 경우, 해당 사용자에 대해 추가적인 차단 조치를 취할 수 있습니다. 일반적으로 그 조치는 API 키 또는 IP 주소 범위를 차단하는 방식으로 합니다.
 
-For more information, see [Throttling Pattern][throttling-pattern].
+자세한 내용은 [제한 패턴][throttling-pattern]을 참조하십시오.
 
-### Use a circuit breaker
-The Circuit Breaker pattern can prevent an application from repeatedly trying an operation that is likely to fail. The analogy is to a physical circuit breaker, a switch that interrupts the flow of current when a circuit is overloaded.
+### 회로 차단기 사용
+회로 차단기 패턴을 이용하여 응용 프로그램이 실패할 가능성이 있는 작업을 반복적으로 시도하는 것을 방지할 수 있습니다. 비유로서 물리적 차단기를 들 수 있는데, 이는 회로에 과부하가 걸리면 전류 흐름을 중지시키는 스위치입니다.
 
-The circuit breaker wraps calls to a service. It has three states:
+회로 차단기는 서비스 호출을 래핑합니다. 차단기의 상태는 다음 세 가지입니다.
 
-* **Closed**. This is the normal state. The circuit breaker sends requests to the service, and a counter tracks the number of recent failures. If the failure count exceeds a threshold within a given time period, the circuit breaker switches to the Open state. 
-* **Open**. In this state, the circuit breaker immediately fails all requests, without calling the service. The application should use a mitigation path, such as reading data from a replica or simply returning an error to the user. When the circuit breaker switches to Open, it starts a timer. When the timer expires, the circuit breaker switches to the Half-open state.
-* **Half-open**. In this state, the circuit breaker lets a limited number of requests go through to the service. If they succeed, the service is assumed to be recovered, and the circuit breaker switches back to the Closed state. Otherwise, it reverts to the Open state. The Half-Open state prevents a recovering service from suddenly being inundated with requests.
+* **닫힘**. 정상 상태를 말합니다. 회로 차단기가 서비스로 요청을 보내고 카운터가 최근 실패 수를 추적합니다. 실패 수가 주어진 기간의 임계치를 초과하면 회로 차단기가 열림 상태로 전환됩니다.
+* **개방**. 이 상태에서는 회로 차단기가 서비스를 호출하지 않고 즉시 모든 요청을 실패 처리합니다. 응용 프로그램이 완화 경로를 사용해야 하며, 예를 들면 본제본에서 데이터를 읽거나 단순히 오류를 사용자에게 반환해야 합니다. 회로 차단기가 개방으로 전환되면 타이머가 시작됩니다. 타이머가 만료되면 회로 차단기가 절반 개방 상태로 전환됩니다.
+* **절반 개방**. 이 상태에서는 회로 차단기가 제한된 수의 요청만 서비스로 전달되도록 합니다. 이들이 성공하면 서비스가 복구된 것으로 가정하고, 회로 차단기가 닫힘 상태로 다시 전환됩니다. 그렇지 않으면 개방 상태로 되돌아갑니다. 절반 개방 상태는 서비스에 갑자기 다량의 요청이 유입되는 것을 방지합니다.
 
-For more information, see [Circuit Breaker Pattern][circuit-breaker-pattern].
+자세한 내용은 [회로 차단기 패턴][circuit-breaker-pattern]을 참조하십시오.
 
-### Use load leveling to smooth out spikes in traffic
-Applications may experience sudden spikes in traffic, which can overwhelm services on the backend. If a backend service cannot respond to requests quickly enough, it may cause requests to queue (back up), or cause the service to throttle the application.
+### 트래픽 급증을 원활히 처리하기 위해 부하 평준화 사용
+응용 프로그램이 갑작스런 트래픽 급증을 경험할 수 있고, 그러면 백엔드의 서비스에 과부하가 걸릴 수 있습니다. 백엔드서비스가 충분히 신속히 요청에 응답할 수 없으면, 큐 요청(백업)이 발생하거나 또는 서비스가 응용 프로그램을 제한할 수 있습니다.
 
-To avoid this, you can use a queue as a buffer. When there is a new work item, instead of calling the backend service immediately, the application queues a work item to run asynchronously. The queue acts as a buffer that smooths out peaks in the load. 
+이를 방지하기 위해서 큐를 버퍼로 사용할 수 있습니다. 새로운 작업 항목이 있을 경우, 즉시 백엔드 서비스를 호출하는 대신에 응용 프로그램이 비동기 실행을 위해 작업 항목을 큐에 넣습니다. 큐는 부하의 급증을 원활히 처리하는 버퍼 역할을 수행합니다.
 
-For more information, see [Queue-Based Load Leveling Pattern][load-leveling-pattern].
+자세한 내용은 [큐 기반 부하 평준화 패턴][load-leveling-pattern]을 참조하십시오.
 
-### Isolate critical resources
-Failures in one subsystem can sometimes cascade, causing failures in other parts of the application. This can happen if a failure causes some resources, such as threads or sockets, not to get freed in a timely manner, leading to resource exhaustion. 
+### 중요한 리소스 격리
+때로는 한 서브시스템의 장애가 연속 장애를 유발할 수 있고 따라서 응용 프로그램의 다른 부분들이 실패할 수 있습니다. 장애 때문에 스레드, 소켓 등 일부 리소스가 제때 해제되지 않아서 리소스가 소진되는 경우에 이런 상황이 발생할 수 있습니다. 
 
-To avoid this, you can partition a system into isolated groups, so that a failure in one partition does not bring down the entire system. This technique is sometimes called the Bulkhead pattern.
+이를 방지하려면, 시스템을 격리된 그룹들로 분할하여 한 파티션의 장애가 전체 시스템을 다운시키지 않도록 해야 합니다. 이 기법을 때로는 벌크헤드 패턴이라고도 합니다.
 
-Examples:
+예를 들면 다음과 같습니다.
 
-* Partition a database -- for example, by tenant -- and assign a separate pool of web server instances for each partition.  
-* Use separate thread pools to isolate calls to different services. This helps to prevent cascading failures if one of the services fails. For an example, see the Netflix [Hystrix library][hystrix].
-* Use [containers][containers] to limit the resources available to a particular subsystem. 
+* 예를 들어 테넌트로 데이터베이스를 분할하고, 각 파티션에 별도의 웹 서버 인스턴스 풀을 할당합니다.
+* 별도의 스레드 풀을 사용하여 다른 서비스에 대한 호출을 격리합니다. 그러면 서비스 중 하나가 실패할 때 연속적인 장애가 발생하는 것이 방지됩니다. 예를 들어, Netflix [Hystrix 라이브러리][hystrix]를 참조하십시오.
+* 특정 서브시스템에서 사용 가능한 리소스를 제한하려면 [컨테이너][containers]를 사용하십시오.
 
 ![Composite SLA](./images/bulkhead.png)
 
-### Apply compensating transactions
-A compensating transaction is a transaction that undoes the effects of another completed transaction.
+### 보상 트랜잭션의 적용
+보상 트랜잭션은 다른 완료된 트랜잭션의 결과를 실행 취소하는 트랜잭션입니다.
 
-In a distributed system, it can be very difficult to achieve strong transactional consistency. Compensating transactions are a way to achieve consistency by using a series of smaller, individual transactions that can be undone at each step.
+분산 시스템에서는 강력한 트랜잭션 일관성을 달성하는 것이 매우 어려울 수 있습니다. 보상 트랜잭션은 각 단계를 실행 취소할 수 있는 보다 작은 일련의 개별 트랜잭션을 사용하여 일관성을 달성하는 방법입니다.
 
-For example, to book a trip, a customer might reserve a car, a hotel room, and a flight. If any of these steps fails, the entire operation fails. Instead of trying to use a single distributed transaction for the entire operation, you can define a compensating transaction for each step. For example, to undo a car reservation, you cancel the reservation. In order to complete the whole operation, a coordinator executes each step. If any step fails, the coordinator applies compensating transactions to undo any steps that were completed. 
+예를 들어 여행을 예약하려면 차량, 호텔 객실 및 항공편 예약이 필요할 수 있습니다. 이들 단계 중 하나라도 실패하면 전체 작업이 실패합니다. 이 전체 작업을 위해 단일 분산 트랜잭션을 사용하는 대신에 각 단계에 대한 보상 트랜잭션을 정의할 수 있습니다. 예를 들면 차량 예약을 실행 취소하기 위해 예약을 취소할 수 있습니다. 전체 작업을 완료하기 위해 코디네이터가 각 단계를 실행합니다. 임의 단계가 실패하면 코디네이터가 보상 트랜잭션을 적용하여 이전에 완료되었던 모든 단계를 취소합니다.
 
-For more information, see [Compensating Transaction Pattern][compensating-transaction-pattern]. 
+자세한 내용은 [보상 트랜잭션 패턴][compensating-transaction-pattern]을 참조하십시오. 
 
-## Testing for resiliency
-Generally, you can't test resiliency in the same way that you test application functionality (by running unit tests and so on). Instead, you must test how the end-to-end workload performs under failure conditions, which by definition don't happen all of the time.
+## 복원력 테스트
+일반적으로 (단위 테스트 실행 등을 통한) 응용 프로그램 기능 테스트와 동일한 방식으로 복원력을 테스트할 수는 없습니다. 대신에 장애 조건에서 종단 간 작업이 어떻게 수행되는지 테스트해야 하는데 이는 정의상 항상 발생하는 상황이 아닙니다.
 
-Testing is part of an iterative process. Test the application, measure the outcome, analyze and fix any failures that result, and repeat the process.
+테스트는 반복적 프로세스의 일부입니다. 응용 프로그램을 테스트하고, 결과를 측정하고, 도출된 장애를 분석하여 수정하고 이 프로세스를 반복합니다.
 
-**Fault injection testing**. Test the resiliency of the system to failures, either by triggering actual failures or by simulating them. Here are some common failure scenarios to test:
+**오류 삽입 테스트**. 실제 장애를 트리거하거나 시뮬레이션을 통해서 시스템의 장애 복원력을 테스트합니다. 일반적으로 테스트하는 장애 시나리오는 다음과 같습니다.
 
-* Shut down VM instances.
-* Crash processes.
-* Expire certificates.
-* Change access keys.
-* Shut down the DNS service on domain controllers.
-* Limit available system resources, such as RAM or number of threads.
-* Unmount disks.
-* Redeploy a VM.
+* VM 인스턴스를 종료합니다.
+* 프로세스를 충돌시킵니다.
+* 인증서를 만료시킵니다.
+* 액세스 키를 변경합니다.
+* 도메인 컨트롤러에서 DNS 서비스를 종료합니다.
+* RAM, 스레드 수 등 가용 시스템 리소스를 제한합니다.
+* 디스크를 분리합니다.
+* VM을 다시 배포합니다.
 
-Measure the recovery times and verify they meet your business requirements. Test combinations of failure modes, as well. Make sure that failures don't cascade, and are handled in an isolated way.
+복구 시간을 측정하고 비즈니스 요구 사항을 충족하는지 확인합니다. 장애 모드가 결합된 상황도 테스트합니다. 장애가 연속으로 발생하지 않도록 하고 분리된 방식으로 처리되도록 합니다.
 
-This is another reason why it's important to analyze possible failure points during the design phase. The results of that analysis should be inputs into your test plan.
+이것이 설계 단계에서 예상 실패 지점을 분석하는 것이 중요한 또 하나의 이유입니다. 분석 결과가 테스트 계획의 투입 자료가 되어야 합니다.
 
-**Load testing**. Load test the application using a tool such as [Visual Studio Team Services][vsts] or [Apache JMeter][jmeter] Load testing is crucial for identifying failures that only happen under load, such as the backend database being overwhelmed or service throttling. Test for peak load, using production data, or synthetic data that is as close to production data as possible. The goal is to see how the application behaves under real-world conditions.   
+**부하 테스트**. [Visual Studio Team Services][vsts] 또는 [Apache JMeter][jmeter]를 사용한 응용 프로그램 부하 테스트는 부하 상태에서만 발생하는 장애(예: 백엔드 데이터베이스의 과부하, 또는 서비스 제한 등)를 식별할 때 매우 중요합니다. 최대 부하 테스트는 프로덕션 데이터 또는 프로덕션 데이터와 유사한 가상 데이터를 사용하여 수행합니다. 그 목표는 응용 프로그램이 실제 상황에서 어떻게 작동하는지 확인하는 것입니다.
 
-## Resilient deployment
-Once an application is deployed to production, updates are a possible source of errors. In the worst case, a bad update can cause downtime. To avoid this, the deployment process must be predictable and repeatable. Deployment includes provisioning Azure resources, deploying application code, and applying configuration settings. An update may involve all three, or a subset. 
+## 복원 가능한 배포
+응용 프로그램이 생산 환경에 배포되고 나면, 업데이트가 예상되는 오류의 출처가 됩니다. 최악의 경우 불량 업데이트는 가동 중지를 야기할 수도 있습니다. 이를 방지하려면 배포 프로세스가 예측 가능하고 반복적이어야 합니다. 배포 작업에는 Azure 리소스 프로비저닝, 응용 프로그램 코드 배포 및 구성 설정을 적용하는 것이 포함됩니다. 업데이트에는 세 개 모두 또는 하위 집합이 포함될 수 있습니다. 
 
-The crucial point is that manual deployments are prone to error. Therefore, it's recommended to have an automated, idempotent process that you can run on demand, and re-run if something fails. 
+중요한 사항은 수동 배포가 오류에 취약하다는 점입니다. 그러므로 온디맨드 방식으로 실행할 수 있고 실패 발생 시 다시 실행할 수 있는 자동 Idempotent 프로세스를 보유할 것을 권장합니다. 
 
-* Use Resource Manager templates to automate provisioning of Azure resources.
-* Use [Azure Automation Desired State Configuration][dsc] (DSC) to configure VMs.
-* Use an automated deployment process for application code.
+* Azure 리소스 프로비저닝을 자동화하려면 Resource Manager 템플릿을 사용하십시오.
+* VM을 구성하려면 [Azure 자동화 필요한 상태 구성][dsc] (DSC)을 사용하십시오.
+* 응용 프로그램 코드를 위해 자동화된 배포 프로세스를 사용하십시오.
 
-Two concepts related to resilient deployment are *infrastructure as code* and *immutable infrastructure*.
+복원 가능한 배포와 관련된 두 가지 주제는 *코드형 인프라* 및 *수정 불가 인프라* 입니다.
 
-* **Infrastructure as code** is the practice of using code to provision and configure infrastructure. Infrastructure as code may use a declarative approach or an imperative approach (or a combination of both). Resource Manager templates are an example of a declarative approach. PowerShell scripts are an example of an imperative approach.
-* **Immutable infrastructure** is the principle that you shouldn’t modify infrastructure after it’s deployed to production. Otherwise, you can get into a state where ad hoc changes have been applied, so it’s hard to know exactly what changed, and hard to reason about the system. 
+* **코드형 인프라** 는 인프라 프로비저닝 및 구성을 위해 코드를 사용하는 방식을 말합니다. 코드형 인프라는 선언적 접근법 또는 명령적 접근법(또는 이 두 개의 조합)을 사용할 수 있습니다. Resource Manager 템플릿은 선언적 접근법의 예입니다. PowerShell 스크립트는 명령적 접근법의 예입니다.
+* **수정 불가 인프라** 는 생산 용으로 배포된 후에는 인프라를 수정해서는 안 된다는 원칙입니다. 그렇지 않으면 특별 변경사항이 적용된 상태로 들어갈 수 있고, 무엇을 변경했는지 정확히 알기가 어려우며, 시스템에 관한 추론을 하기가 어렵습니다. 
 
-Another question is how to roll out an application update. We recommend techniques such as blue-green deployment or canary releases, which push updates in highly controlled way to minimize possible impacts from a bad deployment.
+또 하나의 질문은 응용 프로그램 업데이트를 배포하는 방법에 관한 것입니다. 저희는 블루-그린 배포 또는 카나리아 릴리스와 같은 기법을 권장하는데, 이는 불량 배포로 예상되는 영향을 최소화하기 위해 매우 통제된 방식으로 업데이트를 진행합니다.
 
-* [Blue-green deployment][blue-green] is a technique where you deploy an update into a separate production environment from the live application. After you validate the deployment, switch the traffic routing to the updated version. For example, Azure App Service Web Apps enables this with [staging slots][staging-slots]. 
-* [Canary releases][canary-release] are similar to blue-green deployment. Instead of switching all traffic to the updated version, you roll out the update to a small percentage of users, by routing a portion of the traffic to the new deployment. If there is a problem, back off and revert to the old deployment. Otherwise, route more traffic to the new version, until it gets 100% of traffic.
+* [•	블루-그린 배포][blue-green] 는 업데이트를 라이브 응용 프로그램과는 분리된의 생산 환경에 배포하는 기법입니다. 배포를 확인한 후 트래픽 라우팅을 업데이트된 버전으로 전환합니다. 예를 들면 Azure App Service 웹 응용 프로그램은 [준비 슬롯][staging-slots]을 통해서 이를 지원합니다.
+* [•	카나리아 릴리스][canary-release] 는 블루-그린 배포와 유사합니다. 모든 트래픽을 업데이트된 버전으로 전환하는 대신에, 트래픽의 일부만을 새로운 배포에 라우팅함으로써 업데이트를 적은 비율의 사용자들에게만 배포합니다. 문제가 있으면 철회하고 기존 배포로 되돌아갑니다. 문제가 없으면, 트래픽의 10%가 될 때까지 더 많은 트래픽을 새 버전으로 라우팅합니다.
 
-Whatever approach you take, make sure that you can roll back to the last-known good-deployment, in case the new version is not functioning. Also, if errors occur, it must be possible to tell from the application logs which version caused the error. 
+어떤 접근법을 취하든 간에, 새 버전이 제대로 작동하지 않을 경우 최근에 알려진 양호한 배포로 롤백할 수 있어야 합니다. 또한 오류가 발생할 경우 응용 프로그램 로그를 통해서 어느 버전이 오류를 유발했는지 알 수 있어야 합니다.
 
-## Monitoring and diagnostics
-Monitoring and diagnostics are crucial for resiliency. If something fails, you need to know that it failed, and you need insights into the cause of the failure. 
+## 모니터링 및 진단
+복원을 위해 모니터링 및 진단은 매우 중요합니다. 무언가 실패하면, 실패 사실을 알아야 하고, 실패 원인에 대한 통찰력이 필요합니다.
 
-Monitoring a large-scale distributed system poses a significant challenge. Think about an application that runs on a few dozen VMs -- it's not practical to log into each VM, one at a time, and look through log files, trying to troubleshoot a problem. Moreover, the number of VM instances is probably not static. VMs get added and removed as the application scales in and out, and occasionally an instance may fail and need to be reprovisioned. In addition, a typical cloud application might use multiple data stores (Azure storage, SQL Database, DocumentDB, Redis cache), and a single user action may span multiple subsystems. 
+대규모 분산 시스템을 모니터링하는 것은 상당히 어려운 과제입니다. 수십 개의 VM에서 실행되는 응용 프로그램에 대해서 생각해보십시오. 각 VM에 로그인하여 한번에 하나씩 로그 파일을 검토하여 문제 해결을 시도하는 것은 실용적이지 않습니다. 게다가 VM 인스턴스의 수는 아마도 정적이지 않습니다. 응용 프로그램을 축소 및 확장함에 따라 VM이 추가, 제거되며 가끔 인스턴스가 실패하고 다시 프로비저닝하는 것이 필요합니다. 또한 일반적인 클라우드 응용 프로그램은 여러 데이터 스토어(Azure 저장소, SQL 데이터베이스, DocumentDB, Redis 캐시)를 사용할 수 있으며, 단일 사용자 행위에 여러 서브시스템이 포함될 수 있습니다.
 
-You can think of the monitoring and diagnostics process as a pipeline with several distinct stages:
+모니터링과 진단 프로세스를 여러 개의 명확한 단계가 있는 파이프라인으로 생각할 수 있습니다.
 
 ![Composite SLA](./images/monitoring.png)
 
-* **Instrumentation**. The raw data for monitoring and diagnostics comes from a variety of sources, including application logs, web server logs, OS performance counters, database logs, and diagnostics built into the Azure platform. Most Azure services have a diagnostics feature that you can use to figure out the cause of problems.
-* **Collection and storage**. The raw instrumentation data can be held in a variety of locations and with varying formats (application trace logs, performace counters, IIS logs). These disparate sources are collected, consolidated, and put into reliable storage.
-* **Analysis and diagnosis**. After the data is consolidated, it can be analyzed, in order to troubleshoot issues and provide an overall view of the health of the application.
-* **Visualization and alerts**. In this stage, telemetry data is presented in such a way that an operator can quickly spot trends or problems. Example include dashboards or email alerts.  
+* **계측**. 모니터링 및 진단을 위한 원시 데이터는 응용 프로그램 로그, 웹 서버 로그, OS 성능 카운터, 데이터베이스 로그, Azure 플랫폼에 구축된 진단 기능 등 다양한 소스에서 나옵니다. 대부분의 Azure 서비스에는 문제의 원인을 파악할 때 사용할 수 있는 진단 기능이 있습니다.
+* **컬렉션 및 저장소**. 원시 계측 데이터는 다양한 형식(응용 프로그램 추적 로그, 성능 카운터, IIS 로그)으로 다양한 위치에 유지할 수 있습니다. 이렇게 서로 다른 소스를 수집하여 통합하고 신뢰할 수 있는 저장소에 넣습니다.
+* **분석 및 진단**. 데이터를 통합하고 나면, 문제해결 및 응용 프로그램의 전반적 상태를 보여주기 위해 분석할 수 있습니다.
+* **시각화 및 알림**. 이 단계에서는 운영자가 추세나 문제점을 신속히 찾을 수 있는 방식으로 원격 분석 데이터가 제시됩니다. 예를 들면 대시보드 또는 이메일 알림 등이 있습니다.
 
 Monitoring is different than failure detection. For example, your application might detect a transient error and retry, resulting in no downtime. But it should also log the retry operation, so that you can monitor the error rate, in order to get an overall picture of the application health. 
 
