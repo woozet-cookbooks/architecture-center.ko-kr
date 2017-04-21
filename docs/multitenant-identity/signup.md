@@ -11,52 +11,57 @@ pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: claims
 pnp.series.next: app-roles
 ---
-# Tenant sign-up and onboarding
+# 테넌트 등록 및 온보딩
 
-[![GitHub](../_images/github.png) Sample code][sample application]
+[![GitHub](../_images/github.png) 샘플 코드][sample application]
 
-This article describes how to implement a *sign-up* process in a multi-tenant application, which allows a customer to sign up their organization for your application.
-There are several reasons to implement a sign-up process:
+이 문서는 고객이 응용 프로그램에 자기의 조직을 등록할 수 있는 다중 테넌트 응용 프로그램에서 등록 프로세스를 구현하는 방법에 대해 설명합니다.  등록 프로세스를 구현하는 이유는 다음과 같습니다:
 
-* Allow an AD admin to consent for the customer's entire organization to use the application.
-* Collect credit card payment or other customer information.
-* Perform any one-time per-tenant setup needed by your application.
+•	AD 관리자가 고객의 조직 전체가 응용 프로그램을 사용하는 데 동의하는 것을 허용합니다.
 
-## Admin consent and Azure AD permissions
-In order to authenticate with Azure AD, an application needs access to the user's directory. At a minimum, the application needs permission to read the user's profile. The first time that a user signs in, Azure AD shows a consent page that lists the permissions being requested. By clicking **Accept**, the user grants permission to the application.
+•	신용카드 결제 또는 기타 고객 정보를 수집합니다.
 
-By default, consent is granted on a per-user basis. Every user who signs in sees the consent page. However, Azure AD also supports  *admin consent*, which allows an AD administrator to consent for an entire organization.
+•	응용 프로그램에 필요한 테넌트당 1회 설치를 실행합니다.
 
-When the admin consent flow is used, the consent page states that the AD admin is granting permission on behalf of the entire tenant:
+
+## 관리 동의 및 Azure AD 사용 권한
+Azure AD를 인증하기 위해 응용 프로그램은 사용자 디렉터리에 대한 액세스가 필요합니다. 응용 프로그램은 최소한 사용자 프로필을 읽을 권한이 필요합니다. 사용자가 최초 로그인하면, Azure AD는 요청받은 사용 권한을 나열한 동의 페이지를 보여줍니다. 사용자는 **동의**를 클릭하여 응용 프로그램에 사용 권한을 부여합니다.
+
+기본값으로, 사용자별로 동의가 부여됩니다.  로그인한 모든 사용자는 동의 페이지를 봅니다. Azure AD 또한 *관리자 동의*를 지원함으로써, AD 관리자가 조직 전체에 대해서 동의하는 것을 허용합니다.
+
+관리 동의 흐름이 사용되면, 동의 페이지는 AD 관리자가 테넌트 전체를 대신해서 권한을 부여하고 있음을 설명합니다.
 
 ![Admin consent prompt](./images/admin-consent.png)
 
-After the admin clicks **Accept**, other users within the same tenant can sign in, and Azure AD will skip the consent screen.
+관리자가 **동의**를 클릭하고 나면, 같은 테넌트에 있는 다른 사용자들이 로그인할 수 있고, Azure AD는 동의 화면을 건너뛸 것입니다.
 
-Only an AD administrator can give admin consent, because it grants permission on behalf of the entire organization. If a non-administrator tries to authenticate with the admin consent flow, Azure AD displays an error:
+AD 관리자만 관리 동의를 부여할 수 있는데, AD 관리자가 전체 조직을 대신해서 사용 권한을 부여하기 때문입니다. 비관리자가 관리 동의 흐름으로 인증을 시도할 경우, Azure AD는 오류를 표시합니다:
 
 ![Consent error](./images/consent-error.png)
 
-If the application requires additional permissions at a later point, the customer will need to sign up again and consent to the updated permissions.  
+이후 응용 프로그램이 사용 권한을 추가로 요구할 경우, 고객은 다시 등록하고 업데이트된 사용 권한에 동의해야 합니다.   
 
-## Implementing tenant sign-up
-For the [Tailspin Surveys][Tailspin] application,  we defined several requirements for the sign-up process:
+## 테넌트 등록 구현하기
+[Tailspin Surveys][Tailspin] 응용 프로그램에 대해서, 우리는 등록 프로세스에 대한 몇 가지 요구사항을 정의했습니다:
 
-* A tenant must sign up before users can sign in.
-* Sign-up uses the admin consent flow.
-* Sign-up adds the user's tenant to the application database.
-* After a tenant signs up, the application shows an onboarding page.
+•	테넌트가 등록되어야 사용자들이 로그인할 수 있습니다.
 
-In this section, we'll walk through our implementation of the sign-up process.
-It's important to understand that "sign up" versus "sign in" is an application concept. During the authentication flow, Azure AD does not inherently know whether the user is in process of signing up. It's up to the application to keep track of the context.
+•	등록은 관리 동의 흐름을 사용합니다.
 
-When an anonymous user visits the Surveys application, the user is shown two buttons, one to sign in, and one to "enroll your company" (sign up).
+•	등록은 응용 프로그램 데이터베이스에 사용자의 테넌트를 추가합니다.
+
+•	테넌트가 등록되고 나면, 응용 프로그램이 오보딩 페이지를 표시합니다. 
+
+
+이 절에서는 우리가 등록 프로세스를 구현한 것을 보여줄 것입니다. "등록"과 "로그인"이 응용 프로그램 개념임을 이해하는 것이 중요합니다. 인증 흐름 중에, Azure AD는 기본적으로 사용자가 등록 과정인지 여부를 알지 못합니다. 상황을 계속 추적하는 것은 응용 프로그램의 역할입니다.
+
+익명의 사용자가 Surveys 응용 프로그램을 방문하면, 2 개의 단추가 표시되는데, 하나는 로그인 단추이고 하나는 "회사 등록"(등록) 단추입니다.
 
 ![Application sign-up page](./images/sign-up-page.png)
 
-These buttons invoke actions in the [AccountController] class.
+These buttons invoke actions in the [AccountController](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Controllers/AccountController.cs) 클래스에서 작업들을 호출합니다.
 
-The `SignIn` action returns a **ChallegeResult**, which causes the OpenID Connect middleware to redirect to the authentication endpoint. This is the default way to trigger authentication in ASP.NET Core 1.0.  
+`SignIn` 작업이 **ChallegeResult**를 반환하면. OpenID Connect 미들웨어가 인증 끝점으로 리디렉션합니다. 이는 ASP.NET Core 1.0에서 인증을 작동시키는 기본 방법입니다.
 
 ```csharp
 [AllowAnonymous]
@@ -72,7 +77,7 @@ public IActionResult SignIn()
 }
 ```
 
-Now compare the `SignUp` action:
+이제 `SignUp` 작업과 비교해보세요.
 
 ```csharp
 [AllowAnonymous]
@@ -91,24 +96,24 @@ public IActionResult SignUp()
 }
 ```
 
-Like `SignIn`, the `SignUp` action also returns a `ChallengeResult`. But this time, we add a piece of state information to the `AuthenticationProperties` in the `ChallengeResult`:
+`SignIn`처럼 `SignUp` 작업도 `ChallengeResult`를 반환합니다. 이 때, 우리는`ChallengeResult`에서 상태 정보 하나를 `AuthenticationProperties`에 추가합니다. 
 
-* signup: A Boolean flag, indicating that the user has started the sign-up process.
+* signup: 사용자가 등록 프로세스를 시작했음을 나타내는 부울 플래그입니다.
 
-The state information in `AuthenticationProperties` gets added to the OpenID Connect [state] parameter, which round trips during the authentication flow.
+`AuthenticationProperties` 안에 있는 상태 정보는 OpenID Connect  [상태](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest) 매개변수에 추가되어, 인증 흐름 중에 왕복합니다.
 
 ![State parameter](./images/state-parameter.png)
 
-After the user authenticates in Azure AD and gets redirected back to the application, the authentication ticket contains the state. We are using this fact to make sure the "signup" value persists across the entire authentication flow.
+사용자가 Azure AD에서 인증되고 응용 프로그램으로 리디렉션되고 나면, 인증 티켓은 상태를 포함합니다. 이런 사실을 이용하여, 우리는 "등록" 값을 전체 인증 흐름 동안 유지할 것입니다.
 
-## Adding the admin consent prompt
-In Azure AD, the admin consent flow is triggered by adding a "prompt" parameter to the query string in the authentication request:
+## 관리 동의 프롬프트 추가하기
+Azure AD에서, 관리 동의 흐름은 인증 요청의 쿼리 문자열에 "prompt" 매개변수를 추가함으로써 작동됩니다.
 
 ```
 /authorize?prompt=admin_consent&...
 ```
 
-The Surveys application adds the prompt during the `RedirectToAuthenticationEndpoint` event. This event is called right before the middleware redirects to the authentication endpoint.
+Surveys 응용 프로그램은 `RedirectToAuthenticationEndpoint` 이벤트 중에 프롬프트를 추가합니다. 이 이벤트는 미들웨어가 인증 끝점으로 리디렉션되기 직전에 호출됩니다.
 
 ```csharp
 public override Task RedirectToAuthenticationEndpoint(RedirectContext context)
@@ -123,14 +128,14 @@ public override Task RedirectToAuthenticationEndpoint(RedirectContext context)
 }
 ```
 
-> [!NOTE]
-> See [SurveyAuthenticationEvents.cs].
+> [!참고]
+> [SurveyAuthenticationEvents.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs)를 참고하세요.
 > 
 > 
 
-Setting` ProtocolMessage.Prompt` tells the middleware to add the "prompt" parameter to the authentication request.
+Setting` ProtocolMessage.Prompt`는 미들웨어에 "prompt" 매개변수를 인증 요청에 추가하라고 알립니다.
 
-Note that the prompt is only needed during sign-up. Regular sign-in should not include it. To distinguish between them, we check for the `signup` value in the authentication state. The following extension method checks for this condition:
+프롬프트는 등록 중에만 필요하다는 사실에 주의하세요. 일반 로그인은 프롬프트를 포함하면 안 됩니다. 두 가지를 구별하려면 인증 상태에서 `등록` 값을 확인해야 합니다. 다음의 확장 메서드는 이런 조건을 확인합니다. 
 
 ```csharp
 internal static bool IsSigningUp(this BaseControlContext context)
@@ -166,24 +171,24 @@ internal static bool IsSigningUp(this BaseControlContext context)
 }
 ```
 
-> [!NOTE]
-> See [BaseControlContextExtensions.cs].
+> [!참고]
+> [BaseControlContextExtensions.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/BaseControlContextExtensions.cs)를 참조하세요.
 > 
-> [!NOTE]
-> Note: This code includes a workaround for a known bug in ASP.NET Core 1.0 RC1. In the `RedirectToAuthenticationEndpoint` event, there is no way to get the authentication properties that contains the "signup" state. As a workaround, the `AccountController.SignUp` method also puts the "signup" state into the `HttpContext`. This works because `RedirectToAuthenticationEndpoint` happens before the redirect, so we still have the same `HttpContext`.
+> [!참고]
+> 참고: 이 코드는 ASP.NET Core 1.0 RC1에 알려진 버그에 대한 해결 방법을 담고 있습니다. `RedirectToAuthenticationEndpoint` 이벤트에서, "startup" 상태를 포함한 인증 속성을 얻을 방법이 없습니다. 해결 방법으로, `AccountController.SignUp` 메서드도 `HttpContext`에 "startup" 상태를 넣습니다. 이는 `RedirectToAuthenticationEndpoint`가 리디렉션 전에 발생하기 때문에 작동하는 것이므로, 우리는 계속해서 같은 `HttpContext`를 갖습니다.
 > 
 > 
 
-## Registering a Tenant
-The Surveys application stores some information about each tenant and user in the application database.
+## 테넌트 등록하기
+Surveys 응용 프로그램은 응용 프로그램 데이터베이스에 각 테넌트와 사용자에 관한 정보를 저장합니다.
 
 ![Tenant table](./images/tenant-table.png)
 
-In the Tenant table, IssuerValue is the value of the issuer claim for the tenant. For Azure AD, this is `https://sts.windows.net/<tentantID>` and gives a unique value per tenant.
+Tenant 표에서, IssuerValue는 테넌트에 대한 발급자 클레임의 값입니다. Azure AD에서는 `https://sts.windows.net/<tentantID>`이고 테넌트마다 고유한 값을 부여합니다.
 
-When a new tenant signs up, the Surveys application writes a tenant record to the database. This happens inside the `AuthenticationValidated` event. (Don't do it before this event, because the ID token won't be validated yet, so you can't trust the claim values. See [Authentication].
+새 테넌트가 등록되면 Surveys 응용 프로그램은 테넌트 레코드를 데이터베이스에 씁니다. 이 작업은 `AuthenticationValidated` 이벤트 안에서 일어납니다. (ID 토큰이 아직 확인되지 않아서 클레임 값을 신뢰할 수 없으므로, 이 이벤트 전에 수행하지 않도록 합니다.) [Authentication](https://docs.microsoft.com/en-us/azure/architecture/multitenant-identity/authenticate)을 참조하세요.
 
-Here is the relevant code from the Surveys application:
+다음은 Surveys 응용 프로그램에 있는 관련 코드입니다. 
 
 ```csharp
 public override async Task AuthenticationValidated(AuthenticationValidatedContext context)
@@ -229,22 +234,26 @@ public override async Task AuthenticationValidated(AuthenticationValidatedContex
 }
 ```
 
-> [!NOTE]
-> See [SurveyAuthenticationEvents.cs].
+> [!참고]
+> [SurveyAuthenticationEvents.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs)를 참고하세요.
 > 
 > 
 
-This code does the following:
+이 코드는 다음을 실행합니다:
 
-1. Check if the tenant's issuer value is already in the database. If the tenant has not signed up, `FindByIssuerValueAsync` returns null.
-2. If the user is signing up:
-   1. Add the tenant to the database (`SignUpTenantAsync`).
-   2. Add the authenticated user to the database (`CreateOrUpdateUserAsync`).
-3. Otherwise complete the normal sign-in flow:
-   1. If the tenant's issuer was not found in the database, it means the tenant is not registered, and the customer needs to sign up. In that case, throw an exception to cause the authentication to fail.
-   2. Otherwise, create a database record for this user, if there isn't one already (`CreateOrUpdateUserAsync`).
+1. 테넌트의 발급자 값이 이미 데이터베이스에 있는지 확인합니다. 테넌트가 등록되지 않은 경우, `FindByIssuerValueAsync`는 null을 반환합니다.
 
-Here is the [SignUpTenantAsync] method that adds the tenant to the database.
+2. 사용자가 등록된 경우:
+   1. 테넌트를 데이터베이스에(`SignUpTenantAsync`) 추가합니다.
+   2. 인증된 사용자를 데이터베이스에(`CreateOrUpdateUserAsync`) 추가합니다.
+   
+3. 그렇지 않으면 정상적인 로그인 흐름을 완료합니다:
+
+   1. 데이터베이스에 테넌트 발급자가 없는 경우, 테넌트가 등록되지 않았고 고객 등록이 필요함을 의미합니다.  그런 경우, 인증 실패를 야기하는 예외를 발생시킵니다.
+   
+   2. b.	그렇지 않고, 이미 사용자가 있는 경우 이 사용자에 대한 데이터베이스 레코드를 만듭니다 (`CreateOrUpdateUserAsync`).
+
+다음은 데이터베이스에 테넌트를 추가하는 [SignUpTenantAsync](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs) 메서드입니다.
 
 ```csharp
 private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantManager tenantManager)
@@ -275,16 +284,16 @@ private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantM
 }
 ```
 
-Here is a summary of the entire sign-up flow in the Surveys application:
+다음은 Surveys 응용 프로그램의 등록 흐름 전 과정을 요약한 내용입니다. 
 
-1. The user clicks the **Sign Up** button.
-2. The `AccountController.SignUp` action returns a challege result.  The authentication state includes "signup" value.
-3. In the `RedirectToAuthenticationEndpoint` event, add the `admin_consent` prompt.
-4. The OpenID Connect middleware redirects to Azure AD and the user authenticates.
-5. In the `AuthenticationValidated` event, look for the "signup" state.
-6. Add the tenant to the database.
+1. 사용자가 **등록** 단추를 클릭합니다.
+2. `AccountController.SignUp` 작업은 challege result를 반환합니다. 인증 상태는 "signup" 값을 포함합니다.
+3. `RedirectToAuthenticationEndpoint` 이벤트에서, `admin_consent` 프롬프트를 추가합니다.
+4. OpenID Connect 미들웨어가 Azure AD로 리디렉션되고 사용자가 인증됩니다.
+5. `AuthenticationValidated` 이벤트에서, "signup" 상태를 찾습니다.
+6. 테넌트를 데이터베이스에 추가합니다. 
 
-[**Next**][app roles]
+[**다음**][app roles]
 
 <!-- Links -->
 [app roles]: app-roles.md
