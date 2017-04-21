@@ -1,4 +1,4 @@
-# [Reference Architectures](./index.md)
+# [참조 아키텍처](./index.md)
 
 ## [ID 관리](./identity/index.md)
 ### [Which should I choose?](./identity/considerations.md)
