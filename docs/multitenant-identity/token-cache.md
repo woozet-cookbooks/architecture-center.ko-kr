@@ -11,50 +11,54 @@ pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: web-api
 pnp.series.next: adfs
 ---
-# Cache access tokens
+# 캐시 액세스 토큰
 
-[![GitHub](../_images/github.png) Sample code][sample application]
+[![GitHub](../_images/github.png) 샘플 코드][sample application]
 
-It's relatively expensive to get an OAuth access token, because it requires an HTTP request to the token endpoint. Therefore, it's good to cache tokens whenever possible. The [Azure AD Authentication Library][ADAL] (ADAL)  automatically caches tokens obtained from Azure AD, including refresh tokens.
+OAuth 액세스 토큰을 받는 것은 상대적으로 비싼데, 토큰 끝점으로 HTTP 요청을 요구하기 때문입니다. 그러므로 가능하면 토큰을 캐시하는 것이 좋습니다. [Azure AD 인증 라이브러리][ADAL] (ADAL)는 새로 고침 토큰을 포함하여 Azure AD에서 받은 토큰을 자동으로 캐시합니다.
 
-ADAL provides a default token cache implementation. However, this token cache is intended for native client apps, and is *not* suitable for web apps:
+ADAL은 기본 토큰 캐시 구현을 제공합니다. 그러나, 이 토큰 캐시는 네이티브 클라이언트 앱을 위한 것으로, 웹 앱에는 적절하지 *않습니다*:
 
-* It is a static instance, and not thread safe.
-* It doesn't scale to large numbers of users, because tokens from all users go into the same dictionary.
-* It can't be shared across web servers in a farm.
+•	고정 인스턴스이며, 스레드로부터 안전하지 않습니다.
 
-Instead, you should implement a custom token cache that derives from the ADAL `TokenCache` class but is suitable for a server environment and provides the desirable level of isolation between tokens for different users.
+•	모든 사용자들로부터 받은 토큰이 같은 디렉터리로 가기 때문에, 다수의 사용자들로 확장될 수 없습니다.
 
-The `TokenCache` class stores a dictionary of tokens, indexed by issuer, resource, client ID, and user. A custom token cache should write this dictionary to a backing store, such as a Redis cache.
+•	팜의 웹 서버들에서 공유할 수 없습니다.
 
-In the Tailspin Surveys application, the `DistributedTokenCache` class implements the token cache. This implementation uses the [IDistributedCache][distributed-cache] abstraction from ASP.NET Core 1.0. That way, any `IDistributedCache` implementation can be used as a backing store.
 
-* By default, the Surveys app uses a Redis cache.
-* For a single-instance web server, you could use the ASP.NET Core 1.0 [in-memory cache][in-memory-cache]. (This is also a good option for running the app locally during development.)
+대신, ADAL `TokenCache` 클래스에서 파생되었지만 서버 환경에 적절한 사용자 지정 토큰 캐시를 구현해야 합니다. 이 토큰 캐시는 다양한 사용자들의 토큰들에서 안정적 수준의 격리를 제공합니다.
 
-> [!NOTE]
-> Currently the Redis cache is not supported for .NET Core.
+`TokenCache` 클래스는 발급자, 리소스, 클라이언트 ID, 사용자에 의해 인덱싱된 토큰 사전을 저장합니다. 사용자 지정 토큰 캐시는 이 사전을 Redis 캐시와 같은 백업 저장소에 써야 합니다.
+
+Tailspin Surveys 응용 프로그램에서, `DistributedTokenCache`클래스는 토큰 캐시를 구현합니다. 이 구현에서는 ASP.NET Core 1.0의 [IDistributedCache][distributed-cache] 개념을 사용합니다. 이와 같이, 어떠한 `IDistributedCache` i구현도 백업 저장소로 사용될 수 있습니다.
+
+•	기본값으로, Surveys 앱은 Redis 캐시를 사용합니다.
+
+•	단일 인스턴스 웹 서버인 경우, ASP.NET Core 1.0 [메모리 내 캐시][in-memory-cache]를 사용할 수 있습니다.  (개발 중 앱을 로컬로 실행할 때 이 방법도 좋은 선택입니다.)
+
+> [!참고]
+> 현재 .NET Core에서는 Redis 캐시가 지원되지 않습니다.
 > 
 > 
 
-`DistributedTokenCache` stores the cache data as key/value pairs in the backing store. The key is the user ID plus client ID, so the backing store holds separate cache data for each unique combination of user/client.
+`DistributedTokenCache` 는 백업 저장소에 키/값의 쌍으로 캐시 데이터를 저장합니다. 키는 사용자 ID 더하기 클라이언트 ID이므로, 백업 저장소는 사용자/클라이언트의 고유한 조합에 대해서 별도의 캐시 데이터를 저장합니다.
 
 ![Token cache](./images/token-cache.png)
 
-The backing store is partitioned by user. For each HTTP request, the tokens for that user are read from the backing store and loaded into the `TokenCache` dictionary. If Redis is used as the backing store, every server instance in a server farm reads/writes to the same cache, and this approach scales to many users.
+백업 저장소는 사용자에 의해 분할됩니다. HTTP 요청이 오면, 그 사용자에 대한 토큰이 백업 저장소에서 읽히고 `TokenCache` 사전으로 로드됩니다. Redis가 백업 저장소로 사용될 경우, 서버 팜에 있는 모든 서버 인스턴스는 같은 캐시를 읽기/쓰기 하고, 이런 접근 방식은 다수의 사용자들로 확장될 수 있습니다.
 
-## Encrypting cached tokens
-Tokens are sensitive data, because they grant access to a user's resources. (Moreover, unlike a user's password, you can't just store a hash of the token.) Therefore, it's critical to protect tokens from being compromised. The Redis-backed cache is protected by a password, but if someone obtains the password, they could get all of the cached access tokens. For that reason, the `DistributedTokenCache` encrypts everything that it writes to the backing store. Encryption is done using the ASP.NET Core 1.0 [data protection][data-protection] APIs.
+## 캐시된 토큰 암호화
+토큰은 사용자 리소스에 대한 액세스를 허용하기 때문에 중요한 데이터입니다. (또한, 사용자 암호와 달리, 토큰 해시를 저장할 수 없습니다.) 그러므로, 토큰이 손상되지 않게 보호하는 것이 중요합니다. Redis에 백업된 캐시는 암호에 의해 보호되지만, 누군가 암호를 확보할 경우 캐시된 액세스 토큰을 모두 가져갈 수 있습니다. 이런 이유로, `DistributedTokenCache` 는 백업 저장소에 쓴 것을 모두 암호화합니다. 암호화는 ASP.NET Core 1.0 [데이터 보호][data-protection] API를 사용하여 이루어집니다.
 
-> [!NOTE]
-> If you deploy to Azure Web Sites, the encryption keys are backed up to network storage and synchronized across all machines (see [Key Management][key-management]). By default, keys are not encrypted when running in Azure Web Sites, but you can [enable encryption using an X.509 certificate][x509-cert-encryption].
+> [!참고]
+> 사용자가 Azure 웹 사이트에 배포할 경우, 암호화 키가 네트워크 저장소에 백업되고 모든 컴퓨터에서 동기화됩니다([키 관리][key-management])를 참조하세요). 기본값으로, 키는 Azure 웹 사이트에서 실행될 때 암호화되지 않지만, [X.509 인증서를 사용한 암호화][x509-cert-encryption]를 할 수 있습니다.
 > 
 > 
 
-## DistributedTokenCache implementation
-The [DistributedTokenCache][DistributedTokenCache] class derives from the ADAL [TokenCache][tokencache-class] class.
+## DistributedTokenCache 구현
+[DistributedTokenCache][DistributedTokenCache] 클래스는 ADAL  [TokenCache][tokencache-class] 클래스에서 파생됩니다.
 
-In the constructor, the `DistributedTokenCache` class creates a key for the current user and loads the cache from the backing store:
+생성자에서, `DistributedTokenCache` 클래스는 현 사용자용 키를 만들고 백업 저장소의 캐시를 로드합니다:
 
 ```csharp
 public DistributedTokenCache(
@@ -74,7 +78,7 @@ public DistributedTokenCache(
 }
 ```
 
-The key is created by concatenating the user ID and client ID. Both of these are taken from claims found in the user's `ClaimsPrincipal`:
+키는 사용자 ID와 클라이언트 ID를 연결하여 생성됩니다. 두 ID는 사용자의 `ClaimsPrincipal`에서 찾은 클레임에서 가져온 것입니다.
 
 ```csharp
 private static string BuildCacheKey(ClaimsPrincipal claimsPrincipal)
@@ -87,7 +91,7 @@ private static string BuildCacheKey(ClaimsPrincipal claimsPrincipal)
 }
 ```
 
-To load the cache data, read the serialized blob from the backing store, and call `TokenCache.Deserialize` to convert the blob into cache data.
+캐시 데이터를 로드하기 위해서는, 백업 저장소에서 직렬화된 블롭을 읽은 다음 `TokenCache.Deserialize`를 호출하여 블롭을 캐시 데이터로 변환합니다.
 
 ```csharp
 private void LoadFromCache()
@@ -100,7 +104,7 @@ private void LoadFromCache()
 }
 ```
 
-Whenever ADAL access the cache, it fires an `AfterAccess` event. If the cache data has changed, the `HasStateChanged` property is true. In that case, update the backing store to reflect the change, and then set `HasStateChanged` to false.
+ADAL는 캐시를 액세스할 때마다 `AfterAccess` 이벤트를 발생시킵니다. 캐시 데이터가 변경된 경우, `HasStateChanged` 속성이 true가 됩니다. 그런 경우, 변경이 반영되도록 백업 저장소를 업데이트한 다음 `HasStateChanged`를 false로 설정합니다.
 
 ```csharp
 public void AfterAccessNotification(TokenCacheNotificationArgs args)
@@ -129,17 +133,20 @@ public void AfterAccessNotification(TokenCacheNotificationArgs args)
 }
 ```
 
-TokenCache sends two other events:
+TokenCache는 두 개의 다른 이벤트를 전송합니다:
 
-* `BeforeWrite`. Called immediately before ADAL writes to the cache. You can use this to implement a concurrency strategy
-* `BeforeAccess`. Called immediately before ADAL reads from the cache. Here you can reload the cache to get the latest version.
+* `BeforeWrite`. ADAL이 캐시에 쓰기 직전에 호출됩니다. 동시성 전략 구현에 사용할 수 있습니다.
 
-In our case, we decided not to handle these two events.
+* `BeforeAccess`. ADAL이 캐시에서 읽기 직전에 호출됩니다. 여기서 캐시를 다시 로드하여 최종 버전을 얻을 수 있습니다.
 
-* For concurrency, last write wins. That's OK, because tokens are stored independently for each user + client, so a conflict would only happen if the same user had two concurrent login sessions.
-* For reading, we load the cache on every request. Requests are short lived. If the cache gets modified in that time, the next request will pick up the new value.
+우리는 이 두 이벤트를 처리하지 않기로 결정했습니다.
 
-[**Next**][client-assertion]
+•	동시성을 위해서 마지막 쓰기를 합니다. 좋아요. 이제 토큰이 사용자 + 클라이언트별로 따로 저장되기 때문에, 사용자 한 명이 두 개의 로그인 세션을 동시에 연결한 경우에만 충돌이 일어납니다.
+
+•	읽기의 경우, 요청이 있을 때마다 캐시를 로드합니다. 요청은 일시적입니다. 그 때 캐시가 수정된 경우, 다음 요청은 새로운 값을 선택할 것입니다. 
+
+
+[**다음**][client-assertion]
 
 <!-- links -->
 [ADAL]: https://msdn.microsoft.com/library/azure/jj573266.aspx
