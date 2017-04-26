@@ -1,4 +1,4 @@
----
+선선---
 title: Connect an on-premises network to Azure
 description: Recommended architectures for secure, robust network connections between on-premises networks and Azure.
 layout: LandingPage
@@ -8,7 +8,7 @@ ms.author: pnp
 
 # 온-프레미스 네트워크를 Azure에 연결
 
-이 참조 아키텍처는 온프레미스 네트워크와 Azure 사이의 강력한 네트워크 연결 생성을 위한 검증된 사례들을 보여줍니다. [Which should I choose?](./considerations.md)
+이 참조 아키텍처는 온프레미스 네트워크와 Azure 사이의 강력한 네트워크 연결 생성을 위한 검증된 사례들을 보여줍니다. [무엇을 선택해야 할까요?](./considerations.md)
 
 <ul class="panelContent cardsH">
     <li>
