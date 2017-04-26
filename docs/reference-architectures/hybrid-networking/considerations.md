@@ -52,7 +52,7 @@ ExpressRoute 연결은 외부 연결성 공급자를 통해 사설 전용 연결
 
 ## VPN 장애조치를 지원하는 Expressroute
 
-This options combines the previous two, using ExpressRoute in normal conditions, but failing over to a VPN connection if there is a loss of connectivity in the ExpressRoute circuit.
+이 옵션은 앞선 두 가지 방법을 결합한 것으로, 일반적인 상황에서는 ExpressRoute를 사용하다가 ExpressRoute 회선이 끊어진 경우 VPN으로 우회하게 됩니다.
 
 이 아키텍처는 ExpressRoute의 높은 대역폭과 고가용성 네트워크 연결성이 필요한 하이브리드 애플리케이션에 적합합니다.
 
