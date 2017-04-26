@@ -190,10 +190,10 @@ ExpressRoute 회로는 추가 비용 없이 구입한 대역폭 한도의 최대
     Set-AzureRmExpressRouteCircuit -ExpressRouteCircuit $ckt
     ```
 
-    > [!중요]
-    > SKu.Name 속성이 Sku.Tier 및 Sku.Family와 일치해야 합니다. 패밀리와 계층을 변경하고 이름은 변경하지 않으면 연결을 사용할 수 없게 됩니다.  
-    >
-    >
+> [!중요]
+> SKu.Name 속성이 Sku.Tier 및 Sku.Family와 일치해야 합니다. 패밀리와 계층을 변경하고 이름은 변경하지 않으면 연결을 사용할 수 없게 됩니다.  
+>
+>
     
     연결 중단 없이 SKU를 업그레이드할 수는 있지만 무제한 요금제에서 계량 요금제로 변경하는 것은 불가능합니다. SKU를 다운그레이드하는 경우에는 대역폭 소비가 Standard SKU의 기본 한도 내에 있어야 합니다. 
 
