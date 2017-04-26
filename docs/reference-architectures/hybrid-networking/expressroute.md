@@ -40,10 +40,10 @@ cardTitle: ExpressRoute
 
 * **연결성 공급자** (미표시). 레이어2 또는 레이어3 연결을 사용하여 귀하의 데이터 센터와 Azure 데이터센터 간 연결을 제공하는 회사입니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+아키텍처 다이어그램은 Visio를 통해 [다운로드](https://aka.ms/arch-diagrams) 하실 수 있습니다.
 
 > [!참고]
-> Azure는 [Resource Manager](/azure/azure-resource-manager/resource-group-overview)와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
+> Azure는 [리소스 매니저](/azure/azure-resource-manager/resource-group-overview)와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
 > 
 > 
 
