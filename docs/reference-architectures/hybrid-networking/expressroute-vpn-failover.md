@@ -42,9 +42,9 @@ ExpressRoute 회로를 사용할 수 없는 경우 VPN 루트는 사설 피어�
 
 * **게이트웨이 서브넷**. 가상 네트워크 게이트웨이들은 동일한 서브넷에 배치됩니다.
 
-* **클라우드 애플리케이션**. Azure에 호스팅된 애플리케이션. 여러 계층이 포함될 수 있고, 여러 서브넷이 Azure 부하 분산 장치를 통해 연결됩니다. For more information about the application infrastructure, see [Running Windows VM workloads][windows-vm-ra] and [Running Linux VM workloads][linux-vm-ra].
+* **클라우드 애플리케이션**. Azure에 호스팅된 애플리케이션. 여러 계층이 포함될 수 있고, 여러 서브넷이 Azure 부하 분산 장치를 통해 연결됩니다. 어플리케이션 인프라구조에 대해서 정보가 더 필요하시면,  [Windows VM 워크로드][windows-vm-ra] and [리눅스 VM 워크로드][linux-vm-ra] 자료를 참고하시기 바랍니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+Visio 파일을 [Visio file](https://aka.ms/arch-diagrams) 다운로드 하실 수 있습니다.
 
 > [!참고]
 > Azure는 [Resource Manager](/azure/azure-resource-manager/resource-group-overview) 와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 참조 아키텍처에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
