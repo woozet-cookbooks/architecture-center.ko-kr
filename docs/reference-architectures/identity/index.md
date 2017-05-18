@@ -8,7 +8,7 @@ ms.author: pnp
 
 # ID 관리
 
-이 참조 아키텍처는 온프레미스 Active Directory (AD) 환경을 Azure 네트워크에 통합하기 위한 옵션을 보여줍니다. [Which should I choose?](./considerations.md)
+이 참조 아키텍처는 온프레미스 Active Directory (AD) 환경을 Azure 네트워크에 통합하기 위한 옵션을 보여줍니다. [어떤 서비스를 선택해야 할까요?](./considerations.md)
 
 <ul class="panelContent cardsH">
     <li>
