@@ -45,7 +45,7 @@ cardTitle: VPN
 
 * **내부 부하 분산 장치**. VPN 게이트웨이로부터의 네트워크 트래픽은 내부 부하 분산 장치를 통해 클라우드 응용 프로그램으로 라우팅됩니다. 이 부하 분산 장치는 응용 프로그램의 프런트엔드 서브넷에 위치합니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+Visio파일을 [다운로드](https://aka.ms/arch-diagrams) 하실 수 있습니다.
 
 > [!참고]
 > Azure는 [Azure Resource Manager][resource-manager-overview]와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 참조 아키텍처에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
