@@ -1,45 +1,16 @@
----
-title: Azure and AWS services compared - multicloud
-description: See how Microsoft Azure cloud services compare to Amazon Web Services (AWS) for multicloud solutions or migration to Azure. Learn the IT capabilities of each.  
-keywords: cloud services comparison, cloud services compared, multicloud, compare azure aws, compare azure and aws, compare aws and azure, IT capabilities
-author: lbrader
-ms.service: guidance
-ms.topic: article
-ms.date: 03/24/2017
-ms.author: pnp
-
-pnp.series.title: Azure for AWS Professionals
----
-# 서비스 비교
-[!INCLUDE [header](../_includes/header.md)]
-
-본 문서는 Microsoft Azure 서비스와 Amazone 웹 서비스(AWS)를 비교하여 이해하는 데 도움이 됩니다. Azure와 AWS로 멀티클라우드 솔루션을 계획하든 Azure에 마이그레이션하든, 모든 범주에서 Azure와 AWS 서비스의 IT 기능을 비교할 수 있습니다.  
-
-다음 표는 AWS 서비스에 대하여 여러 Azure 서비스를 목록화한 것입니다. Azure 서비스는 서로 비슷하나, 그 기능의 깊이와 폭은 다릅니다. 
-
-## 멀티클라우드 솔루션을 위한 Azure와 AWS
-
-주요 공개 클라우드 플랫폼으로서의 Microsoft Azure와 Amazon 웹 서비스(AWS)는 비즈니스에 광범위한 범위의 넓고 깊은 기능을 제공합니다. 그러나 많은 회사들이 멀티클라우드 접근법으로 위험과 종속성을 배분할뿐만 아니라 더 큰 선택과 활용을 위해서 두 플랫폼을 함께 사용하기로 결정했습니다.   Azure와 AWS가 대부분의 클라우드 시장 요구를 나타내기 때문에, 컨설팅 회사와 소프트웨어 공급업체들은 두 플랫폼을 모두 빌드하고 사용할 수 있습니다.
-
-AWS 사용자를 위한 Azure의 개요를 보려면, [AWS 전문가를 위한 Azure 소개](index.md)를 참조하세요.
-
-
-## 마켓플레이스
-
-| 하위 범주        | AWS 서비스     | Azure 서비스                                                 | 설명                                                                                                                                  |
-|-------------|-----------------|---------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| 마켓플레이스 | AWS 마켓플레이스 | [Azure 마켓플레이스](https://azure.microsoft.com/marketplace/) | 단일 가상 컴퓨터 또는 여러 가상 컴퓨터 솔루션을 포함하여, 배포하기 쉬운 자동으로 구성된 타사의 응용 프로그램. |
-
-
 ## 계산 서비스
-
-| 하위 범주                            | AWS 서비스                     | Azure 서비스                                                                                                                                                                                                                                                                                                                                                                | 설명                                                                                                                                                                                                                                    |
+35
+​
+36
+| 하위 범주                            | AWS 서비스                     | Azure 서비스                                                                                                                                                                                                                                                                                                                                                                | 설명                                                                                                                                                                                                                                    |
+37
 |---------------------------------|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-
-| 가상 서버                 | EC2 | [가상 컴퓨터](https://azure.microsoft.com/en-us/services/virtual-machines/)  | 가상 서버를 이용하면 OS 및 서버 소프트웨어를 배포, 관리, 유지할 수 있습니다. 인스턴스 유형은 CPU/RAM의 조합을 정합니다. 사용자들은 크기를 변경하는 데 유연하게 이용할 수 있는 것에 비용을 지불합니다. |
-|
-
- **&nbsp;**                      | Amazon Lightsail                | [Azure Virtual Machines & Images](https://azure.microsoft.com/en-us/services/virtual-machines/)                                                                                                                                                                                                                                                                              | 가상 컴퓨터를 구축할 때 선택할 수 있는 가상 컴퓨터 템플릿 모음.   |      
+38
+| 가상 서버                 | EC2 | [가상 컴퓨터](https://azure.microsoft.com/en-us/services/virtual-machines/)                                                                                                                                                                                                                                                                                       | 가상 서버를 이용하면 OS 및 서버 소프트웨어를 배포, 관리, 유지할 수 있습니다. 인스턴스 유형은 CPU/RAM의 조합을 정합니다. 사용자들은 크기를 변경하는 데 유연하게 이용할 수 있는 것에 비용을 지불합니다. |
+39
+​
+40
+ **&nbsp;**                      | Amazon Lightsail                | [Azure Virtual Machines & Images](https://azure.microsoft.com/en-us/services/virtual-machines/)                                                                                                                                                                                                                                                                              | 가상 컴퓨터를 구축할 때 선택할 수 있는 가상 컴퓨터 템플릿 모음.                                                                                                                                                   |                                                                                                     |
 | 컨테이너 관리            | EC2 컨테이너 서비스     | [컨테이너 서비스](https://azure.microsoft.com/en-us/services/container-service/)                                                                                                                                                                                                                                                                                     | Docker 컨테이너를 지원하는 컨테이너 관리 서비스로  사용자들은 관리 인스턴스 클러스터에서 응용 프로그램을 실행할 수 있습니다. 클러스터 관리 소프트웨어를 운영하거나 내결함성 클러스터 아키텍처를 설계할 필요성을 제거합니다. |
 | **&nbsp;**                      | EC2 Container Registry          | [Azure Container Registry (Preview)](https://azure.microsoft.com/en-us/services/container-registry/)                                                                                                                                                                                                                                                                         |고객들이 Docker 형식 이미지를 저장할 수 있습니다. Azure에서 모든 유형의 컨테이너를 배포할 수 있었습니다.                                                                                                                                  |
 | 마이크로서비스 기반 응용 프로그램 | None                            | [서비스 패브릭](https://azure.microsoft.com/en-us/services/service-fabric/)                                                                                                                                                                                                                                                                                                 | 상태 비저장(stateless)이거나 상태 저장(stateful)일 수 있는 복잡하고 상호 관련된 코드 구성요소들의 실행, 수명, 복원을 오케스트레이션 하고 관리하는 계산 서비스.                                                                     |
