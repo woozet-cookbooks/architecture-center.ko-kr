@@ -53,8 +53,7 @@ Azure 서비스는 자기 조직의 규모와 요구에 따라 몇 가지 가격
 
 AWS에서 IAM 사용자와 그룹에 사용 권한이 부여되는 것과 유사하게, 구독 등급 하에서도 사용자 역할과 개별적인 사용 권한은 특정 리소스에 지정될 수 있습니다.  Azure의 모든 사용자 계정은 Microsoft 계정이나 조직 계정(Azure Active Directory를 통해 관리되는 계정) 중 하나와 관련되어있습니다.
 
-AWS 계정과 마찬가지로 구독에도 기본 서비스 할당량과 제한이 있습니다. 이 제한들의 전체 목록을 보려면 [Azure 구독 및 서비스 제한, 할당량, 제약 조건](https://azure.microsoft.com/documentation/articles/azure-subscription-service-limits/)을 참조하세요. 이 제한들은
-These limits can be increased up to the maximum by [관리 포털에서 지원 요청 정리하기](https://blogs.msdn.microsoft.com/girishp/2015/09/20/increasing-core-quota-limits-in-azure/)에 의해 최대로 증가할 수 있습니다.
+AWS 계정과 마찬가지로 구독에도 기본 서비스 할당량과 제한이 있습니다. 이 제한들의 전체 목록을 보려면 [Azure 구독 및 서비스 제한, 할당량, 제약 조건](https://azure.microsoft.com/documentation/articles/azure-subscription-service-limits/)을 참조하세요. 이 제한들은 [관리 포털에서 지원 요청하기](https://blogs.msdn.microsoft.com/girishp/2015/09/20/increasing-core-quota-limits-in-azure/)를 통해 최대로 증가 시킬 수 있습니다.
 
 ### 참고 항목
 
@@ -333,11 +332,10 @@ Azure는 디렉터리 서비스를 다음 제품들로 나눕니다.
 
 #### 웹 응용 프로그램 방화벽
 
-In addition to the [응용 프로그램 게이트웨이 웹 응용 프로그램 방화벽](https://azure.microsoft.com/documentation/articles/application-gateway-webapplicationfirewall-overview/)뿐만 아니라, [Barracuda
+[응용 프로그램 게이트웨이 웹 응용 프로그램 방화벽](https://azure.microsoft.com/documentation/articles/application-gateway-webapplicationfirewall-overview/)뿐만 아니라, [Barracuda
 Networks](https://azure.microsoft.com/marketplace/partners/barracudanetworks/waf/)와 같은 타 공급업체의 [웹 응용 프로그램 방화벽](https://azure.microsoft.com/documentation/articles/application-gateway-webapplicationfirewall-overview/)을 사용할 수 있습니다.
 
 #### 참고 항목
-
 -   [Microsoft Azure 보안 시작하기](https://azure.microsoft.com/documentation/articles/azure-security-getting-started/)
 
 -   [Azure 신원확인 관리 및 출입 통제 보안의 모범 사례](https://azure.microsoft.com/documentation/articles/azure-security-identity-management-best-practices/)
@@ -359,9 +357,9 @@ AWS 심플 큐 서비스(SQS)는 AWS 플랫폼에서 응용 프로그램, 서비
 
 #### 디바이스 팜(Device Farm)
 
-AWS 디바이스 팜은 장치 간 시험 서비스를 제공합니다. Azure에서, [Xamarin 시험 클라우드](https://www.xamarin.com/test-cloud)는 모바일 장치에 대하여 비슷한 장치 간 프런트 엔드 시험을 제공합니다.
+AWS 디바이스 팜은 장치 간 시험 서비스를 제공합니다. Azure에서, [Xamarin 시험 클라우드](https://www.xamarin.com/test-cloud)는 모바일 장치에 대하여 비슷한 장치 간 프런트 엔드 테스트를 제공합니다.
 
-In addition to front-end testing, the [Azure DevTest 랩](https://azure.microsoft.com/services/devtest-lab/)은 프런트 엔드 시험뿐만 아니라 Linux와 Windows 환경에 대한 백 엔드 시험 리소스를 제공합니다.
+[Azure DevTest 랩](https://azure.microsoft.com/services/devtest-lab/)은 프런트 엔드 테스트 뿐만 아니라 Linux와 Windows 환경에 대한 백 엔드 테스트 리소스를 제공합니다.
 
 #### 참고 항목
 
