@@ -1,7 +1,7 @@
 # [참조 아키텍처](./index.md)
 
 ## [ID 관리](./identity/index.md)
-### [Which should I choose?](./identity/considerations.md)
+### [ID 관리 방법은?](./identity/considerations.md)
 ### [온프레미스 AD를 Azure AD와 통합](./identity/azure-ad.md)
 ### [AD DS를 Azure로 확장](./identity/adds-extend-domain.md)
 ### [Azure에 AD DS 포레스트 생성](./identity/adds-forest.md)
