@@ -31,7 +31,7 @@ pnp.series.prev: n-tier
 * **VNets**. 지역별로 별개의 VNet을 생성하는데, 이 때 주소 공간이 겹치지 않도록 주의해야 합니다.
 * **Apache Cassandra**. 고가용성을 위해 여러 Azure 지역의 데이터 센터에 Cassandra를 배포합니다. 각 지역 내 노드를 장애 도메인과 업그레이드 도메인을 사용하여 rack-aware 모드로 구성하여 지역 내 복원성을 확보합니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+이 아키텍처에 대한 Visio 파일 [다운로드](https://aka.ms/arch-diagrams).
 
 ## 권장사항
 
