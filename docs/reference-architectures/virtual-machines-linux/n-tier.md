@@ -32,7 +32,7 @@ N계층 아키텍처를 구현하는 방법은 다양합니다. 아래 다이어
 * **네트워크 보안 그룹(NSG).** [네트워크 보안 그룹][nsg] (NSG)을 사용하여 VNet 내 네트워크 트래픽을 제한합니다. 예를 들어, 위의 그림과 같은 3계층 아키텍처에서는 DB 계층이 웹 프런트엔드로부터의 트래픽을 수용하지 않고 오직 비즈니스 계층과 관리 서브넷으로부터의 트래픽만을 수용합니다.
 * **Apache Cassandra database**. DB 복제 및 장애조치(failover)를 사용하도록 설정하여 데이터 계층에서 고가용성을 제공합니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+이 아키텍처에 대한 Visio 파일 [다운로드](https://aka.ms/arch-diagrams).
 
 > [!참고]
 > Azure는 [Resource Manager][resource-manager-overview]와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다. 
