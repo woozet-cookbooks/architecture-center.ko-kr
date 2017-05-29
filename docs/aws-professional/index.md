@@ -407,8 +407,7 @@ AWS 디바이스 팜은 장치 간 시험 서비스를 제공합니다. Azure에
 
 #### 알림
 
-Notification Hubs do not support sending SMS or email messages, so third-party
-services are needed for those delivery types.
+알림 허브는 SMS나 Email발송을 지원하지 않습니다. 그렇기 때문에 SMS, Email을 발송하기 위해서는 서드파티 서비스를 사용하셔야 합니다.
 
 #### 참고 항목
 
