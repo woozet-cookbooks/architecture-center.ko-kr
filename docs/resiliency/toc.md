@@ -3,7 +3,7 @@
 ## [복원 체크리스트](../checklist/resiliency.md?toc=/azure/architecture/resiliency/toc.json)
 ## [장애 모드 분석](./failure-mode-analysis.md)
 
-## Additional guidance
+##  추가적인 가이드 
 ### [재해 복구](./disaster-recovery-azure-applications.md)
 ### [재해 복구 및 고가용성](./disaster-recovery-high-availability-azure-applications.md)
 ### [고가용성](./high-availability-azure-applications.md)
