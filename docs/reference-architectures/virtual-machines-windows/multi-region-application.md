@@ -37,7 +37,7 @@ pnp.series.prev: n-tier
 
 * **•	VPN 게이트웨이**. 각 VNet에 [VPN 게이트웨이][vpn-gateway]를 생성하고 [VNet-to-VNet 연결][vnet-to-vnet]을 구성하면 두 VNet 간 네트워크 트래픽을 허용하도록 설정할 수 있습니다. SQL Always On 가용성 그룹을 사용하려면 이러한 구성이 필요합니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+이 아키텍처에 대한 Visio 파일 [다운로드](https://aka.ms/arch-diagrams).
 
 > [!참고]
 > Azure는 [Resource Manager][resource-manager-overview]와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
