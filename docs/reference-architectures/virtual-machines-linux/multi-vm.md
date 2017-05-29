@@ -39,7 +39,7 @@ pnp.series.prev: single-vm
 * **네트워크 인터페이스(NIC)**. 각각의 VM은 네트워크 연결을 위한 NIC를 갖습니다.
 * **저장소**. 저장소 계정은 VM 이미지뿐만 아니라 Azure가 수집한 VM 진단 데이터와 같은 다른 파일 관련 리소스도 포함합니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+이 아키텍처에 대한 Visio 파일 [다운로드](https://aka.ms/arch-diagrams).
 
 > [!참고]
 > Azure는 [Resource Manager][resource-manager-overview]와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다. 
