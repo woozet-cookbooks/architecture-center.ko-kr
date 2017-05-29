@@ -35,7 +35,7 @@ N계층 아키텍처를 구현하는 방법은 다양합니다. 아래 다이어
 * **SQL 서버 Always On 가용성 그룹.** 복제 및 장애조치를 사용하도록 설정하여 데이터 계층에서 고가용성을 제공합니다.
 * **Active Directory 도메인 서비스(AD DS) 서버**. Windows Server 2016에 앞서 SQL 서버 Always On 가용성 그룹을 도메인에 추가해야 합니다. 이는 가용성 그룹이 Windows Server Failover Cluster(WSFC) 기술을 기반으로 하기 때문입니다. Windows Server 2016은 Active Directory 없이 Failover Cluster를 생성할 수 있는 기능을 지원하며 이 경우 이 아키텍처에서는 AD DS 서버가 필요하지 않습니다.  자세한 내용은 [Windows Server 2016의 Failover Clustering의 새로운 특징][wsfc-whats-new]을 참조하시기 바랍니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+이 아키텍처에 대한 Visio 파일 [다운로드](https://aka.ms/arch-diagrams).
 
 > [!참고]
 > Azure는 [Resource Manager][resource-manager-overview]와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다. 
