@@ -1,6 +1,6 @@
 # [클라우드 설계 패턴](./index.md)
 
-## Categories
+## 분류
 ### [가용성](./category/availability.md)
 ### [데이터 관리](./category/data-management.md)
 ### [설계와 구현](./category/design-implementation.md)
