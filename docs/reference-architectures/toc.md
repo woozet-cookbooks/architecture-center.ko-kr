@@ -22,16 +22,16 @@
 ### [단일 VM](./virtual-machines-linux/single-vm.md)
 ### [부하 분산 VM](./virtual-machines-linux/multi-vm.md)
 ### [N계층 응용 프로그램](./virtual-machines-linux/n-tier.md)  
-### [다지역 응용 프로그램](./virtual-machines-linux/multi-region-application.md)
+### [여러 지역 응용 프로그램](./virtual-machines-linux/multi-region-application.md)
 
 ## [Windows VM 워크로드](./virtual-machines-windows/index.md)
 ### [단일 VM](./virtual-machines-windows/single-vm.md)
 ### [부하 분산 VM](./virtual-machines-windows/multi-vm.md)
 ### [N계층 응용 프로그램](./virtual-machines-windows/n-tier.md)  
-### [다지역 응용 프로그램](./virtual-machines-windows/multi-region-application.md)
+### [여러 지역 응용 프로그램](./virtual-machines-windows/multi-region-application.md)
 
 ## [관리 웹 응용 프로그램](./managed-web-app/index.md)
 ### [기본 웹 응용 프로그램](./managed-web-app/basic-web-app.md)
 ### [향상된 확장성](./managed-web-app/scalable-web-app.md)
-### [다지역에서 실행](./managed-web-app/multi-region-web-app.md)
+### [여러 지역에서 실행](./managed-web-app/multi-region-web-app.md)
 
