@@ -8,7 +8,7 @@
 ### [AD FS를 Azure로 확장](./identity/adfs.md)
 
 ## [하이브리드 네트워크](./hybrid-networking/index.md)
-### [Which should I choose?](./hybrid-networking/considerations.md)
+### [연결 방법은?](./hybrid-networking/considerations.md)
 ### [VPN](./hybrid-networking/vpn.md)
 ### [ExpressRoute](./hybrid-networking/expressroute.md)
 ### [VPN 장애조치를 지원하는 ExpressRoute](./hybrid-networking/expressroute-vpn-failover.md)
