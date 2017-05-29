@@ -37,7 +37,7 @@ Azure에서 VM을 프로비전하는 데는 VM 외에도 많은 유동적 요소
 * **네트워크 보안 그룹(NSG)**. [네트워크 보안 그룹(NSG)][nsg]은 서브넷에 네트워크 트래픽을 허용하거나 거부하는 데 사용됩니다. 사용자는 NSG를 개별 네트워크 인터페이스(NIC) 또는 서브넷과 연관지을 수 있습니다. NSG를 서브넷과 연관짓는 경우, 해당 서브넷의 모든 VM에 NSG 규칙이 적용됩니다.
 * **진단.** 진단 로깅은 VM의 관리 및 문제해결에 매우 중요한 역할을 합니다.
 
-You can download a [Visio file](https://aka.ms/arch-diagrams) of this architecture.
+이 아키텍처에 대한 Visio 파일 [다운로드](https://aka.ms/arch-diagrams).
 
 > [!참고]
 > Azure는 [Resource Manager][resource-manager-overview]와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다. 
