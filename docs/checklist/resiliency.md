@@ -28,7 +28,7 @@ ms.custom: resiliency, checklist
   o	복구 전략을 식별합니다.
 
 
-    자세한 내용은 see [복원 가능한 Azure용 응용 프로그램 설계](https://docs.microsoft.com/en-us/azure/architecture/resiliency/failure-mode-analysis)를 참조하십시오. [fma](https://docs.microsoft.com/en-us/azure/architecture/resiliency/failure-mode-analysis).  
+    자세한 내용은 see [실패 모드 분석(FMA)](https://docs.microsoft.com/en-us/azure/architecture/resiliency/failure-mode-analysis)를 참조하십시오.
 
 ## 응용 프로그램
 
