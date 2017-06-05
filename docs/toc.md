@@ -29,7 +29,7 @@
 ## [일시적 오류 처리](./best-practices/transient-faults.md)
 ## [특정 서비스를 위한 다시 시도 지침](./best-practices/retry-service-specific.md)
 
-# Design Review Checklists
+#  디자인 체크리스트
 ## [가용성 체크리스트](./checklist/availability.md)
 ## [복원력 체크리스트](./checklist/resiliency.md)
 ## [확장성 체크리스트](./checklist/scalability.md)
@@ -39,17 +39,17 @@
 ## [복원력 체크리스트](./checklist/resiliency.md)
 ## [장애 모드 분석](./resiliency/failure-mode-analysis.md)
 
-# Scenario guides
+# 시나리오 가이드
 ## [AWS 전문가를 위한 Azure](./aws-professional/index.md)
 ## [다중 테넌트 응용 프로그램에서 ID 관리](./multitenant-identity/index.md)
-## [Migrate from Cloud Services to Service Fabric](./service-fabric/migrate-from-cloud-services.md)
-## [Run Elasticsearch on Azure](./elasticsearch/index.md)
+## [Cloud Service를 Service Fabric으로 마이그레이션하기](./service-fabric/migrate-from-cloud-services.md)
+## [Azure에서 Elasticsearch 실행하기](./elasticsearch/index.md)
 
-# Resources
+# 참고 자료
 ## [Microsoft Trust Center for Azure](https://www.microsoft.com/en-us/trustcenter/cloudservices/azure)
 ## [Icons and diagrams](./resources/diagrams.md)
-## [Calendar of Azure updates](https://azure.microsoft.com/updates/)
+## [Azure 업데이트](https://azure.microsoft.com/updates/)
 ## [Azure 교육 및 인증](https://azure.microsoft.com/community/training/)
-## [SQLCAT blog](https://blogs.msdn.microsoft.com/sqlcat/)
-## [AzureCAT blog](https://blogs.msdn.microsoft.com/azurecat/)
+## [SQLCAT팀 blog](https://blogs.msdn.microsoft.com/sqlcat/)
+## [Azure CAT팀 blog](https://blogs.msdn.microsoft.com/azurecat/)
 ## [백서](https://azure.microsoft.com/resources/whitepapers/)
