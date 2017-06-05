@@ -15,7 +15,7 @@ ms.custom: resiliency, checklist
 
 ## 요구사항
 
-* **고객의 가용성 요구사항을 정의합니다.** 고객은 귀사의 응용 프로그램 구성 요소에 대한 가용성 요구사항이 있으며, 이는 응용 프로그램 설계에 영향을 줍니다. 각 응용 프로그램의 가용성 목표에 대해 고객의 동의를 구하십시오. 그렇지 않으면 귀사의 설계가 고객의 기대에 못 미칠 수 있습니다. 자세한 내용은 문서 [Zaure를 위한 복원력 높은 응용 프로그램 설계하기(Designing resilient applications for Azure)](../resiliency/index.md) document 중 [복원력 요구사항 정의(Defining your resiliency requirements)](../resiliency/index.md#defining-your-resiliency-requirements) 섹션을 참조하십시오. 
+* **고객의 가용성 요구사항을 정의합니다.** 고객은 귀사의 응용 프로그램 구성 요소에 대한 가용성 요구사항이 있으며, 이는 응용 프로그램 설계에 영향을 줍니다. 각 응용 프로그램의 가용성 목표에 대해 고객의 동의를 구하십시오. 그렇지 않으면 귀사의 설계가 고객의 기대에 못 미칠 수 있습니다. 자세한 내용은 문서 [복원 가능한 Azure용 응용 프로그램 설계](../resiliency/index.md) 문서 중 [복원력 요구사항 정의](../resiliency/index.md#defining-your-resiliency-requirements) 섹션을 참조하십시오. 
 
 ## 실패 모드 분석
 
