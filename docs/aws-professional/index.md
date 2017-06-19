@@ -116,7 +116,7 @@ AWS에서 가용성은 가용 영역이라는 개념에 중점을 둡니다. Azu
 
 AWS에서 지역은 둘 이상의 가용 영역으로 분할됩니다. 가용 영역은 지역 내에 물리적으로 격리된 데이터센터에 해당합니다. 가용 영역들을 구분하기 위해서 응용 프로그램 서버를 배치한 경우, 한 영역에 영향을 주는 하드웨어 또는 연결 중단은 다른 영역에 호스팅된 서버에 영향을 미치지 않습니다.
 
-IAzure에서, [장애 도메인](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/)
+Azure에서, [장애 도메인](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/)
 은 물리적 전원과 네트워크 스위치를 공유하는 VM 그룹의 범위를 규정합니다. VM을 여러 장애 도메인에 VM을 분배하려면 [가용성 세트](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-manage-availability/)를 사용합니다. 인스턴스들이 같은 가용성 세트에 할당되면, Azure는 그 인스턴스들을 몇몇 장애 도메인에 골고루 배분합니다.  장애 도메인 한 곳에서 정전이나 네트워크 중단이 발생한 경우, 적어도 그 세트의 VM 일부가 다른 장애 도메인에 있어야 그러한 중단에 영향을 받지 않습니다.
 
 ![AWS Availability Zones comparison to Azure fault domains and availability sets](./images/zone-fault-domains.png "AWS Availability Zones compared with Azure fault domains and availability sets")
