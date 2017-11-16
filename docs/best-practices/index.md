@@ -1,6 +1,6 @@
 ---
-redirect_url: /azure/patterns/category/availability
-ms.openlocfilehash: 9c87d911a4a7a9d5d14cc31ba1bba48a8cf48978
+redirect_url: /azure/architecture/best-practices/api-design
+ms.openlocfilehash: cf61fdce39f24269b5a43c26ce9f32615eeaee97
 ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
