@@ -19,7 +19,10 @@
     }
   ],
   "notification_subscribers": [],
-  "branches_to_filter": [],
+  "branches_to_filter": [
+    "live",
+    "master-sxs"
+  ],
   "git_repository_url_open_to_public_contributors": "https://github.com/mspnp/architecture-center",
   "continue_with_document_error": true,
   "skip_source_output_uploading": false,
