@@ -1,0 +1,21 @@
+- name: Azure 아키텍처 센터
+  href: /azure/architecture
+- name: 성능 안티패턴
+  href: index.md
+  items:
+    - name: 사용량이 많은 데이터베이스
+      href: busy-database/index.md
+    - name: 사용량이 많은 프런트 엔드
+      href: busy-front-end/index.md
+    - name: 번잡한 I/O
+      href: chatty-io/index.md
+    - name: 불필요한 가져오기
+      href: extraneous-fetching/index.md
+    - name: 부적절한 인스턴스화
+      href: improper-instantiation/index.md
+    - name: 모놀리식 지속성
+      href: monolithic-persistence/index.md
+    - name: 캐싱 없음
+      href: no-caching/index.md
+    - name: 동기 I/O
+      href: synchronous-io/index.md

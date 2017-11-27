@@ -1,0 +1,60 @@
+- name: Azure 아키텍처 센터
+  href: /azure/architecture
+- name: 응용 프로그램 아키텍처 가이드
+  href: index.md
+  items:
+    - name: 아키텍처 스타일
+      href: architecture-styles/index.md
+      items:
+        - name: n계층 응용 프로그램
+          href: architecture-styles/n-tier.md
+        - name: 웹-큐-작업자
+          href: architecture-styles/web-queue-worker.md
+        - name: 마이크로 서비스
+          href: architecture-styles/microservices.md
+        - name: CQRS
+          href: architecture-styles/cqrs.md
+        - name: 이벤트 기반 아키텍처
+          href: architecture-styles/event-driven.md
+        - name: 빅데이터
+          href: architecture-styles/big-data.md
+        - name: 큰 계산
+          href: architecture-styles/big-compute.md
+    - name: 기술 선택
+      href: technology-choices/index.md
+      items:
+        - name: 계산 옵션 개요
+          href: technology-choices/compute-overview.md
+        - name: 계산 비교
+          href: technology-choices/compute-comparison.md
+        - name: 데이터 저장소 개요
+          href: technology-choices/data-store-overview.md
+        - name: 데이터 저장소 비교
+          href: technology-choices/data-store-comparison.md
+    - name: 디자인 원칙
+      href: design-principles/index.md
+      items:
+        - name: 자체 복구를 위한 디자인
+          href: design-principles/self-healing.md
+        - name: 모두 중복으로 구성
+          href: design-principles/redundancy.md
+        - name: 조정 최소화
+          href: design-principles/minimize-coordination.md
+        - name: 규모 확장을 위한 디자인
+          href: design-principles/scale-out.md
+        - name: 한도에 맞춘 분할
+          href: design-principles/partition.md
+        - name: 운영을 위한 디자인
+          href: design-principles/design-for-operations.md
+        - name: 관리되는 서비스 사용
+          href: design-principles/managed-services.md
+        - name: 작업에 가장 적합한 데이터 저장소 사용
+          href: design-principles/use-the-best-data-store.md
+        - name: 진화를 위한 디자인
+          href: design-principles/design-for-evolution.md
+        - name: 비즈니스 요구 사항에 맞게 구축
+          href: design-principles/build-for-business.md
+    - name: 소프트웨어 품질 핵심 요소
+      href: pillars.md
+    - name: 디자인 패턴
+      href: ../patterns/index.md?toc=/azure/architecture/guide/toc.json

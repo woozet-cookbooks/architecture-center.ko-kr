@@ -1,207 +1,307 @@
 ---
-title: Azure Architecture Center
-description: The Azure Architecture Center is the official center for guidance, blueprints, patterns, and best practices for building solutions with Microsoft Azure. It is curated by the Microsoft patterns & practices team.
+title: "Azure 아키텍처 센터"
+description: "Azure 아키텍처 센터는 Microsoft Azure를 사용하여 솔루션을 구축하기 위한 지침, 청사진, 패턴 및 모범 사례를 위한 공식 센터입니다. Microsoft 패턴 및 작업 방식 팀에 의해 엄선됩니다."
 layout: LandingPage
-ms.service: guidance
-ms.author: pnp
+ms.openlocfilehash: 3afe907b8ea1fe59d6c2eb9505ddb34775fdcd62
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
+# <a name="azure-architecture-center"></a>Azure 아키텍처 센터
 
-# Azure 아키텍처 센터
-
+<!-- main panel -->
 <ul class="panelContent cardsC">
+    <!-- A3G -->
     <li>
-        <a href="/azure/architecture/reference-architectures">
-        <div class="cardSize">
-            <div class="cardPadding">
-                <div class="card">
-                    <div class="cardImageOuter">
-                        <div class="cardImage bgdAccent1">
-                            <img src="_images/azure-arch-1.svg" alt="" />
+        <a href="/azure/architecture/guide">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <img src="_images/a3g-logo.svg" alt="Azure Application Architecture Guide" />
+                        <div class="cardText">
+                            <h3>Azure 응용 프로그램 아키텍처 가이드</h3>
+                            <p> 고객 참여를 통해 확보한 검증된 사례를 기반으로 하는 확장성, 복원력 및 고가용성 응용 프로그램을 디자인하는 방법에 대한 안내서입니다.</p>
                         </div>
                     </div>
-                <div class="cardText">
-                    <h3>참조 아키텍처</h3>
-                    <p>클라우드용으로 권장되는 아키텍처로, 각각의 아키텍처에는 모범 사례, 관행적 단계, 배포 가능한 솔루션이 포함되어 있습니다.</p>
                 </div>
             </div>
-        </div>
-    </div>
-    </a>
-</li>
-<li>
-    <a href="/azure/architecture/patterns/">
-    <div class="cardSize">
-        <div class="cardPadding">
-            <div class="card">
-                <div class="cardImageOuter">
-                    <div class="cardImage bgdAccent1">
-                        <img src="_images/azure-arch-3.svg" alt="" />
+        </a>
+    </li>
+    <!-- Reference architectures -->
+    <li>
+        <a href="/azure/architecture/reference-architectures">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <img src="_images/reference-architectures.svg" alt="Azure Reference Architectures" />
+                        <div class="cardText">
+                            <h3>참조 아키텍처</h3>
+                            <p>Azure에 권장되는 아키텍처 집합입니다. 각 아키텍처는 모범 사례, 조치 단계 및 배포 가능한 솔루션을 포함합니다.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="cardText">
-                    <h3>클라우드 설계 패턴</h3>
-                    <p>개발자와 솔루션 설계자를 위한 설계 패턴으로, 각각의 패턴에는 문제, 문제 해결 패턴, Azure에서의 사례가 포함되어 있습니다.</p>
-                </div>
             </div>
-        </div>
-    </div>
-    </a>
-</li>
-<li>
-    <a href="/azure/architecture/best-practices/">
-    <div class="cardSize">
-        <div class="cardPadding">
-            <div class="card">
-                <div class="cardImageOuter">
-                    <div class="cardImage bgdAccent1">
-                        <img src="_images/azure-arch-4.svg" alt="" />
+        </a>
+    </li>
+    <!-- Cloud design patterns -->
+    <li>
+        <a href="/azure/architecture/patterns/">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <img src="_images/cloud-design-patterns.svg" alt="Cloud Design Patterns" />
+                        <div class="cardText">
+                            <h3>클라우드 디자인 패턴</h3>
+                            <p>개발자 및 솔루션 설계자를 위한 디자인 패턴입니다. 각 패턴은 문제, 문제를 해결하는 패턴 및 Azure를 기반으로 하는 예를 설명합니다.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="cardText">
-                    <h3>클라우드 응용 프로그램을 위한 모범 사례</h3>
-                    <p>클라우드 응용 프로그램을 위한 모범 사례로, 자동 크기 조정, 캐싱, 데이터 파티셔닝, API 설계 등을 포괄합니다.</p>
-                </div>
             </div>
-        </div>
-    </div>
-    </a>
-</li>
+        </a>
+    </li>
 </ul>
 
-<hr />
-
+<!-- Second panel -->
 <ul class="panelContent cardsI">
+    <!-- Best practices -->
     <li>
-    <a href="/azure/architecture/checklist/">
-<div class="cardSize">
-<div class="cardPadding">
-    <div class="card">
-        <div class="cardImageOuter">
-            <div class="cardImage">
-                <img src="_images/checklist.svg" alt="Design Review Checklists" />
+        <a href="/azure/architecture/best-practices/">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/best-practices.svg" alt="Best Practices" height="100%" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>클라우드 응용 프로그램에 대한 모범 사례</h3>
+                            <p>자동 크기 조정, 캐싱, 데이터 분할, API 디자인 등과 같은 측면을 다루는 클라우드 응용 프로그램에 대한 모범 사례입니다.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="cardText">
-            <h3>설계 점검 목록</h3>
-            <p>설계 과정에서 개발자와 솔루션 설계자를 지원하기 위한 설계 점검 목록.</p>
-        </div>
-    </div>
-</div>
-</div>
-</a>
+        </a>
     </li>
+    <!-- Performance anti-practices -->
     <li>
-    <a href="/azure/architecture/resiliency">
-<div class="cardSize">
-<div class="cardPadding">
-    <div class="card">
-        <div class="cardImageOuter">
-            <div class="cardImage">
-                <img src="_images/resiliency.svg" alt="Designing for Resiliency" />
+        <a href="/azure/architecture/antipatterns">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/performance.svg" alt="Performance antipatterns" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>성능 안티패턴</h3>
+                            <p>클라우드 응용 프로그램에서 성능 및 확장성 문제의 일반적인 원인을 감지하고 수정하는 방법입니다.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="cardText">
-            <h3>복원력 설계</h3>
-            <p>Azure를 위한 응용 프로그램 복원력 설계 방법 소개</p>
-        </div>
-    </div>
-</div>
-</div>
-</a>
+        </a>
     </li>
+    <!-- Checklists -->
     <li>
-    <a href="/azure/architecture/elasticsearch">
-<div class="cardSize">
-<div class="cardPadding">
-    <div class="card">
-        <div class="cardImageOuter">
-            <div class="cardImage">
-                <img src="_images/elasticsearch.svg" alt="Run Elasticsearch on Azure" />
+        <a href="/azure/architecture/checklist/">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/checklist.svg" alt="Design Review Checklists" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>디자인 검토 검사 목록</h3>
+                            <p>디자인 프로세스 중 개발자와 솔루션 설계자를 지원하기 위한 검사 목록입니다.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="cardText">
-            <h3>Azure에서 Elasticsearch 실행</h3>
-            <p>Azure에서 Elasticsearch 클러스터를 배포, 관리 및 튜닝하는 방법 소개</p>
-        </div>
-    </div>
-</div>
-</div>
-</a>
+        </a>
     </li>
+    <!-- Azure for AWS Professionals -->
     <li>
-    <a href="/azure/architecture/aws-professional">
-<div class="cardSize">
-<div class="cardPadding">
-    <div class="card">
-        <div class="cardImageOuter">
-            <div class="cardImage">
-                <img src="_images/aws-professional.svg" alt="Azure for AWS Professionals" />
+        <a href="/azure/architecture/aws-professional">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/aws-professional.svg" alt="Azure for AWS Professionals" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>AWS 전문가를 위한 Azure</h3>
+                            <p>Microsoft Azure에서 AWS 환경을 활용합니다.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="cardText">
-            <h3>AWS 전문가를 위한 Azure</h3>
-            <p>Microsoft Azure에서 귀하의 AWS 경험 활용</p>
-        </div>
-    </div>
-</div>
-</div>
-</a>
+        </a>
     </li>
+    <!-- Resiliency -->
     <li>
-    <a href="/azure/architecture/multitenant-identity">
-<div class="cardSize">
-<div class="cardPadding">
-    <div class="card">
-        <div class="cardImageOuter">
-            <div class="cardImage">
-                <img src="_images/multitenant-identity.svg" alt="Identity Management for Multitenant Applications" />
+        <a href="/azure/architecture/resiliency">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/resiliency.svg" alt="Designing for Resiliency" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>복원력을 위한 디자인</h3>
+                            <p>Azure용 복원력 있는 응용 프로그램을 설계하는 방법을 알아봅니다.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="cardText">
-            <h3>멀티 테넌트 응용 프로그램용 ID 관리</h3>
-            <p>ID 관리를 위한 Azure AD 사용 시 멀티 테넌시에 대한 모범 사례 확인</p>
-        </div>
-    </div>
-</div>
-</div>
-</a>
+        </a>
     </li>
+    <!-- Building blocks -->
     <li>
-    <a href="https://blogs.msdn.microsoft.com/azurecat/">
-<div class="cardSize">
-<div class="cardPadding">
-    <div class="card">
-        <div class="cardImageOuter">
-            <div class="cardImage">
-                <img src="_images/azurecat.svg" alt="Azure Customer Advisory Team" />
+        <a href="https://github.com/mspnp/template-building-blocks/wiki">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/azbb.svg" alt="Azure Building Blocks" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>Azure 구성 요소</h3>
+                            <p>Azure 리소스의 배포를 간소화합니다. 단일 설정 파일을 사용하여 Azure에 복잡한 아키텍처를 배포합니다.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="cardText">
-            <h3>Azure 고객 상담팀</h3>
-            <p>AzureCAT 팀 블로그</p>
-        </div>
-    </div>
-</div>
-</div>
-</a>
+        </a>
     </li>
+    <!-- Sharepoint -->
     <li>
-    <a href="https://blogs.msdn.microsoft.com/sqlcat/">
-<div class="cardSize">
-<div class="cardPadding">
-    <div class="card">
-        <div class="cardImageOuter">
-            <div class="cardImage">
-                <img src="_images/sqlcat.svg" alt="SQL Server Customer Advisory Team" />
+        <a href="/azure/architecture/reference-architectures/sharepoint">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="/azure/architecture/reference-architectures/sharepoint/images/sharepoint.svg" alt="Run SharePoint 2016 on Azure" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>Azure에서 SharePoint Server 2016 실행</h3>
+                            <p>Azure에서 고가용성 SharePoint Server 2016 팜을 배포하고 실행합니다.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="cardText">
-            <h3>SQL 서버 고객 상담팀</h3>
-            <p>SQLCAT 팀 블로그</p>
-        </div>
-    </div>
-</div>
-</div>
-</a>
+        </a>
+    </li>
+    <!-- SAP -->
+    <li>
+        <a href="/azure/architecture/reference-architectures/sap">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="/azure/architecture/reference-architectures/sap/images/sap.svg" width="100%" alt="Run Elasticsearch on Azure" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>Azure에서 SAP HANA 실행</h3>
+                            <p>Azure의 고가용성 환경에서 SAP NetWeaver 및 SAP HANA를 배포하고 실행합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- Multitenant identity -->
+    <li>
+        <a href="/azure/architecture/multitenant-identity">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/multitenant-identity.svg" alt="Identity Management for Multitenant Applications" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>다중 테넌트 응용 프로그램에 대한 ID 관리</h3>
+                            <p>Azure AD를 사용하여 ID를 관리하는 경우 다중 테넌트에 대한 모범 사례를 이해합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- ElasticSearch -->
+    <li>
+        <a href="/azure/architecture/elasticsearch">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/elasticsearch.svg" alt="Run Elasticsearch on Azure" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>Azure에서 Elasticsearch 실행</h3>
+                            <p>Azure에서 Elasticsearch 클러스터를 배포, 관리 및 조정하는 방법을 알아봅니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- AzureCAT blog -->
+    <li>
+        <a href="https://blogs.msdn.microsoft.com/azurecat/">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/azurecat.svg" alt="Azure Customer Advisory Team" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>Azure 고객 자문 팀</h3>
+                            <p>AzureCAT 팀의 블로그</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- SQL CAT blog -->
+    <li>
+        <a href="https://blogs.msdn.microsoft.com/sqlcat/">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/sqlcat.svg" alt="SQL Server Customer Advisory Team" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>SQL Server 고객 자문 팀</h3>
+                            <p>SQLCAT 팀의 블로그</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
     </li>
 </ul>

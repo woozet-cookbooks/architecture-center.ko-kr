@@ -1,0 +1,75 @@
+- name: Azure 아키텍처 센터
+  href: /azure/architecture
+- name: 참조 아키텍처
+  href: index.md
+  items:
+    - name: App Service 웹 응용 프로그램
+      href: app-service-web-app/index.md
+      items:
+        - name: 기본 웹앱 응용 프로그램
+          href: app-service-web-app/basic-web-app.md
+        - name: 향상된 확장성
+          href: app-service-web-app/scalable-web-app.md
+        - name: 다중 지역 배포
+          href: app-service-web-app/multi-region.md
+    - name: ID 관리
+      href: identity/index.md
+      items:
+        - name: 어떤 것을 선택해야 하나요?
+          href: identity/considerations.md
+        - name: 온-프레미스 AD와 Azure AD 통합
+          href: identity/azure-ad.md
+        - name: AD DS를 Azure로 확장
+          href: identity/adds-extend-domain.md
+        - name: Azure에 AD DS 포리스트 만들기
+          href: identity/adds-forest.md
+        - name: AD FS를 Azure로 확장
+          href: identity/adfs.md
+    - name: 하이브리드 네트워크
+      href: hybrid-networking/index.md
+      items:
+        - name: 어떤 것을 선택해야 하나요?
+          href: hybrid-networking/considerations.md
+        - name: VPN
+          href: hybrid-networking/vpn.md
+        - name: ExpressRoute
+          href: hybrid-networking/expressroute.md
+        - name: VPN 장애 조치(failover)를 사용하는 ExpressRoute
+          href: hybrid-networking/expressroute-vpn-failover.md
+        - name: 허브-스포크 토폴로지
+          href: hybrid-networking/hub-spoke.md
+    - name: 네트워크 DMZ
+      href: dmz/index.md
+      items:
+        - name: Azure와 온-프레미스 간의 DMZ
+          href: dmz/secure-vnet-hybrid.md
+        - name: Azure와 인터넷 간의 DMZ
+          href: dmz/secure-vnet-dmz.md
+        - name: 고가용성 네트워크 가상 어플라이언스
+          href: dmz/nva-ha.md
+    - name: VM 워크로드(Linux)
+      href: virtual-machines-linux/index.md
+      items:
+        - name: 단일 VM
+          href: virtual-machines-linux/single-vm.md
+        - name: 부하 분산된 VM
+          href: virtual-machines-linux/multi-vm.md
+        - name: N 계층 응용 프로그램
+          href: virtual-machines-linux/n-tier.md
+        - name: 다중 지역 응용 프로그램
+          href: virtual-machines-linux/multi-region-application.md
+    - name: VM 워크로드(Windows)
+      href: virtual-machines-windows/index.md
+      items:
+        - name: 단일 VM
+          href: virtual-machines-windows/single-vm.md
+        - name: 부하 분산된 VM
+          href: virtual-machines-windows/multi-vm.md
+        - name: N 계층 응용 프로그램
+          href: virtual-machines-windows/n-tier.md
+        - name: 다중 지역 응용 프로그램
+          href: virtual-machines-windows/multi-region-application.md
+    - name: SAP NetWeaver 및 SAP HANA
+      href: sap/index.md
+    - name: SharePoint Server 2016
+      href: sharepoint/index.md

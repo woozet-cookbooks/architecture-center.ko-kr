@@ -1,29 +1,31 @@
 ---
-title: Identity management 
-description: Explains and compares the different methods available for managing identity in hybrid systems that span the on-premises/cloud boundary with Azure.
+title: "ID 관리"
+description: "Azure를 사용하여 온-프레미스/클라우드 경계에 걸쳐 있는 하이브리드 시스템의 ID 관리에 사용 가능한 여러 방법을 비교 및 설명합니다."
 layout: LandingPage
-ms.service: guidance
-ms.author: pnp
+ms.openlocfilehash: cc4b069dc166931cb487c4b549f74a1f09be1cdd
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
+# <a name="identity-management"></a>ID 관리
 
-# ID 관리
+이러한 참조 아키텍처는 온-프레미스 AD(Active Directory) 환경을 Azure 네트워크와 통합하는 옵션을 보여줍니다. [어떤 것을 선택해야 하나요?](./considerations.md)
 
-이 참조 아키텍처는 온프레미스 Active Directory (AD) 환경을 Azure 네트워크에 통합하기 위한 옵션을 보여줍니다. [어떤 서비스를 선택해야 할까요?](./considerations.md)
-
-<ul class="panelContent cardsH">
+<ul class="panelContent">
     <li>
         <a href="./azure-ad.md">
             <div class="cardSize">
                 <div class="cardPadding">
                     <div class="card">
                         <div class="cardImageOuter">
-                            <div class="cardImage bgdAccent1">
+                            <div class="cardImage">
                             <img src="./images/azure-ad.svg">
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Azure Active Directory (Azure AD)와 통합</h3>
-                            <p>온프레미스 Active Directory 도메인 및 포리스트를 Azure AD와 통합합니다.</p>
+                            <h3>Azure Active Directory와 통합</h3>
+                            <p>온-프레미스 Active Directory 도메인 및 포리스트를 Azure AD와 통합합니다.</p>
                         </div>
                     </div>
                 </div>
@@ -36,13 +38,13 @@ ms.author: pnp
                 <div class="cardPadding">
                     <div class="card">
                         <div class="cardImageOuter">
-                            <div class="cardImage bgdAccent1">
+                            <div class="cardImage">
                             <img src="./images/adds-extend-domain.svg">
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Active Directory Domain Services (AD DS)를 Azure로 확장</h3>
-                            <p>Active Directory 환경을 Azure로 확장하여 AD DS를 이용한 분산 인증을 제공합니다.</p>
+                            <h3>AD DS를 Azure로 확장</h3>
+                            <p>Active Directory Domain Services를 사용하여 Active Directory 환경을 Azure로 확장합니다.</p>
                         </div>
                     </div>
                 </div>
@@ -55,13 +57,13 @@ ms.author: pnp
                 <div class="cardPadding">
                     <div class="card">
                         <div class="cardImageOuter">
-                            <div class="cardImage bgdAccent1">
+                            <div class="cardImage">
                             <img src="./images/adds-forest.svg">
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Azure에 AD DS 포리스트 생성</h3>
-                            <p>온프레미스 포리스트 내 도메인들로부터 신뢰받는 별도의 Active Directory 도메인을 Azure 내에 생성합니다.</p>
+                            <h3>Azure에 AD DS 포리스트 만들기</h3>
+                            <p>온-프레미스 포리스트의 도메인이 신뢰하는 별도의 AD 도메인을 Azure에 만듭니다.</p>
                         </div>
                     </div>
                 </div>
@@ -74,13 +76,13 @@ ms.author: pnp
                 <div class="cardPadding">
                     <div class="card">
                         <div class="cardImageOuter">
-                            <div class="cardImage bgdAccent1">
+                            <div class="cardImage">
                             <img src="./images/adfs.svg">
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Active Directory Federation Services (AD FS)를 Azure로 확장</h3>
-                            <p>AD FS를 이용하여 Azure에서 실행되는 구성 요소들에 대한 연합 인증 및 권한 부여를 수행합니다. </p>
+                            <h3>AD FS를 Azure로 확장</h3>
+                            <p>Azure에서 페더레이션 인증 및 권한 부여에 Active Directory Federation Services를 사용합니다.</p>
                         </div>
                     </div>
                 </div>

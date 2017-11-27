@@ -1,332 +1,335 @@
 ---
-title: Design resilient applications
-description: How to build resilient applications in Azure, for high availability and disaster recovery.
+title: "Azure용 복원 응용 프로그램 디자인"
+description: "Azure에서 고가용성 및 재해 복구를 제공하는 복원 응용 프로그램을 빌드하는 방법을 설명합니다."
 author: MikeWasson
-ms.service: guidance
-ms.topic: article
-ms.date: 03/24/2017
-ms.author: pnp
+ms.date: 05/26/2017
 ms.custom: resiliency
-
 pnp.series.title: Design for Resiliency
+ms.openlocfilehash: 31a685e46da02fb59d93a210e6f14da5c68331de
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
-# 복원 가능한 Azure용 응용 프로그램 설계
+# <a name="designing-resilient-applications-for-azure"></a><span data-ttu-id="9959f-103">Azure용 복원 응용 프로그램 디자인</span><span class="sxs-lookup"><span data-stu-id="9959f-103">Designing resilient applications for Azure</span></span>
 
-분산 시스템에서도 장애가 발생합니다. 하드웨어 고장도 발생할 수 있습니다. 네트워크에 일시적 장애가 발생할 수 있습니다. 드물게 전체 서비스나 지역이 중단될 수 있지만, 그에 대한 계획도 세워야 합니다.
+<span data-ttu-id="9959f-104">분산 시스템에서는 오류가 발생하기 마련입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-104">In a distributed system, failures will happen.</span></span> <span data-ttu-id="9959f-105">하드웨어 고장이 발생할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-105">Hardware can fail.</span></span> <span data-ttu-id="9959f-106">일시적인 네트워크 오류가 발생할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-106">The network can have transient failures.</span></span> <span data-ttu-id="9959f-107">매우 드물게 서비스 또는 지역 전체가 중단될 수도 있지만 그렇다 하더라도 계획된 중단이어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-107">Rarely, an entire service or region may experience a disruption, but even those must be planned for.</span></span> 
 
-클라우드에 신뢰성 있는 응용 프로그램을 구축하는 것은 엔터프라이즈 환경에 신뢰성 있는 응용 프로그램을 구축하는 것과는 다릅니다. 과거에는 수직 확장을 위해 고급 사양의 하드웨어를 구매하였을 수 있지만, 클라우드 환경에서는 수직 확장 대신에 수평 확장을 해야 합니다. 상용 하드웨어를 사용함으로써 클라우드 환경 비용이 낮게 유지됩니다. 장애 방지 및 "평균 무고장 시간" 최적화에 초점을 맞추는 대신에, 이 새로운 환경에서는 "평균 복원 시간"에 초점을 맞춥니다. 목표는 장애의 영향을 최소화하는 것입니다.
+<span data-ttu-id="9959f-108">클라우드에서 신뢰할 수 있는 응용 프로그램을 빌드하는 것은 엔터프라이즈 환경에서 신뢰할 수 있는 응용 프로그램을 빌드하는 것과 다릅니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-108">Building a reliable application in the cloud is different than building a reliable application in an enterprise setting.</span></span> <span data-ttu-id="9959f-109">기존에는 규모 확장을 위해 고성능 하드웨어를 구입해야 했지만, 클라우드 환경에서는 강화 대신 규모 확장을 해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-109">While historically you may have purchased higher-end hardware to scale up, in a cloud environment you must scale out instead of scaling up.</span></span> <span data-ttu-id="9959f-110">클라우드 환경의 비용은 상용 하드웨어를 사용하는 내내 낮은 수준으로 유지됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-110">Costs for cloud environments are kept low through the use of commodity hardware.</span></span> <span data-ttu-id="9959f-111">이 새로운 환경에서는 오류를 방지하고 "오류 간 평균 시간" 최적화에 중점을 두는 대신 "평균 복원 시간"에 집중합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-111">Instead of focusing on preventing failures and optimizing "mean time between failures," in this new environment the focus shifts to "mean time to restore."</span></span> <span data-ttu-id="9959f-112">목표는 오류의 영향을 최소화하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-112">The goal is to minimize the effect of a failure.</span></span>
 
-이 문서에서는 Microsoft Azure에서 복원 가능한 응용 프로그램을 구축하는 방법의 개요를 설명합니다. 우선 *복원력* 이라는 용어와 관련 개념의 정의부터 시작합니다. 그 다음에 설계, 구현, 배포, 운영에 이르기까지 응용 프로그램의 수명 동안 구조화된 접근법을 사용하여 복원력을 달성하는 프로세스를 설명합니다.
+<span data-ttu-id="9959f-113">이 문서에서는 Microsoft Azure에서 복원 응용 프로그램을 빌드하는 방법에 대한 개요를 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-113">This article provides an overview of how to build resilient applications in Microsoft Azure.</span></span> <span data-ttu-id="9959f-114">먼저 *복원력*이라는 용어의 정의와 관련 개념부터 시작하겠습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-114">It starts with a definition of the term *resiliency* and related concepts.</span></span> <span data-ttu-id="9959f-115">그런 다음 디자인 및 구현부터 배포 및 운영에 이르는 응용 프로그램의 전체 수명에 걸쳐 구조화된 방법을 사용하여 복원력을 달성하는 프로세스를 설명하겠습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-115">Then it describes a process for achieving resiliency, using a structured approach over the lifetime of an application, from design and implementation to deployment and operations.</span></span>
 
-## 복원력이란 무엇일까요?
-**복원력** 은 장애로부터 복구하여 계속 기능을 발휘하는 것을 말합니다. 이는 장애를 *피하는 것* 이 아니라 가동 중시 또는 데이터 손실을 방지하는 방식으로 장애에 *대응* 하는 것을 말합니다. 복원의 목표는 장애 이후에 응용 프로그램을 완전히 작동하는 상태로 되돌리는 것입니다.
+## <a name="what-is-resiliency"></a><span data-ttu-id="9959f-116">복원력이란?</span><span class="sxs-lookup"><span data-stu-id="9959f-116">What is resiliency?</span></span>
+<span data-ttu-id="9959f-117">**복원력**은 오류를 복구하여 계속 작동하는 시스템 기능입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-117">**Resiliency** is the ability of a system to recover from failures and continue to function.</span></span> <span data-ttu-id="9959f-118">오류 *방지*가 아니라 가동 중지 또는 데이터 손실을 방지하는 방법으로 오류에 *대응*하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-118">It's not about *avoiding* failures, but *responding* to failures in a way that avoids downtime or data loss.</span></span> <span data-ttu-id="9959f-119">복원력의 목표는 오류가 발생한 후 응용 프로그램을 완전히 작동하는 상태로 되돌리기 위한 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-119">The goal of resiliency is to return the application to a fully functioning state following a failure.</span></span>
 
-복원의 중요한 두 가지 측면은 고가용성과 장애 복구입니다.
+<span data-ttu-id="9959f-120">복원력의 두 가지 중요한 측면은 고가용성과 재해 복구입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-120">Two important aspects of resiliency are high availability and disaster recovery.</span></span>
 
-* **고가용성** (HA) 은 응용 프로그램이 유의미한 가동 중지 없이 정상 상태로 계속 작동하게 하는 능력입니다. "정상 상태"란 응용 프로그램이 응답하고 사용자가 응용 프로그램에 연결하여 상호작용할 수 있는 상태를 의미합니다.  
-* **재해 복구** (DR) 는 드물지만 중대한 사고 즉 전체 지역에 영향을 주는 서비스 중단처럼 일시적이지 않고 광범위한 규모의 장애로부터 복구하는 능력을 말합니다. 재해 복구에는 데이터 백업과 보관이 포함되며, 백업에서 데이터베이스를 복원하는 등 수동 개입도 포함될 수 있습니다.
+* <span data-ttu-id="9959f-121">**HA(고가용성)**은 응용 프로그램이 심각한 가동 중지 없이 정상 상태로 계속 실행되는 기능입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-121">**High availability** (HA) is the ability of the application to continue running in a healthy state, without significant downtime.</span></span> <span data-ttu-id="9959f-122">"정상 상태"는 응용 프로그램에서 응답하고 사용자가 응용 프로그램에 연결하여 응용 프로그램과 상호 작용할 수 있음을 의미합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-122">By "healthy state," we mean the application is responsive, and users can connect to the application and interact with it.</span></span>  
+* <span data-ttu-id="9959f-123">**DR(재해 복구)**은 드물지만 중요한 사고, 즉 전체 지역에 영향을 주는 서비스 중단과 같이 일시적이지 않은 대규모 장애로부터 복구할 수 있는 기능입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-123">**Disaster recovery** (DR) is the ability to recover from rare but major incidents: non-transient, wide-scale failures, such as service disruption that affects an entire region.</span></span> <span data-ttu-id="9959f-124">재해 복구에는 데이터 백업 및 보관이 포함되며, 백업에서 데이터베이스를 복원하는 것과 같은 수동 작업이 포함될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-124">Disaster recovery includes data backup and archiving, and may include manual intervention, such as restoring a database from backup.</span></span> 
 
-DR에 대비하여 HA를 생각하는 한 가지 방법은, DR은 장애의 영향이 설계된 HA의 처리 능력을 초과했을 때 시작됩니다. 예를 들어, 부하 분산 장치 뒤에 몇 개의 VM을 두면 하나의 VM에 장애가 발생해도 가용성을 제공하지만, 그 VM 모두에 동시에 장애가 발생하면 그렇게 할 수 없습니다.
+<span data-ttu-id="9959f-125">HA와 DR을 구분하는 방법 중 하나로, DR은 오류의 영향이 HA 디자인의 오류 처리 능력을 초과할 때 시작됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-125">One way to think about HA versus DR is that DR starts when the impact of a fault exceeds the ability of the HA design to handle it.</span></span> <span data-ttu-id="9959f-126">예를 들어 부하 분산 장치 뒤에 여러 VM을 배치하면 한 VM에서 오류가 발생하더라도 가용성이 제공되지만 모든 VM이 동시에 중단되는 경우에는 가용성이 제공되지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-126">For example, putting several VMs behind a load balancer will provide availability if one VM fails, but not if they all fail at the same time.</span></span> 
 
-복원 가능한 응용 프로그램을 설계할 때에는 가용성 요구사항을 이해해야 합니다. 어느 정도의 가동 중지 시간이 허용 가능합니까? 이는 부분적으로 비용의 함수입니다. 잠재적 가동 중지로 얼마의 비즈니스 비용이 발생할까요? 응용 프로그램의 고가용성 확보를 위해 얼마를 투자해야 할까요? 또한 응용 프로그램의 가용성에 대한 정의도 해야 합니다. 예를 들어, 고객이 주문서를 제출할 수 있지만 시스템이 정상 기간 내에 처리할 수 없다면 응용 프로그램이 "다운"되었다고 간주합니까?
+<span data-ttu-id="9959f-127">복원력 있는 응용 프로그램을 디자인할 때에는 가용성 요구 사항을 이해해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-127">When you design an application to be resilient, you have to understand your availability requirements.</span></span> <span data-ttu-id="9959f-128">허용되는 가동 중지 시간이 얼마나 됩니까?</span><span class="sxs-lookup"><span data-stu-id="9959f-128">How much downtime is acceptable?</span></span> <span data-ttu-id="9959f-129">이것은 비용 함수의 일종입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-129">This is partly a function of cost.</span></span> <span data-ttu-id="9959f-130">가동 중지로 인한 잠재적 비용이 얼마나 발생할까요?</span><span class="sxs-lookup"><span data-stu-id="9959f-130">How much will potential downtime cost your business?</span></span> <span data-ttu-id="9959f-131">고가용성 응용 프로그램을 만들려면 얼마를 투자해야 할까요?</span><span class="sxs-lookup"><span data-stu-id="9959f-131">How much should you invest in making the application highly available?</span></span> <span data-ttu-id="9959f-132">응용 프로그램을 사용할 수 있다는 것이 무슨 뜻인지도 정의해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-132">You also have to define what it means for the application to be available.</span></span> <span data-ttu-id="9959f-133">예를 들어 고객이 주문을 제출할 수 있지만 시스템이 일반적인 시간 내에 처리할 수 없으면 "가동 중지"입니까?</span><span class="sxs-lookup"><span data-stu-id="9959f-133">For example, is the application "down" if a customer can submit an order but the system cannot process it within the normal timeframe?</span></span> <span data-ttu-id="9959f-134">특정 유형의 정전이 발생할 확률, 그리고 완화 전략이 비용 효율적인지 여부도 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-134">Also consider the probability of a particular type of outage occurring, and whether a mitigation strategy is cost-effective.</span></span>
 
-또 하나의 일반적인 용어가 **비즈니스 연속성**(BC)인데, 이는 재해 기간 또는 그 후에 필수적 비즈니스 기능을 수행하는 능력을 말합니다. BC는 물리적 시설, 인력, 커뮤니케이션, 운송, IT 등 전체 비즈니스 운영에 적용됩니다. 이 문서에서는 클라우드 응용 프로그램에만 초점을 맞추지만, 복원 계획은 전반적 BC 요구 사항 맥락에서 수행해야 합니다. 
+<span data-ttu-id="9959f-135">또 다른 일반적인 용어로 **BC(비즈니스 연속성)**가 사용되고 있는데, 자연 재해나 서비스 중단 같은 악조건이 발생하는 동안 그리고 발생 후에 필수 비즈니스 기능을 수행하는 기능을 말합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-135">Another common term is **business continuity** (BC), which is the ability to perform essential business functions during and after adverse conditions, such as a natural disaster or a downed service.</span></span> <span data-ttu-id="9959f-136">물리적 시설, 사람, 통신, 운송, IT를 포함한 기업의 전체 운영이 BC 범위에 포함됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-136">BC covers the entire operation of the business, including physical facilities, people, communications, transportation, and IT.</span></span> <span data-ttu-id="9959f-137">이 문서에서는 클라우드 응용 프로그램을 집중적으로 다루지만, 전체적인 BC 요구 사항에 맞춰서 복원력 계획을 수행해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-137">This article focuses on cloud applications, but resilience planning must be done in the context of overall BC requirements.</span></span> <span data-ttu-id="9959f-138">자세한 내용은 NIST(National Institute of Science and Technology)의 [대체 계획 가이드][capacity-planning-guide]를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-138">For more information, see the [Contingency Planning Guide][capacity-planning-guide] from the National Institute of Science and Technology (NIST).</span></span>
 
-## 복원력 달성을 위한 프로세스
-복원력은 애드온이 아닙니다. 이는 반드시 시스템 내에 설계하고 운영 시 실행해야 하는 것입니다. 따라야 할 일반적인 모델은 다음과 같습니다.
+## <a name="process-to-achieve-resiliency"></a><span data-ttu-id="9959f-139">복원력을 구현하기 위한 프로세스</span><span class="sxs-lookup"><span data-stu-id="9959f-139">Process to achieve resiliency</span></span>
+<span data-ttu-id="9959f-140">복원력은 추가 기능이 아닙니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-140">Resiliency is not an add-on.</span></span> <span data-ttu-id="9959f-141">시스템적으로 설계하여 운영 방식 속에 담아야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-141">It must be designed into the system and put into operational practice.</span></span> <span data-ttu-id="9959f-142">다음은 일반적인 모델입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-142">Here is a general model to follow:</span></span>
 
-1. **정의:** 비즈니스 요구를 기준으로 가용성 요구 사항을 정의합니다.
-2. **설계:** 응용 프로그램의 복원력을 설계합니다. 검증된 관행을 따르는 아키텍처로 시작한 후, 그 아키텍처에서 예상되는 장애 지점을 식별합니다.
-3. **구현:** 장애를 감지하고 복원하는 전략을 구현합니다.
-4. **테스트:** 장애를 시뮬레이션하고 강제 장애 조치를 트리거하여 구현 내용을 테스트합니다.
-5. **배포:** 신뢰성 있고 반복할 수 있는 프로세스를 사용하여 응용 프로그램을 생산 환경에 배포합니다.
-6. **모니터링:** 응용 프로그램을 모니터링하여 장애를 감지합니다. 시스템을 모니터링함으로써 응용 프로그램의 상태를 측정하고 필요 시 사고에 대응할 수 있습니다.
-7. **대응:** 수동 개입이 필요한 사고가 있을 경우에 대응합니다.
+1. <span data-ttu-id="9959f-143">**정의** - 비즈니스 요구에 따라 가용성 요구 사항을 정의합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-143">**Define** your availability requirements, based on business needs.</span></span>
+2. <span data-ttu-id="9959f-144">**디자인** - 복원력 있는 응용 프로그램을 디자인합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-144">**Design** the application for resiliency.</span></span> <span data-ttu-id="9959f-145">검증된 사례를 따르는 아키텍처로 시작한 후 해당 아키텍처에서 발생 가능한 오류를 식별합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-145">Start with an architecture that follows proven practices, and then identify the possible failure points in that architecture.</span></span>
+3. <span data-ttu-id="9959f-146">**구현** - 오류를 감지하고 복구할 전략을 구현합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-146">**Implement** strategies to detect and recover from failures.</span></span> 
+4. <span data-ttu-id="9959f-147">**테스트** - 오류를 시뮬레이션하고 강제 장애 조치(failover)를 트리거하여 구현된 전략을 테스트합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-147">**Test** the implementation by simulating faults and triggering forced failovers.</span></span> 
+5. <span data-ttu-id="9959f-148">**배포** - 안정적이고 반복 가능한 프로세스를 사용하여 프로덕션 환경에 응용 프로그램을 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-148">**Deploy** the application into production using a reliable, repeatable process.</span></span> 
+6. <span data-ttu-id="9959f-149">**모니터링** - 응용 프로그램을 모니터링하여 오류를 감지합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-149">**Monitor** the application to detect failures.</span></span> <span data-ttu-id="9959f-150">시스템을 모니터링하여 응용 프로그램 상태를 측정하고 필요할 때 사고에 대응할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-150">By monitoring the system, you can gauge the health of the application and respond to incidents if necessary.</span></span> 
+7. <span data-ttu-id="9959f-151">**대응** - 수동 개입이 필요한 문제가 있는 경우 적절하게 대응합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-151">**Respond** if there are incidents that require manual interventions.</span></span>
 
-이 문서의 나머지 부분에서는 이들 각 단계에 관해서 자세히 설명합니다.
+<span data-ttu-id="9959f-152">이 문서의 나머지 부분에서는 이러한 각 단계를 좀 더 자세히 살펴보겠습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-152">In the remainder of this article, we discuss each of these steps in more detail.</span></span>
 
-## 복원 요구 사항의 정의
-복원 계획은 비즈니스 요구 사항에서 시작됩니다. 그러한 조건에서 복원력에 관하여 생각하는 몇 가지 접근법이 있습니다.
+## <a name="defining-your-resiliency-requirements"></a><span data-ttu-id="9959f-153">복원력 요구 사항 정의</span><span class="sxs-lookup"><span data-stu-id="9959f-153">Defining your resiliency requirements</span></span>
+<span data-ttu-id="9959f-154">복원력 계획은 비즈니스 요구 사항으로 시작합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-154">Resiliency planning starts with business requirements.</span></span> <span data-ttu-id="9959f-155">다음과 같은 몇 가지 용어를 통해 복원력에 대해 생각해볼 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-155">Here are some approaches for thinking about resiliency in those terms.</span></span>
 
-### 작업을 기준으로 구성 해체
-다수의 클라우드 솔루션은 여러 응용 프로그램 작업으로 구성됩니다. 이러한 맥락에서 "작업"(workload)이란 용어는 비즈니스 논리와 데이터 저장 요구 사항 측면에서 다른 작업과 논리적으로 분리될 수 있는 개별 기능 또는 컴퓨팅 작업을 의미합니다. 예를 들어, 전자 상거래 앱에는 아래의 작업이 포함될 수 있습니다.
+### <a name="decompose-by-workload"></a><span data-ttu-id="9959f-156">워크로드별로 분해</span><span class="sxs-lookup"><span data-stu-id="9959f-156">Decompose by workload</span></span>
+<span data-ttu-id="9959f-157">많은 클라우드 솔루션이 여러 응용 프로그램 워크로드로 구성되어 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-157">Many cloud solutions consist of multiple application workloads.</span></span> <span data-ttu-id="9959f-158">여기서 "워크로드"라는 용어는 별개의 기능 또는 계산 작업을 의미하며, 비즈니스 논리와 데이터 저장소 요구 사항의 측면에서 다른 작업과 논리적으로 분리할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-158">The term "workload" in this context means a discrete capability or computing task, which can be logically separated from other tasks, in terms of business logic and data storage requirements.</span></span> <span data-ttu-id="9959f-159">예를 들어 전자 상거래 앱에는 다음과 같은 워크로드가 포함될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-159">For example, an e-commerce app might include the following workloads:</span></span>
 
-* 제품 카탈로그 찾아보기 및 검색.
-* 주문서 작성 및 추적.
-* 권장 사항 보기.
+* <span data-ttu-id="9959f-160">제품 카탈로그를 찾아보고 검색합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-160">Browse and search a product catalog.</span></span>
+* <span data-ttu-id="9959f-161">주문을 작성하고 추적합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-161">Create and track orders.</span></span>
+* <span data-ttu-id="9959f-162">추천 제품을 살펴봅니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-162">View recommendations.</span></span>
 
-이들 작업의 가용성, 확장성, 데이터 일관성, 재해 복구 등에 대한 요구 사항은 다를 수 있습니다. 다시 말하지만 그것은 비즈니스 결정 사항입니다.
+<span data-ttu-id="9959f-163">이러한 워크로드마다 가용성, 확장성, 데이터 일관성, 재해 복구 등에 대한 요구 사항이 서로 다를 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-163">These workloads might have different requirements for availability, scalability, data consistency, disaster recovery, and so forth.</span></span> <span data-ttu-id="9959f-164">다시 말씀드리지만, 이것은 비즈니스적인 의사 결정입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-164">Again, these are business decisions.</span></span>
 
-또한 이용 패턴도 생각하십시오. 시스템이 반드시 가용성을 유지해야 할 중요한 특정 기간이 있습니까? 예를 들어 신고 기간 직전에 세무 신고 서비스가 다운되어서는 안 되며, 큰 스포츠 이벤트 기간 동안에는 비디오 스트리밍 서비스가 반드시 작동되어야 합니다. 중요한 기간에는, 한 지역에 장애가 발생해도 응용 프로그램이 장애 조치를 취할 수 있도록 여러 지역에 걸쳐 중복 배포를 보유할 수 있습니다. 하지만 다중 지역 배포는 비용이 더 많이 소요되므로 덜 중요한 기간에는 응용 프로그램을 단일 지역에서 실행할 수 있습니다.
+<span data-ttu-id="9959f-165">사용 패턴도 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-165">Also consider usage patterns.</span></span> <span data-ttu-id="9959f-166">시스템이 반드시 작동해야 하는 특정 중요 시간대가 있습니까?</span><span class="sxs-lookup"><span data-stu-id="9959f-166">Are there certain critical periods when the system must be available?</span></span> <span data-ttu-id="9959f-167">예를 들어 세금 신고 서비스는 신고 마감 직전에는 절대 중지되면 안 되고, 비디오 스트리밍 서비스는 대형 스포츠 행사가 진행되는 내내 작동해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-167">For example, a tax-filing service can't go down right before the filing deadline, a video streaming service must stay up during a big sports event, and so on.</span></span> <span data-ttu-id="9959f-168">이처럼 중요한 기간에는 여러 지역에 걸쳐 이중으로 배포하면 한 지역에서 오류가 발생하더라도 응용 프로그램을 장애 조치(failover)할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-168">During the critical periods, you might have redundant deployments across several regions, so the application could fail over if one region failed.</span></span> <span data-ttu-id="9959f-169">그러나 다중 지역 배포는 더 많은 비용이 들기 때문에 덜 중요한 시간에는 한 지역에서만 응용 프로그램을 실행할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-169">However, a multi-region deployment is more expensive, so during less critical times, you might run the application in a single region.</span></span>
 
-### RTO와 RPO
-고려해야 할 중요한 두 가지 메트릭은 복구 시간 목표와 복구 지점 목표입니다.
+### <a name="rto-and-rpo"></a><span data-ttu-id="9959f-170">RTO 및 RPO</span><span class="sxs-lookup"><span data-stu-id="9959f-170">RTO and RPO</span></span>
+<span data-ttu-id="9959f-171">고려해야 할 두 가지 중요한 메트릭으로 복구 시간 목표와 복구 지점 목표가 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-171">Two important metrics to consider are the recovery time objective and recovery point objective.</span></span>
 
-* **복구 시간 목표** (RTO)는 사고 후에 응용 프로그램의 사용 불가 상태를 허용하는 최대 수용 가능한 시간입니다. RTO가 90분이면 재해 시작 시점부터 90분 이내에 응용 프로그램을 작동 상태로 복원할 수 있어야 합니다. RTO 시간이 매우 낮으면 지역의 서비스 중단을 방지하기 위해 보조 배포를 계속 대기 상태로 운영하는 것이 필요할 수 있습니다.
-* **복구 지점 목표** (RPO) 는 재해 시 수용 가능한 최대 데이터 손실 기간을 말합니다. 예를 들어 데이터를 단일 데이터베이스에 저장하는데 다른 데이터베이스에 복제하지 않고 매시간 백업을 수행한다면, 최대 1시간 분량의 데이터가 손실될 수 있습니다.
+* <span data-ttu-id="9959f-172">**RTO(복구 시간 목표)**는 사고 발생 후 응용 프로그램 중단이 허용되는 최대 시간입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-172">**Recovery time objective** (RTO) is the maximum acceptable time that an application can be unavailable after an incident.</span></span> <span data-ttu-id="9959f-173">RTO가 90분이면 재해가 시작된 시점부터 90분 이내에 응용 프로그램을 실행 상태로 복원할 수 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-173">If your RTO is 90 minutes, you must be able to restore the application to a running state within 90 minutes from the start of a disaster.</span></span> <span data-ttu-id="9959f-174">RTO가 매우 낮은 경우 지역 단위 정전에 대비하여 항상 대기 중인 보조 배포를 실행할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-174">If you have a very low RTO, you might keep a second deployment continually running on standby, to protect against a regional outage.</span></span>
+* <span data-ttu-id="9959f-175">**RPO(복구 지점 목표)**는 재해 발생 시 허용되는 최대 데이터 손실 기간입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-175">**Recovery point objective** (RPO) is the maximum duration of data loss that is acceptable during a disaster.</span></span> <span data-ttu-id="9959f-176">예를 들어 다른 데이터베이스에 데이터를 복제하지 않고 단일 데이터베이스에만 데이터를 저장하며 매시간 백업을 수행하는 경우 최대 1시간 분량의 데이터가 손실될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-176">For example, if you store data in a single database, with no replication to other databases, and perform hourly backups, you could lose up to an hour of data.</span></span> 
 
-RTO와 RPO는 비즈니스 요구 사항입니다. 또 하나의 일반적 메트릭으로 **평균 복구 시간** (MTTR)이 있는데 이는 장애 후에 응용 프로그램을 복구하는 데 소요되는 평균 시간을 말합니다. MTTR는 시스템에 관한 경험적 사실입니다. MTTR가 RTO를 초과하면 정의된 RTO 내에 시스템을 복원할 수 없기 때문에 시스템 장애가 수용 불가능한 비즈니스 중단을 야기합니다. 
+<span data-ttu-id="9959f-177">RTO 및 RPO는 비즈니스 요구 사항입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-177">RTO and RPO are business requirements.</span></span> <span data-ttu-id="9959f-178">위험 평가를 수행하면 응용 프로그램의 RTO 및 RPO를 정의하는 데 도움이 될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-178">Conducting a risk assessment can help you define the application's RTO and RPO.</span></span> <span data-ttu-id="9959f-179">또 다른 일반적인 메트릭인 **MTTR(평균 복구 시간)**은 오류 발생 후 응용 프로그램을 복원하는 데 걸리는 평균 시간입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-179">Another common metric is **mean time to recover** (MTTR), which is the average time that it takes to restore the application after a failure.</span></span> <span data-ttu-id="9959f-180">MTTR은 시스템에 대한 실증적 팩트입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-180">MTTR is an empirical fact about a system.</span></span> <span data-ttu-id="9959f-181">MTTR이 RTO를 초과하면 시스템에 오류가 발생했을 때 정의된 RTO 내에서 시스템을 복원할 수 없기 때문에 허용할 수 없는 수준의 비즈니스 중단이 발생합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-181">If MTTR exceeds the RTO, then a failure in the system will cause an unacceptable business disruption, because it won't be possible to restore the system within the defined RTO.</span></span> 
 
-### SLA
-Azure에서 [서비스 수준 계약][sla] (SLA)은 가동 시간과 연결성에 관한 Microsoft의 약속을 설명합니다. 특정 서비스의 SLA가 99.9%이면, 서비스가 시간 중 99.9% 동안 이용할 수 있다고 기대할 수 있습니다.
+### <a name="slas"></a><span data-ttu-id="9959f-182">SLA</span><span class="sxs-lookup"><span data-stu-id="9959f-182">SLAs</span></span>
+<span data-ttu-id="9959f-183">Azure에서 [Service Level Agreement(서비스 수준 약정)][sla]는 작동 시간 및 연결에 대한 Microsoft의 정책을 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-183">In Azure, the [Service Level Agreement][sla] (SLA) describes Microsoft’s commitments for uptime and connectivity.</span></span> <span data-ttu-id="9959f-184">특정 서비스의 SLA가 99.9%라는 것은 시간의 99.9% 동안 서비스를 사용할 수 있다는 의미입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-184">If the SLA for a particular service is 99.9%, it means you should expect the service to be available 99.9% of the time.</span></span>
 
-> [!참고]
-> T또한 Azure SLA에는 SLA가 충족되지 않았을 경우에 서비스 크레딧을 받는 조항, 그리고 각 서비스에 대한 "가용성"의 구체적 정의도 포함되어 있습니다. SLA의 그러한 측면이 적용 정책의 역할을 수행합니다.
+> [!NOTE]
+> <span data-ttu-id="9959f-185">Azure SLA에는 각 서비스의 "가용성"에 대한 구체적인 정의와 함께 SLA가 충족되지 않은 경우 서비스 크레딧을 제공하는 조항도 포함되어 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-185">The Azure SLA also includes provisions for obtaining a service credit if the SLA is not met, along with specific definitions of "availability" for each service.</span></span> <span data-ttu-id="9959f-186">SLA의 이러한 측면은 적용 정책의 역할을 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-186">That aspect of the SLA acts as an enforcement policy.</span></span> 
 > 
 > 
 
-여러분은 솔루션 내의 각 작업에 대해 자체적인 목표 SLA를 정의해야 합니다. SLA가 있으면 아키텍처에 관한 추론이 가능하고 아키텍처가 비즈니스 요구 사항을 충족하는지 여부를 판단할 수 있습니다. 예를 들어 작업이 99.99%의 가동 시간을 요구하지만 99.99% SLA의 서비스에 의존한다면, 그 서비스는 시스템에서 단일 실패 지점이 될 수 없습니다. 한 가지 해결책은 서비스 장애가 발생할 경우에 대비하여 대체 경로를 확보하거나 그 서비스의 장애로부터 복구하는 다른 조치를 취하는 것입니다.
+<span data-ttu-id="9959f-187">개발자는 솔루션의 각 워크로드에 대한 고유의 목표 SLA를 정의해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-187">You should define your own target SLAs for each workload in your solution.</span></span> <span data-ttu-id="9959f-188">SLA를 사용하면 아키텍처가 비즈니스 요구 사항을 충족하는지 평가할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-188">An SLA makes it possible to evaluate whether the architecture meets the business requirements.</span></span> <span data-ttu-id="9959f-189">예를 들어 어떤 워크로드가 99.99% 작동 시간을 요구하지만 SLA 99.9% 서비스를 사용하는 경우 해당 서비스는 시스템에서 단일 오류 지점이 될 수 없습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-189">For example, if a workload requires 99.99% uptime, but depends on a service with a 99.9% SLA, that service cannot be a single-point of failure in the system.</span></span> <span data-ttu-id="9959f-190">한 가지 해결책은 서비스 오류를 대비하여 대체 경로를 만들거나, 다른 조치를 수행하여 해당 서비스의 오류를 복구하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-190">One remedy is to have a fallback path in case the service fails, or take other measures to recover from a failure in that service.</span></span> 
 
-아래 표는 다양한 SLA 수준별로 예상되는 누적 가동 중지 시간을 표시하고 있습니다.
+<span data-ttu-id="9959f-191">다음 표는 다양한 SLA 수준의 잠재적인 누적 가동 중지 시간을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-191">The following table shows the potential cumulative downtime for various SLA levels.</span></span> 
 
-| SLA | 주간 가동 중지 시간 | 월간 가동 중지 시간 | 연간 가동 중지 시간 |
+| <span data-ttu-id="9959f-192">SLA</span><span class="sxs-lookup"><span data-stu-id="9959f-192">SLA</span></span> | <span data-ttu-id="9959f-193">주간 가동 중지 시간</span><span class="sxs-lookup"><span data-stu-id="9959f-193">Downtime per week</span></span> | <span data-ttu-id="9959f-194">월간 가동 중지 시간</span><span class="sxs-lookup"><span data-stu-id="9959f-194">Downtime per month</span></span> | <span data-ttu-id="9959f-195">연간 가동 중지 시간</span><span class="sxs-lookup"><span data-stu-id="9959f-195">Downtime per year</span></span> |
 | --- | --- | --- | --- |
-| 99% |1.68 시간 |7.2 시간 |3.65 일 |
-| 99.9% |10.1 분 |43.2 분 |8.76 시간 |
-| 99.95% |5 분 |21.6 분 |4.38 시간 |
-| 99.99% |1.01 분 |4.32 분 |52.56 분 |
-| 99.999% |6 초 |25.9 초 |5.26 분 |
+| <span data-ttu-id="9959f-196">99%</span><span class="sxs-lookup"><span data-stu-id="9959f-196">99%</span></span> |<span data-ttu-id="9959f-197">1.68시간</span><span class="sxs-lookup"><span data-stu-id="9959f-197">1.68 hours</span></span> |<span data-ttu-id="9959f-198">7.2시간</span><span class="sxs-lookup"><span data-stu-id="9959f-198">7.2 hours</span></span> |<span data-ttu-id="9959f-199">3.65일</span><span class="sxs-lookup"><span data-stu-id="9959f-199">3.65 days</span></span> |
+| <span data-ttu-id="9959f-200">99.9%</span><span class="sxs-lookup"><span data-stu-id="9959f-200">99.9%</span></span> |<span data-ttu-id="9959f-201">10.1분</span><span class="sxs-lookup"><span data-stu-id="9959f-201">10.1 minutes</span></span> |<span data-ttu-id="9959f-202">43.2분</span><span class="sxs-lookup"><span data-stu-id="9959f-202">43.2 minutes</span></span> |<span data-ttu-id="9959f-203">8.76시간</span><span class="sxs-lookup"><span data-stu-id="9959f-203">8.76 hours</span></span> |
+| <span data-ttu-id="9959f-204">99.95%</span><span class="sxs-lookup"><span data-stu-id="9959f-204">99.95%</span></span> |<span data-ttu-id="9959f-205">5분</span><span class="sxs-lookup"><span data-stu-id="9959f-205">5 minutes</span></span> |<span data-ttu-id="9959f-206">21.6분</span><span class="sxs-lookup"><span data-stu-id="9959f-206">21.6 minutes</span></span> |<span data-ttu-id="9959f-207">4.38시간</span><span class="sxs-lookup"><span data-stu-id="9959f-207">4.38 hours</span></span> |
+| <span data-ttu-id="9959f-208">99.99%</span><span class="sxs-lookup"><span data-stu-id="9959f-208">99.99%</span></span> |<span data-ttu-id="9959f-209">1.01분</span><span class="sxs-lookup"><span data-stu-id="9959f-209">1.01 minutes</span></span> |<span data-ttu-id="9959f-210">4.32분</span><span class="sxs-lookup"><span data-stu-id="9959f-210">4.32 minutes</span></span> |<span data-ttu-id="9959f-211">52.56분</span><span class="sxs-lookup"><span data-stu-id="9959f-211">52.56 minutes</span></span> |
+| <span data-ttu-id="9959f-212">99.999%</span><span class="sxs-lookup"><span data-stu-id="9959f-212">99.999%</span></span> |<span data-ttu-id="9959f-213">6초</span><span class="sxs-lookup"><span data-stu-id="9959f-213">6 seconds</span></span> |<span data-ttu-id="9959f-214">25.9초</span><span class="sxs-lookup"><span data-stu-id="9959f-214">25.9 seconds</span></span> |<span data-ttu-id="9959f-215">5.26분</span><span class="sxs-lookup"><span data-stu-id="9959f-215">5.26 minutes</span></span> |
 
-물론 모든 조건이 동일하다면 고가용성이 더 좋습니다. 하지만 더 많은 9를 확보하려면 그 수준의 가용성을 달성하기 위한 비용과 복잡성도 증가합니다. 99.99%의 가동 시간은 월간 총 가동 중지 시간이 약 5분임을 의미합니다. 다섯 개의 9를 달성하는 데 소요되는 추가적 복잡성과 비용을 투입할 가치가 있습니까? 그 답변은 비즈니스 요구 사항에 달려있습니다.
+<span data-ttu-id="9959f-216">다른 요소가 전부 동일하다면 당연히 가용성이 높을수록 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-216">Of course, higher availability is better, everything else being equal.</span></span> <span data-ttu-id="9959f-217">그러나 9의 수를 늘리려면 그에 따른 비용과 복잡성도 함께 증가합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-217">But as you strive for more 9s, the cost and complexity to achieve that level of availability grows.</span></span> <span data-ttu-id="9959f-218">작동 시간이 99.99%이면 총 월간 가동 중지 시간이 약 5분입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-218">An uptime of 99.99% translates to about 5 minutes of total downtime per month.</span></span> <span data-ttu-id="9959f-219">99.999%를 달성하기 위해 추가적인 복잡성과 비용을 감수할 가치가 있습니까?</span><span class="sxs-lookup"><span data-stu-id="9959f-219">Is it worth the additional complexity and cost to reach five 9s?</span></span> <span data-ttu-id="9959f-220">대답은 비즈니스 요구 사항에 따라 다릅니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-220">The answer depends on the business requirements.</span></span> 
 
-SLA를 정의할 때 고려해야 할 기타 몇 가지 고려사항이 있습니다.
+<span data-ttu-id="9959f-221">다음은 SLA를 정의할 때 고려해야 할 다른 사항입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-221">Here are some other considerations when defining an SLA:</span></span>
 
-* 네 개의 9(99.99%)를 달성하려면 아마도 장애 복구를 위해 수동 개입에 의존할 수는 없을 것입니다. 응용 프로그램이 자가 진단을 하고 자가 복구를 수행해야 합니다.
-* 네 개의 9를 넘어서면 SLA를 충족하기 위해 충분히 신속하게 중단을 감지하는 것이 어렵습니다.
-* SLA를 측정하는 시간대를 생각해보십시오. 시간대가 작을수록 허용 범위가 더 작아집니다. 시간별 또는 일별 가동 시간 측면에서 SLA를 정의하는 것이 의미가 없을 수도 있습니다. 
+* <span data-ttu-id="9959f-222">4개의 9(99.99%)를 달성하려면 아마도 수동 개입에 의존한 오류 복구로는 불가능할 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-222">To achieve four 9's (99.99%), you probably can't rely on manual intervention to recover from failures.</span></span> <span data-ttu-id="9959f-223">응용 프로그램이 자체적으로 진단하고 자체적으로 복구해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-223">The application must be self-diagnosing and self-healing.</span></span> 
+* <span data-ttu-id="9959f-224">9의 수가 4개를 넘어가면 SLA를 충족할 만큼 신속하게 가동 중단을 감지하기가 쉽지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-224">Beyond four 9's, it is challenging to detect outages quickly enough to meet the SLA.</span></span>
+* <span data-ttu-id="9959f-225">SLA가 측정되는 시간을 생각해 보세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-225">Think about the time window that your SLA is measured against.</span></span> <span data-ttu-id="9959f-226">시간이 짧을수록 허용 오차도 작습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-226">The smaller the window, the tighter the tolerances.</span></span> <span data-ttu-id="9959f-227">SLA를 시간별 또는 일별 작동 시간으로 정의할 수가 없습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-227">It probably doesn't make sense to define your SLA in terms of hourly or daily uptime.</span></span> 
 
-### 복합 SLA
-Azure SQL 데이터베이스에 작성하는 앱 서비스 웹 응용 프로그램을 생각해보십시오. 작성 시점에 이들 Azure 서비스는 아래와 같은 SLA를 가지고 있습니다.
+### <a name="composite-slas"></a><span data-ttu-id="9959f-228">복합 SLA</span><span class="sxs-lookup"><span data-stu-id="9959f-228">Composite SLAs</span></span>
+<span data-ttu-id="9959f-229">Azure SQL Database에 쓰는 App Service 웹앱을 고려해 보세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-229">Consider an App Service web app that writes to Azure SQL Database.</span></span> <span data-ttu-id="9959f-230">이 문서가 작성된 시점에 이러한 Azure 서비스의 SLA는 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-230">At the time of this writing, these Azure services have the following SLAs:</span></span>
 
-* 앱 서비스 웹 응용 프로그램 = 99.95%
-* SQL 데이터베이스 = 99.99%
+* <span data-ttu-id="9959f-231">App Service Web Apps = 99.95%</span><span class="sxs-lookup"><span data-stu-id="9959f-231">App Service Web Apps = 99.95%</span></span>
+* <span data-ttu-id="9959f-232">SQL Database = 99.99%</span><span class="sxs-lookup"><span data-stu-id="9959f-232">SQL Database = 99.99%</span></span>
 
-![Composite SLA](./images/sla1.png)
+![복합 SLA](./images/sla1.png)
 
-이 응용 프로그램에서 기대할 수 있는 최대 가동 중지 시간은 얼마일까요? 어느 한 서비스에 장애가 발생하면 전체 응용 프로그램에 장애가 발생합니다. 일반적으로 각 서비스의 장애 발생 가능성은 독립적이므로 이 응용 프로그램의 복합 SLA는 99.95% x 99.99% = 99.94%입니다. 이는 개별 SLA보다 낮은데, 그 이유는 여러 서비스에 의존하는 응용 프로그램은 잠재적 장애 지점이 더 많기 때문입니다.
+<span data-ttu-id="9959f-234">이 응용 프로그램에 기대하는 최대 가동 중지 시간이 얼마입니까?</span><span class="sxs-lookup"><span data-stu-id="9959f-234">What is the maximum downtime you would expect for this application?</span></span> <span data-ttu-id="9959f-235">서비스 중 하나가 중단되면 전체 응용 프로그램이 중단됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-235">If either service fails, the whole application fails.</span></span> <span data-ttu-id="9959f-236">일반적으로 각 서비스가 중단될 확률은 독립적이므로 이 응용 프로그램의 복합 SLA는 99.95% &times; 99.99% = 99.94%입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-236">In general, the probability of each service failing is independent, so the composite SLA for this application is 99.95% &times; 99.99% = 99.94%.</span></span> <span data-ttu-id="9959f-237">개별 SLA보다 낮은데, 별로 놀랄 일은 아닙니다. 여러 서비스를 사용하는 응용 프로그램은 잠재적 오류 지점이 더 많기 때문입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-237">That's lower than the individual SLAs, which isn't surprising, because an application that relies on multiple services has more potential failure points.</span></span> 
 
-한편, 독립적 대체 경로를 만들어서 복합 SAL를 향상할 수 있습니다. 예를 들어 SQL 데이터베이스를 사용할 수 없을 경우, 트랜잭션을 큐에 넣어 나중에 처리하도록 합니다.
+<span data-ttu-id="9959f-238">반면, 독립적인 대체 경로를 만들어서 복합 SLA를 높일 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-238">On the other hand, you can improve the composite SLA by creating independent fallback paths.</span></span> <span data-ttu-id="9959f-239">예를 들어 SQL Database를 사용할 수 없으면 트랜잭션을 큐에 배치하여 나중에 처리할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-239">For example, if SQL Database is unavailable, put transactions into a queue, to be processed later.</span></span>
 
-![Composite SLA](./images/sla2.png)
+![복합 SLA](./images/sla2.png)
 
-이와 같이 설계하면 응용 프로그램이 데이터베이스에 연결할 수 없을 경우에도 계속 이용할 수 있습니다. 하지만 데이터베이스와 큐가 모두 동시에 실패하면 장애가 발생합니다. 동시 장애가 발생할 예상 비율은 0.0001 × 0.001이므로 결합된 경로의 복합 SLA는 다음과 같습니다.
+<span data-ttu-id="9959f-241">이 디자인에서는 응용 프로그램이 데이터베이스에 연결할 수 없는 경우에도 계속 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-241">With this design, the application is still available even if it can't connect to the database.</span></span> <span data-ttu-id="9959f-242">그러나 데이터베이스와 큐가 동시에 중단되면 응용 프로그램도 중단됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-242">However, it fails if the database and the queue both fail at the same time.</span></span> <span data-ttu-id="9959f-243">예상되는 동시 중단 시간 비율은 0.0001 &times; 0.001이므로 이 복합 경로의 복합 SLA는 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-243">The expected percentage of time for a simultaneous failure is 0.0001 &times; 0.001, so the composite SLA for this combined path is:</span></span>  
 
-* 데이터베이스 또는 큐 = 1.0 &minus; (0.0001 &times; 0.001) = 99.99999%
+* <span data-ttu-id="9959f-244">데이터베이스 또는 큐 = 1.0 &minus; (0.0001 &times; 0.001) = 99.99999%</span><span class="sxs-lookup"><span data-stu-id="9959f-244">Database OR queue = 1.0 &minus; (0.0001 &times; 0.001) = 99.99999%</span></span>
 
-총 복합 SLA:
+<span data-ttu-id="9959f-245">총 복합 SLA는 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-245">The total composite SLA is:</span></span>
 
-* 웹 응용 프로그램 그리고 (데이터베이스 또는 큐) = 99.95% &times; 99.99999% = ~99.95%
+* <span data-ttu-id="9959f-246">웹앱 및 (데이터베이스 또는 큐) = 99.95% &times; 99.99999% = ~99.95%</span><span class="sxs-lookup"><span data-stu-id="9959f-246">Web app AND (database OR queue) = 99.95% &times; 99.99999% = ~99.95%</span></span>
 
-하지만 이러한 접근법에는 장단점이 있습니다. 응용 프로그램 논리가 더 복잡하고, 큐에 대한 비용도 지불하며, 고려해야 할 데이터 일관성 문제도 있을 수 있습니다.
+<span data-ttu-id="9959f-247">하지만 이 방법에는 단점이 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-247">But there are tradeoffs to this approach.</span></span> <span data-ttu-id="9959f-248">응용 프로그램 논리가 더 복잡하고 큐에 대한 비용을 지불해야 하며, 데이터 일관성 문제를 고려해야 할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-248">The application logic is more complex, you are paying for the queue, and there may be data consistency issues to consider.</span></span>
 
-**다중 지역 배포의 SLA**. 또 하나의 HA 기법은 응용 프로그램을 두 개 이상의 지역에 배포하고, 한 지역에서 응용 프로그램이 실패할 경우 장애 조치를 위해 Azure Traffic Manager를 사용하는 것입니다. 2지역 배포의 경우 복합 SLA는 다음과 같이 계산합니다.
+<span data-ttu-id="9959f-249">**다중 지역 배포의 SLA**.</span><span class="sxs-lookup"><span data-stu-id="9959f-249">**SLA for multi-region deployments**.</span></span> <span data-ttu-id="9959f-250">또 다른 HA 기술은 여러 지역에 응용 프로그램을 배포 하고, 한 지역의 응용 프로그램에 오류가 발생하면 Azure Traffic Manager를 사용하여 장애 조치(failover)하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-250">Another HA technique is to deploy the application in more than one region, and use Azure Traffic Manager to fail over if the application fails in one region.</span></span> <span data-ttu-id="9959f-251">2지역 배포의 경우 복합 SLA는 다음과 같이 계산합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-251">For a two-region deployment, the composite SLA is calculated as follows.</span></span> 
 
-*N* 을 한 지역에 배포되는 응용 프로그램의 SLA라고 하겠습니다. 양쪽 지역에서 동시에 응용 프로그램이 실패할 가능성은 (1 &minus; N) &times; (1 &minus; N)입니다. 그러므로,
+<span data-ttu-id="9959f-252">한 지역에 배포된 응용 프로그램의 SLA를 *N*이라 하겠습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-252">Let *N* be the composite SLA for the application deployed in one region.</span></span> <span data-ttu-id="9959f-253">두 지역의 응용 프로그램이 동시에 중단될 예상 가능성은 (1 &minus; N) &times; (1 &minus; N)입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-253">The expected chance that the application will fail in both regions at the same time is (1 &minus; N) &times; (1 &minus; N).</span></span> <span data-ttu-id="9959f-254">따라서</span><span class="sxs-lookup"><span data-stu-id="9959f-254">Therefore,</span></span>
 
-* 양쪽 지역의 결합 SLA = 1 &minus; (1 &minus; N)(1 &minus; N) = N + (1 &minus; N)N
+* <span data-ttu-id="9959f-255">두 지역의 복합 SLA = 1 &minus; (1 &minus; N)(1 &minus; N) = N + (1 &minus; N)N입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-255">Combined SLA for both regions = 1 &minus; (1 &minus; N)(1 &minus; N) = N + (1 &minus; N)N</span></span>
 
-마지막으로 [Traffic Manager의 SLA][tm-sla]를 고려해야 합니다. 본 기사의 작성 시점에 Traffic Manager의 SLA는 99.99%입니다.
+<span data-ttu-id="9959f-256">마지막으로, [Traffic Manager SLA][tm-sla]를 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-256">Finally, you must factor in the [SLA for Traffic Manager][tm-sla].</span></span> <span data-ttu-id="9959f-257">이 문서가 작성된 시점의 Traffic Manager SLA는 99.99%입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-257">At the time of this writing, the SLA for Traffic Manager SLA is 99.99%.</span></span>
 
-* 복합 SLA = 99.99% &times; (양쪽 지역의 결합 SLA)
+* <span data-ttu-id="9959f-258">복합 SLA = 99.99% &times;(두 지역의 SLA를 결합)</span><span class="sxs-lookup"><span data-stu-id="9959f-258">Composite SLA = 99.99% &times; (combined SLA for both regions)</span></span>
 
-자세히 설명하자면 장애 조치가 즉시 이루어지는 것이 아니기 때문에 장애 조치 시에 약간의 가동 중지 시간이 발생할 수 있습니다. [Traffic Manager 끝점 모니터링 및 장애 조치][tm-failover]를 참조하십시오.
+<span data-ttu-id="9959f-259">또한 장애 조치(failover)가 즉시 이루어지는 것이 아니기 때문에 장애 조치(failover) 중에 약간의 가동 중지 시간이 있을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-259">Also, failing over is not instantaneous and can result in some downtime during a failover.</span></span> <span data-ttu-id="9959f-260">자세한 내용은 [Traffic Manager 엔드포인트 모니터링 및 장애 조치(failover)][tm-failover]를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-260">See [Traffic Manager endpoint monitoring and failover][tm-failover].</span></span>
 
-계산된 SLA는 유용한 기준선이 되지만, 가용성에 관한 전체 내용을 말해주지는 않습니다. 중요하지 않은 경로가 실패하면 응용 프로그램 기능이 안정적으로 저하될 수 있습니다. 책 카탈로그를 보여주는 응용 프로그램을 생각해보십시오. 응용 프로그램이 커버의 미리 보기 이미지를 검색할 수 없을 경우 자리 표시자 이미지를 보여줄 수 있습니다. 이 경우, 이미지 가져오기가 실패해도 사용자 경험에는 영향을 주지만 응용 프로그램의 가동 시간을 줄이지는 않습니다.
+<span data-ttu-id="9959f-261">계산된 SLA 숫자는 유용한 기본 자료이지만 가용성에 대한 전반적인 성능을 알려주지는 않습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-261">The calculated SLA number is a useful baseline, but it doesn't tell the whole story about availability.</span></span> <span data-ttu-id="9959f-262">종종 중요하지 않은 경로에 오류가 발생할 때 응용 프로그램 성능이 정상적으로 저하될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-262">Often, an application can degrade gracefully when a non-critical path fails.</span></span> <span data-ttu-id="9959f-263">책 카탈로그를 표시하는 응용 프로그램을 생각해 보세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-263">Consider an application that shows a catalog of books.</span></span> <span data-ttu-id="9959f-264">이 응용 프로그램은 표지의 썸네일 이미지를 검색할 수 없으면 자리 표시자 이미지를 표시할 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-264">If the application can't retrieve the thumbnail image for the cover, it might show a placeholder image.</span></span> <span data-ttu-id="9959f-265">이 경우, 이미지를 가져오지 못해도 사용자 경험에는 영향을 주지만 응용 프로그램의 작동 시간에는 영향을 주지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-265">In that case, failing to get the image does not reduce the application's uptime, although it affects the user experience.</span></span>  
 
-## 복원력 설계
-디자인 단계에서 장애 모드 분석(FMA)을 수행해야 합니다. FMA의 목표는 예상 장애 지점을 식별하고 응용 프로그램의 장애 대응 방법을 정의하는 것입니다.
+## <a name="designing-for-resiliency"></a><span data-ttu-id="9959f-266">복원력을 위한 디자인</span><span class="sxs-lookup"><span data-stu-id="9959f-266">Designing for resiliency</span></span>
+<span data-ttu-id="9959f-267">디자인 단계에서 FMA(오류 모드 분석)를 수행해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-267">During the design phase, you should perform a failure mode analysis (FMA).</span></span> <span data-ttu-id="9959f-268">FMA의 목표는 가능한 실패 지점을 식별하고 응용 프로그램이 이러한 오류에 대응하는 방식을 정의하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-268">The goal of an FMA is to identify possible points of failure, and define how the application will respond to those failures.</span></span>
 
-* 응용 프로그램이 어떻게 장애 유형을 감지할까요?
-* 응용 프로그램이 어떻게 그 장애 유형에 대응할까요?
-* 그 장애 유형을 어떻게 기록하고 모니터링할까요?
+* <span data-ttu-id="9959f-269">응용 프로그램이 이러한 종류의 오류를 어떻게 감지하나요?</span><span class="sxs-lookup"><span data-stu-id="9959f-269">How will the application detect this type of failure?</span></span>
+* <span data-ttu-id="9959f-270">응용 프로그램이 이러한 종류의 오류에 어떻게 대응하나요?</span><span class="sxs-lookup"><span data-stu-id="9959f-270">How will the application respond to this type of failure?</span></span>
+* <span data-ttu-id="9959f-271">이러한 종류의 오류를 어떻게 로깅하고 모니터링하나요?</span><span class="sxs-lookup"><span data-stu-id="9959f-271">How will you log and monitor this type of failure?</span></span> 
 
-FMA 프로세스 및 Azure의 자세한 권장 사항에 관한 내용은 [Azure 복원 지침: 장애 모드 분석][fma]을 참조하십시오.
+<span data-ttu-id="9959f-272">Azure에 대한 구체적인 권장 사항을 비롯한 FMA 프로세스에 대한 자세한 내용은 [Azure 복원력 지침: 오류 모드 분석][fma]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-272">For more information about the FMA process, with specific recommendations for Azure, see [Azure resiliency guidance: Failure mode analysis][fma].</span></span>
 
-### 장애 모드 식별 및 감지 전략의 예
-**장애 지점:** 외부 웹 서비스 / API로 호출.
+### <a name="example-of-identifying-failure-modes-and-detection-strategy"></a><span data-ttu-id="9959f-273">오류 모드 식별 및 감지 전략의 예</span><span class="sxs-lookup"><span data-stu-id="9959f-273">Example of identifying failure modes and detection strategy</span></span>
+<span data-ttu-id="9959f-274">**실패 지점:** 외부 웹 서비스/API에 대한 호출입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-274">**Failure point:** Call to an external web service / API.</span></span>
 
-| 장애 모드 | 감지 전략 |
+| <span data-ttu-id="9959f-275">오류 모드</span><span class="sxs-lookup"><span data-stu-id="9959f-275">Failure mode</span></span> | <span data-ttu-id="9959f-276">감지 전략</span><span class="sxs-lookup"><span data-stu-id="9959f-276">Detection strategy</span></span> |
 | --- | --- |
-| 서비스를 사용할 수 없음 |HTTP 5xx |
-| 제한 |HTTP 429 (너무 많은 요청) |
-| 인증 |HTTP 401 (인증 받지 않음) |
-| 느린 응답 |요청 시간 초과 |
+| <span data-ttu-id="9959f-277">서비스를 사용할 수 없음</span><span class="sxs-lookup"><span data-stu-id="9959f-277">Service is unavailable</span></span> |<span data-ttu-id="9959f-278">HTTP 5xx</span><span class="sxs-lookup"><span data-stu-id="9959f-278">HTTP 5xx</span></span> |
+| <span data-ttu-id="9959f-279">제한</span><span class="sxs-lookup"><span data-stu-id="9959f-279">Throttling</span></span> |<span data-ttu-id="9959f-280">HTTP 429(요청이 너무 많음)</span><span class="sxs-lookup"><span data-stu-id="9959f-280">HTTP 429 (Too Many Requests)</span></span> |
+| <span data-ttu-id="9959f-281">인증</span><span class="sxs-lookup"><span data-stu-id="9959f-281">Authentication</span></span> |<span data-ttu-id="9959f-282">HTTP 401(권한 없음)</span><span class="sxs-lookup"><span data-stu-id="9959f-282">HTTP 401 (Unauthorized)</span></span> |
+| <span data-ttu-id="9959f-283">느린 응답 시간</span><span class="sxs-lookup"><span data-stu-id="9959f-283">Slow response</span></span> |<span data-ttu-id="9959f-284">요청 시간 초과</span><span class="sxs-lookup"><span data-stu-id="9959f-284">Request times out</span></span> |
 
-## 복원 전략
-이 섹션에서는 일부 일반적인 복원 전략에 관한 조사 내용을 제시합니다. 그 전략의 대부분은 특정 기술에 국한되지 않습니다. 이 섹션의 내용은 각 기법 이면의 일반적 아이디어 및 추가로 읽을 자료를 요약하여 설명합니다.
+## <a name="resiliency-strategies"></a><span data-ttu-id="9959f-285">복원력 전략</span><span class="sxs-lookup"><span data-stu-id="9959f-285">Resiliency strategies</span></span>
+<span data-ttu-id="9959f-286">이 섹션에서는 몇 가지 일반적인 복원력 전략에 대한 설문 조사를 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-286">This section provides a survey of some common resiliency strategies.</span></span> <span data-ttu-id="9959f-287">이들 중 대부분은 특정 기술에 제한되지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-287">Most of these are not limited to a particular technology.</span></span> <span data-ttu-id="9959f-288">이 섹션에서는 각 기술의 밑바탕에 깔려 있는 일반적인 개념을 설명하고 추가 정보에 대한 링크를 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-288">The descriptions in this section summarize the general idea behind each technique, with links to further reading.</span></span>
 
-### 일시적 장애의 재시도
-일시적 장애는 순간적인 네트워크 연결 끊김, 데이터베이스 연결 끊김 또는 서비스를 사용 중일 때 시간 초과로 인하여 발생할 수 있습니다. 일시적 장애는 간단히 요청을 재시도함으로써 해결되는 경우가 많습니다. 많은 Azure 서비스의 경우 호출자에게 투명한 방식으로 클라이언트 SDK가 자동으로 재시도를 수행합니다. 관련 내용은 [서비스별 재시도 지침][retry-service-specific guidance]을 참조하십시오.
+### <a name="retry-transient-failures"></a><span data-ttu-id="9959f-289">일시적인 오류 다시 시도</span><span class="sxs-lookup"><span data-stu-id="9959f-289">Retry transient failures</span></span>
+<span data-ttu-id="9959f-290">서비스 사용량이 많을 때 일시적인 네트워크 연결 해제, 데이터베이스 연결 끊김 또는 시간 제한으로 인해 일시적 오류가 발생할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-290">Transient failures can be caused by momentary loss of network connectivity, a dropped database connection, or a timeout when a service is busy.</span></span> <span data-ttu-id="9959f-291">일시적인 오류는 요청을 다시 시도하면 해결되는 경우가 자주 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-291">Often, a transient failure can be resolved simply by retrying the request.</span></span> <span data-ttu-id="9959f-292">여러 Azure 서비스의 경우 클라이언트 SDK는 호출자에게 투명한 방식으로 자동 다시 시도를 구현합니다. 자세한 내용은 [다시 시도 서비스별 지침][retry-service-specific guidance]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-292">For many Azure services, the client SDK implements automatic retries, in a way that is transparent to the caller; see [Retry service specific guidance][retry-service-specific guidance].</span></span>
 
-각각의 재시도는 전체 대기 시간을 증가시킵니다. 또한 실패한 요청이 너무 많으면 큐에 대기 중인 요청이 누적되어 병목 현상이 야기됩니다. 이렇게 차단된 요청은 메모리, 스레드, 데이터베이스 연결 등 중요한 시스템 자원을 붙들고 있어서 연속적인 장애를 유발할 수 있습니다. 이를 방지하려면 각 재시도 간의 대기 시간을 증가시켜 실패한 요청의 총 수를 제한해야 합니다.
+<span data-ttu-id="9959f-293">각 다시 시도는 총 대기 시간에 추가됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-293">Each retry attempt adds to the total latency.</span></span> <span data-ttu-id="9959f-294">또한 실패한 요청 수가 너무 많으면 보류 중인 요청이 큐에 누적되어 병목 상태가 발생할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-294">Also, too many failed requests can cause a bottleneck, as pending requests accumulate in the queue.</span></span> <span data-ttu-id="9959f-295">이처럼 차단된 요청이 메모리, 스레드, 데이터베이스 연결 등의 중요한 시스템 리소스를 계속 잡아 두어 연속 오류를 일으킬 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-295">These blocked requests might hold critical system resources such as memory, threads, database connections, and so on, which can cause cascading failures.</span></span> <span data-ttu-id="9959f-296">이 문제를 방지하려면 각 다시 시도 사이의 지연 시간을 늘리고 총 실패한 요청 수를 제한하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-296">To avoid this, increase the delay between each retry attempt, and limit the total number of failed requests.</span></span>
 
-![Composite SLA](./images/retry.png)
+![복합 SLA](./images/retry.png)
 
-자세한 내용은 [재시도 패턴][retry-pattern]을 참조하십시오.
+<span data-ttu-id="9959f-298">자세한 내용은 [다시 시도 패턴][retry-pattern]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-298">For more information, see [Retry Pattern][retry-pattern].</span></span>
 
-### 인스턴스 간 부하 분산
-확장성의 경우 클라우드 응용 프로그램이 인스턴스 추가를 통한 수평 확장이 가능해야 합니다. 또한 이러한 접근법은 복원력도 향상시키는데 그 이유는 비정상적 인스턴스는 로테이션에서 제외할 수 있기 때문입니다.
+### <a name="load-balance-across-instances"></a><span data-ttu-id="9959f-299">인스턴스 간에 부하 분산</span><span class="sxs-lookup"><span data-stu-id="9959f-299">Load balance across instances</span></span>
+<span data-ttu-id="9959f-300">확장성을 위해 클라우드 응용 프로그램은 인스턴스를 추가하여 규모 확장할 수 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-300">For scalability, a cloud application should be able to scale out by adding more instances.</span></span> <span data-ttu-id="9959f-301">이 방법은 회전 대상에서 비정상 인스턴스를 제거할 수 있으므로 복원력도 향상됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-301">This approach also improves resiliency, because unhealthy instances can be removed from rotation.</span></span>  
 
-예제:
+<span data-ttu-id="9959f-302">예:</span><span class="sxs-lookup"><span data-stu-id="9959f-302">For example:</span></span>
 
-* 부하 분산 장치 뒤에 두 개 이상의 VM을 두십시오. 부하 분산 장치가 트래픽을 모든 VM에 분산시킵니다. 관련 내용은 [확장성 및 가용성을 위해 Azure에서 다수의 VM 실행][ra-multi-vm] 을 참조하십시오.
-* Azure App Service 앱을 여러 인스턴스로 확장하십시오. App Service는 자동으로 인스턴스 간 부하 분산을 수행합니다. [기본 웹 응용 프로그램][ra-basic-web]을 참조하십시오.
-* 끝점 집합에 걸쳐 트래픽을 배분하려면 [Azure Traffic Manager][tm]를 사용하십시오.
+* <span data-ttu-id="9959f-303">부하 분산 장치 뒤에 둘 이상의 VM을 배치합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-303">Put two or more VMs behind a load balancer.</span></span> <span data-ttu-id="9959f-304">부하 분산 장치는 모든 VM에 트래픽을 분산합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-304">The load balancer distributes traffic to all the VMs.</span></span> <span data-ttu-id="9959f-305">[부하가 분산된 VM을 실행하여 확장성 및 가용성 확보][ra-multi-vm]를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-305">See [Run load-balanced VMs for scalability and availability][ra-multi-vm].</span></span>
+* <span data-ttu-id="9959f-306">Azure App Service 앱을 여러 인스턴스로 규모 확장합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-306">Scale out an Azure App Service app to multiple instances.</span></span> <span data-ttu-id="9959f-307">App Service는 자동으로 인스턴스 간에 부하를 분산합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-307">App Service automatically balances load across instances.</span></span> <span data-ttu-id="9959f-308">[기본 웹 응용 프로그램][ra-basic-web]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-308">See [Basic web application][ra-basic-web].</span></span>
+* <span data-ttu-id="9959f-309">[Azure Traffic Manager][tm]를 사용하여 엔드포인트 집합에 트래픽을 분산합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-309">Use [Azure Traffic Manager][tm] to distribute traffic across a set of endpoints.</span></span>
 
-### 데이터 복제
-데이터 복제는 일시적이 아닌 데이터 저장소의 장애를 처리하는 일반적인 전략입니다. 많은 저장소 기술이 Azure SQL Database, DocumentDB, Apache Cassandra 등 복제 기능을 기본으로 제공합니다.
 
-읽기 및 쓰기 경로를 모두 고려하는 것이 중요합니다. 저장소 기술에 따라 기록이 가능한 여러 복제본이 있거나 또는 한 개의 기록 가능 복제본과 여러 개의 읽기 전용 복제본이 있을 수 있습니다.
+### <a name="replicate-data"></a><span data-ttu-id="9959f-310">데이터 복제</span><span class="sxs-lookup"><span data-stu-id="9959f-310">Replicate data</span></span>
+<span data-ttu-id="9959f-311">데이터 복제는 데이터 저장소의 일시적이지 않은 오류를 처리하는 일반적인 전략입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-311">Replicating data is a general strategy for handling non-transient failures in a data store.</span></span> <span data-ttu-id="9959f-312">Azure SQL Database, Cosmos DB, Apache Cassandra를 포함한 많은 저장소 기술이 기본적으로 복제 기능을 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-312">Many storage technologies provide built-in replication, including Azure SQL Database, Cosmos DB, and Apache Cassandra.</span></span>  
 
-최고의 가용성을 얻으려면 복제본을 여러 지역에 배치해야 합니다. 하지만 그렇게 하면 데이터 복제 대기 시간이 증가합니다. 일반적으로 지역 간 복제는 비동기식으로 수행되므로 궁극적인 일관성 모델을 의미하며 복제에 실패할 경우 데이터가 손실될 가능성이 있습니다.
+<span data-ttu-id="9959f-313">읽기 및 쓰기 경로를 모두 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-313">It's important to consider both the read and write paths.</span></span> <span data-ttu-id="9959f-314">저장소 기술에 따라 여러 개의 쓰기 가능한 복제본이 생길 수도 있고, 쓰기 가능한 복제본 하나와 읽기 전용 복제본 여러 개가 생길 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-314">Depending on the storage technology, you might have multiple writable replicas, or a single writable replica and multiple read-only replicas.</span></span> 
 
-### 안정적 기능 저하
-서비스가 실패하고 장애 조치 경로가 없을 경우, 응용 프로그램은 여전히 수용 가능한 사용자 환경을 제공하면서 안정적으로 기능이 저하될 수 있습니다. 예를 들면 다음과 같습니다.
+<span data-ttu-id="9959f-315">가용성을 최대화하기 위해 복제본을 여러 영역에 배치할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-315">To maximize availability, replicas can be placed in multiple regions.</span></span> <span data-ttu-id="9959f-316">그러나 데이터를 복제할 때 대기 시간이 증가하게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-316">However, this increases the latency when replicating the data.</span></span> <span data-ttu-id="9959f-317">일반적으로 지역 간 복제는 비동기적으로 수행되며, 이는 복제본 오류가 발생할 경우 궁극적으로 일관성 모델 및 데이터 손실 가능성이 있다는 의미입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-317">Typically, replicating across regions is done asynchronously, which implies an eventual consistency model and potential data loss if a replica fails.</span></span> 
 
-* 작업 항목을 큐에 넣어 나중에 실행되도록 합니다.
-* 추정값을 반환합니다.
-* 로컬로 캐시된 데이터를 사용합니다.
-* 사용자에게 오류 메시지를 표시합니다. (이 옵션은 응용 프로그램이 요청에 대한 대응을 중지하는 것보다 낫습니다.)
+### <a name="degrade-gracefully"></a><span data-ttu-id="9959f-318">정상적으로 성능 저하</span><span class="sxs-lookup"><span data-stu-id="9959f-318">Degrade gracefully</span></span>
+<span data-ttu-id="9959f-319">서비스에 오류가 발생하고 장애 조치(failover) 경로가 없는 경우 응용 프로그램이 정상적으로 성능을 내리고 계속해서 허용 가능한 수준의 사용자 환경을 제공할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-319">If a service fails and there is no failover path, the application may be able to degrade gracefully while still providing an acceptable user experience.</span></span> <span data-ttu-id="9959f-320">예:</span><span class="sxs-lookup"><span data-stu-id="9959f-320">For example:</span></span>
 
-### 대용량 사용자의 제한
-때로는 소수의 사용자가 과도한 부하를 야기할 때가 있습니다. 그러면 다른 사용자들에게 영향을 줄 수 있고, 응용 프로그램의 전반적 가용성을 떨어뜨립니다.
+* <span data-ttu-id="9959f-321">나중에 처리하도록 작업 항목을 큐에 배치합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-321">Put a work item on a queue, to be handled later.</span></span> 
+* <span data-ttu-id="9959f-322">예상 값을 반환합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-322">Return an estimated value.</span></span>
+* <span data-ttu-id="9959f-323">로컬로 캐시된 데이터를 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-323">Use locally cached data.</span></span> 
+* <span data-ttu-id="9959f-324">사용자에게 오류 메시지를 표시합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-324">Show the user an error message.</span></span> <span data-ttu-id="9959f-325">(요청에 대응하여 응용 프로그램을 중지하는 것보다는 이 옵션이 낫습니다.)</span><span class="sxs-lookup"><span data-stu-id="9959f-325">(This option is better than having the application stop responding to requests.)</span></span>
 
-단일 클라이언트가 지나치게 많은 요청을 하면, 응용 프로그램이 해당 클라이언트를 일정 기간 제한할 수도 있습니다. 제한 기간 동안 (정확한 제한 전략에 따라) 응용 프로그램이 그 클라이언트의 일부 또는 전체 요청을 거절합니다. 제한 임계값은 고객의 서비스 계층에 따라 달라질 수 있습니다.
+### <a name="throttle-high-volume-users"></a><span data-ttu-id="9959f-326">대규모 사용자 제한</span><span class="sxs-lookup"><span data-stu-id="9959f-326">Throttle high-volume users</span></span>
+<span data-ttu-id="9959f-327">소수의 사용자가 과도한 로드를 생성하는 경우가 가끔 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-327">Sometimes a small number of users create excessive load.</span></span> <span data-ttu-id="9959f-328">이 경우 응용 프로그램의 가용성을 떨어트려 다른 사용자에게 영향을 줄 수입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-328">That can have an impact on other users, reducing the overall availability of your application.</span></span>
 
-제한을 하는 것이 반드시 클라이언트가 악의적 행위를 했다는 것을 의미하지는 않습니다. 단순히 클라이언트가 서비스 할당량을 초과했음을 의미하는 것입니다. 일부의 경우 고객이 지속적으로 할당량을 초과했거나, 불량한 행위를 했을 가능성이 있습니다. 그 경우, 해당 사용자에 대해 추가적인 차단 조치를 취할 수 있습니다. 일반적으로 그 조치는 API 키 또는 IP 주소 범위를 차단하는 방식으로 합니다.
+<span data-ttu-id="9959f-329">단일 클라이언트가 과도한 요청을 만드는 경우 응용 프로그램에서 클라이언트를 일정 기간 동안 제한할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-329">When a single client makes an excessive number of requests, the application might throttle the client for a certain period of time.</span></span> <span data-ttu-id="9959f-330">제한 기간 동안 응용 프로그램은 해당 클라이언트의 요청 중 일부 또는 전부를 거부합니다(정확한 제한 전략에 따라).</span><span class="sxs-lookup"><span data-stu-id="9959f-330">During the throttling period, the application refuses some or all of the requests from that client (depending on the exact throttling strategy).</span></span> <span data-ttu-id="9959f-331">제한의 임계값은 고객의 서비스 계층에 따라 달라질 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-331">The threshold for throttling might depend on the customer's service tier.</span></span> 
 
-자세한 내용은 [제한 패턴][throttling-pattern]을 참조하십시오.
+<span data-ttu-id="9959f-332">제한은 반드시 클라이언트가 악의적으로 작동했다는 의미가 아니라 서비스 할당량을 초과한다는 의미입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-332">Throttling does not imply the client was necessarily acting maliciously, only that it exceeded its service quota.</span></span> <span data-ttu-id="9959f-333">경우에 따라 소비자가 지속적으로 할당량을 초과하거나 악의적으로 행동할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-333">In some cases, a consumer might consistently exceed their quota or otherwise behave badly.</span></span> <span data-ttu-id="9959f-334">이 경우 더 나아가서 해당 사용자를 차단할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-334">In that case, you might go further and block the user.</span></span> <span data-ttu-id="9959f-335">일반적으로 사용자 차단은 API 키 또는 IP 주소 범위를 차단하여 수행됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-335">Typically, this is done by blocking an API key or an IP address range.</span></span>
 
-### 회로 차단기 사용
-회로 차단기 패턴을 이용하여 응용 프로그램이 실패할 가능성이 있는 작업을 반복적으로 시도하는 것을 방지할 수 있습니다. 비유로서 물리적 차단기를 들 수 있는데, 이는 회로에 과부하가 걸리면 전류 흐름을 중지시키는 스위치입니다.
+<span data-ttu-id="9959f-336">자세한 내용은 [제한 패턴][throttling-pattern]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-336">For more information, see [Throttling Pattern][throttling-pattern].</span></span>
 
-회로 차단기는 서비스 호출을 래핑합니다. 차단기의 상태는 다음 세 가지입니다.
+### <a name="use-a-circuit-breaker"></a><span data-ttu-id="9959f-337">회로 차단기 사용</span><span class="sxs-lookup"><span data-stu-id="9959f-337">Use a circuit breaker</span></span>
+<span data-ttu-id="9959f-338">회로 차단기 패턴은 응용 프로그램이 실패 가능성이 있는 작업을 반복해서 다시 시도하지 않도록 차단할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-338">The Circuit Breaker pattern can prevent an application from repeatedly trying an operation that is likely to fail.</span></span> <span data-ttu-id="9959f-339">회로가 과부하가 흐르면 전류 흐름을 차단하는 물리적 회로 차단기와 비슷한 원리입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-339">This is similar to a physical circuit breaker, a switch that interrupts the flow of current when a circuit is overloaded.</span></span>
 
-* **닫힘**. 정상 상태를 말합니다. 회로 차단기가 서비스로 요청을 보내고 카운터가 최근 실패 수를 추적합니다. 실패 수가 주어진 기간의 임계치를 초과하면 회로 차단기가 열림 상태로 전환됩니다.
-* **개방**. 이 상태에서는 회로 차단기가 서비스를 호출하지 않고 즉시 모든 요청을 실패 처리합니다. 응용 프로그램이 완화 경로를 사용해야 하며, 예를 들면 본제본에서 데이터를 읽거나 단순히 오류를 사용자에게 반환해야 합니다. 회로 차단기가 개방으로 전환되면 타이머가 시작됩니다. 타이머가 만료되면 회로 차단기가 절반 개방 상태로 전환됩니다.
-* **절반 개방**. 이 상태에서는 회로 차단기가 제한된 수의 요청만 서비스로 전달되도록 합니다. 이들이 성공하면 서비스가 복구된 것으로 가정하고, 회로 차단기가 닫힘 상태로 다시 전환됩니다. 그렇지 않으면 개방 상태로 되돌아갑니다. 절반 개방 상태는 서비스에 갑자기 다량의 요청이 유입되는 것을 방지합니다.
+<span data-ttu-id="9959f-340">회로 차단기는 서비스에 대한 호출을 래핑합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-340">The circuit breaker wraps calls to a service.</span></span> <span data-ttu-id="9959f-341">다음과 같은 세 가지 상태가 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-341">It has three states:</span></span>
 
-자세한 내용은 [회로 차단기 패턴][circuit-breaker-pattern]을 참조하십시오.
+* <span data-ttu-id="9959f-342">**닫힘**.</span><span class="sxs-lookup"><span data-stu-id="9959f-342">**Closed**.</span></span> <span data-ttu-id="9959f-343">정상 상태입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-343">This is the normal state.</span></span> <span data-ttu-id="9959f-344">회로 차단기는 서비스에 요청을 보내고, 카운터는 최근 실패 수를 추적합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-344">The circuit breaker sends requests to the service, and a counter tracks the number of recent failures.</span></span> <span data-ttu-id="9959f-345">실패 횟수가 지정된 기간 내에서 임계값을 초과하면 회로 차단기가 열림 상태로 전환됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-345">If the failure count exceeds a threshold within a given time period, the circuit breaker switches to the Open state.</span></span> 
+* <span data-ttu-id="9959f-346">**열림**.</span><span class="sxs-lookup"><span data-stu-id="9959f-346">**Open**.</span></span> <span data-ttu-id="9959f-347">이 상태에서는 회로 차단기가 서비스를 호출하지 않고 즉시 모든 요청을 실패로 처리합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-347">In this state, the circuit breaker immediately fails all requests, without calling the service.</span></span> <span data-ttu-id="9959f-348">응용 프로그램은 복제본에서 데이터를 읽거나 사용자에게 오류만 반환하는 것처럼 완화 경로를 사용해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-348">The application should use a mitigation path, such as reading data from a replica or simply returning an error to the user.</span></span> <span data-ttu-id="9959f-349">회로 차단기는 열림으로 전환될 때 타이머를 시작합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-349">When the circuit breaker switches to Open, it starts a timer.</span></span> <span data-ttu-id="9959f-350">타이머가 만료되면 회로 차단기가 반 열림 상태로 전환됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-350">When the timer expires, the circuit breaker switches to the Half-open state.</span></span>
+* <span data-ttu-id="9959f-351">**반 열림**.</span><span class="sxs-lookup"><span data-stu-id="9959f-351">**Half-open**.</span></span> <span data-ttu-id="9959f-352">이 상태에서는 회로 차단기가 제한된 수의 요청만 서비스로 보냅니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-352">In this state, the circuit breaker lets a limited number of requests go through to the service.</span></span> <span data-ttu-id="9959f-353">요청이 성공하면 서비스가 복구된 것으로 추정할 수 있으며, 회로 차단기가 닫힘 상태로 전환됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-353">If they succeed, the service is assumed to be recovered, and the circuit breaker switches back to the Closed state.</span></span> <span data-ttu-id="9959f-354">요청이 실패하면 다시 열림 상태로 돌아갑니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-354">Otherwise, it reverts to the Open state.</span></span> <span data-ttu-id="9959f-355">반 열림 상태는 복구 중인 서비스에 갑자기 요청이 몰리는 것을 방지합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-355">The Half-Open state prevents a recovering service from suddenly being inundated with requests.</span></span>
 
-### 트래픽 급증을 원활히 처리하기 위해 부하 평준화 사용
-응용 프로그램이 갑작스런 트래픽 급증을 경험할 수 있고, 그러면 백엔드의 서비스에 과부하가 걸릴 수 있습니다. 백엔드서비스가 충분히 신속히 요청에 응답할 수 없으면, 큐 요청(백업)이 발생하거나 또는 서비스가 응용 프로그램을 제한할 수 있습니다.
+<span data-ttu-id="9959f-356">자세한 내용은 [회로 차단기 패턴][circuit-breaker-pattern]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-356">For more information, see [Circuit Breaker Pattern][circuit-breaker-pattern].</span></span>
 
-이를 방지하기 위해서 큐를 버퍼로 사용할 수 있습니다. 새로운 작업 항목이 있을 경우, 즉시 백엔드 서비스를 호출하는 대신에 응용 프로그램이 비동기 실행을 위해 작업 항목을 큐에 넣습니다. 큐는 부하의 급증을 원활히 처리하는 버퍼 역할을 수행합니다.
+### <a name="use-load-leveling-to-smooth-out-spikes-in-traffic"></a><span data-ttu-id="9959f-357">부하 평준화를 사용하여 트래픽 급증을 매끄럽게 처리</span><span class="sxs-lookup"><span data-stu-id="9959f-357">Use load leveling to smooth out spikes in traffic</span></span>
+<span data-ttu-id="9959f-358">백 엔드의 서비스가 감당할 수 없을 정도로 응용 프로그램의 트래픽이 갑자기 치솟을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-358">Applications may experience sudden spikes in traffic, which can overwhelm services on the backend.</span></span> <span data-ttu-id="9959f-359">백 엔드 서비스가 요청에 충분히 신속하게 응답할 수 없는 경우 요청이 큐에 추가되거나(백업) 서비스가 응용 프로그램을 제한할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-359">If a backend service cannot respond to requests quickly enough, it may cause requests to queue (back up), or cause the service to throttle the application.</span></span>
 
-자세한 내용은 [큐 기반 부하 평준화 패턴][load-leveling-pattern]을 참조하십시오.
+<span data-ttu-id="9959f-360">큐를 버퍼로 사용하면 이 상황을 방지할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-360">To avoid this, you can use a queue as a buffer.</span></span> <span data-ttu-id="9959f-361">새 작업 항목이 있으면 백 엔드 서비스를 즉시 호출하는 대신 응용 프로그램이 작업 항목을 비동기적으로 실행되도록 큐에 추가합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-361">When there is a new work item, instead of calling the backend service immediately, the application queues a work item to run asynchronously.</span></span> <span data-ttu-id="9959f-362">큐는 피크 부하를 매끄럽게 하는 버퍼 역할을 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-362">The queue acts as a buffer that smooths out peaks in the load.</span></span> 
 
-### 중요한 리소스 격리
-때로는 한 서브시스템의 장애가 연속 장애를 유발할 수 있고 따라서 응용 프로그램의 다른 부분들이 실패할 수 있습니다. 장애 때문에 스레드, 소켓 등 일부 리소스가 제때 해제되지 않아서 리소스가 소진되는 경우에 이런 상황이 발생할 수 있습니다. 
+<span data-ttu-id="9959f-363">자세한 내용은 [큐 기반 부하 평준화 패턴][load-leveling-pattern]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-363">For more information, see [Queue-Based Load Leveling Pattern][load-leveling-pattern].</span></span>
 
-이를 방지하려면, 시스템을 격리된 그룹들로 분할하여 한 파티션의 장애가 전체 시스템을 다운시키지 않도록 해야 합니다. 이 기법을 때로는 벌크헤드 패턴이라고도 합니다.
+### <a name="isolate-critical-resources"></a><span data-ttu-id="9959f-364">중요한 리소스 격리</span><span class="sxs-lookup"><span data-stu-id="9959f-364">Isolate critical resources</span></span>
+<span data-ttu-id="9959f-365">가끔 한 하위 시스템의 오류가 원인이 되어 응용 프로그램의 다른 부분에서 오류가 발생하기도 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-365">Failures in one subsystem can sometimes cascade, causing failures in other parts of the application.</span></span> <span data-ttu-id="9959f-366">오류가 스레드 또는 소켓 같은 리소스를 적시에 놓아주지 않으면 리소스가 고갈되어 이와 같은 상황이 발생할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-366">This can happen if a failure causes some resources, such as threads or sockets, not to get freed in a timely manner, leading to resource exhaustion.</span></span> 
 
-예를 들면 다음과 같습니다.
+<span data-ttu-id="9959f-367">이 상황을 방지하려면 한 파티션의 오류 때문에 전체 시스템이 중단되는 일이 없도록 시스템을 격리된 그룹으로 분할하면 됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-367">To avoid this, you can partition a system into isolated groups, so that a failure in one partition does not bring down the entire system.</span></span> <span data-ttu-id="9959f-368">이 기술을 격벽 패턴이라고도 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-368">This technique is sometimes called the Bulkhead pattern.</span></span>
 
-* 예를 들어 테넌트로 데이터베이스를 분할하고, 각 파티션에 별도의 웹 서버 인스턴스 풀을 할당합니다.
-* 별도의 스레드 풀을 사용하여 다른 서비스에 대한 호출을 격리합니다. 그러면 서비스 중 하나가 실패할 때 연속적인 장애가 발생하는 것이 방지됩니다. 예를 들어, Netflix [Hystrix 라이브러리][hystrix]를 참조하십시오.
-* 특정 서브시스템에서 사용 가능한 리소스를 제한하려면 [컨테이너][containers]를 사용하십시오.
+<span data-ttu-id="9959f-369">예제:</span><span class="sxs-lookup"><span data-stu-id="9959f-369">Examples:</span></span>
 
-![Composite SLA](./images/bulkhead.png)
+* <span data-ttu-id="9959f-370">데이터베이스를 분할하고(예를 들어 테넌트 기준으로 분할) 각 파티션에 대한 별도의 웹 서버 인스턴스 풀을 할당합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-370">Partition a database (for example, by tenant) and assign a separate pool of web server instances for each partition.</span></span>  
+* <span data-ttu-id="9959f-371">별도의 스레드 풀을 사용하여 호출을 서로 다른 서비스에 격리합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-371">Use separate thread pools to isolate calls to different services.</span></span> <span data-ttu-id="9959f-372">이렇게 하면 서비스 중 하나가 실패하더라도 연쇄 오류가 발생하지 않도록 방지하는 데 도움이 됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-372">This helps to prevent cascading failures if one of the services fails.</span></span> <span data-ttu-id="9959f-373">예제는 Netflix [Hystrix 라이브러리][hystrix]를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-373">For an example, see the Netflix [Hystrix library][hystrix].</span></span>
+* <span data-ttu-id="9959f-374">[컨테이너][containers]를 사용하여 특정 하위 시스템에만 리소스를 제공하도록 제한합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-374">Use [containers][containers] to limit the resources available to a particular subsystem.</span></span> 
 
-### 보상 트랜잭션의 적용
-보상 트랜잭션은 다른 완료된 트랜잭션의 결과를 실행 취소하는 트랜잭션입니다.
+![복합 SLA](./images/bulkhead.png)
 
-분산 시스템에서는 강력한 트랜잭션 일관성을 달성하는 것이 매우 어려울 수 있습니다. 보상 트랜잭션은 각 단계를 실행 취소할 수 있는 보다 작은 일련의 개별 트랜잭션을 사용하여 일관성을 달성하는 방법입니다.
+### <a name="apply-compensating-transactions"></a><span data-ttu-id="9959f-376">보정 트랜잭션 적용</span><span class="sxs-lookup"><span data-stu-id="9959f-376">Apply compensating transactions</span></span>
+<span data-ttu-id="9959f-377">보정 트랜잭션은 완료된 다른 트랜잭션의 효과를 실행 취소하는 트랜잭션입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-377">A compensating transaction is a transaction that undoes the effects of another completed transaction.</span></span>
 
-예를 들어 여행을 예약하려면 차량, 호텔 객실 및 항공편 예약이 필요할 수 있습니다. 이들 단계 중 하나라도 실패하면 전체 작업이 실패합니다. 이 전체 작업을 위해 단일 분산 트랜잭션을 사용하는 대신에 각 단계에 대한 보상 트랜잭션을 정의할 수 있습니다. 예를 들면 차량 예약을 실행 취소하기 위해 예약을 취소할 수 있습니다. 전체 작업을 완료하기 위해 코디네이터가 각 단계를 실행합니다. 임의 단계가 실패하면 코디네이터가 보상 트랜잭션을 적용하여 이전에 완료되었던 모든 단계를 취소합니다.
+<span data-ttu-id="9959f-378">분산 시스템에서 강력한 트랜잭션 일관성을 달성하기가 매우 어려울 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-378">In a distributed system, it can be very difficult to achieve strong transactional consistency.</span></span> <span data-ttu-id="9959f-379">보정 트랜잭션은 각 단계에서 실행 취소할 수 있는 더 작은 일련의 개별 트랜잭션을 사용하여 일관성을 확보하는 방법입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-379">Compensating transactions are a way to achieve consistency by using a series of smaller, individual transactions that can be undone at each step.</span></span>
 
-자세한 내용은 [보상 트랜잭션 패턴][compensating-transaction-pattern]을 참조하십시오. 
+<span data-ttu-id="9959f-380">예를 들어 출장을 준비하려면 고객은 자동차, 호텔 객실 및 항공편을 예약해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-380">For example, to book a trip, a customer might reserve a car, a hotel room, and a flight.</span></span> <span data-ttu-id="9959f-381">이러한 단계 중 하나라도 실패하면 전체 작업이 실패합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-381">If any of these steps fails, the entire operation fails.</span></span> <span data-ttu-id="9959f-382">전체 작업에 단일 분산 트랜잭션을 사용하는 대신, 각 단계에 대한 보정 트랜잭션을 정의할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-382">Instead of trying to use a single distributed transaction for the entire operation, you can define a compensating transaction for each step.</span></span> <span data-ttu-id="9959f-383">예를 들어 자동차 예약을 실행 취소하려면 예약을 취소하면 됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-383">For example, to undo a car reservation, you cancel the reservation.</span></span> <span data-ttu-id="9959f-384">전체 작업을 완료하기 위해 코디네이터는 각 단계를 실행합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-384">In order to complete the whole operation, a coordinator executes each step.</span></span> <span data-ttu-id="9959f-385">어느 단계가 실패하면 코디네이터가 보정 트랜잭션을 적용하여 완료된 단계를 실행 취소합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-385">If any step fails, the coordinator applies compensating transactions to undo any steps that were completed.</span></span> 
 
-## 복원력 테스트
-일반적으로 (단위 테스트 실행 등을 통한) 응용 프로그램 기능 테스트와 동일한 방식으로 복원력을 테스트할 수는 없습니다. 대신에 장애 조건에서 종단 간 작업이 어떻게 수행되는지 테스트해야 하는데 이는 정의상 항상 발생하는 상황이 아닙니다.
+<span data-ttu-id="9959f-386">자세한 내용은 [보정 트랜잭션 패턴][compensating-transaction-pattern]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-386">For more information, see [Compensating Transaction Pattern][compensating-transaction-pattern].</span></span> 
 
-테스트는 반복적 프로세스의 일부입니다. 응용 프로그램을 테스트하고, 결과를 측정하고, 도출된 장애를 분석하여 수정하고 이 프로세스를 반복합니다.
 
-**오류 삽입 테스트**. 실제 장애를 트리거하거나 시뮬레이션을 통해서 시스템의 장애 복원력을 테스트합니다. 일반적으로 테스트하는 장애 시나리오는 다음과 같습니다.
+## <a name="testing-for-resiliency"></a><span data-ttu-id="9959f-387">복원력 테스트</span><span class="sxs-lookup"><span data-stu-id="9959f-387">Testing for resiliency</span></span>
+<span data-ttu-id="9959f-388">일반적으로 응용 프로그램의 기능을 테스트하는 방법과 동일한 방법으로는(단위 테스트 등을 실행) 복원력을 테스트할 수 없습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-388">Generally, you can't test resiliency in the same way that you test application functionality (by running unit tests and so on).</span></span> <span data-ttu-id="9959f-389">그 대신, 간헐적으로 발생하는 오류 조건 하에서 종단 간 워크로드가 수행되는 방식을 테스트해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-389">Instead, you must test how the end-to-end workload performs under failure conditions which only occur intermittently.</span></span>
 
-* VM 인스턴스를 종료합니다.
-* 프로세스를 충돌시킵니다.
-* 인증서를 만료시킵니다.
-* 액세스 키를 변경합니다.
-* 도메인 컨트롤러에서 DNS 서비스를 종료합니다.
-* RAM, 스레드 수 등 가용 시스템 리소스를 제한합니다.
-* 디스크를 분리합니다.
-* VM을 다시 배포합니다.
+<span data-ttu-id="9959f-390">테스트는 반복적인 프로세스입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-390">Testing is an iterative process.</span></span> <span data-ttu-id="9959f-391">응용 프로그램을 테스트하고, 결과를 측정하고, 결과를 분석 및 해결하고, 다시 프로세스를 반복합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-391">Test the application, measure the outcome, analyze and address any failures that result, and repeat the process.</span></span>
 
-복구 시간을 측정하고 비즈니스 요구 사항을 충족하는지 확인합니다. 장애 모드가 결합된 상황도 테스트합니다. 장애가 연속으로 발생하지 않도록 하고 분리된 방식으로 처리되도록 합니다.
+<span data-ttu-id="9959f-392">**오류 주입 테스트**.</span><span class="sxs-lookup"><span data-stu-id="9959f-392">**Fault injection testing**.</span></span> <span data-ttu-id="9959f-393">실제 오류를 트리거하거나 시뮬레이션하여 오류 시 시스템 복원력을 테스트합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-393">Test the resiliency of the system during failures, either by triggering actual failures or by simulating them.</span></span> <span data-ttu-id="9959f-394">다음은 테스트에 자주 사용되는 몇 가지 일반적인 오류 시나리오입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-394">Here are some common failure scenarios to test:</span></span>
 
-이것이 설계 단계에서 예상 실패 지점을 분석하는 것이 중요한 또 하나의 이유입니다. 분석 결과가 테스트 계획의 투입 자료가 되어야 합니다.
+* <span data-ttu-id="9959f-395">VM 인스턴스가 중단됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-395">Shut down VM instances.</span></span>
+* <span data-ttu-id="9959f-396">프로세스가 충돌합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-396">Crash processes.</span></span>
+* <span data-ttu-id="9959f-397">인증서가 만료됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-397">Expire certificates.</span></span>
+* <span data-ttu-id="9959f-398">액세스 키가 변경됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-398">Change access keys.</span></span>
+* <span data-ttu-id="9959f-399">도메인 컨트롤러에서 DNS 서비스를 중단합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-399">Shut down the DNS service on domain controllers.</span></span>
+* <span data-ttu-id="9959f-400">RAM 또는 스레드 수 같은 가용 시스템 리소스를 제한합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-400">Limit available system resources, such as RAM or number of threads.</span></span>
+* <span data-ttu-id="9959f-401">디스크를 탑재 해제합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-401">Unmount disks.</span></span>
+* <span data-ttu-id="9959f-402">VM을 다시 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-402">Redeploy a VM.</span></span>
 
-**부하 테스트**. [Visual Studio Team Services][vsts] 또는 [Apache JMeter][jmeter]를 사용한 응용 프로그램 부하 테스트는 부하 상태에서만 발생하는 장애(예: 백엔드 데이터베이스의 과부하, 또는 서비스 제한 등)를 식별할 때 매우 중요합니다. 최대 부하 테스트는 프로덕션 데이터 또는 프로덕션 데이터와 유사한 가상 데이터를 사용하여 수행합니다. 그 목표는 응용 프로그램이 실제 상황에서 어떻게 작동하는지 확인하는 것입니다.
+<span data-ttu-id="9959f-403">복구 시간을 측정하고 비즈니스 요구 사항이 충족되었는지 확인합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-403">Measure the recovery times and verify that your business requirements are met.</span></span> <span data-ttu-id="9959f-404">오류 모드를 조합하여 테스트합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-404">Test combinations of failure modes as well.</span></span> <span data-ttu-id="9959f-405">오류가 연쇄적으로 발생하지 않아야 하며, 오류를 격리된 방식으로 처리해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-405">Make sure that failures don't cascade, and are handled in an isolated way.</span></span>
 
-## 복원 가능한 배포
-응용 프로그램이 생산 환경에 배포되고 나면, 업데이트가 예상되는 오류의 출처가 됩니다. 최악의 경우 불량 업데이트는 가동 중지를 야기할 수도 있습니다. 이를 방지하려면 배포 프로세스가 예측 가능하고 반복적이어야 합니다. 배포 작업에는 Azure 리소스 프로비저닝, 응용 프로그램 코드 배포 및 구성 설정을 적용하는 것이 포함됩니다. 업데이트에는 세 개 모두 또는 하위 집합이 포함될 수 있습니다. 
+<span data-ttu-id="9959f-406">이러한 이유로 디자인 단계에서 잠재적인 실패 지점을 분석하는 것이 매우 중요합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-406">This is another reason why it's important to analyze possible failure points during the design phase.</span></span> <span data-ttu-id="9959f-407">분석 결과를 테스트 계획에 입력해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-407">The results of that analysis should be inputs into your test plan.</span></span>
 
-중요한 사항은 수동 배포가 오류에 취약하다는 점입니다. 그러므로 온디맨드 방식으로 실행할 수 있고 실패 발생 시 다시 실행할 수 있는 자동 Idempotent 프로세스를 보유할 것을 권장합니다. 
+<span data-ttu-id="9959f-408">**부하 테스트**.</span><span class="sxs-lookup"><span data-stu-id="9959f-408">**Load testing**.</span></span> <span data-ttu-id="9959f-409">[Visual Studio Team Services][vsts] 또는 [Apache JMeter][jmeter] 같은 도구를 사용하여 응용 프로그램의 부하 테스트를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-409">Load test the application using a tool such as [Visual Studio Team Services][vsts] or [Apache JMeter][jmeter].</span></span> <span data-ttu-id="9959f-410">부하 테스트는 백 엔드 데이터베이스 성능 초과나 서비스 제한처럼 부하 상태에서만 발생하는 오류를 식별하는 데 있어서 매우 중요합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-410">Load testing is crucial for identifying failures that only happen under load, such as the backend database being overwhelmed or service throttling.</span></span> <span data-ttu-id="9959f-411">프로덕션 데이터와 최대한 비슷한 프로덕션 데이터 또는 가상 데이터를 사용하여 최대 부하를 테스트합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-411">Test for peak load, using production data or synthetic data that is as close to production data as possible.</span></span> <span data-ttu-id="9959f-412">응용 프로그램이 실제 조건에서 어떻게 동작하는지 확인하는 것이 목표입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-412">The goal is to see how the application behaves under real-world conditions.</span></span>   
 
-* Azure 리소스 프로비저닝을 자동화하려면 Resource Manager 템플릿을 사용하십시오.
-* VM을 구성하려면 [Azure 자동화 필요한 상태 구성][dsc] (DSC)을 사용하십시오.
-* 응용 프로그램 코드를 위해 자동화된 배포 프로세스를 사용하십시오.
+## <a name="resilient-deployment"></a><span data-ttu-id="9959f-413">복원력 있는 배포</span><span class="sxs-lookup"><span data-stu-id="9959f-413">Resilient deployment</span></span>
+<span data-ttu-id="9959f-414">응용 프로그램이 프로덕션 환경에 배포된 후에는 업데이트로 인해 오류가 발생할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-414">Once an application is deployed to production, updates are a possible source of errors.</span></span> <span data-ttu-id="9959f-415">최악의 경우 잘못된 업데이트 때문에 가동이 중지될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-415">In the worst case, a bad update can cause downtime.</span></span> <span data-ttu-id="9959f-416">이를 방지하려면 배포 프로세스가 예측 가능하고 반복 가능해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-416">To avoid this, the deployment process must be predictable and repeatable.</span></span> <span data-ttu-id="9959f-417">배포에는 Azure 리소스를 프로비전하고, 응용 프로그램 코드를 배포하고, 구성 설정을 적용하는 것이 포함됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-417">Deployment includes provisioning Azure resources, deploying application code, and applying configuration settings.</span></span> <span data-ttu-id="9959f-418">업데이트에 세 가지가 모두 관련될 수도 있고 일부만 관련될 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-418">An update may involve all three, or a subset.</span></span> 
 
-복원 가능한 배포와 관련된 두 가지 주제는 *코드형 인프라* 및 *수정 불가 인프라* 입니다.
+<span data-ttu-id="9959f-419">중요한 점은, 수동 배포는 오류가 발생하기 쉽다는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-419">The crucial point is that manual deployments are prone to error.</span></span> <span data-ttu-id="9959f-420">따라서 요청이 있을 때 실행할 수 있고 오류가 발생하면 다시 실행할 수 있는 자동화된 멱등원(idempotent) 프로세스를 사용하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-420">Therefore, it's recommended to have an automated, idempotent process that you can run on demand, and re-run if something fails.</span></span> 
 
-* **코드형 인프라** 는 인프라 프로비저닝 및 구성을 위해 코드를 사용하는 방식을 말합니다. 코드형 인프라는 선언적 접근법 또는 명령적 접근법(또는 이 두 개의 조합)을 사용할 수 있습니다. Resource Manager 템플릿은 선언적 접근법의 예입니다. PowerShell 스크립트는 명령적 접근법의 예입니다.
-* **수정 불가 인프라** 는 생산 용으로 배포된 후에는 인프라를 수정해서는 안 된다는 원칙입니다. 그렇지 않으면 특별 변경사항이 적용된 상태로 들어갈 수 있고, 무엇을 변경했는지 정확히 알기가 어려우며, 시스템에 관한 추론을 하기가 어렵습니다. 
+* <span data-ttu-id="9959f-421">Resource Manager 템플릿을 사용하여 Azure 리소스의 프로비전을 자동화하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-421">Use Resource Manager templates to automate provisioning of Azure resources.</span></span>
+* <span data-ttu-id="9959f-422">[Azure Automation DSC(Desired State Configuration)][dsc]를 사용하여 VM을 구성하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-422">Use [Azure Automation Desired State Configuration][dsc] (DSC) to configure VMs.</span></span>
+* <span data-ttu-id="9959f-423">응용 프로그램 코드에 자동화 배포 프로세스를 사용하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-423">Use an automated deployment process for application code.</span></span>
 
-또 하나의 질문은 응용 프로그램 업데이트를 배포하는 방법에 관한 것입니다. 저희는 블루-그린 배포 또는 카나리아 릴리스와 같은 기법을 권장하는데, 이는 불량 배포로 예상되는 영향을 최소화하기 위해 매우 통제된 방식으로 업데이트를 진행합니다.
+<span data-ttu-id="9959f-424">복원력 있는 배포와 관련된 두 가지 개념은 *코드로써의 인프라* 및 *변경이 불가능한 인프라*입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-424">Two concepts related to resilient deployment are *infrastructure as code* and *immutable infrastructure*.</span></span>
 
-* [블루-그린 배포][blue-green] 는 업데이트를 라이브 응용 프로그램과는 분리된의 생산 환경에 배포하는 기법입니다. 배포를 확인한 후 트래픽 라우팅을 업데이트된 버전으로 전환합니다. 예를 들면 Azure App Service 웹 응용 프로그램은 [준비 슬롯][staging-slots]을 통해서 이를 지원합니다.
-* [카나리아 릴리스][canary-release] 는 블루-그린 배포와 유사합니다. 모든 트래픽을 업데이트된 버전으로 전환하는 대신에, 트래픽의 일부만을 새로운 배포에 라우팅함으로써 업데이트를 적은 비율의 사용자들에게만 배포합니다. 문제가 있으면 철회하고 기존 배포로 되돌아갑니다. 문제가 없으면, 트래픽의 10%가 될 때까지 더 많은 트래픽을 새 버전으로 라우팅합니다.
+* <span data-ttu-id="9959f-425">**코드로써의 인프라**는 인프라를 프로비전하고 구성하기 위한 코드 사용 관행입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-425">**Infrastructure as code** is the practice of using code to provision and configure infrastructure.</span></span> <span data-ttu-id="9959f-426">코드로써의 인프라는 선언적 방법 또는 명령적 방법(또는 두 가지 조합)을 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-426">Infrastructure as code may use a declarative approach or an imperative approach (or a combination of both).</span></span> <span data-ttu-id="9959f-427">Resource Manager 템플릿은 선언적 방법의 예입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-427">Resource Manager templates are an example of a declarative approach.</span></span> <span data-ttu-id="9959f-428">PowerShell 스크립트는 명령적 방법의 예입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-428">PowerShell scripts are an example of an imperative approach.</span></span>
+* <span data-ttu-id="9959f-429">**변경이 불가능한 인프라**는 프로덕션 환경에 인프라가 배포된 후에는 인프라를 수정하면 안 된다는 원칙입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-429">**Immutable infrastructure** is the principle that you shouldn’t modify infrastructure after it’s deployed to production.</span></span> <span data-ttu-id="9959f-430">그렇지 않으면 임시 변경 작업이 수행되어 무엇이 변경되었는지 정확하게 알기 어렵고 시스템에 대해 추론하기 어려운 상태에 빠질 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-430">Otherwise, you can get into a state where ad hoc changes have been applied, so it's hard to know exactly what changed, and hard to reason about the system.</span></span> 
 
-어떤 접근법을 취하든 간에, 새 버전이 제대로 작동하지 않을 경우 최근에 알려진 양호한 배포로 롤백할 수 있어야 합니다. 또한 오류가 발생할 경우 응용 프로그램 로그를 통해서 어느 버전이 오류를 유발했는지 알 수 있어야 합니다.
+<span data-ttu-id="9959f-431">또 다른 문제는 응용 프로그램 업데이트를 수행하는 방법입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-431">Another question is how to roll out an application update.</span></span> <span data-ttu-id="9959f-432">잘못된 배포의 악영향을 최소화할 수 있도록 정교하게 통제되는 방식으로 업데이트를 푸시하는 청록색 배포 또는 카나리아 릴리스 같은 기술을 사용하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-432">We recommend techniques such as blue-green deployment or canary releases, which push updates in highly controlled way to minimize possible impacts from a bad deployment.</span></span>
 
-## 모니터링 및 진단
-복원을 위해 모니터링 및 진단은 매우 중요합니다. 무언가 실패하면, 실패 사실을 알아야 하고, 실패 원인에 대한 통찰력이 필요합니다.
+* <span data-ttu-id="9959f-433">[청록색 배포][blue-green]는 실시간 응용 프로그램과 분리된 프로덕션 환경에 업데이트를 배포하는 기술입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-433">[Blue-green deployment][blue-green] is a technique where an update is deployed into a production environment separate from the live application.</span></span> <span data-ttu-id="9959f-434">배포의 유효성을 검사한 후에는 업데이트된 버전으로 트래픽 라우팅을 전환합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-434">After you validate the deployment, switch the traffic routing to the updated version.</span></span> <span data-ttu-id="9959f-435">예를 들어 Azure App Service Web Apps는 스테이징 슬롯을 사용하여 이를 지원합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-435">For example, Azure App Service Web Apps enables this with staging slots.</span></span>
+* <span data-ttu-id="9959f-436">[카나리아 릴리스][canary-release]는 청록색 배포와 비슷합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-436">[Canary releases][canary-release] are similar to blue-green deployments.</span></span> <span data-ttu-id="9959f-437">모든 트래픽을 업데이트된 버전으로 전환하는 대신, 트래픽의 일부를 새 배포로 라우팅하여 일부 사용자에게만 업데이트를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-437">Instead of switching all traffic to the updated version, you roll out the update to a small percentage of users, by routing a portion of the traffic to the new deployment.</span></span> <span data-ttu-id="9959f-438">문제가 있으면 업데이트를 중단하고 이전 배포를 되돌립니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-438">If there is a problem, back off and revert to the old deployment.</span></span> <span data-ttu-id="9959f-439">문제가 없으면 트래픽 100%에 도달할 때까지 점점 더 많은 트래픽을 새 버전으로 라우팅합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-439">Otherwise, route more of the traffic to the new version, until it gets 100% of the traffic.</span></span>
 
-대규모 분산 시스템을 모니터링하는 것은 상당히 어려운 과제입니다. 수십 개의 VM에서 실행되는 응용 프로그램에 대해서 생각해보십시오. 각 VM에 로그인하여 한번에 하나씩 로그 파일을 검토하여 문제 해결을 시도하는 것은 실용적이지 않습니다. 게다가 VM 인스턴스의 수는 아마도 정적이지 않습니다. 응용 프로그램을 축소 및 확장함에 따라 VM이 추가, 제거되며 가끔 인스턴스가 실패하고 다시 프로비저닝하는 것이 필요합니다. 또한 일반적인 클라우드 응용 프로그램은 여러 데이터 스토어(Azure 저장소, SQL 데이터베이스, DocumentDB, Redis 캐시)를 사용할 수 있으며, 단일 사용자 행위에 여러 서브시스템이 포함될 수 있습니다.
+<span data-ttu-id="9959f-440">어떤 방법을 사용하든, 새 버전이 작동하지 않는 경우 마지막으로 알려진 정상 배포로 롤백할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-440">Whatever approach you take, make sure that you can roll back to the last-known-good deployment, in case the new version is not functioning.</span></span> <span data-ttu-id="9959f-441">또한 오류가 발생하면 어떤 버전 때문에 오류가 발생했는지 응용 프로그램 로그를 보고 알 수 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-441">Also, if errors occur, the application logs must indicate which version caused the error.</span></span> 
 
-모니터링과 진단 프로세스를 여러 개의 명확한 단계가 있는 파이프라인으로 생각할 수 있습니다.
+## <a name="monitoring-and-diagnostics"></a><span data-ttu-id="9959f-442">모니터링 및 진단</span><span class="sxs-lookup"><span data-stu-id="9959f-442">Monitoring and diagnostics</span></span>
+<span data-ttu-id="9959f-443">모니터링 및 진단은 복원력에 매우 중요한 요소입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-443">Monitoring and diagnostics are crucial for resiliency.</span></span> <span data-ttu-id="9959f-444">오류가 발생하면 오류가 있다는 사실을 알 수 있어야 하고 오류 원인을 파악할 수 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-444">If something fails, you need to know that it failed, and you need insights into the cause of the failure.</span></span> 
 
-![Composite SLA](./images/monitoring.png)
+<span data-ttu-id="9959f-445">대규모 분산 시스템을 모니터링하는 것은 상당한 과제입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-445">Monitoring a large-scale distributed system poses a significant challenge.</span></span> <span data-ttu-id="9959f-446">수십 개의 VM에서 실행되는 응용 프로그램이 있다고 생각해 봅시다. 각 VM에 한 번에 하나씩 로그인하여 로그 파일을 살펴보고 문제를 해결하는 것은 현실적이지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-446">Think about an application that runs on a few dozen VMs &mdash; it's not practical to log into each VM, one at a time, and look through log files, trying to troubleshoot a problem.</span></span> <span data-ttu-id="9959f-447">뿐만 아니라 VM 인스턴스의 수는 고정적이지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-447">Moreover, the number of VM instances is probably not static.</span></span> <span data-ttu-id="9959f-448">응용 프로그램이 규모 감축 또는 확장되면 VM이 추가 또는 제거되며, 인스턴스가 실패하여 다시 프로비전해야 하는 경우가 가끔 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-448">VMs get added and removed as the application scales in and out, and occasionally an instance may fail and need to be reprovisioned.</span></span> <span data-ttu-id="9959f-449">또한 일반적인 클라우드 응용 프로그램은 여러 데이터 저장소(Azure 저장소, SQL Database, Cosmos DB, Redis 캐시)를 사용할 수 있으며, 단일 사용자 작업이 여러 하위 시스템에 걸쳐 이어질 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-449">In addition, a typical cloud application might use multiple data stores (Azure storage, SQL Database, Cosmos DB, Redis cache), and a single user action may span multiple subsystems.</span></span> 
 
-* **계측**. 모니터링 및 진단을 위한 원시 데이터는 응용 프로그램 로그, 웹 서버 로그, OS 성능 카운터, 데이터베이스 로그, Azure 플랫폼에 구축된 진단 기능 등 다양한 소스에서 나옵니다. 대부분의 Azure 서비스에는 문제의 원인을 파악할 때 사용할 수 있는 진단 기능이 있습니다.
-* **컬렉션 및 저장소**. 원시 계측 데이터는 다양한 형식(응용 프로그램 추적 로그, 성능 카운터, IIS 로그)으로 다양한 위치에 유지할 수 있습니다. 이렇게 서로 다른 소스를 수집하여 통합하고 신뢰할 수 있는 저장소에 넣습니다.
-* **분석 및 진단**. 데이터를 통합하고 나면, 문제해결 및 응용 프로그램의 전반적 상태를 보여주기 위해 분석할 수 있습니다.
-* **시각화 및 알림**. 이 단계에서는 운영자가 추세나 문제점을 신속히 찾을 수 있는 방식으로 원격 분석 데이터가 제시됩니다. 예를 들면 대시보드 또는 이메일 알림 등이 있습니다.
+<span data-ttu-id="9959f-450">모니터링 및 진단 프로세스를 여러 개별 단계로 구성된 파이프라인이라고 생각하면 됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-450">You can think of the monitoring and diagnostics process as a pipeline with several distinct stages:</span></span>
 
-모니터링은 장애 감지와는 다릅니다. 예를 들어, 응용 프로그램이 일시적 오류를 감지하고 재시도함으로써 가동 중지 시간이 발생하지 않을 수 있습니다. 하지만 재시도 작업도 기록해야 하며, 따라서 응용 프로그램의 전반적 상태를 파악하기 위해 오류 비율을 모니터링할 수 있습니다.
+![복합 SLA](./images/monitoring.png)
 
-응용 프로그램 로그는 진단 데이터의 중요한 소스입니다. 응용 프로그램 로깅의 모범 사례의 예를 들면 다음과 같습니다.
+* <span data-ttu-id="9959f-452">**계측**.</span><span class="sxs-lookup"><span data-stu-id="9959f-452">**Instrumentation**.</span></span> <span data-ttu-id="9959f-453">모니터링 및 진단에 사용되는 원시 데이터는 응용 프로그램 로그, 웹 서버 로그, OS 성능 카운터, 데이터베이스 로그, Azure 플랫폼에 기본 제공되는 진단 기능을 포함하여 다양한 소스에서 가져옵니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-453">The raw data for monitoring and diagnostics comes from a variety of sources, including application logs, web server logs, OS performance counters, database logs, and diagnostics built into the Azure platform.</span></span> <span data-ttu-id="9959f-454">대부분의 Azure 서비스는 문제의 원인을 파악하는 데 사용할 수 있는 진단 기능을 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-454">Most Azure services have a diagnostics feature that you can use to determine the cause of problems.</span></span>
+* <span data-ttu-id="9959f-455">**수집 및 저장**.</span><span class="sxs-lookup"><span data-stu-id="9959f-455">**Collection and storage**.</span></span> <span data-ttu-id="9959f-456">원시 계측 데이터는 다양한 위치에 다양한 형식으로 저장할 수 있습니다(예: 응용 프로그램 추적 로그, IIS 로그, 성능 카운터).</span><span class="sxs-lookup"><span data-stu-id="9959f-456">Raw instrumentation data can be held in various locations and with various formats (e.g., application trace logs, IIS logs, performance counters).</span></span> <span data-ttu-id="9959f-457">이러한 서로 다른 원본을 수집, 통합하여 신뢰할 수 있는 저장소에 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-457">These disparate sources are collected, consolidated, and put into reliable storage.</span></span>
+* <span data-ttu-id="9959f-458">**분석 및 진단**.</span><span class="sxs-lookup"><span data-stu-id="9959f-458">**Analysis and diagnosis**.</span></span> <span data-ttu-id="9959f-459">데이터를 통합한 후에는 데이터를 분석하여 문제를 해결하고 응용 프로그램 상태에 대한 전체적인 보기를 제공할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-459">After the data is consolidated, it can be analyzed to troubleshoot issues and provide an overall view of application health.</span></span>
+* <span data-ttu-id="9959f-460">**시각화 및 경고**.</span><span class="sxs-lookup"><span data-stu-id="9959f-460">**Visualization and alerts**.</span></span> <span data-ttu-id="9959f-461">이 단계에서는 운영자가 문제 또는 추세를 신속하게 파악할 수 있는 방식으로 원격 분석 데이터가 제공됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-461">In this stage, telemetry data is presented in such a way that an operator can quickly notice problems or trends.</span></span> <span data-ttu-id="9959f-462">대시보드 또는 전자 메일 경고를 예로 들 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-462">Example include dashboards or email alerts.</span></span>  
 
-* 실운영에서 로그하십시오. 그렇지 않으면 가장 필요할 때에 통찰력을 잃을 수 있습니다.
-* 서비스 경계에서 이벤트를 로그하십시오 서비스 경계를 따라 흐르는 상관 관계 ID를 포함시킵니다. 트랜잭션 X가 여러 서비스를 통해 흐르는데 그 중 하나가 실패하면, 상관 관계 ID가 트랜잭션 실패 이유를 정확히 파악하도록 도와줍니다.
-* 의미 중심 로깅(구조화된 로깅이라고도 함)을 사용하십시오. 구조화되지 않은 로그는 클라우드 규모에서 필요한 로그 데이터의 사용 및 분석의 자동화를 어렵게 합니다.
-* 비동기 로깅을 사용하십시오. 그렇지 않으면 로깅 시스템 자체가 응용 프로그램의 실패를 야기할 수 있습니다. 그 이유는 요청이 로깅 이벤트 기록 대기를 차단하므로 요청의 백업을 야기하기 때문입니다.
-* 응용 프로그램 로깅은 감사와 동일하지 않습니다. 감사는 규정 준수 또는 규제상 이유로 수행할 수 있습니다. 그러므로 감사 기록은 완전해야 하며, 트랜잭션 처리 중에 일부를 놓치는 것이 허용되지 않습니다. 응용 프로그램에 감사가 필요한 경우 기록을 진단 로깅과는 별도로 유지해야 합니다.
+<span data-ttu-id="9959f-463">모니터링은 오류 감지와 다릅니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-463">Monitoring is not the same as failure detection.</span></span> <span data-ttu-id="9959f-464">예를 들어 응용 프로그램이 임시 오류 및 다시 시도를 감지했지만, 결과적으로 가동 중지 없이 넘어갈 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-464">For example, your application might detect a transient error and retry, resulting in no downtime.</span></span> <span data-ttu-id="9959f-465">하지만 그렇더라도 오류 비율을 모니터링하여 응용 프로그램의 전체적인 상태를 확인할 수 있도록 응용 프로그램에서 다시 시도 작업을 로깅해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-465">But it should also log the retry operation, so that you can monitor the error rate, in order to get an overall picture of application health.</span></span> 
 
-모니터링 및 진단에 관한 자세한 내용은 [모니터링 및 진단 지침][monitoring-guidance]을 참조하십시오.
+<span data-ttu-id="9959f-466">응용 프로그램 로그는 진단 데이터의 중요한 소스입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-466">Application logs are an important source of diagnostics data.</span></span> <span data-ttu-id="9959f-467">응용 프로그램 로깅에 대한 모범 사례는 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-467">Best practices for application logging include:</span></span>
 
-## 수동 장애 대응
-이전의 섹션에서는 고가용성을 위해 매우 중요한 자동 복구 전략에 초점을 맞추었습니다. 하지만 때로는 수동 개입이 필요할 수 있습니다.
+* <span data-ttu-id="9959f-468">프로덕션 환경에 로그인합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-468">Log in production.</span></span> <span data-ttu-id="9959f-469">그렇지 않으면 데이터가 가장 필요할 때 데이터를 얻을 수 없습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-469">Otherwise, you lose insight where you need it most.</span></span>
+* <span data-ttu-id="9959f-470">서비스 경계에서 이벤트를 로깅합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-470">Log events at service boundaries.</span></span> <span data-ttu-id="9959f-471">서비스 경계 너머로 흐르는 상관 관계 ID를 포함합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-471">Include a correlation ID that flows across service boundaries.</span></span> <span data-ttu-id="9959f-472">한 트랜잭션이 여러 서비스를 통과하는데 그 중 하나가 실패하면 상관 관계 ID를 통해 트랜잭션 실패 이유를 찾아낼 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-472">If a transaction flows through multiple services and one of them fails, the correlation ID will help you pinpoint why the transaction failed.</span></span>
+* <span data-ttu-id="9959f-473">구조적 로깅이라고도 하는 의미 체계 로깅을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-473">Use semantic logging, also known as structured logging.</span></span> <span data-ttu-id="9959f-474">구조화되지 않은 로그는 클라우드 규모에서 필요한 로그 데이터의 사용 및 분석 자동화가 어렵습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-474">Unstructured logs make it hard to automate the consumption and analysis of the log data, which is needed at cloud scale.</span></span>
+* <span data-ttu-id="9959f-475">비동기 로깅을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-475">Use asynchronous logging.</span></span> <span data-ttu-id="9959f-476">그렇지 않으면 로깅 시스템 자체에서 요청을 백업하게 하여 응용 프로그램 오류가 발생할 수 있습니다. 요청 로깅 이벤트 작성을 기다리는 동안 요청이 차단되기 때문입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-476">Otherwise, the logging system itself can cause the application to fail by causing requests to back up, as they block while waiting to write a logging event.</span></span>
+* <span data-ttu-id="9959f-477">응용 프로그램 로깅은 감사와 다릅니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-477">Application logging is not the same as auditing.</span></span> <span data-ttu-id="9959f-478">감사는 규정 또는 규제 준수를 위해 수행됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-478">Auditing may be done for compliance or regulatory reasons.</span></span> <span data-ttu-id="9959f-479">따라서 감사 레코드는 완전해야 하고, 트랜잭션을 처리하는 동안 손실이 발생하면 안 됩니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-479">As such, audit records must be complete, and it's not acceptible to drop any while processing transactions.</span></span> <span data-ttu-id="9959f-480">응용 프로그램에서 감사를 요구하는 경우 감사 레코드를 진단 로깅과 별도로 보관해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-480">If an application requires auditing, this should be kept separate from diagnostics logging.</span></span> 
 
-* **알림**. 사전에 개입을 요구하는 경호 신호를 파악하기 위해 응용 프로그램을 모니터링하십시오. 예를 들어 SQL 데이터베이스나 DocumentDB가 계속 응용 프로그램을 제한할 경우, 데이터베이스 용량을 늘리거나 쿼리를 최적화하는 것이 필요할 수 있습니다. 이 경우 응용 프로그램이 제한 오류를 투명하게 처리할 수 있지만, 여전히 원격 분석을 통해 알려줌으로써 후속 조치를 취할 수 있게 합니다.
-* **수동 장애 조치**. 일부 시스템은 자동으로 장애 조치를 수행할 수 없으므로 수동 장애 조치가 필요합니다.
-* **운영 준비 상태 테스트**. 응용 프로그램이 보조 지역으로 장애 조치된 경우, 기본 지역으로 다시 되돌리기 전에 운영 준비 상태 테스트를 수행해야 합니다. 이 테스트를 통해 기본 지역이 정상이고 다시 트래픽을 수신할 준비가 되어 있는지 확인해야 합니다.
-* **데이터 일관성 확인**. 데이터 스토어에서 장애가 발생할 경우, 스토어를 다시 사용하게 될 때 특히 데이터가 복제된 경우 데이터 불일치가 있을 수 있습니다.
-* **백업에서 복원**. 예를 들어 SQL 데이터베이스에 지역 서비스 중단이 발생한 경우, 최근 백업으로부터 데이터베이스의 지리적 복원을 수행할 수 있습니다.
+<span data-ttu-id="9959f-481">모니터링 및 진단에 대한 자세한 내용은 [모니터링 및 진단 지침][monitoring-guidance]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="9959f-481">For more information about monitoring and diagnostics, see [Monitoring and diagnostics guidance][monitoring-guidance].</span></span>
 
-재해 복구 계획을 문서화하고 테스트하십시오. 수동 장애 조치, 백업의 데이터 복원 등 모든 수동 단계에 대한 서면 절차서를 포함시키십시오.
+## <a name="manual-failure-responses"></a><span data-ttu-id="9959f-482">수동 오류 대응</span><span class="sxs-lookup"><span data-stu-id="9959f-482">Manual failure responses</span></span>
+<span data-ttu-id="9959f-483">이전 섹션에서는 고가용성을 위해 중요한 자동 복구 전략에 집중했습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-483">Previous sections have focused on automated recovery strategies, which are critical for high availability.</span></span> <span data-ttu-id="9959f-484">그러나 경우에 따라 수동 개입이 필요할 때도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-484">However, sometimes manual intervention is needed.</span></span>
 
-## 요약
-이 문서에서는 클라우드의 일부 고유한 과제를 강조하면서 전체적 관점에서 복원에 관하여 살펴보았습니다. 그 내용에는 클라우드 컴퓨팅의 분산 특성, 상용 하드웨어의 사용, 일시적 네트워크 장애의 존재 등이 포함됩니다.
+* <span data-ttu-id="9959f-485">**경고**.</span><span class="sxs-lookup"><span data-stu-id="9959f-485">**Alerts**.</span></span> <span data-ttu-id="9959f-486">응용 프로그램을 모니터링하여 사전 개입이 필요할 수도 있는 경고 기호를 확인합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-486">Monitor your application for warning signs that may require proactive intervention.</span></span> <span data-ttu-id="9959f-487">예를 들어 SQL Database 또는 Cosmos DB가 지속적으로 응용 프로그램을 제한하는 것을 확인하면 데이터베이스 용량을 높이거나 쿼리를 최적화해야 할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-487">For example, if you see that SQL Database or Cosmos DB consistently throttles your application, you might need to increase your database capacity or optimize your queries.</span></span> <span data-ttu-id="9959f-488">이 예제에서는 응용 프로그램이 제한 오류를 투명하게 처리할 수도 있지만 후속 조치를 취할 수 있도록 원격 분석에서 계속 경고를 보내야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-488">In this example, even though the application might handle the throttling errors transparently, your telemetry should still raise an alert so that you can follow up.</span></span>  
+* <span data-ttu-id="9959f-489">**수동 장애 조치(Failover)**.</span><span class="sxs-lookup"><span data-stu-id="9959f-489">**Manual failover**.</span></span> <span data-ttu-id="9959f-490">일부 시스템은 자동 장애 조치(failover)가 불가능하기 때문에 수동 장애 조치(failover)가 필요합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-490">Some systems cannot fail over automatically and require a manual failover.</span></span> 
+* <span data-ttu-id="9959f-491">**운영 준비 테스트**.</span><span class="sxs-lookup"><span data-stu-id="9959f-491">**Operational readiness testing**.</span></span> <span data-ttu-id="9959f-492">응용 프로그램이 보조 지역으로 장애 조치(failover)되는 경우 주 지역으로 장애 복구(failback)하기 전에 운영 준비 테스트를 수행해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-492">If your application fails over to a secondary region, you should perform an operational readiness test before you fail back to the primary region.</span></span> <span data-ttu-id="9959f-493">테스트를 통해 주 지역이 정상 상태이고 다시 트래픽을 받을 준비가 되었는지 확인해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-493">The test should verify that the primary region is healthy and ready to receive traffic again.</span></span>
+* <span data-ttu-id="9959f-494">**데이터 일관성 확인**.</span><span class="sxs-lookup"><span data-stu-id="9959f-494">**Data consistency check**.</span></span> <span data-ttu-id="9959f-495">데이터 저장소에 오류가 발생한 후 데이터를 다시 사용할 수 있게 되었을 때, 특히 데이터가 복제된 경우 데이터 불일치가 있을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-495">If a failure happens in a data store, there may be data inconsistencies when the store becomes available again, especially if the data was replicated.</span></span> 
+* <span data-ttu-id="9959f-496">**백업에서 복원**.</span><span class="sxs-lookup"><span data-stu-id="9959f-496">**Restoring from backup**.</span></span> <span data-ttu-id="9959f-497">예를 들어 한 지역의 SQL Database가 가동 중지된 경우 최신 백업을 사용하여 데이터베이스를 지역 복원할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-497">For example, if SQL Database experiences a regional outage, you can geo-restore the database from the latest backup.</span></span>
 
-이 문서의 주요 요점은 다음과 같습니다.
+<span data-ttu-id="9959f-498">재해 복구 계획을 문서화 및 테스트합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-498">Document and test your disaster recovery plan.</span></span> <span data-ttu-id="9959f-499">응용 프로그램 오류가 비즈니스에 미치는 영향을 평가합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-499">Evaluate the business impact of application failures.</span></span> <span data-ttu-id="9959f-500">프로세스를 최대한 자동화하고 수동 장애 조치(failover), 백업에서 데이터 복원 등의 수동 단계를 문서화합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-500">Automate the process as much as possible, and document any manual steps, such as manual failover or data restoration from backups.</span></span> <span data-ttu-id="9959f-501">재해 복구 프로세스를 주기적으로 테스트하여 유효성을 검사하고 계획을 개선합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-501">Regularly test your disaster recovery process to validate and improve the plan.</span></span> 
 
-* 복원력을 통해 고가용성과 낮은 평균 고장 복구 시간을 달성할 수 있습니다.
-* 클라우드에서 복원력을 확보하려면 전통적 온프레미스 솔루션의 다양한 기법들이 필요합니다.
-* 복원력은 우연히 달성되는 것이 아닙니다. 처음부터 설계하고 구축해야 합니다.
-* 복원은 계획부터 코딩, 운영까지 응용 프로그램 수명 주기의 모든 부분과 관련됩니다.
-* 테스트와 모니터링이 필요합니다.
+## <a name="summary"></a><span data-ttu-id="9959f-502">요약</span><span class="sxs-lookup"><span data-stu-id="9959f-502">Summary</span></span>
+<span data-ttu-id="9959f-503">이 문서에서는 전체적인 관점에서 복원력을 살펴보고, 클라우드의 고유한 과제 중 일부를 강조했습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-503">This article discussed resiliency from a holistic perspective, emphasizing some of the unique challenges of the cloud.</span></span> <span data-ttu-id="9959f-504">그 중에는 분산, 상용 하드웨어 사용, 일시적 네트워크 오류라는 클라우드 컴퓨팅의 특성도 포함되어 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-504">These include the distributed nature of cloud computing, the use of commodity hardware, and the presence of transient network faults.</span></span>
+
+<span data-ttu-id="9959f-505">다음은 이 문서에서 기억해야 할 핵심 내용입니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-505">Here are the major points to take away from this article:</span></span>
+
+* <span data-ttu-id="9959f-506">복원력이 높으면 가용성이 높고 평균 오류 복구 시간은 짧습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-506">Resiliency leads to higher availability, and lower mean time to recover from failures.</span></span> 
+* <span data-ttu-id="9959f-507">클라우드에서 높은 복원력을 얻으려면 기존 온-프레미스 솔루션과는 다른 여러 기술 집합이 필요합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-507">Achieving resiliency in the cloud requires a different set of techniques from traditional on-premises solutions.</span></span> 
+* <span data-ttu-id="9959f-508">복원력은 우연히 얻을 수 없습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-508">Resiliency does not happen by accident.</span></span> <span data-ttu-id="9959f-509">처음부터 디자인하고 구축해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-509">It must be designed and built in from the start.</span></span>
+* <span data-ttu-id="9959f-510">복원력은 계획부터 코딩 및 운영까지 응용 프로그램의 모든 수명 주기와 관련되어 있습니다.</span><span class="sxs-lookup"><span data-stu-id="9959f-510">Resiliency touches every part of the application lifecycle, from planning and coding to operations.</span></span>
+* <span data-ttu-id="9959f-511">테스트하고 모니터링하세요!</span><span class="sxs-lookup"><span data-stu-id="9959f-511">Test and monitor!</span></span>
 
 
 <!-- links -->
@@ -336,21 +339,21 @@ FMA 프로세스 및 Azure의 자세한 권장 사항에 관한 내용은 [Azure
 [circuit-breaker-pattern]: https://msdn.microsoft.com/library/dn589784.aspx
 [compensating-transaction-pattern]: https://msdn.microsoft.com/library/dn589804.aspx
 [containers]: https://en.wikipedia.org/wiki/Operating-system-level_virtualization
-[dsc]: https://azure.microsoft.com/documentation/articles/automation-dsc-overview/
+[dsc]: /azure/automation/automation-dsc-overview
+[contingency-planning-guide]: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-34r1.pdf
 [fma]: failure-mode-analysis.md
 [hystrix]: http://techblog.netflix.com/2012/11/hystrix.html
 [jmeter]: http://jmeter.apache.org/
-[load-leveling-pattern]: https://msdn.microsoft.com/library/dn589783.aspx
+[load-leveling-pattern]: ../patterns/queue-based-load-leveling.md
 [monitoring-guidance]: ../best-practices/monitoring.md
-[ra-basic-web]: https://azure.microsoft.com/documentation/articles/web-apps-basic/
-[ra-multi-vm]: https://azure.microsoft.com/documentation/articles/compute-multi-vm/
+[ra-basic-web]: ../reference-architectures/app-service-web-app/basic-web-app.md
+[ra-multi-vm]: ../reference-architectures/virtual-machines-windows/multi-vm.md
 [checklist]: ../checklist/resiliency.md
-[retry-pattern]: https://msdn.microsoft.com/library/dn589788.aspx
+[retry-pattern]: ../patterns/retry.md
 [retry-service-specific guidance]: ../best-practices/retry-service-specific.md
 [sla]: https://azure.microsoft.com/support/legal/sla/
-[staging-slots]: https://azure.microsoft.com/documentation/articles/web-apps-basic/
-[throttling-pattern]: https://msdn.microsoft.com/library/dn589798.aspx
+[throttling-pattern]: ../patterns/throttling.md
 [tm]: https://azure.microsoft.com/services/traffic-manager/
-[tm-failover]: https://azure.microsoft.com/documentation/articles/traffic-manager-monitoring/
+[tm-failover]: /azure/traffic-manager/traffic-manager-monitoring
 [tm-sla]: https://azure.microsoft.com/support/legal/sla/traffic-manager/v1_0/
 [vsts]: https://www.visualstudio.com/features/vso-cloud-load-testing-vs.aspx
