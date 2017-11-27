@@ -1,0 +1,145 @@
+- name: Azure 아키텍처 센터
+  href: index.md
+- name: 응용 프로그램 아키텍처 가이드
+  href: guide/index.md
+  items:
+    - name: 아키텍처 스타일
+      href: guide/architecture-styles/index.md
+    - name: 기술 선택
+      href: guide/technology-choices/index.md
+      items: null
+    - name: 디자인 원칙
+      href: guide/design-principles/index.md
+    - name: 소프트웨어 품질 핵심 요소
+      href: guide/pillars.md
+    - name: 디자인 패턴
+      href: patterns/index.md?toc=/azure/architecture/guide/toc.json
+- name: 참조 아키텍처
+  href: reference-architectures/index.md
+  items:
+    - name: ID 관리
+      href: reference-architectures/identity/index.md
+    - name: 하이브리드 네트워크
+      href: reference-architectures/hybrid-networking/index.md
+    - name: App Service 웹 응용 프로그램
+      href: reference-architectures/app-service-web-app/index.md
+    - name: 네트워크 DMZ
+      href: reference-architectures/dmz/index.md
+    - name: SAP NetWeaver 및 SAP HANA
+      href: reference-architectures/sap/index.md
+    - name: SharePoint Server 2016
+      href: reference-architectures/sharepoint/index.md
+    - name: VM 워크로드(Linux)
+      href: reference-architectures/virtual-machines-linux/index.md
+    - name: VM 워크로드(Windows)
+      href: reference-architectures/virtual-machines-windows/index.md
+- name: 클라우드 디자인 패턴
+  href: patterns/index.md
+  items:
+    - name: 가용성 패턴
+      href: patterns/category/availability.md
+    - name: 데이터 관리 패턴
+      href: patterns/category/data-management.md
+    - name: 디자인 및 구현 패턴
+      href: patterns/category/design-implementation.md
+    - name: 관리 및 모니터링 패턴
+      href: patterns/category/management-monitoring.md
+    - name: 메시지 패턴
+      href: patterns/category/messaging.md
+    - name: 성능 및 확장성 패턴
+      href: patterns/category/performance-scalability.md
+    - name: 복원력 패턴
+      href: patterns/category/resiliency.md
+    - name: 보안 패턴
+      href: patterns/category/security.md
+- name: 모범 사례
+  items:
+    - name: API 디자인
+      href: best-practices/api-design.md
+    - name: API 구현
+      href: best-practices/api-implementation.md
+    - name: 자동 확장
+      href: best-practices/auto-scaling.md
+    - name: 백그라운드 작업
+      href: best-practices/background-jobs.md
+    - name: 구성
+      href: best-practices/caching.md
+    - name: Content Delivery Network
+      href: best-practices/cdn.md
+    - name: 데이터 분할
+      href: best-practices/data-partitioning.md
+    - name: 모니터링 및 진단
+      href: best-practices/monitoring.md
+    - name: 명명 규칙
+      href: best-practices/naming-conventions.md
+    - name: 일시적인 오류 처리
+      href: best-practices/transient-faults.md
+    - name: 특정 서비스에 대한 다시 시도 지침
+      href: best-practices/retry-service-specific.md
+- name: 성능 안티패턴
+  href: antipatterns/index.md
+  items:
+    - name: 사용량이 많은 데이터베이스
+      href: antipatterns/busy-database/index.md
+    - name: 사용량이 많은 프런트 엔드
+      href: antipatterns/busy-front-end/index.md
+    - name: 번잡한 I/O
+      href: antipatterns/chatty-io/index.md
+    - name: 불필요한 가져오기
+      href: antipatterns/extraneous-fetching/index.md
+    - name: 부적절한 인스턴스화
+      href: antipatterns/improper-instantiation/index.md
+    - name: 모놀리식 지속성
+      href: antipatterns/monolithic-persistence/index.md
+    - name: 캐싱 없음
+      href: antipatterns/no-caching/index.md
+    - name: 동기 I/O
+      href: antipatterns/synchronous-io/index.md
+- name: 디자인 검토 검사 목록
+  items:
+    - name: Availability
+      href: checklist/availability.md
+    - name: DevOps
+      href: checklist/dev-ops.md
+    - name: 복원력
+      href: checklist/resiliency.md
+    - name: 확장성
+      href: checklist/scalability.md
+- name: 복원력을 위한 디자인
+  items:
+    - name: 복원력 있는 응용 프로그램 디자인
+      href: resiliency/index.md
+    - name: 복원력 검사 목록
+      href: checklist/resiliency.md?toc=/azure/architecture/resiliency/toc.json
+    - name: 실패 모드 분석
+      href: resiliency/failure-mode-analysis.md
+- name: 시나리오 가이드
+  items:
+    - name: AWS 전문가를 위한 Azure
+      href: aws-professional/index.md
+    - name: 다중 테넌트 응용 프로그램의 ID 관리
+      href: multitenant-identity/index.md
+    - name: Cloud Services에서 Service Fabric으로 마이그레이션
+      href: service-fabric/migrate-from-cloud-services.md
+    - name: Azure에서 Elasticsearch 실행
+      href: elasticsearch/index.md
+    - name: Azure Resource Manager 템플릿 기능 확장
+      href: building-blocks/extending-templates/index.md
+- name: 리소스
+  items:
+    - name: Azure 로드맵
+      href: 'https://azure.microsoft.com/roadmap/'
+    - name: Azure에 대한 Microsoft 보안 센터
+      href: 'https://www.microsoft.com/en-us/trustcenter/cloudservices/azure'
+    - name: 아이콘 및 다이어그램
+      href: resources/diagrams.md
+    - name: Azure 업데이트 일정
+      href: 'https://azure.microsoft.com/updates/'
+    - name: 교육
+      href: 'https://azure.microsoft.com/community/training/'
+    - name: SQLCAT 블로그
+      href: 'https://blogs.msdn.microsoft.com/sqlcat/'
+    - name: AzureCAT 블로그
+      href: 'https://blogs.msdn.microsoft.com/azurecat/'
+    - name: 백서
+      href: 'https://azure.microsoft.com/resources/whitepapers/'

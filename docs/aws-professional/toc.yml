@@ -1,0 +1,8 @@
+- name: Azure 아키텍처 센터
+  href: /azure/architecture
+- name: AWS 전문가를 위한 Azure
+  items:
+    - name: 개요
+      href: index.md
+    - name: 서비스 비교
+      href: services.md

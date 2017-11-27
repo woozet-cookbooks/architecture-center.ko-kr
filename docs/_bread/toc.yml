@@ -1,0 +1,47 @@
+- name: Azure
+  tocHref: /azure/
+  topicHref: /azure
+  items:
+    - name: 아키텍처
+      tocHref: /azure/architecture/
+      topicHref: /azure/architecture
+      items:
+        - name: 모범 사례
+          tocHref: /azure/architecture/best-practices
+          topicHref: /azure/architecture/best-practices
+        - name: AWS 전문가를 위한 Azure
+          tocHref: /azure/architecture/aws-professional
+          topicHref: /azure/architecture/aws-professional
+        - name: 복원력을 위한 디자인
+          tocHref: /azure/architecture/resiliency
+          topicHref: /azure/architecture/resiliency
+        - name: 디자인 검토 검사 목록
+          tocHref: /azure/architecture/checklist
+          topicHref: /azure/architecture/checklist
+        - name: Elasticsearch
+          tocHref: /azure/architecture/elasticsearch
+          topicHref: /azure/architecture/elasticsearch
+        - name: 다중 테넌트 응용 프로그램의 ID 관리
+          tocHref: /azure/architecture/multitenant-identity
+        - name: 참조 아키텍처
+          tocHref: /azure/architecture/reference-architectures
+          topicHref: /azure/architecture/reference-architectures
+        - name: 클라우드 디자인 패턴
+          tocHref: /azure/architecture/patterns
+          topicHref: /azure/architecture/patterns
+        - name: 리소스
+          tocHref: /azure/architecture/resources
+          topicHref: /azure/architecture/resources
+        - name: 가이드
+          tocHref: /azure/architecture/guide
+          topicHref: /azure/architecture/guide
+        - name: 성능 안티패턴
+          tocHref: /azure/architecture/antipatterns
+          topicHref: /azure/architecture/
+        - name: 규정 준수
+          tocHref: /azure/architecture/compliance
+          topicHref: /azure/architecture/compliance
+          items:
+            - name: PCI-DSS
+              tocHref: /azure/architecture/compliance/pci-dss
+              topicHref: /azure/architecture/compliance/pci-dss
