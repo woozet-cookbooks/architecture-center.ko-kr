@@ -62,6 +62,7 @@
     "template": [
       "docs.html"
     ],
-    "dest": "azure"
+    "dest": "azure",
+    "exportRawModel": true
   }
 }
