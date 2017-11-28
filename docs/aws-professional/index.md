@@ -5,11 +5,11 @@ keywords: "AWS 전문가, Azure 비교, AWS 비교, azure와 aws의 차이점, a
 author: lbrader
 ms.date: 03/24/2017
 pnp.series.title: Azure for AWS Professionals
-ms.openlocfilehash: 251489e7a6d78d82f3ed70ca2df6c88f8759f9a5
-ms.sourcegitcommit: fbcf9a1c25db13b2627a8a58bbc985cd01ea668d
+ms.openlocfilehash: 75fda82ee5ca7ca3665501fe428d1d01995e7422
+ms.sourcegitcommit: c53adf50d3a787956fc4ebc951b163a10eeb5d20
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/16/2017
+ms.lasthandoff: 11/23/2017
 ---
 # <a name="azure-for-aws-professionals"></a>AWS 전문가를 위한 Azure
 
@@ -21,7 +21,7 @@ ms.lasthandoff: 11/16/2017
 * Azure에서 사용 가능한 솔루션이 구성되는 방식.
 * 주요 Azure 서비스가 AWS 서비스와 다른 점.
 
- Azure와 AWS는 시간에 관계없이 각 기능을 독립적으로 개발했기 때문에 각 기능의 구현 및 디자인이 큰 차이를 보입니다.
+Azure와 AWS는 시간에 관계없이 각 기능을 독립적으로 개발했기 때문에 각 기능의 구현 및 디자인이 큰 차이를 보입니다.
 
 ## <a name="overview"></a>개요
 
@@ -62,7 +62,7 @@ AWS 계정과 마찬가지로, 구독의 기본 서비스 할당량 및 제한�
 
 Azure에서 말하는 "리소스"라는 용어는 AWS와 똑같은 의미로 사용됩니다. 즉, 모든 계산 인스턴스, 저장소 개체, 네트워킹 장치 또는 플랫폼 내에서 만들거나 구성할 수 있는 기타 엔터티를 의미합니다.
 
-Azure 리소스는 [Azure Resource Manager 또는 기존 Azure [클래식 배포 모델](/azure/azure-resource-manager/resource-manager-deployment-model)]을 사용하여 배포 및 관리됩니다.
+Azure 리소스는 [Azure Resource Manager](/azure/azure-resource-manager/resource-group-overview) 또는 기존 Azure [클래식 배포 모델](/azure/azure-resource-manager/resource-manager-deployment-model)을 사용하여 배포 및 관리됩니다.
 모든 새 리소스는 Resource Manager 모델을 사용하여 만듭니다.
 
 ### <a name="resource-groups"></a>리소스 그룹
@@ -142,7 +142,7 @@ Azure [지역 중복 저장소](https://azure.microsoft.com/documentation/articl
 
 -   [Azure 응용 프로그램에 대한 재해 복구](../resiliency/disaster-recovery-azure-applications.md)
 
--   [Azure에서 Linux 가상 머신에 대한 계획된 유지 관리](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-planned-maintenance/)
+-   [Azure에서 Linux 가상 컴퓨터에 대한 계획된 유지 관리](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-planned-maintenance/)
 
 ## <a name="services"></a>Services
 
@@ -166,7 +166,7 @@ AWS 인스턴스 형식과 Azure 가상 머신 크기는 비슷한 방식으로 
 
 초 단위로 요금이 청구되는 AWS와는 달리, Azure 주문형 VM은 분 단위로 요금이 청구됩니다.
 
-Azure는 EC2 스폿 인스턴스, 예약된 인스턴스 또는 전용 호스트에 해당하는 항목이 없습니다.
+Azure에는 EC2 스폿 인스턴스 또는 전용 호스트에 해당하는 항목이 없습니다.
 
 #### <a name="ebs-and-azure-storage-for-vm-disks"></a>VM 디스크용 EBS 및 Azure Storage
 
@@ -232,16 +232,18 @@ AWS 플랫폼에서 클라우드 저장소는 주로 세 가지 서비스로 분
 Azure Storage에서는 구독에 바인딩된 [저장소 계정](https://azure.microsoft.com/documentation/articles/storage-create-storage-account/)을 사용하여 다음과 같은 저장소 서비스를 만들고 관리할 수 있습니다.
 
 -   [Blob Storage](https://azure.microsoft.com/documentation/articles/storage-create-storage-account/) - 문서, 미디어 파일 또는 응용 프로그램 설치 프로그램과 같은 모든 종류의 텍스트 또는 이진 데이터를 저장할 수 있습니다. 개인 액세스에 대해 Blob Storage를 설정하거나 인터넷에 공개적으로 콘텐츠를 공유할 수 있습니다. Blob Storage는 AWS S3 및 EBS와 동일한 용도로 사용됩니다.
-
 -   [Table Storage](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-table-storage/) - 구조화된 데이터 집합을 저장합니다. Table Storage는 신속한 개발과 대량 데이터에 대한 빠른 액세스를 가능하게 하는 NoSQL 키-특성 데이터 저장소입니다. AWS의 SimpleDB 및 DynamoDB 서비스와 비슷합니다.
 
 -   [Queue Storage](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-queues/) - 워크플로 처리 및 클라우드 서비스 구성 요소 사이의 통신을 위한 메시지를 제공합니다.
 
 -   [File Storage](https://azure.microsoft.com/documentation/articles/storage-java-how-to-use-file-storage/) - 표준 SMB(서버 메시지 블록) 프로토콜을 사용하는 기존 응용 프로그램을 위한 공유 저장소를 제공합니다. File Storage는 AWS 플랫폼의 EFS와 비슷한 방식으로 사용됩니다.
 
-#### <a name="glacier-and-azure-storage"></a>Glacier 및 Azure Storage
 
-Azure Storage는 AWS의 장기 보관 Glacier 저장소에 직접 해당하는 서비스를 제공하지 않습니다. Azure는 액세스 빈도가 낮고 오래 보관되는 데이터를 위해 [Azure 쿨 BLOB 저장소 계층](https://azure.microsoft.com/documentation/articles/storage-blob-storage-tiers/)을 제공합니다.
+
+
+ 
+#### <a name="glacier-and-azure-storage"></a>Glacier 및 Azure Storage 
+[Azure Storage 표준 아카이브](/azure/storage/blobs/storage-blob-storage-tiers)는 AWS의 장기 보관 Glacier 저장소에 직접 해당하는 서비스를 제공합니다. Azure는 액세스 빈도가 낮고 오래 보관되는 데이터를 위해 [Azure 쿨 BLOB 저장소 계층](/azure/storage/blobs/storage-blob-storage-tiers)을 제공합니다.
 쿨 저장소는 표준 BLOB 저장소보다 저렴한 저성능 저장소를 제공하며 AWS의 S3 - Infrequent Access와 비슷합니다.
 
 #### <a name="see-also"></a>참고 항목
@@ -284,13 +286,17 @@ Azure는 [ExpressRoute](https://azure.microsoft.com/documentation/services/expre
 
 ### <a name="database-services"></a>데이터베이스 서비스
 
-#### <a name="rds-and-azure-sql-database-service"></a>RDS 및 Azure SQL Database 서비스
+#### <a name="rds-and-azure-relational-database-services"></a>RDS 및 Azure 관계형 데이터베이스 서비스
 
-AWS와 Azure는 클라우드에 제공하는 관계형 데이터베이스 서비스에서 서로 다른 접근 방식을 취합니다. AWS의 RDS(관계형 데이터베이스 서비스)는 Oracle 및 MySQL 같은 여러 데이터베이스 엔진을 사용하여 인스턴스를 만들 수 있습니다.
+Azure의 AWS RDS(관계형 데이터베이스 서비스)에 해당하는 몇 가지 다른 관계형 데이터베이스 서비스를 제공합니다.
 
-[SQL Database](https://azure.microsoft.com/documentation/articles/sql-database-technical-overview/)는 Azure의 클라우드 데이터베이스 제품입니다. 관리되는 서비스를 통해 확장성이 우수한 관계형 데이터 저장소를 제공합니다. SQL Database는 고유의 엔진을 사용하며, 다른 종류의 데이터베이스 만들기를 지원하지 않습니다. [SQL Server](https://azure.microsoft.com/services/virtual-machines/sql-server/), [Oracle](https://azure.microsoft.com/campaigns/oracle/) 또는 [MySQL](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-classic-mysql-2008r2/) 같은 다른 데이터베이스 엔진은 Azure VM 인스턴스를 사용하여 배포할 수 있습니다.
+-   [SQL Database](https://docs.microsoft.com/azure/sql-database/sql-database-technical-overview)
+-   [Azure Database for MySQL](https://docs.microsoft.com/azure/mysql/overview)
+-   [Azure Database for PostgreSQL](https://docs.microsoft.com/azure/postgresql/overview)
 
-AWS RDS의 비용은 CPU, RAM, 저장소, 네트워크 대역폭 등 인스턴스에서 사용하는 하드웨어 리소스의 양에 따라 결정됩니다. SQL Database 서비스의 비용은 데이터베이스 크기, 동시 연결 수 및 처리량 수준에 따라 결정됩니다.
+[SQL Server](https://azure.microsoft.com/services/virtual-machines/sql-server/), [Oracle](https://azure.microsoft.com/campaigns/oracle/) 및 [MySQL](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-classic-mysql-2008r2/) 같은 다른 데이터베이스 엔진은 Azure VM 인스턴스를 사용하여 배포할 수 있습니다.
+
+AWS RDS의 비용은 CPU, RAM, 저장소, 네트워크 대역폭 등 인스턴스에서 사용하는 하드웨어 리소스의 양에 따라 결정됩니다. Azure 데이터베이스 서비스의 비용은 데이터베이스 크기, 동시 연결 수 및 처리량 수준에 따라 결정됩니다.
 
 #### <a name="see-also"></a>참고 항목
 
