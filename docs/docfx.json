@@ -45,7 +45,6 @@
     "overwrite": [],
     "externalReference": [],
     "globalMetadata": {
-      "bilingual_type": "hover over",
       "breadcrumb_path": "/azure/architecture/bread/toc.json",
       "brand": "azure",
       "ms.author": "pnp",
