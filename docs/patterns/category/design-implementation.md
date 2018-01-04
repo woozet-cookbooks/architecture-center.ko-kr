@@ -1,28 +1,33 @@
 ---
-title: Design and Implementation patterns
-description: Good design encompasses factors such as consistency and coherence in component design and deployment, maintainability to simplify administration and development, and reusability to allow components and subsystems to be used in other applications and in other scenarios. Decisions made during the design and implementation phase have a huge impact on the quality and the total cost of ownership of cloud hosted applications and services.
-keywords: design pattern
+title: "디자인 및 구현 패턴"
+description: "좋은 디자인이 되려면 구성 요소 디자인 및 배포의 일관성, 관리 및 배포 방법이 간단한 유지 관리 용이성, 구성 요소 및 하위 시스템을 다른 응용 프로그램 및 다른 시나리오에 사용할 수 있는 재사용 가능성 등의 요소를 고려해야 합니다. 디자인 및 구현 단계에서 결정된 사항은 클라우드에 호스팅되는 응용 프로그램과 서비스의 품질 및 총 소유 비용에 엄청난 영향을 미칩니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.author: pnp
-ms.date: 03/24/2017
-ms.topic: article
-ms.service: guidance
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
+ms.openlocfilehash: 3d6e528b8c88c6fcc265d6425dcdae6fae5166fb
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
+# <a name="design-and-implementation-patterns"></a>디자인 및 구현 패턴
 
-# 설계와 구현 패턴
-
-[!INCLUDE [header](../../_includes/header.md)]
-
-좋은 설계는 구성 요소 설계와 배포의 일관성과 일치성, 관리와 개발을 간소화하는 유지 관리성, 구성 요소와 하위 시스템을 다른 응용 프로그램과 다른 시나리오에 사용할 수 있는 재사용성과 같은 요인을 망라합니다. 설계와 구현 단계에서 이루어진 결정은 클라우드 호스팅 응용 프로그램과 서비스의 품질 및 총 소유 비용에 큰 영향을 미칩니다.
+좋은 디자인이 되려면 구성 요소 디자인 및 배포의 일관성, 관리 및 배포 방법이 간단한 유지 관리 용이성, 구성 요소 및 하위 시스템을 다른 응용 프로그램 및 다른 시나리오에 사용할 수 있는 재사용 가능성 등의 요소를 고려해야 합니다. 디자인 및 구현 단계에서 결정된 사항은 클라우드에 호스팅되는 응용 프로그램과 서비스의 품질 및 총 소유 비용에 엄청난 영향을 미칩니다.
 
 | 패턴 | 요약 |
 | ------- | ------- |
-| [CQRS](../cqrs.md) | 별도의 인터페이스를 사용해 데이터를 업데이트하는 작업에서 데이터를 읽는 작업을 분리합니다. |
-| [계산 리소스 통합](../compute-resource-consolidation.md) | 다중 작업 또는 연산을 하나의 계산 단위로 통합합니다. |
-| [외부 구성 저장소](../external-configuration-store.md) | 구성 정보를 응용 프로그램 배포 패키지에서 중앙 집중식 위치로 옮깁니다. |
-| [리더 선정](../leader-election.md) | 하나의 인스턴스를 다른 인스턴스의 관리를 책임지는 리더로 선정해 배포 응용 프로그램 내에 있는 공동 작업 인스턴스 모음이 수행하는 작업을 조정합니다. |
-| [파이프 및 필터](../pipes-and-filters.md) | 복잡한 처리를 수행하는 작업을 재사용할 수 있는 여러 개별 요소로 분할합니다. |
-| [런타임 재구성](../runtime-reconfiguration.md) | 응용 프로그램을 재배포하거나 재시작하지 않고 재구성할 수 있도록 설계합니다. |
-| [정적 콘텐츠 호스팅](../static-content-hosting.md) | 정적 콘텐츠를 클라이언트에 직접 전달할 수 있는 클라우드 기반 저장소 서비스에 배포합니다. |
+| [특사](../ambassador.md) | 소비자 서비스 또는 응용 프로그램을 대신하여 네트워크 요청을 전송하는 도우미 서비스를 만듭니다. |
+| [손상 방지 레이어](../anti-corruption-layer.md) | 현대식 응용 프로그램과 레거시 시스템 사이에 외관 또는 어댑터 레이어를 구현합니다. |
+| [프런트 엔드에 대한 백 엔드](../backends-for-frontends.md) | 특정 프런트 엔드 응용 프로그램 또는 인터페이스에서 사용할 별도의 백 엔드 서비스를 만듭니다. |
+| [CQRS](../cqrs.md) | 별도의 인터페이스를 사용하여 데이터를 업데이트하는 작업과 데이터를 읽는 작업을 분리합니다. |
+| [계산 리소스 통합](../compute-resource-consolidation.md) | 여러 작업을 단일 계산 단위로 통합합니다. |
+| [외부 구성 저장소](../external-configuration-store.md) | 구성 정보를 응용 프로그램 배포 패키지에서 중앙 위치로 이동합니다. |
+| [게이트웨이 집계](../gateway-aggregation.md) | 게이트웨이를 사용하여 여러 개별 요청을 단일 요청으로 집계합니다. |
+| [게이트웨이 오프로딩](../gateway-offloading.md) | 공유 또는 특수 서비스 기능을 게이트웨이 프록시에 오프로드합니다. |
+| [게이트웨이 라우팅](../gateway-routing.md) | 단일 엔드포인트를 사용하여 요청을 여러 서비스에 라우팅합니다. |
+| [리더 선택](../leader-election.md) | 인스턴스 중 하나를 다른 인스턴스를 관리하는 리더로 선택하여 분산된 응용 프로그램의 공동 작업 인스턴스 컬렉션이 수행하는 작업을 조정합니다. |
+| [파이프 및 필터](../pipes-and-filters.md) | 복잡한 처리를 수행하는 작업을 재사용 가능한 일련의 별도 요소로 분류합니다. |
+| [사이드카](../sidecar.md) | 격리 및 캡슐화를 제공하는 별도의 프로세스 또는 컨테이너에 응용 프로그램 구성 요소를 배포합니다. |
+| [정적 콘텐츠 호스팅](../static-content-hosting.md) | 정적 콘텐츠를 클라이언트에 직접 제공할 수 있는 클라우드 기반 저장소 서비스에 배포합니다. |
+| [스트랭글러](../strangler.md) | 특정 기능을 새로운 응용 프로그램 및 서비스로 점진적으로 교체하여 레거시 시스템을 단계적으로 마이그레이션합니다. |

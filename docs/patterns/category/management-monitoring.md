@@ -1,24 +1,28 @@
 ---
-title: Management and Monitoring patterns
-description: Cloud applications run in in a remote datacenter where you do not have full control of the infrastructure or, in some cases, the operating system. This can make management and monitoring more difficult than an on-premises deployment. Applications must expose runtime information that administrators and operators can use to manage and monitor the system, as well as supporting changing business requirements and customization without requiring the application to be stopped or redeployed.
-keywords: design pattern
+title: "관리 및 모니터링 패턴"
+description: "클라우드 응용 프로그램은 개발자가 인프라 전체에 대한 제어 권한을 갖고 있지 않은 원격 데이터 센터에서 실행되거나, 또는 경우에 따라 운영 체제에서 실행됩니다. 그렇기 때문에 관리 및 모니터링이 온-프레미스 배포보다 더 어려울 수도 있습니다. 응용 프로그램은 관리자 및 운영자가 시스템 관리 및 모니터링에 사용할 수 있는 런타임 정보를 노출해야 할 뿐 아니라, 응용 프로그램을 중지하거나 다시 배포하지 않고 변화하는 비즈니스 요구 사항과 사용자 지정을 지원해야 합니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.author: pnp
-ms.date: 03/24/2017
-ms.topic: article
-ms.service: guidance
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
+ms.openlocfilehash: 6281f7e5c62593cc60727c994d5dba2c52976b75
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
+# <a name="management-and-monitoring-patterns"></a>관리 및 모니터링 패턴
 
-# 관리와 모니터링 패턴
-
-[!INCLUDE [header](../../_includes/header.md)]
-
-클라우드 응용 프로그램은 인프라 또는 일부 경우 운영 체제의 제어가 필요 없는 원격 데이터 센터에서 실행합니다. 따라서 관리와 모니터링이 온-프레미스 배포보다 어려울 수 있습니다. 응용 프로그램은 런타임 정보를 표시해 관리자와 운영자가 시스템을 관리하고 모니터링하는 데 사용할 수 있도록 지원할 뿐 아니라 응용 프로그램의 중단 또는 재배포 없이 변화하는 기업 요구 사항과 사용자 지정을 지원해야 합니다.
+클라우드 응용 프로그램은 개발자가 인프라 전체에 대한 제어 권한을 갖고 있지 않은 원격 데이터 센터에서 실행되거나, 또는 경우에 따라 운영 체제에서 실행됩니다. 그렇기 때문에 관리 및 모니터링이 온-프레미스 배포보다 더 어려울 수도 있습니다. 응용 프로그램은 관리자 및 운영자가 시스템 관리 및 모니터링에 사용할 수 있는 런타임 정보를 노출해야 할 뿐 아니라, 응용 프로그램을 중지하거나 다시 배포하지 않고 변화하는 비즈니스 요구 사항과 사용자 지정을 지원해야 합니다.
 
 | 패턴 | 요약 |
 | ------- | ------- |
-| [외부 구성 저장소](../external-configuration-store.md) | 구성 정보를 응용 프로그램 배포 패키지에서 중앙 집중식 위치로 옮깁니다. |
-| [상태 끝점 모니터링](../health-endpoint-monitoring.md) | 응용 프로그램에 기능 검사를 구현해 외부 도구가 일정한 간격으로 노출된 끝점을 통해 액세스할 수 있도록 지원합니다. |
-| [런타임 재구성](../runtime-reconfiguration.md) | 응용 프로그램을 재배포하거나 재시작하지 않고 재구성할 수 있도록 설계합니다. |
+| [특사](../ambassador.md) | 소비자 서비스 또는 응용 프로그램을 대신하여 네트워크 요청을 전송하는 도우미 서비스를 만듭니다. |
+| [손상 방지 레이어](../anti-corruption-layer.md) | 현대식 응용 프로그램과 레거시 시스템 사이에 외관 또는 어댑터 레이어를 구현합니다. |
+| [외부 구성 저장소](../external-configuration-store.md) | 구성 정보를 응용 프로그램 배포 패키지에서 중앙 위치로 이동합니다. |
+| [게이트웨이 집계](../gateway-aggregation.md) | 게이트웨이를 사용하여 여러 개별 요청을 단일 요청으로 집계합니다. |
+| [게이트웨이 오프로딩](../gateway-offloading.md) | 공유 또는 특수 서비스 기능을 게이트웨이 프록시에 오프로드합니다. |
+| [게이트웨이 라우팅](../gateway-routing.md) | 단일 엔드포인트를 사용하여 요청을 여러 서비스에 라우팅합니다. |
+| [상태 엔드포인트 모니터링](../health-endpoint-monitoring.md) | 외부 도구가 노출된 엔드포인트를 통해 주기적으로 액세스할 수 있는 기능 검사를 응용 프로그램 내부에 구현합니다. |
+| [사이드카](../sidecar.md) | 격리 및 캡슐화를 제공하는 별도의 프로세스 또는 컨테이너에 응용 프로그램 구성 요소를 배포합니다. |
+| [스트랭글러](../strangler.md) | 특정 기능을 새로운 응용 프로그램 및 서비스로 점진적으로 교체하여 레거시 시스템을 단계적으로 마이그레이션합니다. |

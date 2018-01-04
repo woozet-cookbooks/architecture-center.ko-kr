@@ -3,11 +3,11 @@ title: "Azure에서 고가용성 SharePoint Server 2016 팜 실행"
 description: "Azure에 고가용성 SharePoint Server 2016 팜을 설정하는 방법에 대한 검증된 사례입니다."
 author: njray
 ms.date: 08/01/2017
-ms.openlocfilehash: a3d47eea15f1e7e8cecf2bf1be55d8c3a9bb9bdc
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 0c0e9a7b2ae12a2d12919548f91304e6cbd2d8a6
+ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 12/08/2017
 ---
 # <a name="run-a-high-availability-sharepoint-server-2016-farm-in-azure"></a>Azure에서 고가용성 SharePoint Server 2016 팜 실행
 
@@ -17,7 +17,7 @@ ms.lasthandoff: 11/14/2017
 
 *이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
 
-## <a name="architecture"></a>아키텍처
+## <a name="architecture"></a>건축
 
 이 아키텍처는 [N 계층 응용 프로그램에 대한 Windows VM 실행][windows-n-tier]에 나와 있는 아키텍처를 사용합니다. Azure 가상 네트워크(VNet) 내부에 고가용성 SharePoint Server 2016 팜을 배포합니다. 이 아키텍처는 테스트 또는 프로덕션 환경, Office 365를 사용하는 SharePoint 하이브리드 인프라 또는 재해 복구 시나리오의 기준으로 사용하기에 적합합니다.
 
@@ -169,7 +169,7 @@ SharePoint Server 2016을 실행하는 데 사용되는 도메인 수준 서비�
 
 ## <a name="deploy-the-solution"></a>솔루션 배포
 
-이 참조 아키텍처의 배포 스크립트는 [Github][github]에서 얻을 수 있습니다. 
+이 참조 아키텍처의 배포 스크립트는 [GitHub][github]에서 얻을 수 있습니다. 
 
 이 아키텍처를 단계적으로 또는 한 번에 배포할 수 있습니다. 처음에는 각 배포 단계에서 하는 일을 살펴볼 수 있도록 증분 방식 배포를 사용하는 것이 좋습니다. 다음 *mode* 매개 변수 중 하나를 사용하여 증분을 지정합니다.
 

@@ -1,24 +1,24 @@
 ---
-title: Security patterns
-description: Security is the capability of a system to prevent malicious or accidental actions outside of the designed usage, and to prevent disclosure or loss of information. Cloud applications are exposed on the Internet outside trusted on-premises boundaries, are often open to the public, and may serve untrusted users. Applications must be designed and deployed in a way that protects them from malicious attacks, restricts access to only approved users, and protects sensitive data.
-keywords: design pattern
+title: "보안 패턴"
+description: "보안은 설계된 용도를 벗어나는 악의적 작업 또는 실수로 인한 작업을 방지하고, 정보의 공개 또는 손실을 방지하는 시스템 기능입니다. 클라우드 응용 프로그램은 신뢰할 수 있는 온-프레미스 경계 외부에서 인터넷에 노출되고, 종종 일반에 공개되고, 신뢰할 수 없는 사용자가 사용할 수도 있습니다. 응용 프로그램은 악의적인 공격으로부터 보호하고 승인된 사용자만 액세스하도록 제한하고 중요한 데이터를 보호하는 방식으로 설계 및 배포해야 합니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.author: pnp
-ms.date: 03/24/2017
-ms.topic: article
-ms.service: guidance
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
+ms.openlocfilehash: 266b5c4283d82a107783fc7a746f065be9027b51
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
-
-# 보안 패턴
+# <a name="security-patterns"></a>보안 패턴
 
 [!INCLUDE [header](../../_includes/header.md)]
 
-보안은 설계된 용도를 벗어나는 악의적이거나 우발적인 동작을 방지하고 정보의 공개 또는 손실을 방지하는 시스템의 능력을 의미합니다. 클라우드 응용 프로그램은 신뢰하는 온-프레미스 경계를 벗어나는 인터넷에 노출되고, 대중에 공개되며, 신뢰할 수 없는 사용자가 이용할 수 있습니다. 따라서 악의적인 공격으로부터 응용 프로그램을 보호하고, 승인된 사용자만으로 액세스를 제한하며, 민감한 데이터를 보호하는 방식으로 응용 프로그램을 설계하고 배포해야 합니다.
+보안은 설계된 용도를 벗어나는 악의적 작업 또는 실수로 인한 작업을 방지하고, 정보의 공개 또는 손실을 방지하는 시스템 기능입니다. 클라우드 응용 프로그램은 신뢰할 수 있는 온-프레미스 경계 외부에서 인터넷에 노출되고, 종종 일반에 공개되고, 신뢰할 수 없는 사용자가 사용할 수도 있습니다. 응용 프로그램은 악의적인 공격으로부터 보호하고 승인된 사용자만 액세스하도록 제한하고 중요한 데이터를 보호하는 방식으로 설계 및 배포해야 합니다.
 
 | 패턴 | 요약 |
 | ------- | ------- |
 | [페더레이션 ID](../federated-identity.md) | 외부 ID 공급자에게 인증을 위임합니다. |
-| [게이트키퍼](../gatekeeper.md) | 클라이언트와 응용 프로그램 또는 서비스 사이에 브로커로 작용하는 전용 호스트 인스턴스를 사용해 응용 프로그램과 서비스를 보호하고, 요청을 확인하고 삭제하며, 요청 및 요청 사이의 데이터를 통과시킵니다. |
-| [발렛 키](../valet-key.md) | 특정 리소스 또는 서비스에 대한 제한적인 직접 액세스를 클라이언트에게 제공하는 토큰 또는 키를 사용합니다. |
+| [게이트 키퍼](../gatekeeper.md) | 클라이언트와 응용 프로그램 또는 서비스 간 브로커 역할을 하며, 요청을 검사 및 정리하고, 요청 및 데이터를 전달하는 전용 호스트 인스턴스를 사용하여 응용 프로그램 및 서비스를 보호합니다. |
+| [발레 키](../valet-key.md) | 클라이언트에 특정 리소스 또는 서비스에 대한 제한된 직접 액세스를 제공하는 토큰 또는 키를 사용합니다. |
