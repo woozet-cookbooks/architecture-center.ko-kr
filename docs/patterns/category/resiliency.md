@@ -1,28 +1,27 @@
 ---
-title: Resiliency patterns
-description: Resiliency is the ability of a system to gracefully handle and recover from failures. The nature of cloud hosting, where applications are often multi-tenant, use shared platform services, compete for resources and bandwidth, communicate over the Internet, and run on commodity hardware means there is an increased likelihood that both transient and more permanent faults will arise. Detecting failures, and recovering quickly and efficiently, is necessary to maintain resiliency.
-keywords: design pattern
+title: "복원력 패턴"
+description: "복원력은 중단 없이 오류를 처리하고 정상적으로 복구하는 시스템 기능입니다. 응용 프로그램이 다중 테넌트인 경우가 많고, 공유 플랫폼 서비스를 사용하고, 리소스 및 대역폭을 두고 경합하고, 인터넷을 통해 통신하고, 주로 하드웨어에서 실행되는 클라우드 호스팅의 특성 상, 일시적 오류와 영구적 오류가 모두 발생할 가능성이 좀 더 높습니다. 복원력을 유지하려면 오류를 감지하여 신속하고 효율적으로 복구하는 기능이 필요합니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.author: pnp
-ms.date: 03/24/2017
-ms.topic: article
-ms.service: guidance
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
+ms.openlocfilehash: a3b9d72989e0de57c689bcec51e20653d0441d31
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
+# <a name="resiliency-patterns"></a><span data-ttu-id="97a88-106">복원력 패턴</span><span class="sxs-lookup"><span data-stu-id="97a88-106">Resiliency patterns</span></span>
 
-# 복원력 패턴
+<span data-ttu-id="97a88-107">복원력은 중단 없이 오류를 처리하고 정상적으로 복구하는 시스템 기능입니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-107">Resiliency is the ability of a system to gracefully handle and recover from failures.</span></span> <span data-ttu-id="97a88-108">응용 프로그램이 다중 테넌트인 경우가 많고, 공유 플랫폼 서비스를 사용하고, 리소스 및 대역폭을 두고 경합하고, 인터넷을 통해 통신하고, 주로 하드웨어에서 실행되는 클라우드 호스팅의 특성 상, 일시적 오류와 영구적 오류가 모두 발생할 가능성이 좀 더 높습니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-108">The nature of cloud hosting, where applications are often multi-tenant, use shared platform services, compete for resources and bandwidth, communicate over the Internet, and run on commodity hardware means there is an increased likelihood that both transient and more permanent faults will arise.</span></span> <span data-ttu-id="97a88-109">복원력을 유지하려면 오류를 감지하여 신속하고 효율적으로 복구하는 기능이 필요합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-109">Detecting failures, and recovering quickly and efficiently, is necessary to maintain resiliency.</span></span>
 
-[!INCLUDE [header](../../_includes/header.md)]
-
-복원력은 장애를 점진적으로 처리하고 복구하는 시스템의 능력입니다. 대부분의 응용 프로그램이 다중 테넌트가 되고, 공유 플랫폼 서비스를 사용하며, 리소스와 대역폭을 두고 경쟁하고, 인터넷상에서 통신하며, 범용 하드웨어에서 실행되는 클라우드 호스팅의 특성으로 인해 일시적인 장애와 더 영구적인 장애가 모두 발생할 가능성이 높습니다. 따라서 복원력을 유지하기 위해 장애 감지 및 신속하고 효율적인 복구가 필요합니다.
-
-| 패턴 | 요약 |
+| <span data-ttu-id="97a88-110">패턴</span><span class="sxs-lookup"><span data-stu-id="97a88-110">Pattern</span></span> | <span data-ttu-id="97a88-111">요약</span><span class="sxs-lookup"><span data-stu-id="97a88-111">Summary</span></span> |
 | ------- | ------- |
-| [회로 차단기](../circuit-breaker.md) | 원격 서비스 또는 리소스에 연결 시 해결 시간이 가변적인 장애를 처리합니다. |
-| [보상 트랜잭션](../compensating-transaction.md) | (결과적으로는 일관된 작업을 정의하는) 여러 단계를 거쳐 수행된 작업의 실행을 취소합니다. |
-| [상태 끝점 모니터링](../health-endpoint-monitoring.md) | 응용 프로그램에 기능 검사를 구현해 외부 도구가 일정한 간격으로 노출된 끝점을 통해 액세스할 수 있도록 지원합니다. |
-| [리더 선정](../leader-election.md) | 하나의 인스턴스를 다른 인스턴스의 관리를 책임지는 리더로 선정해 배포 응용 프로그램 내에 있는 공동 작업 인스턴스 모음이 수행하는 동작을 조정합니다. |
-| [큐 기반 부하 평준화](../queue-based-load-leveling.md) | 작업과 작업이 호출하는 서비스 사이에 버퍼로 작용하는 큐를 사용해 간헐적으로 나타나는 과중한 부하를 평활화합니다. |
-| [다시 시도](../retry.md) | 이전에 실패한 작업을 투명하게 다시 시도해 서비스 또는 네트워크 리소스에 연결을 시도할 때 응용 프로그램이 예상되는 일시적인 장애를 처리할 수 있도록 지원합니다. |
-| [스케줄러 에이전트 감독자](../scheduler-agent-supervisor.md) | 서비스와 다른 원격 리소스의 분산 집합에서 실행하는 동작의 집합을 조정합니다. |
+| [<span data-ttu-id="97a88-112">격벽</span><span class="sxs-lookup"><span data-stu-id="97a88-112">Bulkhead</span></span>](../bulkhead.md) | <span data-ttu-id="97a88-113">하나가 고장 나더라도 나머지는 정상적으로 작동하도록 응용 프로그램의 요소를 여러 풀에 격리합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-113">Isolate elements of an application into pools so that if one fails, the others will continue to function.</span></span> |
+| [<span data-ttu-id="97a88-114">회로 차단기</span><span class="sxs-lookup"><span data-stu-id="97a88-114">Circuit Breaker</span></span>](../circuit-breaker.md) | <span data-ttu-id="97a88-115">원격 서비스 또는 리소스에 연결할 때 해결하는 데 걸리는 시간이 유동적인 오류를 처리합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-115">Handle faults that might take a variable amount of time to fix when connecting to a remote service or resource.</span></span> |
+| [<span data-ttu-id="97a88-116">보정 트랜잭션</span><span class="sxs-lookup"><span data-stu-id="97a88-116">Compensating Transaction</span></span>](../compensating-transaction.md) | <span data-ttu-id="97a88-117">여러 단계로 나뉘어 있지만 결국에는 일관적인 작업을 정의하는 일련의 단계에서 수행한 작업을 실행 취소합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-117">Undo the work performed by a series of steps, which together define an eventually consistent operation.</span></span> |
+| [<span data-ttu-id="97a88-118">상태 엔드포인트 모니터링</span><span class="sxs-lookup"><span data-stu-id="97a88-118">Health Endpoint Monitoring</span></span>](../health-endpoint-monitoring.md) | <span data-ttu-id="97a88-119">외부 도구가 노출된 엔드포인트를 통해 주기적으로 액세스할 수 있는 기능 검사를 응용 프로그램 내부에 구현합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-119">Implement functional checks in an application that external tools can access through exposed endpoints at regular intervals.</span></span> |
+| [<span data-ttu-id="97a88-120">리더 선택</span><span class="sxs-lookup"><span data-stu-id="97a88-120">Leader Election</span></span>](../leader-election.md) | <span data-ttu-id="97a88-121">인스턴스 중 하나를 다른 인스턴스를 관리하는 리더로 선택하여 분산된 응용 프로그램의 공동 작업 인스턴스 컬렉션이 수행하는 작업을 조정합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-121">Coordinate the actions performed by a collection of collaborating task instances in a distributed application by electing one instance as the leader that assumes responsibility for managing the other instances.</span></span> |
+| [<span data-ttu-id="97a88-122">큐 기반 부하 평준화</span><span class="sxs-lookup"><span data-stu-id="97a88-122">Queue-Based Load Leveling</span></span>](../queue-based-load-leveling.md) | <span data-ttu-id="97a88-123">작업 그리고 그 작업이 일시적인 높은 부하를 부드럽게 처리하기 위해 호출하는 서비스 사이에서 버퍼 역할을 하는 큐를 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-123">Use a queue that acts as a buffer between a task and a service that it invokes in order to smooth intermittent heavy loads.</span></span> |
+| [<span data-ttu-id="97a88-124">다시 시도</span><span class="sxs-lookup"><span data-stu-id="97a88-124">Retry</span></span>](../retry.md) | <span data-ttu-id="97a88-125">이전에 실패한 작업을 투명하게 다시 시도하여 서비스 또는 네트워크 리소스에 연결하려 할 때 응용 프로그램을 사용하여 예상된 일시적 오류를 처리합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-125">Enable an application to handle anticipated, temporary failures when it tries to connect to a service or network resource by transparently retrying an operation that's previously failed.</span></span> |
+| [<span data-ttu-id="97a88-126">Scheduler 에이전트 감독자</span><span class="sxs-lookup"><span data-stu-id="97a88-126">Scheduler Agent Supervisor</span></span>](../scheduler-agent-supervisor.md) | <span data-ttu-id="97a88-127">서비스 및 기타 원격 리소스의 분산된 집합에서 일련의 작업을 조정합니다.</span><span class="sxs-lookup"><span data-stu-id="97a88-127">Coordinate a set of actions across a distributed set of services and other remote resources.</span></span> |
