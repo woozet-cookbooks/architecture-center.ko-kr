@@ -3,11 +3,11 @@ title: "캐싱 없음 안티패턴"
 description: "동일한 데이터를 반복적으로 가져오면 성능과 확장성을 감소시킬 수 있습니다."
 author: dragon119
 ms.date: 06/05/2017
-ms.openlocfilehash: eb6b69c13b8954ae2efb1da96dec05bc1c13d18b
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 8a2bc3b473a30536cc1bef9e1dcad87acb46c4a9
+ms.sourcegitcommit: c93f1b210b3deff17cc969fb66133bc6399cfd10
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/05/2018
 ---
 # <a name="no-caching-antipattern"></a>캐싱 없음 안티패턴
 
@@ -209,7 +209,7 @@ WHERE [Extent1].[BusinessEntityId] = @p__linq__0
 [cache-aside-pattern]: /azure/architecture/patterns/cache-aside
 [caching-guidance]: ../../best-practices/caching.md
 [circuit-breaker]: ../../patterns/circuit-breaker.md
-[api-implementation]: ../../best-practices/api-implementation.md#considerations-for-optimizing-client-side-data-access
+[api-implementation]: ../../best-practices/api-implementation.md#optimizing-client-side-data-access
 [NewRelic]: http://newrelic.com/azure
 [NewRelic-server-requests]: _images/New-Relic.jpg
 [Performance-Load-Test-Results-Uncached]:_images/InitialLoadTestResults.jpg
