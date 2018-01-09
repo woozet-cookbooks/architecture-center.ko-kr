@@ -1,97 +1,97 @@
 ---
-title: Federated Identity
-description: Delegate authentication to an external identity provider.
-keywords: design pattern
+title: "페더레이션 ID"
+description: "외부 ID 공급자에게 인증을 위임합니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.service: guidance
-ms.topic: article
-ms.author: pnp
-ms.date: 03/24/2017
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
-pnp.pattern.categories: [security]
+pnp.pattern.categories: security
+ms.openlocfilehash: a1edbdd080309383201d33e73602e2f18928c080
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
-
-# 페더레이션 ID
+# <a name="federated-identity-pattern"></a><span data-ttu-id="d3e66-104">페더레이션 ID 패턴</span><span class="sxs-lookup"><span data-stu-id="d3e66-104">Federated Identity pattern</span></span>
 
 [!INCLUDE [header](../_includes/header.md)]
 
-외부 ID 공급자에게 인증을 위임합니다. 이렇게 하면 개발을 단순화하고, 사용자 관리의 요구 사항을 최소화하며, 응용 프로그램의 사용자 경험을 개선할 수 있습니다.
+<span data-ttu-id="d3e66-105">외부 ID 공급자에게 인증을 위임합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-105">Delegate authentication to an external identity provider.</span></span> <span data-ttu-id="d3e66-106">이렇게 하면 개발을 간소화하고, 사용자 관리 요구 사항을 최소화하며, 응용 프로그램의 사용자 환경을 향상할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-106">This can simplify development, minimize the requirement for user administration, and improve the user experience of the application.</span></span>
 
-## 배경 및 문제
+## <a name="context-and-problem"></a><span data-ttu-id="d3e66-107">컨텍스트 및 문제점</span><span class="sxs-lookup"><span data-stu-id="d3e66-107">Context and problem</span></span>
 
-일반적으로 사용자는 비즈니스 관계에 있는 다양한 조직이 제공하고 호스팅하는 여러 응용 프로그램으로 업무를 볼 필요가 있습니다. 이와 같은 사용자에게는 각자 특정한(다른) 자격 증명을 사용할 필요가 있습니다. 그러면 다음과 같은 일이 발생할 수 있습니다.
+<span data-ttu-id="d3e66-108">일반적으로 사용자는 비즈니스 관계가 있는 다른 조직에서 제공하고 호스트하는 여러 응용 프로그램으로 작업해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-108">Users typically need to work with multiple applications provided and hosted by different organizations they have a business relationship with.</span></span> <span data-ttu-id="d3e66-109">사용자가 각 응용 프로그램에 특정(및 다른) 자격 증명을 사용해야 할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-109">These users might be required to use specific (and different) credentials for each one.</span></span> <span data-ttu-id="d3e66-110">이 경우 다음과 같은 문제가 발생할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-110">This can:</span></span>
 
-- **사용자 경험 단절**. 서로 다른 자격 증명을 사용하는 사용자는 로그인 자격 증명을 잊어버리기 일쑤입니다.
+- <span data-ttu-id="d3e66-111">**연결되지 않은 사용자 환경이 생성**됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-111">**Cause a disjointed user experience**.</span></span> <span data-ttu-id="d3e66-112">사용자가 여러 다른 로그인 자격 증명을 가지고 있는 경우 잊어버리기 쉽습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-112">Users often forget sign-in credentials when they have many different ones.</span></span>
 
-- **보안 취약성 노출**. 사용자가 퇴사하면 해당 계정에 대한 프로비전을 즉시 해제해야 하는데, 큰 조직에서는 이를 간과하기 쉽습니다.
+- <span data-ttu-id="d3e66-113">**보안 취약성이 노출**됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-113">**Expose security vulnerabilities**.</span></span> <span data-ttu-id="d3e66-114">사용자가 퇴사하면 즉시 계정 프로비전을 해제해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-114">When a user leaves the company the account must immediately be deprovisioned.</span></span> <span data-ttu-id="d3e66-115">대규모 조직에서는 이 작업을 간과하기 쉽습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-115">It's easy to overlook this in large organizations.</span></span>
 
-- **사용자 관리의 복잡성 증가**. 관리자는 모든 사용자의 자격 증명을 관리해야 하며 암호 힌트 제공과 같은 추가 작업을 수행해야 합니다.
+- <span data-ttu-id="d3e66-116">**사용자 관리가 복잡**해집니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-116">**Complicate user management**.</span></span> <span data-ttu-id="d3e66-117">관리자가 모든 사용자의 자격 증명을 관리하고 암호 힌트 제공 등의 추가 작업을 수행해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-117">Administrators must manage credentials for all of the users, and perform additional tasks such as providing password reminders.</span></span>
 
-보통 사용자는 이런 모든 응용 프로그램에 동일한 자격 증명의 사용을 선호합니다.v
+<span data-ttu-id="d3e66-118">일반적으로 사용자는 이러한 모든 응용 프로그램에 동일한 자격 증명을 사용하는 것을 선호합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-118">Users typically prefer to use the same credentials for all these applications.</span></span>
 
-## 해결책
+## <a name="solution"></a><span data-ttu-id="d3e66-119">해결 방법</span><span class="sxs-lookup"><span data-stu-id="d3e66-119">Solution</span></span>
 
-페더레이션 ID를 사용할 수 있는 인증 방식을 구현합니다. 응용 프로그램 코드에서 사용자 인증을 분리하고 인증을 신뢰할 수 있는 ID 공급자에게 위임합니다. 이렇게 하면 개발을 단순화하고 관리 오버헤드를 최소화하면서 다양한 ID 공급자(IdP)를 사용해 사용자를 인증할 수 있습니다. 또한 권한 부여와 인증을 명확하게 분리할 수도 있습니다.
+<span data-ttu-id="d3e66-120">페더레이션 ID를 사용할 수 있는 인증 메커니즘을 구현합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-120">Implement an authentication mechanism that can use federated identity.</span></span> <span data-ttu-id="d3e66-121">사용자 인증과 응용 프로그램 코드를 분리하고 신뢰할 수 있는 ID 공급자에게 인증을 위임합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-121">Separate user authentication from the application code, and delegate authentication to a trusted identity provider.</span></span> <span data-ttu-id="d3e66-122">이렇게 하면 개발을 간소화할 수 있으며, 관리 오버헤드를 최소화하는 동시에 사용자가 다양한 IdP(ID 공급자)를 사용하여 인증하도록 허용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-122">This can simplify development and allow users to authenticate using a wider range of identity providers (IdP) while minimizing the administrative overhead.</span></span> <span data-ttu-id="d3e66-123">또한 인증과 권한 부여를 명확하게 분리할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-123">It also allows you to clearly decouple authentication from authorization.</span></span>
 
-신뢰할 수 있는 ID 공급자에는 비즈니스 파트너 또는 Microsoft, Google, Yahoo!, Facebook 계정을 보유한 사용자를 인증할 수 있는 소셜 ID 공급자가 제공하는 회사 디렉터리, 온-프레미스 페더레이션 서비스 및 기타 보안 토큰 서비스(STS)가 포함됩니다.
+<span data-ttu-id="d3e66-124">신뢰할 수 있는 ID 공급자에는 회사 디렉터리, 온-프레미스 페더레이션 서비스, 비즈니스 파트너가 제공하는 기타 STS(보안 토큰 서비스) 또는 Microsoft, Google, Yahoo!, Facebook 계정 등을 가진 사용자를 인증할 수 있는 소셜 ID 공급자가 포함됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-124">The trusted identity providers include corporate directories, on-premises federation services, other security token services (STS) provided by business partners, or social identity providers that can authenticate users who have, for example, a Microsoft, Google, Yahoo!, or Facebook account.</span></span>
 
-다음 그림은 클라이언트 응용 프로그램이 인증을 요구하는 서비스에 액세스해야 할 때의 페더레이션 ID 패턴을 보여줍니다. 인증은 STS와 연계하여 작동하는 IdP를 통해 수행됩니다. IdP는 인증된 사용자에 대한 정보를 제공하는 보안 토큰을 발행합니다. 클레임이라고 부르는 이런 정보는 사용자의 ID를 포함하며 역할 멤버 자격과 더 세분화된 액세스 권한 같은 다른 정보도 포함할 수 있습니다.
+<span data-ttu-id="d3e66-125">이 그림은 클라이언트 응용 프로그램이 인증이 필요한 서비스에 액세스해야 하는 경우의 페더레이션 ID 패턴을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-125">The figure illustrates the Federated Identity pattern when a client application needs to access a service that requires authentication.</span></span> <span data-ttu-id="d3e66-126">IdP가 STS를 이용하여 인증을 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-126">The authentication is performed by an IdP that works in concert with an STS.</span></span> <span data-ttu-id="d3e66-127">IdP는 인증된 사용자에 대한 정보를 제공하는 보안 토큰을 발급합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-127">The IdP issues security tokens that provide information about the authenticated user.</span></span> <span data-ttu-id="d3e66-128">이 정보를 클레임이라고 하며, 사용자 ID뿐 아니라 역할 멤버 자격, 보다 세분화된 액세스 권한 등의 기타 정보도 포함할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-128">This information, referred to as claims, includes the user’s identity, and might also include other information such as role membership and more granular access rights.</span></span>
 
-![An overview of federated authentication](./_images/federated-identity-overview.png)
-
-
-클레임 기반 액세스 제어라고 불리기도 하는 이 모델에서 응용 프로그램과 서비스는 토큰에 포함된 클레임을 기반으로 기능에 대한 액세스 권한을 부여합니다. 인증이 필요한 서비스는 반드시 IdP를 신뢰해야 합니다. 클라이언트 응용 프로그램은 인증을 수행하는 IdP와 통신합니다. 인증이 성공하면 IdP는 사용자를 식별하는 클레임을 포함한 토큰을 STS에 반환합니다(IdP와 STS는 동일한 서비스일 수 있습니다.). STS는 클라이언트에 클레임을 반환하기 전에 사전 정의된 규칙을 기반으로 토큰의 클레임을 변환하고 증가시킬 수 있습니다. 그런 다음 클라이언트 응용 프로그램은 이런 토큰을 식별 증거로 서비스에 전달할 수 있습니다.
-
-> 신뢰 체인에는 추가 STS가 있을 수 있습니다. 예를 들면 나중에 설명할 시나리오에서 온-프레미스 STS는 사용자 인증을 위해 ID 공급자에 액세스하는 다른 STS를 신뢰합니다. 이런 접근 방식은 온-프레미스 STS와 디렉터리가 있는 기업 시나리오에서 일반적입니다.
-
-페더레이션 인증은 다양한 도메인에서 ID를 신뢰하는 문제에 대한 표준 기반 해결책을 제공하며 SSO(Single Sign-On) 기능을 지원할 수 있습니다. 페더레이션 인증은 ID 공급자에게 직접 네트워크로 연결할 필요 없이 SSO(Single Sign-On) 기능을 지원하기 때문에, 모든 유형의 응용 프로그램, 특히 클라우드 호스팅 응용 프로그램에서 점점 보편화되는 추세입니다. 사용자는 응용 프로그램마다 자격 증명을 입력할 필요가 없습니다. 이런 방식은 많은 다른 응용 프로그램에 액세스하는 데 필요한 자격 증명을 만들지 않기 때문에 보안이 향상됩니다. 또한 원래 ID 공급자를 제외한 모든 대상에게 사용자의 자격 증명을 표시하지 않습니다.  응용 프로그램은 토큰 내에 포함되는 인증된 ID 정보만 확인할 수 있습니다.
-
-페더레이션 ID는 ID와 자격 증명의 관리가 ID 공급자의 책임이라는 주요 이점도 제공합니다. 응용 프로그램이나 서비스는 ID 관리 기능을 제공할 필요가 없습니다. 또한 회사 시나리오에서 회사 디렉터리도 ID 공급자를 신뢰하는 경우 사용자를 확인할 필요가 없습니다. 따라서 회사 디렉터리 내의 사용자 ID를 관리하는 관리 오버헤드가 모두 제거됩니다.
-
-## 문제 및 고려 사항
-
-페더레이션 인증을 구현하는 응용 프로그램을 설계할 때는 다음을 고려해야 합니다.
-
-- 인증은 단일 실패 지점이 될 수 있습니다. 응용 프로그램을 여러 데이터 센터에 배포하는 경우에는 응용 프로그램의 안정성과 가용성을 유지하기 위해 동일한 데이터 센터에 ID 관리 메커니즘의 배포를 고려해야 합니다.
-
-- 인증 도구는 인증 토큰에 포함된 역할 클레임을 기반으로 액세스 제어를 구성할 수 있습니다. 역할 기반 액세스 제어(RBAC)라고 부르는 이런 방식을 활용하면 기능과 리소스에 대한 액세스를 더 세분화된 수준으로 제어할 수 있습니다.
-
-- 회사 디렉터리와 달리 소셜 ID 공급자를 사용하는 클레임 기반 인증은 일반적으로 이메일 주소와 이름을 제외하고는 인증된 사용자에 대한 정보를 제공하지 않습니다. Microsoft 계정과 같은 일부 소셜 ID 공급자만 고유 식별자를 제공합니다. 보통 응용 프로그램은 등록된 사용자에 대한 일부 정보를 유지할 필요가 있고 이런 정보를 토큰의 클레임에 포함된 식별자와 일치시킬 수 있어야 합니다. 일반적으로 이런 일치는 사용자가 응용 프로그램에 처음 액세스할 때 등록을 통해 이루어지고, 그런 다음에는 정보가 각각의 인증 후 추가 클레임으로 토큰에 삽입됩니다.
-
-- STS에 구성된 ID 공급자가 하나 이상이면 인증을 위해 사용자가 리디렉션되어야 하는 ID 공급자를 검색해야 합니다. 이런 프로세스는 홈 영역 검색이라 부릅니다. STS는 사용자가 제공하는 이메일 주소 또는 사용자 이름, 사용자가 액세스 중인 응용 프로그램의 하위 도메인, 사용자의 IP 주소 범위 또는 사용자 브라우저에 저장된 쿠키의 내용을 기반으로 홈 영역 검색을 자동으로 수행할 수 있습니다. 예를 들어 사용자가 Microsoft 도메인에 user@live.com과 같은 이메일 주소를 입력하면 STS는 사용자를 Microsoft 계정 로그인 페이지로 리디렉션합니다. 나중에 방문할 때 STS는 쿠키를 사용해 마지막 로그인이 Microsoft 계정이었다는 것을 표시할 수 있습니다. 자동 검색으로 홈 영역을 결정할 수 없으면 STS는 신뢰할 수 있는 ID 공급자를 나열하는 홈 영역 검색 페이지를 표시할 것이고 사용자는 사용을 원하는 ID 공급자를 선택해야 합니다.
-
-## 패턴 사용 사례
-
-다음 시나리오에는 이 패턴이 유용합니다.
-
-- **기업 SSO(Single Sign-On)**. 이 시나리오에서는 응용 프로그램을 방문할 때마다 로그인할 필요가 없고, 회사 보안 경계를 벗어나는 클라우드에서 호스팅되는 회사 응용 프로그램에 대해서만 인증하면 됩니다. 사용자 경험은 회사 네트워크에 로그인할 때 인증을 거친 뒤에는 다시 로그인할 필요 없이 관련된 모든 응용 프로그램에 액세스할 수 있는 온-프레미스 응용 프로그램을 사용할 때와 동일합니다.
-
-- **여러 파트너의 페더레이션 ID**. 이 시나리오에서는 회사 디렉터리에 계정이 없는 회사 직원과 비즈니스 파트너를 모두 인증해야 합니다. 이런 방식은 기업 대 기업 응용 프로그램, 타사 서비스를 통합하는 응용 프로그램 및 다양한 IT 시스템을 사용하는 회사가 리소스를 병합하거나 공유하는 경우에 일반적으로 사용됩니다.
-
-- **SaaS 응용 프로그램에서 페더레이션 ID**. 이 시나리오에서 독립 소프트웨어 공급업체는 여러 클라이언트 또는 테넌트에 즉시 사용 가능한 서비스를 제공합니다. 각 테넌트는 적절한 ID 공급자를 사용해 인증합니다. 예를 들면 비즈니스 사용자는 회사 디렉터리를 사용하는 반면, 소비자와 테넌트의 클라이언트는 소셜 ID 자격 증명을 사용합니다.
-
-다음의 상황에는 이 패턴이 유용하지 않습니다.
-
-- 응용 프로그램의 모든 사용자를 하나의 ID 공급자를 통해 인증할 수 있고 다른 ID 공급자를 사용해 인증할 필요가 없는 경우. VPN을 사용하거나 클라우드 호스팅 시나리오에서 온-프레미스 디렉터리와 응용 프로그램 사이의 가상 네트워크 연결을 통해 회사 디렉터리(응용 프로그램에서 액세스 가능)를 사용해 인증하는 비즈니스 응용 프로그램이 대표적인 사례입니다.
-
-- 응용 프로그램이 원래 다른 인증 방식(사용자 지정 사용자 저장소)을 사용해 작성되었거나 클레임 기반 기술에서 사용하는 협상 기준을 처리하는 기능을 제공하지 않는 경우. 기존 응용 프로그램에 대한 클레임 기반 인증과 액세스 제어의 변경은 복잡할 수 있고 경제적이지 않습니다.
-
-## 예제
-
-Microsoft Azure에서 다중 테넌트 SaaS(software as a service) 응용 프로그램을 호스팅하는 조직이 있습니다. 이 응용 프로그램에는 테넌트 사용자가 사용하는 응용 프로그램을 관리하기 위해 테넌트가 활용할 수 있는 웹 사이트가 포함됩니다. 응용 프로그램은 조직의 자체 Active Directory를 통해 사용자를 인증할 때 ADFS(Active Directory Federation Services)가 생성한 페더레이션 ID를 사용해 테넌트가 웹 사이트에 액세스하도록 허용합니다.
-
-![How users at a large enterprise subscriber access the application](./_images/federated-identity-multitenat.png)
+![페더레이션 인증 개요](./_images/federated-identity-overview.png)
 
 
-위의 그림은 테넌트가 자체 ID 공급자(1단계)인 ADFS로 인증하는 방법을 보여줍니다. 테넌트 인증에 성공하면 ADFS는 토큰을 발행합니다. 클라이언트 브라우저는 SaaS 페더레이션 공급자에 유효한 토큰을 다시 가져오기 위해(2단계) 이 토큰을 SaaS 응용 프로그램의 페더레이션 공급자(테넌트의 ADFS가 발행한 토큰을 신뢰)에게 전달합니다. 필요한 경우, SaaS 페더레이션 공급자는 새로운 토큰을 클라이언트 브라우저에 반환하기 전에 토큰의 클레임을 응용 프로그램이 인식하는 클레임으로 변환(3단계)합니다. 응용 프로그램은 SaaS 페더레이션 공급자가 발행한 토큰을 신뢰하고 토큰의 클레임을 사용해 권한 부여 규칙을 적용합니다(4단계).
+<span data-ttu-id="d3e66-130">이 모델을 클레임 기반 액세스 제어라고도 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-130">This model is often called claims-based access control.</span></span> <span data-ttu-id="d3e66-131">응용 프로그램과 서비스는 토큰에 포함된 클레임을 기준으로 기능과 특성에 대한 액세스 권한을 부여합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-131">Applications and services authorize access to features and functionality based on the claims contained in the token.</span></span> <span data-ttu-id="d3e66-132">인증이 필요한 서비스는 IdP를 신뢰해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-132">The service that requires authentication must trust the IdP.</span></span> <span data-ttu-id="d3e66-133">클라이언트 응용 프로그램은 인증을 수행하는 IdP에 연결됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-133">The client application contacts the IdP that performs the authentication.</span></span> <span data-ttu-id="d3e66-134">인증에 성공하면 IdP는 사용자를 식별하는 클레임이 포함된 토큰을 STS에 반환합니다(IdP와 STS는 동일한 서비스일 수 있음).</span><span class="sxs-lookup"><span data-stu-id="d3e66-134">If the authentication is successful, the IdP returns a token containing the claims that identify the user to the STS (note that the IdP and STS can be the same service).</span></span> <span data-ttu-id="d3e66-135">STS는 사전 정의된 규칙에 따라 토큰의 클레임을 변환하고 보강한 후 클라이언트 응용 프로그램에 반환할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-135">The STS can transform and augment the claims in the token based on predefined rules, before returning it to the client.</span></span> <span data-ttu-id="d3e66-136">그러면 클라이언트 응용 프로그램이 이 토큰을 해당 ID 증명으로 서비스에 전달할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-136">The client application can then pass this token to the service as proof of its identity.</span></span>
 
-테넌트는 응용 프로그램에 액세스하기 위한 별도의 자격 증명을 기억할 필요가 없고, 테넌트 회사의 관리자는 응용 프로그램에 액세스할 수 있는 사용자 목록을 자체 ADFS에 구성할 수 있습니다.
+> <span data-ttu-id="d3e66-137">신뢰 체인에 추가 STS가 있을 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-137">There might be additional STSs in the chain of trust.</span></span> <span data-ttu-id="d3e66-138">예를 들어 나중에 설명하는 시나리오에서는 온-프레미스 STS가 사용자를 인증하기 위해 ID 공급자 액세스를 담당하는 다른 STS를 신뢰합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-138">For example, in the scenario described later, an on-premises STS trusts another STS that is responsible for accessing an identity provider to authenticate the user.</span></span> <span data-ttu-id="d3e66-139">이 접근 방법은 온-프레미스 STS 및 디렉터리가 있는 엔터프라이즈 시나리오에서 일반적으로 사용됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-139">This approach is common in enterprise scenarios where there's an on-premises STS and directory.</span></span>
 
-## 관련 지침
+<span data-ttu-id="d3e66-140">페더레이션 인증은 다양한 도메인의 ID를 신뢰하는 문제에 대한 표준 기반 솔루션을 제공하며 Single Sign-On을 지원할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-140">Federated authentication provides a standards-based solution to the issue of trusting identities across diverse domains, and can support single sign-on.</span></span> <span data-ttu-id="d3e66-141">ID 공급자에 대한 직접적인 네트워크 연결을 요구하지 않고 Single Sign-On을 지원하므로 모든 유형의 응용 프로그램, 특히 클라우드에 호스트된 응용 프로그램에서 더 일반적입니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-141">It's becoming more common across all types of applications, especially cloud-hosted applications, because it supports single sign-on without requiring a direct network connection to identity providers.</span></span> <span data-ttu-id="d3e66-142">사용자가 각 응용 프로그램에 대한 자격 증명을 입력할 필요가 없습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-142">The user doesn't have to enter credentials for every application.</span></span> <span data-ttu-id="d3e66-143">이 경우 여러 다른 응용 프로그램에 액세스하는 데 필요한 자격 증명을 생성할 필요가 없으므로 보안이 강화되며, 원래 ID 공급자를 제외한 모든 사람으로부터 사용자 자격 증명이 숨겨집니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-143">This increases security because it prevents the creation of credentials required to access many different applications, and it also hides the user’s credentials from all but the original identity provider.</span></span> <span data-ttu-id="d3e66-144">응용 프로그램에는 토큰에 포함된 인증된 ID 정보만 표시됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-144">Applications see just the authenticated identity information contained within the token.</span></span>
 
-- [Microsoft Azure Active Directory](https://azure.microsoft.com/services/active-directory/)
-- [AD DS(Active Directory Domain Services)](https://msdn.microsoft.com/library/bb897402.aspx)
-- [AD FS(Active Directory Federation Services)](https://msdn.microsoft.com/library/bb897402.aspx)
-- [Microsoft Azure에서 다중 테넌트 응용 프로그램을 위한 ID 관리](https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity/)
-- [Azure에서 다중 테넌트 응용 프로그램](https://azure.microsoft.com/documentation/articles/dotnet-develop-multitenant-applications/)
+<span data-ttu-id="d3e66-145">페더레이션 ID에는 ID 공급자가 ID 및 자격 증명을 관리한다는 주요 장점도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-145">Federated identity also has the major advantage that management of the identity and credentials is the responsibility of the identity provider.</span></span> <span data-ttu-id="d3e66-146">응용 프로그램 또는 서비스에서 ID 관리 기능을 제공할 필요가 없습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-146">The application or service doesn't need to provide identity management features.</span></span> <span data-ttu-id="d3e66-147">또한 회사 시나리오에서는 회사 디렉터리가 ID 공급자를 신뢰할 경우 사용자에 대해 몰라도 됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-147">In addition, in corporate scenarios, the corporate directory doesn't need to know about the user if it trusts the identity provider.</span></span> <span data-ttu-id="d3e66-148">그러면 디렉터리 내에서 사용자 ID를 관리하는 모든 관리 오버헤드가 제거됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-148">This removes all the administrative overhead of managing the user identity within the directory.</span></span>
+
+## <a name="issues-and-considerations"></a><span data-ttu-id="d3e66-149">문제 및 고려 사항</span><span class="sxs-lookup"><span data-stu-id="d3e66-149">Issues and considerations</span></span>
+
+<span data-ttu-id="d3e66-150">페더레이션 인증을 구현하는 응용 프로그램을 디자인할 때 다음을 고려하세요.</span><span class="sxs-lookup"><span data-stu-id="d3e66-150">Consider the following when designing applications that implement federated authentication:</span></span>
+
+- <span data-ttu-id="d3e66-151">인증은 단일 실패 지점이 될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-151">Authentication can be a single point of failure.</span></span> <span data-ttu-id="d3e66-152">여러 데이터 센터에 응용 프로그램을 배포하는 경우 응용 프로그램 안정성 및 가용성을 유지하기 위해 동일한 데이터 센터에 ID 관리 메커니즘을 배포하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-152">If you deploy your application to multiple datacenters, consider deploying your identity management mechanism to the same datacenters to maintain application reliability and availability.</span></span>
+
+- <span data-ttu-id="d3e66-153">인증 도구를 사용하면 인증 토큰에 포함된 역할 클레임에 따라 액세스 제어를 구성할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-153">Authentication tools make it possible to configure access control based on role claims contained in the authentication token.</span></span> <span data-ttu-id="d3e66-154">이를 RBAC(역할 기반 액세스 제어)라고도 하며, 기능 및 리소스에 대한 액세스를 보다 세분화해서 제어할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-154">This is often referred to as role-based access control (RBAC), and it can allow a more granular level of control over access to features and resources.</span></span>
+
+- <span data-ttu-id="d3e66-155">회사 디렉터리와 달리, 소셜 ID 공급자를 사용한 클레임 기반 인증은 일반적으로 메일 주소와 이름 이외에 인증된 사용자에 대한 정보를 제공하지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-155">Unlike a corporate directory, claims-based authentication using social identity providers doesn't usually provide information about the authenticated user other than an email address, and perhaps a name.</span></span> <span data-ttu-id="d3e66-156">Microsoft 계정과 같은 일부 소셜 ID 공급자는 고유 식별자만 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-156">Some social identity providers, such as a Microsoft account, provide only a unique identifier.</span></span> <span data-ttu-id="d3e66-157">응용 프로그램은 일반적으로 등록된 사용자에 대한 일부 정보를 유지 관리해야 하며 토큰의 클레임에 포함된 식별자와 대조할 수 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-157">The application usually needs to maintain some information on registered users, and be able to match this information to the identifier contained in the claims in the token.</span></span> <span data-ttu-id="d3e66-158">일반적으로 이 작업은 사용자가 응용 프로그램에 처음 액세스할 때 등록을 통해 수행되며 각 인증 후에 추가 클레임으로 토큰에 정보가 삽입됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-158">Typically this is done through registration when the user first accesses the application, and information is then injected into the token as additional claims after each authentication.</span></span>
+
+- <span data-ttu-id="d3e66-159">STS에 대해 둘 이상의 ID 공급자가 구성되어 있는 경우 인증을 위해 사용자가 리디렉션되어야 하는 ID 공급자를 검색해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-159">If there's more than one identity provider configured for the STS, it must detect which identity provider the user should be redirected to for authentication.</span></span> <span data-ttu-id="d3e66-160">이 프로세스를 홈 영역 검색이라고 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-160">This process is called home realm discovery.</span></span> <span data-ttu-id="d3e66-161">STS는 사용자가 제공하는 메일 주소 또는 사용자 이름, 사용자가 액세스하는 응용 프로그램의 하위 도메인, 사용자의 IP 주소 범위 또는 사용자 브라우저에 저장된 쿠키 콘텐츠를 기준으로 이 작업을 자동으로 수행할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-161">The STS might be able to do this automatically based on an email address or user name that the user provides, a subdomain of the application that the user is accessing, the user’s IP address scope, or on the contents of a cookie stored in the user’s browser.</span></span> <span data-ttu-id="d3e66-162">예를 들어 사용자가 Microsoft 도메인의 메일 주소(예: user@live.com)를 입력한 경우 STS에서 사용자를 Microsoft 계정 로그인 페이지로 리디렉션합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-162">For example, if the user entered an email address in the Microsoft domain, such as user@live.com, the STS will redirect the user to the Microsoft account sign-in page.</span></span> <span data-ttu-id="d3e66-163">나중에 방문할 때 STS는 쿠키를 사용하여 마지막 로그인이 Microsoft 계정으로 수행되었음을 나타낼 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-163">On later visits, the STS could use a cookie to indicate that the last sign in was with a Microsoft account.</span></span> <span data-ttu-id="d3e66-164">자동 검색을 통해 홈 영역을 확인할 수 없는 경우, STS는 신뢰할 수 있는 ID 공급자가 나열된 홈 영역 검색 페이지를 표시하며 사용자가 사용할 ID 공급자를 선택해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-164">If automatic discovery can't determine the home realm, the STS will display a home realm discovery page that lists the trusted identity providers, and the user must select the one they want to use.</span></span>
+
+## <a name="when-to-use-this-pattern"></a><span data-ttu-id="d3e66-165">이 패턴을 사용해야 하는 경우</span><span class="sxs-lookup"><span data-stu-id="d3e66-165">When to use this pattern</span></span>
+
+<span data-ttu-id="d3e66-166">이 패턴은 다음과 같은 시나리오에 유용합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-166">This pattern is useful for scenarios such as:</span></span>
+
+- <span data-ttu-id="d3e66-167">**엔터프라이즈에서 Single Sign-On 사용**.</span><span class="sxs-lookup"><span data-stu-id="d3e66-167">**Single sign-on in the enterprise**.</span></span> <span data-ttu-id="d3e66-168">이 시나리오에서는 응용 프로그램을 방문할 때마다 로그인하도록 요구하지 않고 회사 보안 경계 외부의 클라우드에 호스트된 회사 응용 프로그램에 대해 직원을 인증해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-168">In this scenario you need to authenticate employees for corporate applications that are hosted in the cloud outside the corporate security boundary, without requiring them to sign in every time they visit an application.</span></span> <span data-ttu-id="d3e66-169">사용자 환경은 회사 네트워크에 로그인할 때 인증된 후 다시 로그인할 필요 없이 모든 관련 응용 프로그램에 액세스할 수 있는 온-프레미스 응용 프로그램을 사용할 때와 동일합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-169">The user experience is the same as when using on-premises applications where they're authenticated when signing in to a corporate network, and from then on have access to all relevant applications without needing to sign in again.</span></span>
+
+- <span data-ttu-id="d3e66-170">**여러 파트너에서 페더레이션 ID 사용**.</span><span class="sxs-lookup"><span data-stu-id="d3e66-170">**Federated identity with multiple partners**.</span></span> <span data-ttu-id="d3e66-171">이 시나리오에서는 회사 디렉터리에 계정이 없는 회사 직원 및 비즈니스 파트너를 둘 다 인증해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-171">In this scenario you need to authenticate both corporate employees and business partners who don't have accounts in the corporate directory.</span></span> <span data-ttu-id="d3e66-172">이 시나리오는 B2B 응용 프로그램, 타사 서비스와 통합된 응용 프로그램, 서로 다른 IT 시스템을 가진 회사에 병합 또는 공유된 리소스가 있는 경우에 일반적으로 사용됩니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-172">This is common in business-to-business applications, applications that integrate with third-party services, and where companies with different IT systems have merged or shared resources.</span></span>
+
+- <span data-ttu-id="d3e66-173">**SaaS 응용 프로그램에서 페더레이션 ID 사용**.</span><span class="sxs-lookup"><span data-stu-id="d3e66-173">**Federated identity in SaaS applications**.</span></span> <span data-ttu-id="d3e66-174">이 시나리오에서는 독립 소프트웨어 공급업체가 여러 클라이언트 또는 테넌트에 즉시 사용할 수 있는 서비스를 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-174">In this scenario independent software vendors provide a ready-to-use service for multiple clients or tenants.</span></span> <span data-ttu-id="d3e66-175">각 테넌트가 적합한 ID 공급자를 사용하여 인증합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-175">Each tenant authenticates using a suitable identity provider.</span></span> <span data-ttu-id="d3e66-176">예를 들어 비즈니스 사용자는 회사 자격 증명을 사용하는 반면, 테넌트의 소비자와 클라이언트는 해당 소셜 ID 자격 증명을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-176">For example, business users will use their corporate credentials, while consumers and clients of the tenant will use their social identity credentials.</span></span>
+
+<span data-ttu-id="d3e66-177">이 패턴은 다음과 같은 경우에 유용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-177">This pattern might not be useful in the following situations:</span></span>
+
+- <span data-ttu-id="d3e66-178">하나의 ID 공급자가 응용 프로그램의 모든 사용자를 인증할 수 있으며, 다른 ID 공급자를 사용하여 인증해야 하는 요구 사항이 없는 경우.</span><span class="sxs-lookup"><span data-stu-id="d3e66-178">All users of the application can be authenticated by one identity provider, and there's no requirement to authenticate using any other identity provider.</span></span> <span data-ttu-id="d3e66-179">온-프레미스 디렉터리와 응용 프로그램 간의 가상 네트워크 연결을 통해 (클라우드에 호스트된 시나리오에서) 또는 VPN을 사용하여 회사 디렉터리(응용 프로그램 내에서 액세스할 수 있음)를 인증에 사용하는 비즈니스 응용 프로그램에서 일반적입니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-179">This is typical in business applications that use a corporate directory (accessible within the application) for authentication, by using a VPN, or (in a cloud-hosted scenario) through a virtual network connection between the on-premises directory and the application.</span></span>
+
+- <span data-ttu-id="d3e66-180">응용 프로그램이 원래 사용자 지정 사용자 저장소와 함께 다른 인증 메커니즘을 사용하여 빌드되었거나 클레임 기반 기술에서 사용되는 협상 표준을 처리할 수 없는 경우.</span><span class="sxs-lookup"><span data-stu-id="d3e66-180">The application was originally built using a different authentication mechanism, perhaps with custom user stores, or doesn't have the capability to handle the negotiation standards used by claims-based technologies.</span></span> <span data-ttu-id="d3e66-181">기존 응용 프로그램에 클레임 기반 인증 및 액세스 제어 기능을 추가하는 것은 복잡하고 비용 효율적이지 않을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-181">Retrofitting claims-based authentication and access control into existing applications can be complex, and probably not cost effective.</span></span>
+
+## <a name="example"></a><span data-ttu-id="d3e66-182">예</span><span class="sxs-lookup"><span data-stu-id="d3e66-182">Example</span></span>
+
+<span data-ttu-id="d3e66-183">조직이 Microsoft Azure에서 다중 테넌트 SaaS(Software as a Service) 응용 프로그램을 호스트합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-183">An organization hosts a multi-tenant software as a service (SaaS) application in Microsoft Azure.</span></span> <span data-ttu-id="d3e66-184">응용 프로그램에는 테넌트에서 해당 사용자를 위해 응용 프로그램을 관리하는 데 사용할 수 있는 웹 사이트가 포함되어 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-184">The application includes a website that tenants can use to manage the application for their own users.</span></span> <span data-ttu-id="d3e66-185">이 응용 프로그램을 통해 테넌트는 사용자가 해당 조직의 Active Directory에서 인증될 때 ADFS(Active Directory Federation Services)에서 생성되는 페더레이션 ID를 사용하여 웹 사이트에 액세스할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-185">The application allows tenants to access the website by using a federated identity that is generated by Active Directory Federation Services (ADFS) when a user is authenticated by that organization’s own Active Directory.</span></span>
+
+![대규모 엔터프라이즈 구독자의 사용자가 응용 프로그램에 액세스하는 방법](./_images/federated-identity-multitenat.png)
+
+
+<span data-ttu-id="d3e66-187">이 그림은 테넌트가 해당 ID 공급자, 이 경우에는 ADFS로 인증하는 방법(1단계)을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-187">The figure shows how tenants authenticate with their own identity provider (step 1), in this case ADFS.</span></span> <span data-ttu-id="d3e66-188">ADFS는 테넌트를 성공적으로 인증한 후 토큰을 발급합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-188">After successfully authenticating a tenant, ADFS issues a token.</span></span> <span data-ttu-id="d3e66-189">클라이언트 브라우저는 SaaS 응용 프로그램의 페더레이션 공급자에게 이 토큰을 전달하며, 페더레이션 공급자는 SaaS 페더레이션 공급자에 유효한 토큰을 다시 가져오기 위해 테넌트의 ADFS에서 발급한 토큰을 신뢰합니다(2단계).</span><span class="sxs-lookup"><span data-stu-id="d3e66-189">The client browser forwards this token to the SaaS application’s federation provider, which trusts tokens issued by the tenant’s ADFS, in order to get back a token that is valid for the SaaS federation provider (step 2).</span></span> <span data-ttu-id="d3e66-190">필요한 경우 SaaS 페더레이션 공급자는 토큰의 클레임을 응용 프로그램에서 인식하는 토큰으로 변환(3단계)한 후 새 토큰을 클라이언트 브라우저에 반환합니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-190">If necessary, the SaaS federation provider performs a transformation on the claims in the token into claims that the application recognizes (step 3) before returning the new token to the client browser.</span></span> <span data-ttu-id="d3e66-191">응용 프로그램은 SaaS 페더레이션 공급자가 발급한 토큰을 신뢰하고 토큰의 클레임을 사용하여 권한 부여 규칙을 적용합니다(4단계).</span><span class="sxs-lookup"><span data-stu-id="d3e66-191">The application trusts tokens issued by the SaaS federation provider and uses the claims in the token to apply authorization rules (step 4).</span></span>
+
+<span data-ttu-id="d3e66-192">테넌트는 응용 프로그램에 액세스하기 위해 별도의 자격 증명을 기억할 필요가 없으며, 테넌트 회사의 관리자가 응용 프로그램에 액세스할 수 있는 사용자 목록을 해당 ADFS에 구성할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="d3e66-192">Tenants won't need to remember separate credentials to access the application, and an administrator at the tenant’s company can configure in its own ADFS the list of users that can access the application.</span></span>
+
+## <a name="related-guidance"></a><span data-ttu-id="d3e66-193">관련 지침</span><span class="sxs-lookup"><span data-stu-id="d3e66-193">Related guidance</span></span>
+
+- [<span data-ttu-id="d3e66-194">Microsoft Azure Active Directory</span><span class="sxs-lookup"><span data-stu-id="d3e66-194">Microsoft Azure Active Directory</span></span>](https://azure.microsoft.com/services/active-directory/)
+- [<span data-ttu-id="d3e66-195">Active Directory Domain Services</span><span class="sxs-lookup"><span data-stu-id="d3e66-195">Active Directory Domain Services</span></span>](https://msdn.microsoft.com/library/bb897402.aspx)
+- [<span data-ttu-id="d3e66-196">Active Directory Federation Services</span><span class="sxs-lookup"><span data-stu-id="d3e66-196">Active Directory Federation Services</span></span>](https://msdn.microsoft.com/library/bb897402.aspx)
+- [<span data-ttu-id="d3e66-197">Microsoft Azure에서 다중 테넌트 응용 프로그램에 대한 ID 관리</span><span class="sxs-lookup"><span data-stu-id="d3e66-197">Identity management for multitenant applications in Microsoft Azure</span></span>](https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity/)
+- [<span data-ttu-id="d3e66-198">Azure의 다중 테넌트 응용 프로그램</span><span class="sxs-lookup"><span data-stu-id="d3e66-198">Multitenant Applications in Azure</span></span>](https://azure.microsoft.com/documentation/articles/dotnet-develop-multitenant-applications/)
