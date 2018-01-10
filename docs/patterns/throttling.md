@@ -1,103 +1,105 @@
 ---
-title: Throttling
-description: Control the consumption of resources used by an instance of an application, an individual tenant, or an entire service.
-keywords: design pattern
+title: "제한"
+description: "응용 프로그램 인스턴스, 개별 테넌트 또는 서비스 전체의 리소스 사용량을 제어합니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.service: guidance
-ms.topic: article
-ms.author: pnp
-ms.date: 03/24/2017
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
-pnp.pattern.categories: [availability, performance-scalability]
+pnp.pattern.categories:
+- availability
+- performance-scalability
+ms.openlocfilehash: 29156fc72f40a952dd53adcb20ffa7c3d0af79b4
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
-
-# 제한(Throttling)
+# <a name="throttling-pattern"></a><span data-ttu-id="20a1a-104">제한 패턴</span><span class="sxs-lookup"><span data-stu-id="20a1a-104">Throttling pattern</span></span>
 
 [!INCLUDE [header](../_includes/header.md)]
 
-응용 프로그램, 개별 테넌트, 전체 서비스의 인스턴스에 의해 사용된 리소스 소비를 제어합니다. 요구 증가가 리소스에 매우 큰 부담을 줄 때조차도, 시스템이 계속 기능을 수행하고 서비스 수준 약정을 충족할 수 있습니다. 
+<span data-ttu-id="20a1a-105">응용 프로그램 인스턴스, 개별 테넌트 또는 서비스 전체의 리소스 사용량을 제어합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-105">Control the consumption of resources used by an instance of an application, an individual tenant, or an entire service.</span></span> <span data-ttu-id="20a1a-106">이를 통해 수요 증가가 리소스에 극단적인 부하를 주는 경우에도 시스템은 계속해서 작동하고 서비스 수준 계약을 충족할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-106">This can allow the system to continue to function and meet service level agreements, even when an increase in demand places an extreme load on resources.</span></span>
 
-## 컨텍스트와 문제점
+## <a name="context-and-problem"></a><span data-ttu-id="20a1a-107">컨텍스트 및 문제점</span><span class="sxs-lookup"><span data-stu-id="20a1a-107">Context and problem</span></span>
 
-일반적으로 클라우드 응용 프로그램에 대한 부하는 활성 사용자의 수와 이들이 수행하는 활동 유형에 근거한 시간에 따라 다양합니다. 예를 들면, 매월 말 더 많은 사용자들이 업무시간에 활동적이기 쉽고, 시스템이 많은 자원이 필요한 분석을 수행해야 할 수 있습니다. 갑작스럽고 예기치 않은 버스트 동작(bursts in activity)이 벌어질 수도 있습니다. 시스템의 처리 요구사항이 이용 가능한 리소스의 역량을 초과한 경우, 성능 저하가 발생하여 실패할 수도 있습니다. 시스템이 합의된 수준의 서비스를 충족해야 하는 경우, 그런 실패는 받아들일 수 없습니다.
+<span data-ttu-id="20a1a-108">클라우드 응용 프로그램에 대한 부하는 일반적으로 활성 사용자 수 또는 수행 중인 작업 유형을 기반으로 시간이 지남에 따라 달라집니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-108">The load on a cloud application typically varies over time based on the number of active users or the types of activities they are performing.</span></span> <span data-ttu-id="20a1a-109">예를 들어 업무 시간 동안에 더 많은 사용자가 활성화될 수 있고 시스템은 월말마다 값비싼 분석을 수행해야 할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-109">For example, more users are likely to be active during business hours, or the system might be required to perform computationally expensive analytics at the end of each month.</span></span> <span data-ttu-id="20a1a-110">작업이 갑자기 예기치 않게 증가할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-110">There might also be sudden and unanticipated bursts in activity.</span></span> <span data-ttu-id="20a1a-111">시스템의 처리 요구 사항이 사용 가능한 리소스 용량을 초과할 경우 성능이 저하되며 실패할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-111">If the processing requirements of the system exceed the capacity of the resources that are available, it'll suffer from poor performance and can even fail.</span></span> <span data-ttu-id="20a1a-112">시스템이 계약된 서비스 수준을 충족해야 하는 경우 이러한 실패는 허용될 수 없습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-112">If the system has to meet an agreed level of service, such failure could be unacceptable.</span></span>
 
-응용 프로그램에 대한 비즈니스 목표에 따라, 클라우드에서 다양한 부하를 처리하는 데 이용할 수 있는 전략이 많이 있습니다. 한 가지 전략은 구축된 리소스를 언제라도 사용자 요구에 맞게 자동 크기 조정을 하는 것입니다. 이 전략은 실행 비용을 최적화하면서 사용자 요구를 일관되게 충족시킬 가능성이 있습니다. 그러나, 자동 크기 조정이 추가 리소스의 구축을 유발할 수 있지만, 이런 구축은 즉각적이지 않습니다. 요구가 빠르게 늘어날 경우, 리소스가 부족해지는 기간이 생길 수 있습니다.
+<span data-ttu-id="20a1a-113">응용 프로그램에 대한 비즈니스 목표에 따라 클라우드의 다양한 부하를 처리할 수 있는 전략은 여러 가지가 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-113">There're many strategies available for handling varying load in the cloud, depending on the business goals for the application.</span></span> <span data-ttu-id="20a1a-114">한 가지 전략은 지정된 시간에 프로비전된 리소스를 사용자 요구에 맞게 자동 크기 조정을 사용하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-114">One strategy is to use autoscaling to match the provisioned resources to the user needs at any given time.</span></span> <span data-ttu-id="20a1a-115">이렇게 하면 실행 비용을 최적화하면서 일관되게 사용자 요구를 잠재적으로 충족할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-115">This has the potential to consistently meet user demand, while optimizing running costs.</span></span> <span data-ttu-id="20a1a-116">그러나 자동 크기 조정으로 추가 리소스의 프로비전을 트리거할 수 있지만 이 프로비전은 바로 실행되지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-116">However, while autoscaling can trigger the provisioning of additional resources, this provisioning isn't immediate.</span></span> <span data-ttu-id="20a1a-117">요구가 빠르게 증가할 경우 리소스가 부족한 기간이 발생할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-117">If demand grows quickly, there can be a window of time where there's a resource deficit.</span></span>
 
-## 솔루션
+## <a name="solution"></a><span data-ttu-id="20a1a-118">해결 방법</span><span class="sxs-lookup"><span data-stu-id="20a1a-118">Solution</span></span>
 
-자동 크기 조정에 대한 대안 전략은 응용 프로그램이 리소스를 제한치까지 사용할 수 있게 허용하고, 이 제한에 도달되면 억제하는 것입니다. 시스템은 사용량이 임계값을 넘으면 사용자들의 요청을 억제할 수 있도록 응용 프로그램이 리소스를 얼마나 사용하는지 모니터해야 합니다. 이 경우 시스템은 계속 기능을 수행하고 서비스 수준 약정을 충족할 수 있을 것입니다. 리소스 사용 모니터에 관한 자세한 정보는, [계측 및 원격 분석 지침](https://msdn.microsoft.com/library/dn589775.aspx)을 참조하세요.
+<span data-ttu-id="20a1a-119">자동 크기 조정을 대체할 수 있는 전략은 응용 프로그램이 리소스를 일정 한도까지만 사용하고 이 한도에 도달하면 리소스를 제한하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-119">An alternative strategy to autoscaling is to allow applications to use resources only up to a limit, and then throttle them when this limit is reached.</span></span> <span data-ttu-id="20a1a-120">사용량이 임계값을 초과하면 하나 이상의 사용자의 요청을 제한할 수 있도록 시스템은 리소스를 어떻게 사용하는지 모니터링해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-120">The system should monitor how it's using resources so that, when usage exceeds the threshold, it can throttle requests from one or more users.</span></span> <span data-ttu-id="20a1a-121">이렇게 하면 시스템이 계속 작동할 수 있고 사용 중인 모든 SLA(서비스 수준 계약)를 충족할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-121">This will enable the system to continue functioning and meet any service level agreements (SLAs) that are in place.</span></span> <span data-ttu-id="20a1a-122">리소스 사용량을 모니터링하는 방법에 대한 자세한 내용은 [계측 및 원격 분석 지침](https://msdn.microsoft.com/library/dn589775.aspx)을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="20a1a-122">For more information on monitoring resource usage, see the [Instrumentation and Telemetry Guidance](https://msdn.microsoft.com/library/dn589775.aspx).</span></span>
 
-시스템은 다음과 같은 제한 전략을 구현할 수 있습니다:
+<span data-ttu-id="20a1a-123">시스템에서 다음과 같이 몇 가지 제한 전략을 구현할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-123">The system could implement several throttling strategies, including:</span></span>
 
-- 정해진 시간에 초당 n회 이상 이미 시스템 API를 액세스한 개별 사용자의 요청을 거부함. 시스템은 응용 프로그램을 실행하는 테넌트 또는 사용자에 대해서 리소스 사용을 측정해야 합니다. 자세한 정보는, [서비스 측정 지침](https://msdn.microsoft.com/library/dn589796.aspx)을 참조하세요.
+- <span data-ttu-id="20a1a-124">지정된 기간 동안 이미 초당 n번을 초과하여 시스템 API에 액세스한 개별 사용자의 요청을 거부합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-124">Rejecting requests from an individual user who's already accessed system APIs more than n times per second over a given period of time.</span></span> <span data-ttu-id="20a1a-125">이를 위해 시스템은 응용 프로그램을 실행하는 사용자 또는 각 테넌트의 리소스 사용을 측정해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-125">This requires the system to meter the use of resources for each tenant or user running an application.</span></span> <span data-ttu-id="20a1a-126">자세한 내용은 [서비스 계량 지침](https://msdn.microsoft.com/library/dn589796.aspx)을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="20a1a-126">For more information, see the [Service Metering Guidance](https://msdn.microsoft.com/library/dn589796.aspx).</span></span>
 
-- 필수 서비스가 충분한 리소스로 막힘없이 실행될 수 있도록, 비필수로 선택된 서비스의 기능을 사용 불가 또는 저하시킴. 예를 들면, 응용 프로그램이 비디오 출력을 스트리밍 중인 경우, 낮은 해상도로 전환할 수 있습니다.
+- <span data-ttu-id="20a1a-127">충분한 리소스를 사용하여 필수 서비스를 실행하는 데 방해되지 않도록 필수가 아닌 선택된 서비스의 기능을 사용하지 않도록 설정하거나 저하시킵니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-127">Disabling or degrading the functionality of selected nonessential services so that essential services can run unimpeded with sufficient resources.</span></span> <span data-ttu-id="20a1a-128">예를 들어 응용 프로그램에서 비디오 출력을 스트리밍하는 경우 낮은 해상도로 전환할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-128">For example, if the application is streaming video output, it could switch to a lower resolution.</span></span>
 
-- 작업의 볼륨을 부드럽게 하기 위해 부하 평준화를 이용함(이 접근 방식의 자세한 내용은 [큐 기반의 부하 평준화 패턴](queue-based-load-leveling.md)을 참조하세요). 다중 테넌트 환경에서, 이 접근 방식은 모든 테넌트의 성능을 저하시킬 것입니다. 시스템이 다양한 SLA의 복합적 테넌트를 지원해야 할 경우, 고가의 테넌트 작업이 즉시 수행될 수 있습니다. 다른 테넌트의 요청이 제지되었다가, 백로그가 덜해지면 처리될 수 있습니다. 이 접근방식을 구현하는 데 [우선순위 큐 패턴][] 이 도움이 될 수 있습니다.
+- <span data-ttu-id="20a1a-129">부하 평준화를 사용하여 작업 볼륨을 완만하게 유지합니다(이 방법은 [큐 기반 부하 평준화 패턴](queue-based-load-leveling.md)에서 자세히 다룹니다).</span><span class="sxs-lookup"><span data-stu-id="20a1a-129">Using load leveling to smooth the volume of activity (this approach is covered in more detail by the [Queue-based Load Leveling pattern](queue-based-load-leveling.md)).</span></span> <span data-ttu-id="20a1a-130">이 방법은 다중 테넌트 환경에서 모든 테넌트의 성능을 감소시킵니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-130">In a multi-tenant environment, this approach will reduce the performance for every tenant.</span></span> <span data-ttu-id="20a1a-131">시스템이 다양한 SLA로 여러 테넌트를 혼합하여 지원해야 하는 경우 중요한 테넌트에 대한 작업을 즉시 수행할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-131">If the system must support a mix of tenants with different SLAs, the work for high-value tenants might be performed immediately.</span></span> <span data-ttu-id="20a1a-132">다른 테넌트에 대한 요청을 다시 유지하고 백로그가 용이해지면 처리할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-132">Requests for other tenants can be held back, and handled when the backlog has eased.</span></span> <span data-ttu-id="20a1a-133">[우선 순위 큐 패턴][]을 사용하여 이 방법을 구현할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-133">The [Priority Queue pattern][] could be used to help implement this approach.</span></span>
 
-- 우선순위가 낮은 응용 프로그램 또는 테넌트 대신 수행되는 작업을 지연시킴. 이 작업은 시스템이 사용 중이어서 작업이 추후 재시도되어야 함을 테넌트에 알리기 위한 예외 상황에서 중단되거나 제한될 수 있습니다.  
+- <span data-ttu-id="20a1a-134">우선 순위가 낮은 응용 프로그램 또는 테넌트를 대신하여 수행할 작업을 연기합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-134">Deferring operations being performed on behalf of lower priority applications or tenants.</span></span> <span data-ttu-id="20a1a-135">이러한 작업은 시스템이 사용 중이고 작업을 나중에 다시 시도해야 함을 테넌트에 알리기 위해 예외를 생성하며 일시 중단되거나 제한될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-135">These operations can be suspended or limited, with an exception generated to inform the tenant that the system is busy and that the operation should be retried later.</span></span>
 
-그림은 3개 기능을 이용하는 응용 프로그램에 대한 시간별 리소스 사용(메모리, CPU, 대역, 기타 요소)의 영역 그래프를 보여줍니다.  A 기능은 특정 태스크 세트를 수행하는 구성요소, 복잡한 계산을 수행하는 코드, 메모리 내 캐시 등의 서비스를 제공하는 요소와 같은 기능의 영역입니다. 이 기능들은 A, B, C로 라벨 표시되었습니다.
+<span data-ttu-id="20a1a-136">다음 그림은 세 가지 기능을 사용하는 응용 프로그램의 시간별 리소스 사용(메모리, CPU, 대역폭 및 기타 요인의 조합)에 대한 영역 그래프를 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-136">The figure shows an area graph for resource use (a combination of memory, CPU, bandwidth, and other factors) against time for applications that are making use of three features.</span></span> <span data-ttu-id="20a1a-137">기능(feature)은 특정 작업 집합을 수행하는 구성 요소, 복잡한 계산을 수행하는 간단한 코드, 메모리 내 캐시와 같은 서비스를 제공하는 요소 등의 단위 기능(functionality)의 영역입니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-137">A feature is an area of functionality, such as a component that performs a specific set of tasks, a piece of code that performs a complex calculation, or an element that provides a service such as an in-memory cache.</span></span> <span data-ttu-id="20a1a-138">이러한 기능은 A, B, C로 레이블이 지정되어 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-138">These features are labeled A, B, and C.</span></span>
 
-![Figure 1 - Graph showing resource use against time for applications running on behalf of three users](./_images/throttling-resource-utilization.png)
-
-
-> 기능에 대한 선 바로 아래 영역은 이 기능을 호출할 때 응용 프로그램에 의해 사용되는 리소스를 나타냅니다. 예를 들면, 기능 A의 선 아래 영역은 기능 A를 이용하는 응용 프로그램에 의해 사용된 리소스를, 기능 A의 선과 기능 B의 선 사이의 영역은 기능 B를 호출하는 응용 프로그램에 의해 사용된 리소스를 나타냅니다. 각 기능의 영역을 집계하면 시스템의 총 리소스 사용이 됩니다.
-
-앞의 그림은 작업을 지연시키는 효과를 설명합니다. 시간 T1 바로 앞에서, 이 기능들을 사용하는 모든 응용 프로그램에 할당된 총 리소스는 임계값(리소스 사용 한계)에 도달합니다. 이 때, 응용 프로그램은 사용 가능한 리소스가 소진될 위험에 처합니다.  이 시스템에서, 기능 B는 기능 A나 기능 C보다 덜 중요하므로, 일시적으로 사용할 수 없고 사용 중이던 리소스가 해제됩니다. 시간 T1과 T2 사이에, 기능 A와 기능 C를 사용하는 응용 프로그램은 정상적으로 계속 실행됩니다. 마침내, 기능 B를 다시 사용할 정도로 용량이 충분해진 시간 T2까지 이 두 기능의 리소스 사용이 줄어듭니다.
-
-자동 크기 조정과 제한 접근 방식이 결합함으로써 응용 프로그램이 계속 반응하고 SLA를 준수하도록 도움을 줄 수 있습니다. 요구가 계속 높을 것으로 예상될 경우, 시스템 규모는 확장하는 반면 제한은 일시적 솔루션을 제공합니다. 이 때, 시스템의 전체 기능이 복원될 수 있습니다.
-
-다음 그림은 시스템에서 실행되는 모든 응용 프로그램에 의한 전체 리소스 사용을 시간별로 나타낸 영역 그래프로서, 제한이 자동 크기 조정과 결합될 수 있는지 보여줍니다.
-
-![Figure 2 - Graph showing the effects of combining throttling with autoscaling](./_images/throttling-autoscaling.png)
+![그림 1 - 3명의 사용자를 대신하여 실행 중인 응용 프로그램의 시간별 리소스 사용을 보여 주는 그래프](./_images/throttling-resource-utilization.png)
 
 
-시간 T1에, 리소스 사용의 소프트 한도를 지정한 임계값에 도달하였습니다. 이 때, 시스템 확장이 시작될 수 있습니다. 그러나, 새 리소스가 빠르게 이용 가능한 상태가 되지 않을 경우, 기존의 리소스가 소진되고 시스템은 실패할 수 있습니다. 이러한 일이 발생하는 것을 막기 위해, 앞서 설명한 바와 같이 시스템이 일시적으로 제한됩니다. 자동 크기 조정이 완료되고 추가 리소스가 이용 가능해지면 제한이 완화될 수 있습니다.
+> <span data-ttu-id="20a1a-140">각 기능의 선 바로 아래 영역이 응용 프로그램에서 이 기능을 호출할 때 사용하는 리소스를 나타냅니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-140">The area immediately below the line for a feature indicates the resources that are used by applications when they invoke this feature.</span></span> <span data-ttu-id="20a1a-141">예를 들어 기능 A 선 아래의 영역은 기능 A를 사용하는 응용 프로그램에서 사용하는 리소스를 나타내고, 기능 A와 기능 B 선 사이의 영역은 기능 B를 호출하는 응용 프로그램에서 사용하는 리소스를 나타냅니다. 각 기능에 대한 영역을 집계하면 시스템의 전체 리소스 사용이 나타납니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-141">For example, the area below the line for Feature A shows the resources used by applications that are making use of Feature A, and the area between the lines for Feature A and Feature B indicates the resources used by applications invoking Feature B. Aggregating the areas for each feature shows the total resource use of the system.</span></span>
 
-## 문제점 및 고려사항
+<span data-ttu-id="20a1a-142">이전 그림에서 작업 지연 효과를 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-142">The previous figure illustrates the effects of deferring operations.</span></span> <span data-ttu-id="20a1a-143">시간 T1 직전에 이러한 기능을 사용하는 모든 응용 프로그램에 할당된 총 리소스가 임계값(리소스 사용 한도)에 도달합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-143">Just prior to time T1, the total resources allocated to all applications using these features reach a threshold (the limit of resource use).</span></span> <span data-ttu-id="20a1a-144">이 시점에서 응용 프로그램은 사용할 수 있는 리소스를 소모할 위험이 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-144">At this point, the applications are in danger of exhausting the resources available.</span></span> <span data-ttu-id="20a1a-145">이 시스템에서 기능 B는 기능 A 또는 기능 C보다 덜 중요하므로 일시적으로 비활성화되고 사용하고 있는 리소스가 해제됩니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-145">In this system, Feature B is less critical than Feature A or Feature C, so it's temporarily disabled and the resources that it was using are released.</span></span> <span data-ttu-id="20a1a-146">시간 T1과 T2 사이에서 기능 A와 기능 C를 사용하는 응용 프로그램은 계속 정상적으로 실행됩니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-146">Between times T1 and T2, the applications using Feature A and Feature C continue running as normal.</span></span> <span data-ttu-id="20a1a-147">결국 이 두 기능의 리소스 사용이 줄어들어 T2 시점에서는 충분한 용량으로 기능 B가 다시 활성화됩니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-147">Eventually, the resource use of these two features diminishes to the point when, at time T2, there is sufficient capacity to enable Feature B again.</span></span>
 
-이 패턴을 구현하는 방법을 결정할 때 다음 사항을 고려해야 합니다.
+<span data-ttu-id="20a1a-148">자동 크기 조정 및 제한 방법을 결합하여 사용하면 SLA 내의 응용 프로그램 응답 성능을 유지할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-148">The autoscaling and throttling approaches can also be combined to help keep the applications responsive and within SLAs.</span></span> <span data-ttu-id="20a1a-149">시스템을 확장하는 동안 수요를 높은 상태로 유지해야 하는 경우 제한이 임시 솔루션이 될 수 있습니다. 이 시점에서 시스템의 모든 기능을 복원할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-149">If the demand is expected to remain high, throttling provides a temporary solution while the system scales out. At this point, the full functionality of the system can be restored.</span></span>
 
-- 응용 프로그램 제한과 사용 전략은 전체 시스템 설계에 영향을 주는 아키텍처상의 결정입니다. 일단 시스템이 구현되고 나면 추가가 쉽지 않기 때문에 제한은 응용 프로그램 설계 프로세서에서 일찍 고려되어야 합니다.
+<span data-ttu-id="20a1a-150">다음 그림은 시스템에서 실행 중인 모든 응용 프로그램의 시간별 전체 리소스 사용에 대한 영역 그래프 및 자동 크기 조정과 제한을 결합하는 방법을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-150">The next figure shows an area graph of the overall resource use by all applications running in a system against time, and illustrates how throttling can be combined with autoscaling.</span></span>
 
-- 제한이 신속하게 수행되어야 합니다. 시스템은 활동 증가를 감지하고 그에 따라 반응할 수 있어야 합니다. 시스템은 또한 부하가 덜해지고 나서 원래 상태로 신속히 되돌아갈 수 있어야 합니다. 이를 위해 적절한 성능 데이터가 계속 수집되고 모니터되어야 합니다.
-
-- 서비스가 일시적으로 사용자 요구를 거부해야 할 경우, 서비스는 특정 오류 코트를 반환해서 클라이언트 응용 프로그램이 작업 수행을 거절한 원인이 제한 때문임을 이해하도록 해야 합니다. 클라이언트 응용 프로그램은 요청을 재시도하기 전에 어느 정도 기다릴 수 있습니다.
-
-- 시스템이 자동 크기 조정되는 동안, 제한은 임시 수단으로 사용될 수 있습니다. 경우에 따라, 자동 크기 조정이 실행 비용을 크게 늘릴 수 있기 때문에, 버스트 동작이 갑작스럽고 예상치 않게 길어질 경우, 크기 조정보다는 간단히 제한하는 것이 더 낫습니다.
-
-- 시스템이 자동 크기 조정되는 동안 제한이 임시 수단으로 사용되는 경우, 또 리소스 요구가 매우 빠르게 늘어나는 경우, 시스템이 기능을 계속 수행하지 못할 수 있습니다 - 제한 모드로 운영될 때조차도. 이것이 허용되지 않을 경우, 더 큰 용량을 유지 관리하고 더 적극적인 자동 크기 조정을 구성할 것을 고려해봅니다. 
-
-## 이 패턴을 사용하는 경우
-
-다음의 경우 이 패턴을 사용합니다:
-
-- 시스템이 계속해서 서비스 수준 약정을 충족하는지 확인하기 위해서.
-
-- 단일 테넌트가 응용 프로그램이 제공한 리소스를 독점하지 못하게 하기 위해서.
-
-- 버스트 동작을 처리하기 위해서.
-
-- 기능 유지에 필요한 최대 리소스 수준을 제한하여 시스템의 비용 최적화를 지원하기 위해서.
-
-## 예
-
-마지막 그림은 다중 테넌트 시스템에서 제한이 어떻게 구현될 수 있는지 보여줍니다. 테넌트 조직의 사용자들은 설문조사를 작성하고 제출하는 클라우드 호스트된 응용 프로그램을 액세스합니다. 응용 프로그램은 이 사용자들이 응용 프로그램에 요청을 제출하는 속도를 모니터하는 계측 수단을 포함합니다.
-
-한 테넌트의 사용자들이 모든 사용자이 사용하는 응용 프로그램의 응답과 가용성에 영향을 주는 것을 막기 위해서, 한 테넌트의 사용자들이 제출할 수 있는 초당 요청 횟수가 제한됩니다. 응용 프로그램은 이 제한을 초과하는 요청을 차단합니다.
-
-![Figure 3 - Implementing throttling in a multi-tenant application](./_images/throttling-multi-tenant.png)
+![그림 2 - 자동 크기 조정과 제한을 결합하는 효과를 보여 주는 그래프](./_images/throttling-autoscaling.png)
 
 
-## 관련 패턴 및 지침
+<span data-ttu-id="20a1a-152">시간 T1에서 리소스 사용의 소프트 한도를 지정하는 임계값에 도달합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-152">At time T1, the threshold specifying the soft limit of resource use is reached.</span></span> <span data-ttu-id="20a1a-153">이 시점에서 시스템은 규모 확장을 시작할 수 있습니다. 그러나 새 리소스를 빨리 사용할 수 없는 경우에는 기존 리소스가 소진되어 시스템이 실패할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-153">At this point, the system can start to scale out. However, if the new resources don't become available quickly enough, then the existing resources might be exhausted and the system could fail.</span></span> <span data-ttu-id="20a1a-154">이런 경우가 발생하지 않도록 앞에서 설명한 대로 시스템이 일시적으로 제한됩니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-154">To prevent this from occurring, the system is temporarily throttled, as described earlier.</span></span> <span data-ttu-id="20a1a-155">자동 크기 조정이 완료되고 추가 리소스를 사용할 수 있게 되면 제한이 완화될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-155">When autoscaling has completed and the additional resources are available, throttling can be relaxed.</span></span>
 
-이 패턴을 구현할 때 다음 패턴과 지침 또한 관련될 수 있습니다:
-- [게측 및 원격 분석 지침](https://msdn.microsoft.com/library/dn589775.aspx). 제한은 서비스가 얼마나 많이 사용되고 있는지에 대한 정보의 수집에 의존합니다. 사용자 지정 모니터링 정보를 생성하고 수집하는 방법에 대해 설명합니다.
-- [서비스 측정 지침](https://msdn.microsoft.com/library/dn589796.aspx). 서비스가 어떻게 사용되는지에 대한 이해를 얻기 위해서 서비스 사용을 계측하는 방법에 대해 설명합니다. 이 정보는 서비스를 어떻게 억제할지에 대한 방법을 결정할 때 유용할 수 있습니다.
-- [자동 크기 조정 지침](https://msdn.microsoft.com/library/dn589774.aspx). 제한은 시스템이 자동 크기 조절되는 동안 또는 시스템이 자동 크기 조절될 필요를 제거하기 위해서 임시 조치로 사용될 수 있습니다. 자동 크기 조절 전략에 관한 정보를 포함합니다.
-- [큐 기반 로드 부하 평준화 패턴](queue-based-load-leveling.md). 큐 기반 부하 평준화는 제한 구현에 일반적으로 사용되는 메커니즘입니다. 큐는 응용 프로그램이 전송한 요청이 서비스로 전달되는 속도를 균등하게 하는 것을 도와주는 버퍼로 작용할 수 있습니다.
-- [우선순위 큐 패턴][]. 시스템은 덜 중요한 응용 프로그램의 성능은 낮추는 반면 중요하거나 고가의 응용 프로그램의 성능을 유지하기 위해서 제한 전략의 하나로서 우선순위 큐를 사용할 수 있습니다. 
+## <a name="issues-and-considerations"></a><span data-ttu-id="20a1a-156">문제 및 고려 사항</span><span class="sxs-lookup"><span data-stu-id="20a1a-156">Issues and considerations</span></span>
 
-[Priority Queue pattern]: priority-queue.md
+<span data-ttu-id="20a1a-157">이 패턴을 구현할 방법을 결정할 때 다음 사항을 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-157">You should consider the following points when deciding how to implement this pattern:</span></span>
+
+- <span data-ttu-id="20a1a-158">응용 프로그램 제한(사용 전략)은 시스템의 전체 디자인에 영향을 주는 아키텍처 의사 결정입니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-158">Throttling an application, and the strategy to use, is an architectural decision that impacts the entire design of a system.</span></span> <span data-ttu-id="20a1a-159">제한은 시스템이 구현되면 추가하는 것이 쉽지 않으므로 응용 프로그램 디자인 프로세스 초기에 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-159">Throttling should be considered early in the application design process because it isn't easy to add once a system has been implemented.</span></span>
+
+- <span data-ttu-id="20a1a-160">제한은 신속하게 수행되어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-160">Throttling must be performed quickly.</span></span> <span data-ttu-id="20a1a-161">시스템은 작업의 증가를 검색하고 그에 따라 반응할 수 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-161">The system must be capable of detecting an increase in activity and react accordingly.</span></span> <span data-ttu-id="20a1a-162">또한 시스템은 부하가 용이하게 된 후 신속하게 원래 상태로 되돌릴 수 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-162">The system must also be able to revert to its original state quickly after the load has eased.</span></span> <span data-ttu-id="20a1a-163">이를 위해 적절한 성능 데이터를 지속적으로 캡처하고 모니터링해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-163">This requires that the appropriate performance data is continually captured and monitored.</span></span>
+
+- <span data-ttu-id="20a1a-164">서비스가 일시적으로 사용자 요청을 거부해야 하는 경우 클라이언트 응용 프로그램에서 작업 수행을 거부하는 사유가 제한으로 인한 것임을 알도록 특정 오류 코드를 반환해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-164">If a service needs to temporarily deny a user request, it should return a specific error code so the client application understands that the reason for the refusal to perform an operation is due to throttling.</span></span> <span data-ttu-id="20a1a-165">클라이언트 응용 프로그램은 요청을 다시 시도하기 전에 일정 기간 대기할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-165">The client application can wait for a period before retrying the request.</span></span>
+
+- <span data-ttu-id="20a1a-166">시스템 자동 크기 조정 동안 임시 수단으로 제한을 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-166">Throttling can be used as a temporary measure while a system autoscales.</span></span> <span data-ttu-id="20a1a-167">갑자기 증가한 작업이 그리 오래 지속되지 않을 경우에는 크기 조정이 실행 비용을 상당히 추가할 수 있으므로 일부 경우 크기 조정 대신 간단하게 제한하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-167">In some cases it's better to simply throttle, rather than to scale, if a burst in activity is sudden and isn't expected to be long lived because scaling can add considerably to running costs.</span></span>
+
+- <span data-ttu-id="20a1a-168">시스템 크기 조정 동안 제한을 임시 수단으로 사용하는 경우와 리소스 요구가 매우 빠르게 증가하는 경우 시스템이 계속 작동하지 않을 수 있습니다. 제한된 모드에서 운영할 때에도 그러합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-168">If throttling is being used as a temporary measure while a system autoscales, and if resource demands grow very quickly, the system might not be able to continue functioning&mdash;even when operating in a throttled mode.</span></span> <span data-ttu-id="20a1a-169">이를 예방하려면 더 큰 용량 예약을 유지하고 보다 강력한 자동 크기 조정을 구성하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-169">If this isn't acceptable, consider maintaining larger capacity reserves and configuring more aggressive autoscaling.</span></span>
+
+## <a name="when-to-use-this-pattern"></a><span data-ttu-id="20a1a-170">이 패턴을 사용해야 하는 경우</span><span class="sxs-lookup"><span data-stu-id="20a1a-170">When to use this pattern</span></span>
+
+<span data-ttu-id="20a1a-171">이 패턴을 사용하여 다음을 수행할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-171">Use this pattern:</span></span>
+
+- <span data-ttu-id="20a1a-172">시스템이 계속해서 서비스 수준 계약을 충족하도록 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-172">To ensure that a system continues to meet service level agreements.</span></span>
+
+- <span data-ttu-id="20a1a-173">단일 테넌트가 응용 프로그램에서 제공하는 리소스를 독점하지 않도록 합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-173">To prevent a single tenant from monopolizing the resources provided by an application.</span></span>
+
+- <span data-ttu-id="20a1a-174">갑작스러운 작업 증가를 처리합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-174">To handle bursts in activity.</span></span>
+
+- <span data-ttu-id="20a1a-175">작동을 유지하는 데 필요한 최대 리소스 수준을 제한하여 시스템 비용을 최적화할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-175">To help cost-optimize a system by limiting the maximum resource levels needed to keep it functioning.</span></span>
+
+## <a name="example"></a><span data-ttu-id="20a1a-176">예</span><span class="sxs-lookup"><span data-stu-id="20a1a-176">Example</span></span>
+
+<span data-ttu-id="20a1a-177">마지막 그림은 다중 테넌트 시스템에서 제한을 구현할 수 있는 방법을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-177">The final figure illustrates how throttling can be implemented in a multi-tenant system.</span></span> <span data-ttu-id="20a1a-178">각 테넌트 조직의 사용자가 설문 조사를 작성 및 제출하는 클라우드 호스팅 응용 프로그램에 액세스합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-178">Users from each of the tenant organizations access a cloud-hosted application where they fill out and submit surveys.</span></span> <span data-ttu-id="20a1a-179">이 응용 프로그램에는 해당 사용자가 응용 프로그램에 요청을 제출하는 속도를 모니터링하는 계측이 포함되어 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-179">The application contains instrumentation that monitors the rate at which these users are submitting requests to the application.</span></span>
+
+<span data-ttu-id="20a1a-180">한 테넌트의 사용자가 다른 모든 사용자에 대한 응용 프로그램의 응답성 및 가용성에 영향을 주지 않도록 한 테넌트의 사용자가 제출할 수 있는 초당 요청 수에 한도를 적용합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-180">In order to prevent the users from one tenant affecting the responsiveness and availability of the application for all other users, a limit is applied to the number of requests per second the users from any one tenant can submit.</span></span> <span data-ttu-id="20a1a-181">응용 프로그램이 이 한도를 초과하는 요청을 차단합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-181">The application blocks requests that exceed this limit.</span></span>
+
+![그림 3 - 다중 테넌트 응용 프로그램에서 제한 구현](./_images/throttling-multi-tenant.png)
+
+
+## <a name="related-patterns-and-guidance"></a><span data-ttu-id="20a1a-183">관련 패턴 및 지침</span><span class="sxs-lookup"><span data-stu-id="20a1a-183">Related patterns and guidance</span></span>
+
+<span data-ttu-id="20a1a-184">이 패턴을 구현할 때 다음 패턴 및 지침도 관련이 있을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-184">The following patterns and guidance may also be relevant when implementing this pattern:</span></span>
+- <span data-ttu-id="20a1a-185">[계측 및 원격 분석 지침](https://msdn.microsoft.com/library/dn589775.aspx)</span><span class="sxs-lookup"><span data-stu-id="20a1a-185">[Instrumentation and Telemetry Guidance](https://msdn.microsoft.com/library/dn589775.aspx).</span></span> <span data-ttu-id="20a1a-186">제한은 서비스가 얼마나 많이 사용되고 있는지에 대한 정보 수집에 따라 달라집니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-186">Throttling depends on gathering information about how heavily a service is being used.</span></span> <span data-ttu-id="20a1a-187">사용자 지정 모니터링 정보를 생성하고 캡처하는 방법에 대해 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-187">Describes how to generate and capture custom monitoring information.</span></span>
+- <span data-ttu-id="20a1a-188">[서비스 계량 지침](https://msdn.microsoft.com/library/dn589796.aspx).</span><span class="sxs-lookup"><span data-stu-id="20a1a-188">[Service Metering Guidance](https://msdn.microsoft.com/library/dn589796.aspx).</span></span> <span data-ttu-id="20a1a-189">사용 방법을 이해하기 위해 서비스 사용을 계량하는 방법을 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-189">Describes how to meter the use of services in order to gain an understanding of how they are used.</span></span> <span data-ttu-id="20a1a-190">이 정보는 서비스 제한 방법을 결정하는 데 유용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-190">This information can be useful in determining how to throttle a service.</span></span>
+- <span data-ttu-id="20a1a-191">[자동 크기 조정 지침](https://msdn.microsoft.com/library/dn589774.aspx).</span><span class="sxs-lookup"><span data-stu-id="20a1a-191">[Autoscaling Guidance](https://msdn.microsoft.com/library/dn589774.aspx).</span></span> <span data-ttu-id="20a1a-192">제한은 시스템 자동 크기 조정 동안 임시 수단으로 사용될 수 있으며, 제한을 사용하면 시스템에서 자동 크기 조정이 필요하지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-192">Throttling can be used as an interim measure while a system autoscales, or to remove the need for a system to autoscale.</span></span> <span data-ttu-id="20a1a-193">자동 크기 조정 전략에 대한 정보를 포함합니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-193">Contains information on autoscaling strategies.</span></span>
+- <span data-ttu-id="20a1a-194">[큐 기반 부하 평준화 패턴](queue-based-load-leveling.md).</span><span class="sxs-lookup"><span data-stu-id="20a1a-194">[Queue-based Load Leveling pattern](queue-based-load-leveling.md).</span></span> <span data-ttu-id="20a1a-195">큐 기반 부하 평준화는 제한을 구현하기 위해 일반적으로 사용되는 메커니즘입니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-195">Queue-based load leveling is a commonly used mechanism for implementing throttling.</span></span> <span data-ttu-id="20a1a-196">큐는 응용 프로그램에 의해 전송되는 요청이 서비스로 전달되는 속도를 평준화하도록 하는 버퍼 역할을 할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-196">A queue can act as a buffer that helps to even out the rate at which requests sent by an application are delivered to a service.</span></span>
+- <span data-ttu-id="20a1a-197">[우선 순위 큐 패턴][].</span><span class="sxs-lookup"><span data-stu-id="20a1a-197">[Priority Queue pattern][].</span></span> <span data-ttu-id="20a1a-198">시스템은 제한 전략의 일환으로 우선 순위 큐를 사용하여 덜 중요한 응용 프로그램의 성능은 줄이고 중요한 응용 프로그램의 성능을 유지 관리할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20a1a-198">A system can use priority queuing as part of its throttling strategy to maintain performance for critical or higher value applications, while reducing the performance of less important applications.</span></span>
+
+[우선 순위 큐 패턴]: priority-queue.md
