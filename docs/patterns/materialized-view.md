@@ -1,90 +1,92 @@
 ---
-title: Materialized View
-description: Generate prepopulated views over the data in one or more data stores when the data isn't ideally formatted for required query operations.
-keywords: design pattern
+title: "구체화된 뷰"
+description: "데이터가 필요한 쿼리 작업에 대해 이상적으로 포맷되지 않은 경우 하나 이상의 데이터 저장소에 있는 데이터에 대한 미리 채워진 뷰를 생성합니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.service: guidance
-ms.topic: article
-ms.author: pnp
-ms.date: 03/24/2017
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
-pnp.pattern.categories: [data-management, performance-scalability]
+pnp.pattern.categories:
+- data-management
+- performance-scalability
+ms.openlocfilehash: 992abcb57204c65a7ca9e9e2525d3ea7339c4a2c
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
-
-# 구체화된 뷰
+# <a name="materialized-view-pattern"></a><span data-ttu-id="ab248-104">구체화된 뷰 패턴</span><span class="sxs-lookup"><span data-stu-id="ab248-104">Materialized View pattern</span></span>
 
 [!INCLUDE [header](../_includes/header.md)]
 
-데이터가 필요한 쿼리 작업에 맞게 포맷되지 않은 경우, 하나 이상의 데이터 저장소 내에 있는 데이터에 대해 미리 채워진 뷰를 생성합니다. 이렇게 하면 효율적인 쿼리와 데이터 추출을 지원하고 응용 프로그램 성능을 개선하는 데 도움을 줄 수 있습니다.
+<span data-ttu-id="ab248-105">데이터가 필요한 쿼리 작업에 대해 이상적으로 포맷되지 않은 경우 하나 이상의 데이터 저장소에 있는 데이터에 대한 미리 채워진 뷰를 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-105">Generate prepopulated views over the data in one or more data stores when the data isn't ideally formatted for required query operations.</span></span> <span data-ttu-id="ab248-106">이렇게 하면 효율적인 쿼리와 데이터 추출을 지원하고 응용 프로그램 성능을 개선하는 데 도움을 줄 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-106">This can help support efficient querying and data extraction, and improve application performance.</span></span>
 
-## 배경 및 문제
+## <a name="context-and-problem"></a><span data-ttu-id="ab248-107">컨텍스트 및 문제점</span><span class="sxs-lookup"><span data-stu-id="ab248-107">Context and problem</span></span>
 
-데이터를 저장할 때 개발자와 데이터 관리자는 데이터를 읽는 방법이 아니라 데이터를 저장하는 방법에 초점을 맞추는 경우가 많습니다. 선택하는 저장소 형식은 대개 데이터 형식, 데이터 크기와 데이터 무결성을 관리하는 요구 사항 및 사용 중인 저장소의 유형과 밀접하게 관련됩니다. 예를 들어 NoSQL 문서 저장소를 사용할 때 데이터는 해당 엔터티의 모든 정보를 포함하는 일련의 집합체로 표현되곤 합니다.
+<span data-ttu-id="ab248-108">데이터를 저장할 때 개발자와 데이터 관리자는 데이터를 읽는 방법이 아니라 데이터를 저장하는 방법에 초점을 맞추는 경우가 많습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-108">When storing data, the priority for developers and data administrators is often focused on how the data is stored, as opposed to how it's read.</span></span> <span data-ttu-id="ab248-109">선택하는 저장소 형식은 대개 데이터 형식, 데이터 크기와 데이터 무결성을 관리하는 요구 사항 및 사용 중인 저장소의 유형과 밀접하게 관련됩니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-109">The chosen storage format is usually closely related to the format of the data, requirements for managing data size and data integrity, and the kind of store in use.</span></span> <span data-ttu-id="ab248-110">예를 들어 NoSQL 문서 저장소를 사용할 때 데이터는 해당 엔터티의 모든 정보를 포함하는 일련의 집합체로 표현되곤 합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-110">For example, when using NoSQL document store, the data is often represented as a series of aggregates, each containing all of the information for that entity.</span></span>
 
-그러나 이는 쿼리에 좋지 않은 영향을 미칠 수 있습니다. 주문 세부 정보를 포함하지 않는 여러 고객의 주문 요약과 같이 쿼리가 일부 엔터티에서 데이터의 하위 집합만 필요로 하는 경우에도 관련 엔터티의 모든 데이터를 추출해야만 필요한 정보를 가져올 수 있기 때문입니다.
+<span data-ttu-id="ab248-111">그러나 이는 쿼리에 좋지 않은 영향을 미칠 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-111">However, this can have a negative effect on queries.</span></span> <span data-ttu-id="ab248-112">모든 주문 세부 정보를 포함하지는 않는 여러 고객의 주문 요약과 같이 쿼리가 일부 엔터티에서 데이터의 하위 집합만 필요로 하는 경우에도 관련 엔터티의 모든 데이터를 추출해야만 필요한 정보를 가져올 수 있기 때문입니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-112">When a query only needs a subset of the data from some entities, such as a summary of orders for several customers without all of the order details, it must extract all of the data for the relevant entities in order to obtain the required information.</span></span>
 
-## 해결책
+## <a name="solution"></a><span data-ttu-id="ab248-113">해결 방법</span><span class="sxs-lookup"><span data-stu-id="ab248-113">Solution</span></span>
 
-효율적인 쿼리를 지원하기 위한 일반적인 해결책은 필요한 결과 집합에 적합한 형식으로 데이터를 구체화하는 보기를 미리 생성하는 것입니다. 구체화된 뷰 패턴은 쿼리에 적합한 형식의 원본 데이터가 없거나, 적절한 쿼리의 생성이 어렵거나, 데이터 또는 데이터 저장소의 특성으로 인해 쿼리 성능이 낮은 환경에서 데이터의 미리 채워진 뷰를 생성하는 방법을 설명합니다.
+<span data-ttu-id="ab248-114">효율적인 쿼리를 지원하기 위한 일반적인 해결책은 필요한 결과 집합에 적합한 형식으로 데이터를 구체화하는 뷰를 미리 생성하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-114">To support efficient querying, a common solution is to generate, in advance, a view that materializes the data in a format suited to the required results set.</span></span> <span data-ttu-id="ab248-115">구체화된 뷰 패턴은 쿼리에 적합한 형식의 원본 데이터가 없거나, 적절한 쿼리의 생성이 어렵거나, 데이터 또는 데이터 저장소의 특성으로 인해 쿼리 성능이 낮은 환경에서 데이터의 미리 채워진 뷰를 생성하는 방법을 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-115">The Materialized View pattern describes generating prepopulated views of data in environments where the source data isn't in a suitable format for querying, where generating a suitable query is difficult, or where query performance is poor due to the nature of the data or the data store.</span></span>
 
-쿼리에 필요한 데이터만 포함하는 구체화된 뷰를 사용하면 응용 프로그램은 필요한 정보를 빠르게 가져올 수 있습니다. 구체화된 뷰는 테이블 조인 또는 데이터 엔터티 조합 뿐 아니라 계산된 열이나 데이터 항목의 현재 값, 값을 조합하거나 데이터 항목에서 변환을 실행한 결과 및 쿼리의 일부로 지정된 값을 포함할 수 있습니다. 심지어 구체화된 뷰는 단일 쿼리에만 최적화될 수도 있습니다.
+<span data-ttu-id="ab248-116">쿼리에 필요한 데이터만 포함하는 구체화된 뷰를 사용하면 응용 프로그램은 필요한 정보를 빠르게 가져올 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-116">These materialized views, which only contain data required by a query, allow applications to quickly obtain the information they need.</span></span> <span data-ttu-id="ab248-117">구체화된 뷰는 테이블 조인 또는 데이터 엔터티 조합 뿐 아니라 계산된 열이나 데이터 항목의 현재 값, 값을 조합하거나 데이터 항목에서 변환을 실행한 결과 및 쿼리의 일부로 지정된 값을 포함할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-117">In addition to joining tables or combining data entities, materialized views can include the current values of calculated columns or data items, the results of combining values or executing transformations on the data items, and values specified as part of the query.</span></span> <span data-ttu-id="ab248-118">심지어 구체화된 뷰는 단일 쿼리에만 최적화될 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-118">A materialized view can even be optimized for just a single query.</span></span>
 
-요점은 구체화된 뷰 및 구체화된 뷰에 포함된 데이터는 원본 데이터 저장소에 따라 완전히 다시 생성되기 때문에 일회용에 불과하다는 것입니다. 구체화된 뷰는 응용 프로그램을 통해 직접 업데이트되지 않으므로 전문화된 캐시에 해당됩니다.
+<span data-ttu-id="ab248-119">요점은 구체화된 뷰 및 구체화된 뷰에 포함된 데이터는 원본 데이터 저장소에 따라 완전히 다시 생성되기 때문에 일회용에 불과하다는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-119">A key point is that a materialized view and the data it contains is completely disposable because it can be entirely rebuilt from the source data stores.</span></span> <span data-ttu-id="ab248-120">구체화된 뷰는 응용 프로그램을 통해 직접 업데이트되지 않으므로 전문화된 캐시에 해당됩니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-120">A materialized view is never updated directly by an application, and so it's a specialized cache.</span></span>
 
-구체화된 뷰의 원본 데이터를 변경하는 경우, 구체화된 뷰를 업데이트해 새로운 정보를 반영해야 합니다. 이런 업데이트는 자동으로 수행하거나 시스템이 원본 데이터의 변경을 감지할 때 수행하도록 예약할 수 있습니다. 일부 경우에는 구체화된 뷰를 수동으로 다시 생성할 필요가 있습니다. 다음 그림은 구체화된 뷰 패턴을 사용할 수 있는 방법의 예를 보여줍니다.
+<span data-ttu-id="ab248-121">뷰의 원본 데이터를 변경하는 경우, 새 정보가 포함되도록 뷰를 업데이트해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-121">When the source data for the view changes, the view must be updated to include the new information.</span></span> <span data-ttu-id="ab248-122">이런 업데이트는 자동으로 수행하거나 시스템이 원본 데이터의 변경을 감지할 때 수행하도록 예약할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-122">You can schedule this to happen automatically, or when the system detects a change to the original data.</span></span> <span data-ttu-id="ab248-123">일부 경우에는 뷰를 수동으로 다시 생성할 필요가 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-123">In some cases it might be necessary to regenerate the view manually.</span></span> <span data-ttu-id="ab248-124">다음 그림은 구체화된 뷰 패턴을 사용할 수 있는 방법의 예를 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-124">The figure shows an example of how the Materialized View pattern might be used.</span></span>
 
-![Figure 1 shows an example of how the Materialized View pattern might be used](./_images/materialized-view-pattern-diagram.png)
-
-
-## 문제 및 고려 사항
-
-이 패턴의 구현 방법을 결정할 때는 다음 사항을 고려해야 합니다.
-
-구체화된 뷰의 업데이트 방법과 시점. 원본 데이터가 급속하게 변경되는 경우, 과도한 오버헤드를 초래하더라도 원본 데이터의 변경을 표시하는 이벤트에 따라 구체화된 뷰를 다시 생성하는 것이 좋습니다. 구체화된 뷰를 다시 생성하기 위한 다른 방법으로는 예약된 작업, 외부 트리거 또는 수동 작업의 사용을 고려할 수 있습니다.
-
-데이터를 수정한 이벤트만 보관된 저장소를 유지하는 이벤트 소싱 패턴을 사용하는 일부 시스템에는 구체화된 뷰가 필요합니다. 모든 이벤트를 검사해 현재 상태를 결정하는 미리 채워진 뷰는 이벤트 저장소에서 정보를 가져오는 유일한 방법일 수 있습니다. 이벤트 소싱을 사용하지 않는 경우, 구체화된 뷰가 도움이 되는지 여부를 고려할 필요가 있습니다. 구체화된 뷰는 하나 또는 적은 수의 쿼리에 특정하게 맞춤화되는 경향이 있습니다. 따라서 많은 쿼리를 사용하는 경우, 구체화된 뷰는 수용하기 어려운 수준의 저장소 용량 요구 사항과 저장소 비용을 초래할 수 있습니다.
-
-구체화된 뷰를 생성하거나 예약을 통해 구체화된 뷰를 업데이트할 때는 데이터 일관성에 미치는 영향을 고려해야 합니다. 구체화된 뷰를 생성하는 시점에 원본 데이터를 변경하고 있는 경우, 구체화된 뷰의 데이터 사본이 원본 데이터와 완벽하게 일치하지 않을 수 있습니다.
-
-구체화된 뷰를 어디에 저장할지 고려해야 하는데, 구체화된 뷰가 원본 데이터와 동일한 저장소 또는 파티션에 있어서는 안 됩니다. 구체화된 뷰는 몇 개가 조합된 파티션의 하위 집합일 수 있습니다.
-
-손실된 뷰는 다시 생성할 수 있습니다. 따라서 구체화된 뷰가 일시적이고 데이터의 현재 상태를 반영해 쿼리 성능을 높이거나 확장성을 향상시키는 데만 사용되는 경우, 구체화된 뷰를 캐시 또는 신뢰성이 낮은 위치에 저장할 수 있습니다.
-
-구체화된 뷰를 정의할 때는 기존 데이터 항목의 계산이나 변환, 쿼리에 전달된 값 및 해당하는 경우 이런 값의 조합을 기반으로 하는 데이터 항목이나 열을 추가해 값을 최대화합니다.
-
-저장소 메커니즘이 구체화된 뷰를 지원하는 경우, 추가 성능 향상을 위해 구체화된 뷰의 인덱싱을 고려할 수 있습니다. 대부분의 관계형 데이터베이스는 Apache Hadoop 기반의 빅데이터 솔루션처럼 보기의 인덱싱을 지원합니다.
-
-## 패턴 사용 사례
-
-다음의 경우에 이 패턴이 유용합니다.
-- 직접 쿼리하기 어려운 데이터에 대한 구체화된 뷰를 생성하거나 쿼리가 너무 복잡해서 정규화, 반구조화, 비구조화 방식으로 저장된 데이터를 추출해야 하는 경우
-- 쿼리 성능을 엄청나게 높일 수 있거나 보고 또는 표시를 위해 UI의 원본 보기 또는 데이터 전송 개체로 직접 작용할 수 있는 임시 보기를 만드는 경우
-- 데이터 저장소와의 연결을 항상 유지할 수 없어서 가끔씩 연결하거나 연결 해제하는 시나리오를 지원하는 경우. 이 경우 구체화된 뷰는 로컬 방식으로 캐시할 수 있습니다.
-- 원본 데이터 형식에 대한 지식이 필요 없는 방식으로 쿼리를 단순화하고 실험 데이터를 표시하는 경우. 예를 들면 하나 이상의 데이터베이스에 있는 여러 테이블 또는 여러 NoSQL 저장소에 있는 하나 이상의 도메인을 연결한 다음 데이터를 최종 용도에 맞게 포맷합니다.
-- 보안 또는 개인 정보 보호 이유로 인해 일반적으로 액세스할 수 없고, 수정하기 위해 열 수 없으며, 사용자에게 완전히 노출되지 않아야 하는 원본 데이터의 특정 하위 집합에 액세스를 제공하는 경우
-- 데이터 저장소의 개별 기능을 활용하기 위해 여러 데이터 저장소를 연결하는 경우. 예를 들면 참조 데이터 저장소로서 쓰기에 효율적인 클라우드 저장소와 구체화된 뷰를 보관하기 위해 뛰어난 쿼리와 읽기 성능을 제공하는 관계형 데이터베이스를 함께 사용하는 경우.
-
-다음의 상황에는 이 패턴이 유용하지 않습니다.
-- 원본 데이터가 단순하고 쿼리하기 용이한 경우
-- 원본 데이터가 굉장히 빠르게 변경되거나 보기를 사용하지 않고 원본 데이터에 액세스할 수 있는 경우. 이런 경우에는 보기 만들기와 관련된 처리 오버헤드를 방지해야 합니다.
-- 일관성이 높은 우선 순위인 경우. 구체화된 뷰는 원본 데이터와 완벽하게 일치하지 않을 수 있습니다.
-
-## 예제
-
-다음 그림은 구체화된 뷰 패턴을 사용해 매출액의 요약을 생성하는 예를 보여줍니다. Azure 저장소 계정의 별도 파티션에 있는 Order, OrderItem, Customer 테이블의 데이터는 Electronics 범주의 제품별 총매출액을 포함하는 보기를 생성하기 위해 각 항목을 구매하는 고객의 숫자와 함께 조합합니다.
-
-![Figure 2: Using the Materialized View pattern to generate a summary of sales](./_images/materialized-view-summary-diagram.png)
+![그림 1은 구체화된 뷰 패턴을 사용할 수 있는 방법의 예를 보여 줍니다.](./_images/materialized-view-pattern-diagram.png)
 
 
-이런 구체화된 뷰를 생성하려면 복잡한 쿼리가 필요합니다. 그러나 쿼리 결과를 구체화된 뷰로 표시하면 결과를 쉽게 확인하고 직접 사용하거나 다른 쿼리에 통합할 수 있습니다. 구체화된 뷰는 보고 시스템 또는 대시보드에 사용할 수 있고 매주 업데이트와 같은 예약 방식으로 업데이트할 수 있습니다.
+## <a name="issues-and-considerations"></a><span data-ttu-id="ab248-126">문제 및 고려 사항</span><span class="sxs-lookup"><span data-stu-id="ab248-126">Issues and considerations</span></span>
 
->  이런 예는 Azure 테이블 저장소를 활용하지만, 많은 관계형 데이터베이스 관리 시스템도 구체화된 뷰를 위한 기본 지원을 제공합니다.
+<span data-ttu-id="ab248-127">이 패턴을 구현할 방법을 결정할 때 다음 사항을 고려하세요.</span><span class="sxs-lookup"><span data-stu-id="ab248-127">Consider the following points when deciding how to implement this pattern:</span></span>
 
-## 관련 패턴 및 지침
+<span data-ttu-id="ab248-128">뷰의 업데이트 방법과 시점.</span><span class="sxs-lookup"><span data-stu-id="ab248-128">How and when the view will be updated.</span></span> <span data-ttu-id="ab248-129">원본 데이터가 급속하게 변경되는 경우, 과도한 오버헤드를 초래하더라도 원본 데이터의 변경을 표시하는 이벤트에 따라 구체화된 뷰를 다시 생성하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-129">Ideally it'll regenerate in response to an event indicating a change to the source data, although this can lead to excessive overhead if the source data changes rapidly.</span></span> <span data-ttu-id="ab248-130">또는 예약된 작업, 외부 트리거 또는 수동 작업을 사용하여 뷰를 다시 생성할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-130">Alternatively, consider using a scheduled task, an external trigger, or a manual action to regenerate the view.</span></span>
 
-이 패턴을 구현할 때 관련될 수 있는 패턴과 지침은 다음과 같습니다.
-- [데이터 일관성 프라이머](https://msdn.microsoft.com/library/dn589800.aspx). 구체화된 뷰의 요약 정보는 구체화된 뷰가 원본 데이터 값을 반영하도록 유지되어야 합니다. 데이터 값이 변경되면 요약 데이터는 실시간으로 업데이트할 수 없으므로 그 대신 최종 일관성 접근을 채택해야 합니다. 분산 데이터의 일관성 유지와 관련된 문제를 요약하고 다양한 일관성 모델의 장점과 단점을 설명합니다.
-- [명령과 쿼리의 역할 분리(CQRS) 패턴](cqrs.md). 원본 데이터 값이 변경될 때 발생하는 이벤트에 따라 구체화된 뷰의 정보를 업데이트하는 데 사용합니다.
-- [이벤트 소싱 패턴](event-sourcing.md). CQRS 패턴와 함께 구체화된 뷰의 정보를 유지하는 데 사용합니다. 구체화된 뷰가 참조하는 원본 데이터 값이 변경되면 시스템은 이런 변경 사항을 설명하는 이벤트를 발생시키고 이벤트를 이벤트 저장소에 저장합니다.
-- [인덱스 테이블 패턴](index-table.md). 보통 구체화된 뷰의 데이터는 기본 키로 구성되지만, 쿼리는 다른 필드의 데이터를 검사해 구체화된 뷰에서 정보를 검색할 필요가 있습니다. 기본 보조 인덱스를 지원하지 않는 데이터 저장소의 데이터 집합에 대한 보조 인덱스를 만드는 데 사용합니다.
+<span data-ttu-id="ab248-131">데이터를 수정한 이벤트만 보관된 저장소를 유지하는 이벤트 소싱 패턴을 사용하는 일부 시스템에는 구체화된 뷰가 필요합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-131">In some systems, such as when using the Event Sourcing pattern to maintain a store of only the events that modified the data, materialized views are necessary.</span></span> <span data-ttu-id="ab248-132">모든 이벤트를 검사해 현재 상태를 결정하는 미리 채워진 뷰는 이벤트 저장소에서 정보를 가져오는 유일한 방법일 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-132">Prepopulating views by examining all events to determine the current state might be the only way to obtain information from the event store.</span></span> <span data-ttu-id="ab248-133">이벤트 소싱을 사용하지 않는 경우, 구체화된 뷰가 도움이 되는지 여부를 고려할 필요가 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-133">If you're not using Event Sourcing, you need to consider whether a materialized view is helpful or not.</span></span> <span data-ttu-id="ab248-134">구체화된 뷰는 하나 또는 적은 수의 쿼리에 특정하게 맞춤화되는 경향이 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-134">Materialized views tend to be specifically tailored to one, or a small number of queries.</span></span> <span data-ttu-id="ab248-135">많은 쿼리를 사용하는 경우, 구체화된 뷰는 수용하기 어려운 수준의 저장소 용량 요구 사항과 저장소 비용을 초래할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-135">If many queries are used, materialized views can result in unacceptable storage capacity requirements and storage cost.</span></span>
+
+<span data-ttu-id="ab248-136">뷰를 생성하거나 예약을 통해 뷰를 업데이트할 때는 데이터 일관성에 미치는 영향을 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-136">Consider the impact on data consistency when generating the view, and when updating the view if this occurs on a schedule.</span></span> <span data-ttu-id="ab248-137">뷰를 생성하는 시점에 원본 데이터를 변경하고 있는 경우, 뷰의 데이터 사본이 원본 데이터와 완벽하게 일치하지 않을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-137">If the source data is changing at the point when the view is generated, the copy of the data in the view won't be fully consistent with the original data.</span></span>
+
+<span data-ttu-id="ab248-138">뷰를 어디에 저장할지 고려해야 하는데,</span><span class="sxs-lookup"><span data-stu-id="ab248-138">Consider where you'll store the view.</span></span> <span data-ttu-id="ab248-139">뷰가 원본 데이터와 동일한 저장소 또는 파티션에 있어서는 안 됩니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-139">The view doesn't have to be located in the same store or partition as the original data.</span></span> <span data-ttu-id="ab248-140">구체화된 뷰는 몇 개가 조합된 파티션의 하위 집합일 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-140">It can be a subset from a few different partitions combined.</span></span>
+
+<span data-ttu-id="ab248-141">손실된 뷰는 다시 생성할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-141">A view can be rebuilt if lost.</span></span> <span data-ttu-id="ab248-142">따라서 뷰가 일시적이고 데이터의 현재 상태를 반영해 쿼리 성능을 높이거나 확장성을 향상시키는 데만 사용되는 경우, 뷰를 캐시 또는 신뢰성이 낮은 위치에 저장할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-142">Because of that, if the view is transient and is only used to improve query performance by reflecting the current state of the data, or to improve scalability, it can be stored in a cache or in a less reliable location.</span></span>
+
+<span data-ttu-id="ab248-143">구체화된 뷰를 정의할 때는 기존 데이터 항목의 계산이나 변환, 쿼리에 전달된 값 및 해당하는 경우 이런 값의 조합을 기반으로 하는 데이터 항목이나 열을 추가해 값을 최대화합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-143">When defining a materialized view, maximize its value by adding data items or columns to it based on computation or transformation of existing data items, on values passed in the query, or on combinations of these values when appropriate.</span></span>
+
+<span data-ttu-id="ab248-144">저장소 메커니즘이 구체화된 뷰를 지원하는 경우, 추가 성능 향상을 위해 구체화된 뷰의 인덱싱을 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-144">Where the storage mechanism supports it, consider indexing the materialized view to further increase performance.</span></span> <span data-ttu-id="ab248-145">대부분의 관계형 데이터베이스는 Apache Hadoop 기반의 빅데이터 솔루션처럼 뷰의 인덱싱을 지원합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-145">Most relational databases support indexing for views, as do big data solutions based on Apache Hadoop.</span></span>
+
+## <a name="when-to-use-this-pattern"></a><span data-ttu-id="ab248-146">이 패턴을 사용해야 하는 경우</span><span class="sxs-lookup"><span data-stu-id="ab248-146">When to use this pattern</span></span>
+
+<span data-ttu-id="ab248-147">다음의 경우에 이 패턴이 유용합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-147">This pattern is useful when:</span></span>
+- <span data-ttu-id="ab248-148">직접 쿼리하기 어려운 데이터에 대한 구체화된 뷰를 생성하거나 쿼리가 너무 복잡해서 정규화, 반구조화, 비구조화 방식으로 저장된 데이터를 추출해야 하는 경우</span><span class="sxs-lookup"><span data-stu-id="ab248-148">Creating materialized views over data that's difficult to query directly, or where queries must be very complex to extract data that's stored in a normalized, semi-structured, or unstructured way.</span></span>
+- <span data-ttu-id="ab248-149">쿼리 성능을 엄청나게 높일 수 있거나 보고 또는 표시를 위해 UI의 원본 뷰 또는 데이터 전송 개체로 직접 작용할 수 있는 임시 뷰를 만드는 경우</span><span class="sxs-lookup"><span data-stu-id="ab248-149">Creating temporary views that can dramatically improve query performance, or can act directly as source views or data transfer objects for the UI, for reporting, or for display.</span></span>
+- <span data-ttu-id="ab248-150">데이터 저장소와의 연결을 항상 유지할 수 없어서 가끔씩 연결하거나 연결이 끊어지는 시나리오를 지원하는 경우.</span><span class="sxs-lookup"><span data-stu-id="ab248-150">Supporting occasionally connected or disconnected scenarios where connection to the data store isn't always available.</span></span> <span data-ttu-id="ab248-151">이 경우 뷰는 로컬 방식으로 캐시할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-151">The view can be cached locally in this case.</span></span>
+- <span data-ttu-id="ab248-152">원본 데이터 형식에 대한 지식이 필요 없는 방식으로 쿼리를 단순화하고 실험 데이터를 표시하는 경우.</span><span class="sxs-lookup"><span data-stu-id="ab248-152">Simplifying queries and exposing data for experimentation in a way that doesn't require knowledge of the source data format.</span></span> <span data-ttu-id="ab248-153">예를 들면 하나 이상의 데이터베이스에 있는 여러 테이블 또는 여러 NoSQL 저장소에 있는 하나 이상의 도메인을 연결한 다음, 최종 용도에 맞게 데이터 형식을 지정합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-153">For example, by joining different tables in one or more databases, or one or more domains in NoSQL stores, and then formatting the data to fit its eventual use.</span></span>
+- <span data-ttu-id="ab248-154">보안 또는 개인 정보 보호 이유로 인해 일반적으로 액세스할 수 없고, 수정하기 위해 열 수 없으며, 사용자에게 완전히 노출되지 않아야 하는 원본 데이터의 특정 하위 집합에 대한 액세스를 제공하는 경우</span><span class="sxs-lookup"><span data-stu-id="ab248-154">Providing access to specific subsets of the source data that, for security or privacy reasons, shouldn't be generally accessible, open to modification, or fully exposed to users.</span></span>
+- <span data-ttu-id="ab248-155">데이터 저장소의 개별 기능을 활용하기 위해 여러 데이터 저장소를 연결하는 경우.</span><span class="sxs-lookup"><span data-stu-id="ab248-155">Bridging different data stores, to take advantage of their individual capabilities.</span></span> <span data-ttu-id="ab248-156">예를 들면 참조 데이터 저장소로서 쓰기에 효율적인 클라우드 저장소와 구체화된 뷰를 보관하기 위해 뛰어난 쿼리와 읽기 성능을 제공하는 관계형 데이터베이스를 함께 사용하는 경우</span><span class="sxs-lookup"><span data-stu-id="ab248-156">For example, using a cloud store that's efficient for writing as the reference data store, and a relational database that offers good query and read performance to hold the materialized views.</span></span>
+
+<span data-ttu-id="ab248-157">다음의 상황에는 이 패턴이 유용하지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-157">This pattern isn't useful in the following situations:</span></span>
+- <span data-ttu-id="ab248-158">원본 데이터가 단순하고 쿼리하기 용이한 경우</span><span class="sxs-lookup"><span data-stu-id="ab248-158">The source data is simple and easy to query.</span></span>
+- <span data-ttu-id="ab248-159">원본 데이터가 굉장히 빠르게 변경되거나 뷰를 사용하지 않고 원본 데이터에 액세스할 수 있는 경우.</span><span class="sxs-lookup"><span data-stu-id="ab248-159">The source data changes very quickly, or can be accessed without using a view.</span></span> <span data-ttu-id="ab248-160">이런 경우에는 뷰 만들기와 관련된 처리 오버헤드를 방지해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-160">In these cases, you should avoid the processing overhead of creating views.</span></span>
+- <span data-ttu-id="ab248-161">일관성이 높은 우선 순위인 경우.</span><span class="sxs-lookup"><span data-stu-id="ab248-161">Consistency is a high priority.</span></span> <span data-ttu-id="ab248-162">뷰는 원본 데이터와 완벽하게 일치하지 않을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-162">The views might not always be fully consistent with the original data.</span></span>
+
+## <a name="example"></a><span data-ttu-id="ab248-163">예</span><span class="sxs-lookup"><span data-stu-id="ab248-163">Example</span></span>
+
+<span data-ttu-id="ab248-164">다음 그림은 구체화된 뷰 패턴을 사용해 매출액의 요약을 생성하는 예를 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-164">The following figure shows an example of using the Materialized View pattern to generate a summary of sales.</span></span> <span data-ttu-id="ab248-165">Azure Storage 계정의 별도 파티션에 있는 Order, OrderItem, Customer 테이블의 데이터를 각 항목을 구매하는 고객의 수와 조합해서 Electronics 범주의 제품별 총매출액을 포함하는 뷰를 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-165">Data in the Order, OrderItem, and Customer tables in separate partitions in an Azure storage account are combined to generate a view containing the total sales value for each product in the Electronics category, along with a count of the number of customers who made purchases of each item.</span></span>
+
+![그림 2: 구체화된 뷰 패턴을 사용하여 매출액 요약 생성](./_images/materialized-view-summary-diagram.png)
+
+
+<span data-ttu-id="ab248-167">이런 구체화된 뷰를 생성하려면 복잡한 쿼리가 필요합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-167">Creating this materialized view requires complex queries.</span></span> <span data-ttu-id="ab248-168">그러나 쿼리 결과를 구체화된 뷰로 표시하면 결과를 쉽게 확인하고 직접 사용하거나 다른 쿼리에 통합할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-168">However, by exposing the query result as a materialized view, users can easily obtain the results and use them directly or incorporate them in another query.</span></span> <span data-ttu-id="ab248-169">구체화된 뷰는 보고 시스템 또는 대시보드에 사용할 수 있고, 매주 업데이트와 같은 예약 방식으로 업데이트할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-169">The view is likely to be used in a reporting system or dashboard, and can be updated on a scheduled basis such as weekly.</span></span>
+
+>  <span data-ttu-id="ab248-170">이 예제는 Azure Table Storage를 활용하지만, 많은 관계형 데이터베이스 관리 시스템도 구체화된 뷰를 위한 기본 지원을 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-170">Although this example utilizes Azure table storage, many relational database management systems also provide native support for materialized views.</span></span>
+
+## <a name="related-patterns-and-guidance"></a><span data-ttu-id="ab248-171">관련 패턴 및 지침</span><span class="sxs-lookup"><span data-stu-id="ab248-171">Related patterns and guidance</span></span>
+
+<span data-ttu-id="ab248-172">이 패턴을 구현할 때 다음 패턴 및 지침도 관련이 있을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-172">The following patterns and guidance might also be relevant when implementing this pattern:</span></span>
+- <span data-ttu-id="ab248-173">[데이터 일관성 입문서](https://msdn.microsoft.com/library/dn589800.aspx).</span><span class="sxs-lookup"><span data-stu-id="ab248-173">[Data Consistency Primer](https://msdn.microsoft.com/library/dn589800.aspx).</span></span> <span data-ttu-id="ab248-174">구체화된 뷰의 요약 정보는 구체화된 뷰가 원본 데이터 값을 반영하도록 유지되어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-174">The summary information in a materialized view has to be maintained so that it reflects the underlying data values.</span></span> <span data-ttu-id="ab248-175">데이터 값이 변경되면 요약 데이터는 실시간으로 업데이트할 수 없으므로 그 대신 최종 일관성 접근을 채택해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-175">As the data values change, it might not be practical to update the summary data in real time, and instead you'll have to adopt an eventually consistent approach.</span></span> <span data-ttu-id="ab248-176">분산 데이터의 일관성 유지와 관련된 문제를 요약하고 다양한 일관성 모델의 장점과 단점을 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-176">Summarizes the issues surrounding maintaining consistency over distributed data, and describes the benefits and tradeoffs of different consistency models.</span></span>
+- <span data-ttu-id="ab248-177">[CQRS(명령 및 쿼리 책임 분리)](cqrs.md).</span><span class="sxs-lookup"><span data-stu-id="ab248-177">[Command and Query Responsibility Segregation (CQRS) pattern](cqrs.md).</span></span> <span data-ttu-id="ab248-178">원본 데이터 값이 변경될 때 발생하는 이벤트에 따라 구체화된 뷰의 정보를 업데이트하는 데 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-178">Use to update the information in a materialized view by responding to events that occur when the underlying data values change.</span></span>
+- <span data-ttu-id="ab248-179">[이벤트 소싱 패턴](event-sourcing.md)</span><span class="sxs-lookup"><span data-stu-id="ab248-179">[Event Sourcing pattern](event-sourcing.md).</span></span> <span data-ttu-id="ab248-180">CQRS 패턴와 함께 구체화된 뷰의 정보를 유지하는 데 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-180">Use in conjunction with the CQRS pattern to maintain the information in a materialized view.</span></span> <span data-ttu-id="ab248-181">구체화된 뷰가 참조하는 원본 데이터 값이 변경되면 시스템은 이런 변경 사항을 설명하는 이벤트를 발생시키고 이벤트를 이벤트 저장소에 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-181">When the data values a materialized view is based on are changed, the system can raise events that describe these changes and save them in an event store.</span></span>
+- <span data-ttu-id="ab248-182">[인덱스 테이블 패턴](index-table.md)</span><span class="sxs-lookup"><span data-stu-id="ab248-182">[Index Table pattern](index-table.md).</span></span> <span data-ttu-id="ab248-183">보통 구체화된 뷰의 데이터는 기본 키로 구성되지만, 쿼리는 다른 필드의 데이터를 검사해 구체화된 뷰에서 정보를 검색할 필요가 있습니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-183">The data in a materialized view is typically organized by a primary key, but queries might need to retrieve information from this view by examining data in other fields.</span></span> <span data-ttu-id="ab248-184">기본 보조 인덱스를 지원하지 않는 데이터 저장소의 데이터 집합에 대한 보조 인덱스를 만드는 데 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="ab248-184">Use to create secondary indexes over data sets for data stores that don't support native secondary indexes.</span></span>

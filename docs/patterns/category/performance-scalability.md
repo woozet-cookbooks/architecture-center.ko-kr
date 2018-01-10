@@ -1,31 +1,31 @@
 ---
-title: Performance and Scalability patterns
-description: Performance is an indication of the responsiveness of a system to execute any action within a given time interval, while scalability is ability of a system either to handle increases in load without impact on performance or for the available resources to be readily increased. Cloud applications typically encounter variable workloads and peaks in activity. Predicting these, especially in a multi-tenant scenario, is almost impossible. Instead, applications should be able to scale out within limits to meet peaks in demand, and scale in when demand decreases. Scalability concerns not just compute instances, but other elements such as data storage, messaging infrastructure, and more.
-keywords: design pattern
+title: "성능 및 확장성 패턴"
+description: "성능은 지정된 시간 간격 내에서 어떤 작업을 실행하는 시스템의 응답성을 나타내는 척도이고, 가용성은 성능에 영향을 주지 않고 부하 증가를 처리하거나 가용 리소스를 즉시 늘릴 수 있는 시스템 기능을 의미합니다. 클라우드 응용 프로그램은 일반적으로 작업에서 수시로 변하는 워크로드 및 최대 부하와 맞닥뜨리게 됩니다. 이러한 변수를 예측하기란, 특히 다중 테넌트 시나리오에서 예측하기란 거의 불가능합니다. 대신, 수요가 증가하면 응용 프로그램이 한도 내에서 규모 확장하고, 수요가 감소하면 규모 감축할 수 있어야 합니다. 확장성은 계산 인스턴스뿐 아니라 데이터 저장소, 메시지 인프라 등의 다른 요소에도 영향을 줍니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.author: pnp
-ms.date: 03/24/2017
-ms.topic: article
-ms.service: guidance
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
+ms.openlocfilehash: 26e5fe0bc05bff7b9fb684795a2de3b57d945ae0
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
-
-# 성능과 확장성 패턴
+# <a name="performance-and-scalability-patterns"></a><span data-ttu-id="5cde5-108">성능 및 확장성 패턴</span><span class="sxs-lookup"><span data-stu-id="5cde5-108">Performance and Scalability patterns</span></span>
 
 [!INCLUDE [header](../../_includes/header.md)]
 
-성능은 지정된 시간 간격 이내에 동작을 실행하는 시스템 응답의 지표인 반면, 확장성은 성능에 영향을 미치지 않고 부하 증가를 처리하거나 사용 가능한 리소스를 쉽게 늘리는 시스템의 능력을 의미합니다. 클라우드 응용 프로그램을 사용하다보면 가변 워크로드 및 피크와 마주치기 마련입니다. 특히 다중 테넌트 시나리오에서는 가변 워크로드와 피크를 거의 예측할 수 없습니다. 대신 응용 프로그램은 한계 이내에서 규모를 확장해 수요의 피크를 충족하고 수요 감소 시 규모를 축소할 수 있어야 합니다. 확장성은 계산 인스턴스뿐 아니라 데이터 저장소, 메시징 인프라 등과 같은 다른 요소와도 관련됩니다.
+<span data-ttu-id="5cde5-109">성능은 지정된 시간 간격 내에서 어떤 작업을 실행하는 시스템의 응답성을 나타내는 척도이고, 가용성은 성능에 영향을 주지 않고 부하 증가를 처리하거나 가용 리소스를 즉시 늘릴 수 있는 시스템 기능을 의미합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-109">Performance is an indication of the responsiveness of a system to execute any action within a given time interval, while scalability is ability of a system either to handle increases in load without impact on performance or for the available resources to be readily increased.</span></span> <span data-ttu-id="5cde5-110">클라우드 응용 프로그램은 일반적으로 작업에서 수시로 변하는 워크로드 및 최대 부하와 맞닥뜨리게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-110">Cloud applications typically encounter variable workloads and peaks in activity.</span></span> <span data-ttu-id="5cde5-111">이러한 변수를 예측하기란, 특히 다중 테넌트 시나리오에서 예측하기란 거의 불가능합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-111">Predicting these, especially in a multi-tenant scenario, is almost impossible.</span></span> <span data-ttu-id="5cde5-112">대신, 수요가 증가하면 응용 프로그램이 한도 내에서 규모 확장하고, 수요가 감소하면 규모 감축할 수 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-112">Instead, applications should be able to scale out within limits to meet peaks in demand, and scale in when demand decreases.</span></span> <span data-ttu-id="5cde5-113">확장성은 계산 인스턴스뿐 아니라 데이터 저장소, 메시지 인프라 등의 다른 요소에도 영향을 줍니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-113">Scalability concerns not just compute instances, but other elements such as data storage, messaging infrastructure, and more.</span></span>
 
-| 패턴 | 요약 |
+| <span data-ttu-id="5cde5-114">패턴</span><span class="sxs-lookup"><span data-stu-id="5cde5-114">Pattern</span></span> | <span data-ttu-id="5cde5-115">요약</span><span class="sxs-lookup"><span data-stu-id="5cde5-115">Summary</span></span> |
 | ------- | ------- |
-| [캐시 배제](../cache-aside.md) | 주문형 데이터를 데이터 저장소에서 캐시로 로드합니다. |
-| [CQRS](../cqrs.md) | 별도의 인터페이스를 사용해 데이터를 업데이트하는 작업에서 데이터를 읽는 작업을 분리합니다. |
-| [이벤트 소싱](../event-sourcing.md) | 추가 전용 저장소를 사용해 도메인 내 데이터에 취해진 조치를 설명하는 전체 시리즈의 이벤트를 기록합니다. |
-| [인덱스 테이블](../index-table.md) | 쿼리가 자주 참조하는 데이터 저장소의 필드 인덱스를 생성합니다. |
-| [구체화된 뷰](../materialized-view.md) | 데이터가 필요한 쿼리 작업에 맞게 포맷되지 않은 경우, 하나 이상의 데이터 저장소 내에 있는 데이터에 대해 미리 채워진 뷰를 생성합니다. |
-| [우선 순위 큐](../priority-queue.md) | 우선 순위가 높은 요청을 우선 순위가 낮은 요청보다 빨리 수신하고 처리하도록 서비스에 전송되는 요청의 우선 순위를 지정합니다. |
-| [큐 기반 부하 평준화](../queue-based-load-leveling.md) | 작업과 작업이 호출하는 서비스 사이에 버퍼로 작용하는 큐를 사용해 간헐적으로 나타나는 과중한 부하를 평활화합니다.|
-| [분할](../sharding.md) | 데이터 저장소를 여러 가로 파티션 또는 분할된 데이터베이스로 나눕니다. |
-| [정적 콘텐츠 호스팅](../static-content-hosting.md) | 정적 콘텐츠를 클라이언트에 직접 전달할 수 있는 클라우드 기반 저장소 서비스에 배포합니다. |
-| [제한](../throttling.md) | 응용 프로그램의 인스턴스, 개별 테넌트 또는 전체 서비스가 사용하는 리소스의 소비량을 제어합니다. |
+| [<span data-ttu-id="5cde5-116">Cache-Aside</span><span class="sxs-lookup"><span data-stu-id="5cde5-116">Cache-Aside</span></span>](../cache-aside.md) | <span data-ttu-id="5cde5-117">필요할 때 데이터를 데이터 저장소에서 캐시로 로드</span><span class="sxs-lookup"><span data-stu-id="5cde5-117">Load data on demand into a cache from a data store</span></span> |
+| [<span data-ttu-id="5cde5-118">CQRS</span><span class="sxs-lookup"><span data-stu-id="5cde5-118">CQRS</span></span>](../cqrs.md) | <span data-ttu-id="5cde5-119">별도의 인터페이스를 사용하여 데이터를 업데이트하는 작업과 데이터를 읽는 작업을 분리합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-119">Segregate operations that read data from operations that update data by using separate interfaces.</span></span> |
+| [<span data-ttu-id="5cde5-120">이벤트 소싱</span><span class="sxs-lookup"><span data-stu-id="5cde5-120">Event Sourcing</span></span>](../event-sourcing.md) | <span data-ttu-id="5cde5-121">추가 전용 저장소를 사용하여 도메인의 데이터에 대해 수행된 작업을 설명하는 일련의 이벤트 전체를 기록합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-121">Use an append-only store to record the full series of events that describe actions taken on data in a domain.</span></span> |
+| [<span data-ttu-id="5cde5-122">인덱스 테이블</span><span class="sxs-lookup"><span data-stu-id="5cde5-122">Index Table</span></span>](../index-table.md) | <span data-ttu-id="5cde5-123">쿼리에서 자주 참조하는 데이터 저장소의 필드에 대한 인덱스를 만듭니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-123">Create indexes over the fields in data stores that are frequently referenced by queries.</span></span> |
+| [<span data-ttu-id="5cde5-124">구체화된 뷰</span><span class="sxs-lookup"><span data-stu-id="5cde5-124">Materialized View</span></span>](../materialized-view.md) | <span data-ttu-id="5cde5-125">데이터가 필요한 쿼리 작업에 대해 이상적으로 포맷되지 않은 경우 하나 이상의 데이터 저장소에 있는 데이터에 대한 미리 채워진 뷰를 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-125">Generate prepopulated views over the data in one or more data stores when the data isn't ideally formatted for required query operations.</span></span> |
+| [<span data-ttu-id="5cde5-126">우선 순위 큐</span><span class="sxs-lookup"><span data-stu-id="5cde5-126">Priority Queue</span></span>](../priority-queue.md) | <span data-ttu-id="5cde5-127">우선 순위가 높은 요청을 우선 순위가 낮은 요청보다 먼저 받아서 처리하도록 서비스로 전송된 요청의 우선 순위를 지정합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-127">Prioritize requests sent to services so that requests with a higher priority are received and processed more quickly than those with a lower priority.</span></span> |
+| [<span data-ttu-id="5cde5-128">큐 기반 부하 평준화</span><span class="sxs-lookup"><span data-stu-id="5cde5-128">Queue-Based Load Leveling</span></span>](../queue-based-load-leveling.md) | <span data-ttu-id="5cde5-129">작업 그리고 그 작업이 일시적인 높은 부하를 부드럽게 처리하기 위해 호출하는 서비스 사이에서 버퍼 역할을 하는 큐를 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-129">Use a queue that acts as a buffer between a task and a service that it invokes in order to smooth intermittent heavy loads.</span></span> |
+| [<span data-ttu-id="5cde5-130">분할</span><span class="sxs-lookup"><span data-stu-id="5cde5-130">Sharding</span></span>](../sharding.md) | <span data-ttu-id="5cde5-131">데이터 저장소를 수평 파티션 또는 분할 집합으로 나눕니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-131">Divide a data store into a set of horizontal partitions or shards.</span></span> |
+| [<span data-ttu-id="5cde5-132">정적 콘텐츠 호스팅</span><span class="sxs-lookup"><span data-stu-id="5cde5-132">Static Content Hosting</span></span>](../static-content-hosting.md) | <span data-ttu-id="5cde5-133">정적 콘텐츠를 클라이언트에 직접 제공할 수 있는 클라우드 기반 저장소 서비스에 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-133">Deploy static content to a cloud-based storage service that can deliver them directly to the client.</span></span> |
+| [<span data-ttu-id="5cde5-134">제한</span><span class="sxs-lookup"><span data-stu-id="5cde5-134">Throttling</span></span>](../throttling.md) | <span data-ttu-id="5cde5-135">응용 프로그램 인스턴스, 개별 테넌트 또는 서비스 전체의 리소스 사용량을 제어합니다.</span><span class="sxs-lookup"><span data-stu-id="5cde5-135">Control the consumption of resources used by an instance of an application, an individual tenant, or an entire service.</span></span> |

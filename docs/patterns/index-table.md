@@ -1,118 +1,120 @@
 ---
-title: Index Table
-description: Create indexes over the fields in data stores that are frequently referenced by queries.
-keywords: design pattern
+title: "인덱스 테이블"
+description: "쿼리에서 자주 참조하는 데이터 저장소의 필드에 대한 인덱스를 만듭니다."
+keywords: "디자인 패턴"
 author: dragon119
-ms.service: guidance
-ms.topic: article
-ms.author: pnp
-ms.date: 03/24/2017
-
+ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
-pnp.pattern.categories: [data-management, performance-scalability]
+pnp.pattern.categories:
+- data-management
+- performance-scalability
+ms.openlocfilehash: 24a1061349af84d13f05f88a1698b4efe4b0f449
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
-
-# 인덱스 테이블
+# <a name="index-table-pattern"></a><span data-ttu-id="20832-104">인덱스 테이블 패턴</span><span class="sxs-lookup"><span data-stu-id="20832-104">Index Table pattern</span></span>
 
 [!INCLUDE [header](../_includes/header.md)]
 
-쿼리가 자주 참조하는 데이터 저장소의 필드 인덱스를 생성합니다. 이 패턴은 응용 프로그램이 데이터 저장소에서 검색할 데이터를 더 신속하게 찾을 수 있어 쿼리 성능을 향상시킬 수 있습니다.
+<span data-ttu-id="20832-105">쿼리에서 자주 참조하는 데이터 저장소의 필드에 대한 인덱스를 만듭니다.</span><span class="sxs-lookup"><span data-stu-id="20832-105">Create indexes over the fields in data stores that are frequently referenced by queries.</span></span> <span data-ttu-id="20832-106">이 패턴은 응용 프로그램이 데이터 저장소에서 검색할 데이터를 더 신속하게 찾을 수 있어 쿼리 성능을 향상시킬 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-106">This pattern can improve query performance by allowing applications to more quickly locate the data to retrieve from a data store.</span></span>
 
-## 배경 및 문제
+## <a name="context-and-problem"></a><span data-ttu-id="20832-107">컨텍스트 및 문제점</span><span class="sxs-lookup"><span data-stu-id="20832-107">Context and problem</span></span>
 
-많은 데이터 저장소는 기본 키를 사용해 항목의 모음에 대한 데이터를 구성합니다. 응용 프로그램은 기본 키를 사용해 데이터를 찾고 검색할 수 있습니다. 다음 그림은 고객 정보를 보관하는 데이터 저장소의 예를 보여줍니다. 기본 키는 Customer ID입니다. 다음 그림은 기본 키(Customer ID)를 사용해 구성한 고객 정보를 보여줍니다.
+<span data-ttu-id="20832-108">많은 데이터 저장소는 기본 키를 사용해 엔터티 모음에 대한 데이터를 구성합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-108">Many data stores organize the data for a collection of entities using the primary key.</span></span> <span data-ttu-id="20832-109">응용 프로그램은 기본 키를 사용해 데이터를 찾고 검색할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-109">An application can use this key to locate and retrieve data.</span></span> <span data-ttu-id="20832-110">다음 그림은 고객 정보를 보관하는 데이터 저장소의 예를 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20832-110">The figure shows an example of a data store holding customer information.</span></span> <span data-ttu-id="20832-111">기본 키는 Customer ID입니다.</span><span class="sxs-lookup"><span data-stu-id="20832-111">The primary key is the Customer ID.</span></span> <span data-ttu-id="20832-112">다음 그림은 기본 키(Customer ID)를 사용해 구성한 고객 정보를 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20832-112">The figure shows customer information organized by the primary key (Customer ID).</span></span>
 
-![Figure 1 - Customer information organized by the primary key (Customer ID)](./_images/index-table-figure-1.png)
-
-
-기본 키가 기본 키의 값을 기반으로 데이터를 가져오는 쿼리에 중요한 경우, 일부 다른 필드를 기반으로 데이터를 검색해야 하면 응용 프로그램은 기본 키를 사용하지 않을 수 있습니다. Customers 테이블의 예에서 고객이 사는 마을과 같이 일부 다른 특성의 값만 참조해 데이터를 쿼리하면 응용 프로그램은 Customer ID 기본 키를 사용해 고객을 검색할 수 없습니다. 이런 쿼리를 수행하려면 응용 프로그램은 모든 고객 레코드를 가져와 조사해야 할 수 있으며, 그러면 프로세스가 느려질 수 있습니다.
-
-많은 관계형 데이터베이스 관리 시스템은 보조 인덱스를 지원합니다. 보조 인덱스는 하나 이상의 기본이 아닌(보조) 키 필드로 구성되는 별도의 데이터 구조이며 각 인덱스 값을 위한 데이터가 저장된다는 것을 의미합니다. 보조 인덱스의 항목은 대개 데이터를 빠르게 조회할 수 있도록 보조 키의 값으로 정렬됩니다. 보통 보조 인덱스는 데이터베이스 관리 시스템을 통해 자동으로 유지됩니다.
-
-응용 프로그램이 수행하는 다양한 쿼리를 지원하는데 필요한 개수만큼 보조 인덱스를 생성할 수 있습니다. 예를 들면 Customer ID가 기본 키인 관계형 데이터베이스의 Customers 테이블에서 응용 프로그램이 거주하는 마을을 기준으로 고객을 자주 조회하는 경우 마을 필드에 보조 인덱스를 추가하는 것이 유용합니다.
-
-그러나 관계형 시스템에서 보조 인덱스를 일반적으로 사용하더라도 클라우드 응용 프로그램이 사용하는 대부분의 NoSQL 데이터 저장소는 동등한 기능을 제공하지 않습니다. 
-
-## 해결책
-
-데이터 저장소가 보조 인덱스를 지원하지 않는 경우, 보조 인덱스는 인덱스 테이블을 생성해 수동으로 에뮬레이트할 수 있습니다. 인덱스 테이블은 지정된 키를 통해 데이터를 구성합니다. 일반적으로 이런 전략은 필요한 보조 인덱스의 개수와 응용 프로그램이 수행하는 쿼리의 특성에 따라 인덱스 테이블을 구성하는데 사용됩니다.
-
-첫 번째 전략은 데이터를 각각의 인덱스 테이블에 복제하고 다른 키로 구성하는 것입니다(완전 역정규화). 다음 그림은 Town과 LastName을 기준으로 동일한 고객 정보를 구성하는 인덱스 테이블을 보여줍니다.
-
-![Figure 2 - Data is duplicated in each index table](./_images/index-table-figure-2.png)
+![그림 1 - 기본 키(Customer ID)로 구성된 고객 정보](./_images/index-table-figure-1.png)
 
 
-이 전략은 각 키를 사용해 쿼리하는 횟수에 비해 데이터가 비교적 정적인 경우에 적절합니다. 데이터가 너무 동적이면 각 인덱스 테이블을 유지하는 처리 오버헤드가 너무 커서 이런 접근 방식이 유용하지 않게 됩니다. 또한 데이터 볼륨이 너무 크면 복제 데이터를 저장하는 데 필요한 공간이 커집니다.
+<span data-ttu-id="20832-114">기본 키가 기본 키의 값을 기준으로 데이터를 가져오는 쿼리에 중요한 경우, 일부 다른 필드를 기준으로 데이터를 검색해야 하면 응용 프로그램은 기본 키를 사용하지 않을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-114">While the primary key is valuable for queries that fetch data based on the value of this key, an application might not be able to use the primary key if it needs to retrieve data based on some other field.</span></span> <span data-ttu-id="20832-115">Customers 테이블의 예에서 고객이 사는 마을과 같이 일부 다른 특성의 값만 참조해 데이터를 쿼리하면 응용 프로그램은 Customer ID 기본 키를 사용해 고객을 검색할 수 없습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-115">In the customers example, an application can't use the Customer ID primary key to retrieve customers if it queries data solely by referencing the value of some other attribute, such as the town in which the customer is located.</span></span> <span data-ttu-id="20832-116">이런 쿼리를 수행하려면 응용 프로그램은 모든 고객 레코드를 가져와 조사해야 할 수 있으며, 그러면 프로세스가 느려질 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-116">To perform a query such as this, the application might have to fetch and examine every customer record, which could be a slow process.</span></span>
 
-두 번째 전략은 다음 그림에서처럼 다른 키로 구성되는 정규화된 인덱스 테이블을 생성하고 데이터를 복제하기보다 기본 키를 사용해 원본 데이터를 참조하는 것입니다. 원본 데이터는 팩트 테이블이라고 부릅니다.
+<span data-ttu-id="20832-117">많은 관계형 데이터베이스 관리 시스템은 보조 인덱스를 지원합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-117">Many relational database management systems support secondary indexes.</span></span> <span data-ttu-id="20832-118">보조 인덱스는 하나 이상의 기본이 아닌(보조) 키 필드로 구성되는 별도의 데이터 구조이며 각 인덱스 값을 위한 데이터가 저장된다는 것을 의미합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-118">A secondary index is a separate data structure that's organized by one or more nonprimary (secondary) key fields, and it indicates where the data for each indexed value is stored.</span></span> <span data-ttu-id="20832-119">보조 인덱스의 항목은 대개 데이터를 빠르게 조회할 수 있도록 보조 키의 값으로 정렬됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-119">The items in a secondary index are typically sorted by the value of the secondary keys to enable fast lookup of data.</span></span> <span data-ttu-id="20832-120">보통 보조 인덱스는 데이터베이스 관리 시스템을 통해 자동으로 유지됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-120">These indexes are usually maintained automatically by the database management system.</span></span>
 
-![Figure 3 - Data is referenced by each index table](./_images/index-table-figure-3.png)
+<span data-ttu-id="20832-121">응용 프로그램이 수행하는 다양한 쿼리를 지원하는데 필요한 개수만큼 보조 인덱스를 생성할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-121">You can create as many secondary indexes as you need to support the different queries that your application performs.</span></span> <span data-ttu-id="20832-122">예를 들면 Customer ID가 기본 키인 관계형 데이터베이스의 Customers 테이블에서 응용 프로그램이 거주하는 마을을 기준으로 고객을 자주 조회하는 경우 마을 필드에 보조 인덱스를 추가하는 것이 유용합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-122">For example, in a Customers table in a relational database where the Customer ID is the primary key, it's beneficial to add a secondary index over the town field if the application frequently looks up customers by the town where they reside.</span></span>
 
+<span data-ttu-id="20832-123">그러나 관계형 시스템에서 보조 인덱스를 일반적으로 사용하더라도 클라우드 응용 프로그램이 사용하는 대부분의 NoSQL 데이터 저장소는 동등한 기능을 제공하지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-123">However, although secondary indexes are common in relational systems, most NoSQL data stores used by cloud applications don't provide an equivalent feature.</span></span>
 
-이 기법은 공간을 절약하고 복제 데이터를 유지하는 오버헤드를 줄인다는 장점이 있지만 단점은 응용 프로그램이 보조 키를 사용해 두 번의 조회 작업을 수행해야만 데이터를 찾을 수 있다는 것입니다. 그리고 인덱스 테이블에서 데이터의 기본 키를 찾은 다음 기본 키를 사용해 팩트 테이블의 데이터를 조회해야 합니다.
+## <a name="solution"></a><span data-ttu-id="20832-124">해결 방법</span><span class="sxs-lookup"><span data-stu-id="20832-124">Solution</span></span>
 
-세 번째 전략은 다른 키로 구성되고 자주 검색된 필드를 복제하는 부분적으로 정규화된 인덱스 테이블을 생성하는 것입니다. 비교적 적게 액세스된 필드에 대한 액세스는 팩트 테이블을 참조합니다. 다음 그림은 일반적으로 액세스되는 데이터를 각 인덱스 테이블에 복제하는 방법을 보여줍니다.
+<span data-ttu-id="20832-125">데이터 저장소가 보조 인덱스를 지원하지 않는 경우, 보조 인덱스는 인덱스 테이블을 생성해 수동으로 에뮬레이트할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-125">If the data store doesn't support secondary indexes, you can emulate them manually by creating your own index tables.</span></span> <span data-ttu-id="20832-126">인덱스 테이블은 지정된 키를 통해 데이터를 구성합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-126">An index table organizes the data by a specified key.</span></span> <span data-ttu-id="20832-127">일반적으로 필요한 보조 인덱스의 개수와 응용 프로그램이 수행하는 쿼리의 특성에 따라 인덱스 테이블을 구성하는 데 3가지 전략이 사용됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-127">Three strategies are commonly used for structuring an index table, depending on the number of secondary indexes that are required and the nature of the queries that an application performs.</span></span>
 
-![Figure 4 - Commonly accessed data is duplicated in each index table](./_images/index-table-figure-4.png)
+<span data-ttu-id="20832-128">첫 번째 전략은 데이터를 각각의 인덱스 테이블에 복제하고 다른 키로 구성하는 것입니다(완전 역정규화).</span><span class="sxs-lookup"><span data-stu-id="20832-128">The first strategy is to duplicate the data in each index table but organize it by different keys (complete denormalization).</span></span> <span data-ttu-id="20832-129">다음 그림은 Town과 LastName을 기준으로 동일한 고객 정보를 구성하는 인덱스 테이블을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20832-129">The next figure shows index tables that organize the same customer information by Town and LastName.</span></span>
 
-
-이 전략을 사용하면 첫 번째 접근 방식과 두 번째 접근 방식 사이에 균형을 유지할 수 있습니다. 단일 조회를 사용해 일반 쿼리를 위한 데이터를 빠르게 검색할 수 있으면서도 공간과 유지 관리 오버헤드는 전체 데이터 집합을 복제하는 것만큼 크지 않습니다.
-
-응용 프로그램이 값의 조합(예: “Redmond에 살고 성이 Smith인 모든 고객 찾기”)을 지정해 데이터를 자주 쿼리하는 경우, 인덱스 테이블의 항목에 대한 키를 Town 특성과 LastName 특성의 연결로 구현할 수 있습니다. 다음 그림은 복합 키를 기반으로 하는 인덱스 테이블을 보여줍니다. 키는 먼저 Town을 기준으로 정렬된 다음 Town의 값이 동일한 레코드에 대해 LastName을 기준으로 정렬됩니다.
-
-![Figure 5 - An index table based on composite keys](./_images/index-table-figure-5.png)
+![그림 2 - 데이터가 각 인덱스 테이블에서 중복됨](./_images/index-table-figure-2.png)
 
 
-인덱스 테이블은 분할 데이터를 대상으로 하는 쿼리 작업의 속도를 높일 수 있는데, 분할 키가 해시된 경우 특히 유용합니다. 다음 그림은 분할 키가 Customer ID의 해시인 예를 보여줍니다. 인덱스 테이블은 데이터를 해시되지 않은 값(Town과 LastName)으로 구성하고 해시된 분할 키를 조회 데이터로 제공할 수 있습니다. 이렇게 하면 범위 내에 있는 데이터를 검색해야 하거나 해시되지 않은 키의 순서로 데이터를 검색해야 하는 경우 응용 프로그램이 해시 키를 반복적으로 계산(비용이 드는 작업)할 필요가 없습니다.  예를 들어 “Redmond에 사는 모든 고객 찾기”와 같은 쿼리는 인덱스 테이블에서 일치하는 항목을 찾아 신속하게 해결할 수 있습니다(일치하는 항목은 모두 연속 블록에 저장됨). 그런 다음 인덱스 테이블에 저장된 분할 키를 사용해 고객 데이터에 대한 참조를 따릅니다.
+<span data-ttu-id="20832-131">이 전략은 각 키를 사용해 쿼리하는 횟수에 비해 데이터가 비교적 정적인 경우에 적절합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-131">This strategy is appropriate if the data is relatively static compared to the number of times it's queried using each key.</span></span> <span data-ttu-id="20832-132">데이터가 너무 동적이면 각 인덱스 테이블을 유지하는 처리 오버헤드가 너무 커서 이런 접근 방식이 유용하지 않게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-132">If the data is more dynamic, the processing overhead of maintaining each index table becomes too large for this approach to be useful.</span></span> <span data-ttu-id="20832-133">또한 데이터 볼륨이 너무 크면 복제 데이터를 저장하는 데 필요한 공간이 커집니다.</span><span class="sxs-lookup"><span data-stu-id="20832-133">Also, if the volume of data is very large, the amount of space required to store the duplicate data is significant.</span></span>
 
-![Figure 6 - An index table providing quick lookup for sharded data](./_images/index-table-figure-6.png)
+<span data-ttu-id="20832-134">두 번째 전략은 다음 그림에서처럼 다른 키로 구성되는 정규화된 인덱스 테이블을 생성하고 데이터를 복제하기보다 기본 키를 사용해 원본 데이터를 참조하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="20832-134">The second strategy is to create normalized index tables organized by different keys and reference the original data by using the primary key rather than duplicating it, as shown in the following figure.</span></span> <span data-ttu-id="20832-135">원본 데이터를 팩트 테이블이라고 부릅니다.</span><span class="sxs-lookup"><span data-stu-id="20832-135">The original data is called a fact table.</span></span>
 
-
-## 문제 및 고려 사항
-
-이 패턴의 구현 방법을 결정할 때는 다음 사항을 고려해야 합니다.
-
-- 보조 인덱스를 유지하는 오버헤드가 클 수 있습니다. 사용자는 응용 프로그램이 사용하는 쿼리를 분석하고 이해해야 합니다. 인덱스 테이블은 정기적으로 사용할 가능성이 있는 경우에만 생성합니다. 응용 프로그램이 수행하지 않거나 가끔씩만 수행하는 쿼리를 지원하기 위한 인덱스 테이블은 굳이 생성할 필요가 없습니다.
-- 인덱스 테이블에 데이터를 복제하는 것은 데이터의 다중 사본을 유지하는 데 필요한 저장 비용과 노력에 상당한 오버헤드를 추가할 수 있습니다.
-- 인덱스 테이블을 원본 데이터를 참조하는 정규화된 구조로 구현하려면 응용 프로그램이 데이터를 찾기 위해 두 번의 조회 작업을 수행해야 합니다. 첫 번째 작업은 인덱스 테이블을 검색해 기본 키를 검색하고, 두 번째 작업은 기본 키를 사용해 데이터를 가져옵니다.
-- 시스템이 대량의 데이터 집합에 대한 많은 인덱스 테이블을 통합하는 경우, 인덱스 테이블과 원본 데이터 사이에 일관성을 유지하는 것이 어려울 수 있습니다. 응용 프로그램은 최종 일관성 모델로 디자인할 수 있습니다. 예를 들어 데이터를 삽입, 업데이트 또는 삭제하기 위해 응용 프로그램은 메시지를 큐에 게시하고 별도의 작업을 사용해 동작을 수행하며 이런 데이터를 비동기적으로 참조하는 인덱스 테이블을 유지할 수 있습니다. 최종 일관성 구현에 대한 추가 정보는 [데이터 일관성 프라이머](https://msdn.microsoft.com/library/dn589800.aspx)를 참조하시기 바랍니다.
-
-   >  Microsoft Azure 저장소 테이블은 동일한 파티션에 보관되는 데이터에 수행된 변경 사항에 대한 트랜잭션 업데이트(엔터티 그룹 트랜잭션)를 지원합니다. 동일한 파티션에 있는 하나의 팩트 테이블과 하나 이상의 인덱스 테이블에 데이터를 저장할 수 있는 경우, 이 기능을 사용하면 일관성을 보장하는 데 도움을 줄 수 있습니다.
-
-- 인덱스 테이블은 나누거나 분할할 수 있습니다.
-
-## 패턴 사용 사례
-
-이 패턴은 응용 프로그램이 기본(또는 분할) 키가 아닌 다른 키를 사용해 데이터를 자주 검색해야 할 때 쿼리 성능을 높이기 위해 사용합니다.
-
-다음의 경우에는 이 패턴이 유용하지 않습니다.
-
-- 데이터가 휘발성인 경우.  인덱스 테이블은 매우 빠르게 구식이 되어 비효과적이 되거나 인덱스 테이블을 유지하는 오버헤드가 인덱스 테이블의 사용을 통해 절감한 비용보다 커질 수 있습니다.
-- 인덱스 테이블을 위해 보조 키로 선택한 필드가 구분할 수 없고 작은 값의 집합(예: 성별)만 포함할 수 있는 경우
-- 인덱스 테이블을 위해 보조 키로 선택한 필드에서 데이터 값의 균형이 매우 비대칭인 경우. 예를 들어 레코드의 90%가 하나의 필드에서 동일한 값을 포함하면 이 필드를 기반으로 데이터를 조회하기 위해 인덱스 테이블을 생성하고 유지하는 것이 데이터 전체를 순차적으로 스캔하는 것보다 많은 오버헤드를 초래할 수 있습니다. 그러나 나머지 10%에 있는 대상 값을 굉장히 자주 쿼리하는 경우에는 이 인덱스가 유용할 수 있습니다. 사용자는 응용 프로그램이 수행하고 있는 쿼리뿐 아니라 쿼리를 얼마나 자주 수행하는지를 이해해야 합니다.
-
-## 예제
-
-Azure 저장소 테이블은 클라우드에서 실행 중인 응용 프로그램에 대한 확장성이 뛰어난 키/값 데이터 저장소를 제공합니다. 응용 프로그램은 키를 지정해 데이터 값을 저장하고 검색합니다. 데이터 값은 여러 필드를 포함할 수 있지만, 데이터 항목의 구조는 단순히 데이터 항목을 바이트의 배열로 처리하는 테이블 저장소가 이해하기 힘듭니다.
-
-Azure 저장소 테이블은 분할도 지원합니다. 분할 키는 두 요소인 파티션 키와 행 키를 포함합니다. 파티션 키가 동일한 항목은 동일한 파티션(분할된 데이터베이스)에 저장되고, 항목은 분할된 데이터베이스 내에 행 키 순서로 저장됩니다. 테이블 저장소는 파티션 내에서 행 키 값의 연속 범위 내에 속한 데이터를 가져오는 쿼리를 수행할 수 있도록 최적화됩니다. Azure 테이블에 정보를 저장하는 클라우드 응용 프로그램을 작성하는 경우에는 이런 기능을 염두에 두고 데이터를 구조화해야 합니다.
-
-예를 들면 영화에 대한 정보를 저장하는 응용 프로그램을 생각해볼 수 있습니다. 응용 프로그램은 장르(액션, 다큐멘터리, 역사, 코메디, 드라마 등)를 기준으로 영화를 자주 쿼리합니다. 사용자는 다음 그림에서처럼 장르를 파티션 키로 사용하고 영화 이름을 행 키로 지정해 Azure 테이블을 생성할 수 있습니다.
-
-![Figure 7 - Movie data stored in an Azure table](./_images/index-table-figure-7.png)
+![그림 3 - 데이터가 각 인덱스 테이블에서 참조됨](./_images/index-table-figure-3.png)
 
 
-이런 접근 방식은 응용 프로그램이 주연 배우로도 영화를 쿼리해야 하는 경우 효과가 떨어집니다. 이 경우 인덱스 테이블로 작용하는 별도의 Azure 테이블을 생성할 수 있습니다. 파티션 키는 배우이고 행 키는 영화 이름입니다. 각 배우의 데이터는 별도의 파티션에 저장됩니다. 영화에 주연 배우가 한 명 이상이면 동일한 영화가 여러 파티션에 발생하게 됩니다.
+<span data-ttu-id="20832-137">이 기법은 공간을 절약하고 복제 데이터를 유지하는 오버헤드를 줄인다는 장점이 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-137">This technique saves space and reduces the overhead of maintaining duplicate data.</span></span> <span data-ttu-id="20832-138">단점은 응용 프로그램이 보조 키를 사용해 두 번의 조회 작업을 수행해야만 데이터를 찾을 수 있다는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="20832-138">The disadvantage is that an application has to perform two lookup operations to find data using a secondary key.</span></span> <span data-ttu-id="20832-139">그리고 인덱스 테이블에서 데이터의 기본 키를 찾은 다음 기본 키를 사용해 팩트 테이블의 데이터를 조회해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-139">It has to find the primary key for the data in the index table, and then use the primary key to look up the data in the fact table.</span></span>
 
-영화 데이터는 위의 해결책 섹션에서 설명한 첫 번째 접근 방식을 채택해 각 파티션에 보관되는 값에 복제할 수 있습니다. 그러나 각 영화는 여러 번 중복될 수 있으므로(주연 배우당 한 번) 가장 일반적인 쿼리(다른 주연 배우의 이름)를 지원하고 응용 프로그램이 장르 파티션에서 완전한 정보를 찾는 데 필요한 파티션 키를 삽입해 나머지 세부 정보를 검색할 수 있도록 데이터를 부분적으로 역정규화하는 것이 더 효율적일 수 있습니다. 이런 접근 방식은 해결책 섹션의 세 번째 옵션에 설명되어 있습니다. 다음 그림은 이런 접근 방식을 보여줍니다.
+<span data-ttu-id="20832-140">세 번째 전략은 다른 키로 구성되고 자주 검색된 필드를 복제하는 부분적으로 정규화된 인덱스 테이블을 생성하는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="20832-140">The third strategy is to create partially normalized index tables organized by different keys that duplicate frequently retrieved fields.</span></span> <span data-ttu-id="20832-141">비교적 적게 액세스된 필드에 대한 액세스는 팩트 테이블을 참조합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-141">Reference the fact table to access less frequently accessed fields.</span></span> <span data-ttu-id="20832-142">다음 그림은 일반적으로 액세스되는 데이터를 각 인덱스 테이블에 복제하는 방법을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20832-142">The next figure shows how commonly accessed data is duplicated in each index table.</span></span>
 
-![Figure 8 - Actor partitions acting as index tables for movie data](./_images/index-table-figure-8.png)
+![그림 4 - 일반적으로 액세스되는 데이터가 각 인덱스 테이블에 복제됨](./_images/index-table-figure-4.png)
 
 
-## 관련 패턴 및 지침
+<span data-ttu-id="20832-144">이 전략을 사용하면 첫 번째 접근 방식과 두 번째 접근 방식 사이에 균형을 유지할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-144">With this strategy, you can strike a balance between the first two approaches.</span></span> <span data-ttu-id="20832-145">단일 조회를 사용해 일반 쿼리를 위한 데이터를 빠르게 검색할 수 있으면서도 공간과 유지 관리 오버헤드는 전체 데이터 집합을 복제하는 것만큼 크지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-145">The data for common queries can be retrieved quickly by using a single lookup, while the space and maintenance overhead isn't as significant as duplicating the entire data set.</span></span>
 
-이 패턴을 구현할 때 관련될 수 있는 패턴과 지침은 다음과 같습니다.
+<span data-ttu-id="20832-146">응용 프로그램이 값의 조합(예: “Redmond에 살고 성이 Smith인 모든 고객 찾기”)을 지정해 데이터를 자주 쿼리하는 경우, 인덱스 테이블의 항목에 대한 키를 Town 특성과 LastName 특성의 연결로 구현할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-146">If an application frequently queries data by specifying a combination of values (for example, “Find all customers that live in Redmond and that have a last name of Smith”), you could implement the keys to the items in the index table as a concatenation of the Town attribute and the LastName attribute.</span></span> <span data-ttu-id="20832-147">다음 그림은 복합 키를 기준으로 하는 인덱스 테이블을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20832-147">The next figure shows an index table based on composite keys.</span></span> <span data-ttu-id="20832-148">키는 먼저 Town을 기준으로 정렬된 다음 Town의 값이 동일한 레코드에 대해 LastName을 기준으로 정렬됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-148">The keys are sorted by Town, and then by LastName for records that have the same value for Town.</span></span>
 
-- [데이터 일관성 프라이머](https://msdn.microsoft.com/library/dn589800.aspx). 인덱스 테이블은 변경 사항을 인덱싱하는 데이터로 유지되어야 합니다. 클라우드에서는 데이터를 수정하는 동일한 트랜잭션의 일부로 인덱스를 업데이트하는 작업을 수행하는 것이 불가능하거나 적절하지 않을 수 있습니다. 이 경우 결과적으로 일관되는 접근 방식이 더 적합합니다. 최종 일관성과 관련된 문제에 대한 정보를 제공합니다.
-- [분할 패턴](https://msdn.microsoft.com/library/dn589797.aspx). 인덱스 테이블 패턴은 분할된 데이터베이스를 사용해 분할한 데이터와 함께 자주 사용합니다. 분할 패턴은 데이터 저장소를 분할된 데이터베이스 집합으로 분할하는 방법에 대한 추가 정보를 제공합니다.
-- [구체화된 뷰 패턴](materialized-view.md). 데이터를 요약하는 쿼리를 지원하기 위한 데이터 인덱싱 대신 데이터의 구체화된 뷰를 생성하는 것이 더 적절할 수 있습니다. 데이터의 미리 채워진 뷰를 생성해 효울적인 요약 쿼리를 지원하는 방법을 설명합니다.
+![그림 5 - 복합 키를 기준으로 하는 인덱스 테이블](./_images/index-table-figure-5.png)
+
+
+<span data-ttu-id="20832-150">인덱스 테이블은 분할 데이터를 대상으로 하는 쿼리 작업의 속도를 높일 수 있는데, 분할 키가 해시된 경우 특히 유용합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-150">Index tables can speed up query operations over sharded data, and are especially useful where the shard key is hashed.</span></span> <span data-ttu-id="20832-151">다음 그림은 분할 키가 Customer ID의 해시인 예를 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20832-151">The next figure shows an example where the shard key is a hash of the Customer ID.</span></span> <span data-ttu-id="20832-152">인덱스 테이블은 데이터를 해시되지 않은 값(Town과 LastName)으로 구성하고 해시된 분할 키를 조회 데이터로 제공할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-152">The index table can organize data by the nonhashed value (Town and LastName), and provide the hashed shard key as the lookup data.</span></span> <span data-ttu-id="20832-153">이렇게 하면 범위 내에 있는 데이터를 검색해야 하거나 해시되지 않은 키의 순서로 데이터를 검색해야 하는 경우 응용 프로그램이 해시 키를 반복적으로 계산(비용이 드는 작업)할 필요가 없습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-153">This can save the application from repeatedly calculating hash keys (an expensive operation) if it needs to retrieve data that falls within a range, or it needs to fetch data in order of the nonhashed key.</span></span> <span data-ttu-id="20832-154">예를 들어 “Redmond에 사는 모든 고객 찾기”와 같은 쿼리는 인덱스 테이블에서 일치하는 항목을 찾아 신속하게 해결할 수 있습니다(일치하는 항목은 모두 연속 블록에 저장됨).</span><span class="sxs-lookup"><span data-stu-id="20832-154">For example, a query such as “Find all customers that live in Redmond” can be quickly resolved by locating the matching items in the index table, where they're all stored in a contiguous block.</span></span> <span data-ttu-id="20832-155">그런 다음 인덱스 테이블에 저장된 분할 키를 사용해 고객 데이터에 대한 참조를 따릅니다.</span><span class="sxs-lookup"><span data-stu-id="20832-155">Then, follow the references to the customer data using the shard keys stored in the index table.</span></span>
+
+![그림 6 - 인덱스 테이블이 분할된 데이터에 대한 빠른 조회 제공](./_images/index-table-figure-6.png)
+
+
+## <a name="issues-and-considerations"></a><span data-ttu-id="20832-157">문제 및 고려 사항</span><span class="sxs-lookup"><span data-stu-id="20832-157">Issues and considerations</span></span>
+
+<span data-ttu-id="20832-158">이 패턴을 구현할 방법을 결정할 때 다음 사항을 고려하세요.</span><span class="sxs-lookup"><span data-stu-id="20832-158">Consider the following points when deciding how to implement this pattern:</span></span>
+
+- <span data-ttu-id="20832-159">보조 인덱스를 유지하는 오버헤드가 클 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-159">The overhead of maintaining secondary indexes can be significant.</span></span> <span data-ttu-id="20832-160">사용자는 응용 프로그램이 사용하는 쿼리를 분석하고 이해해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-160">You must analyze and understand the queries that your application uses.</span></span> <span data-ttu-id="20832-161">인덱스 테이블은 정기적으로 사용할 가능성이 있는 경우에만 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-161">Only create index tables when they're likely to be used regularly.</span></span> <span data-ttu-id="20832-162">응용 프로그램이 수행하지 않거나 가끔씩만 수행하는 쿼리를 지원하기 위한 인덱스 테이블은 굳이 생성할 필요가 없습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-162">Don't create speculative index tables to support queries that an application doesn't perform, or performs only occasionally.</span></span>
+- <span data-ttu-id="20832-163">인덱스 테이블에 데이터를 복제하는 것은 데이터의 다중 사본을 유지하는 데 필요한 저장 비용과 노력에 상당한 오버헤드를 추가할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-163">Duplicating data in an index table can add significant overhead in storage costs and the effort required to maintain multiple copies of data.</span></span>
+- <span data-ttu-id="20832-164">인덱스 테이블을 원본 데이터를 참조하는 정규화된 구조로 구현하려면 응용 프로그램이 데이터를 찾기 위해 두 번의 조회 작업을 수행해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-164">Implementing an index table as a normalized structure that references the original data requires an application to perform two lookup operations to find data.</span></span> <span data-ttu-id="20832-165">첫 번째 작업은 인덱스 테이블을 검색해 기본 키를 검색하고, 두 번째 작업은 기본 키를 사용해 데이터를 가져옵니다.</span><span class="sxs-lookup"><span data-stu-id="20832-165">The first operation searches the index table to retrieve the primary key, and the second uses the primary key to fetch the data.</span></span>
+- <span data-ttu-id="20832-166">시스템이 대량의 데이터 집합에 대한 많은 인덱스 테이블을 통합하는 경우, 인덱스 테이블과 원본 데이터 사이에 일관성을 유지하는 것이 어려울 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-166">If a system incorporates a number of index tables over very large data sets, it can be difficult to maintain consistency between index tables and the original data.</span></span> <span data-ttu-id="20832-167">응용 프로그램은 최종 일관성 모델로 디자인할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-167">It might be possible to design the application around the eventual consistency model.</span></span> <span data-ttu-id="20832-168">예를 들어 데이터를 삽입, 업데이트 또는 삭제하기 위해 응용 프로그램은 메시지를 큐에 게시하고 별도의 작업을 사용해 동작을 수행하며 이런 데이터를 비동기적으로 참조하는 인덱스 테이블을 유지할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-168">For example, to insert, update, or delete data, an application could post a message to a queue and let a separate task perform the operation and maintain the index tables that reference this data asynchronously.</span></span> <span data-ttu-id="20832-169">최종 일관성을 구현하는 방법에 대한 자세한 내용은 [데이터 일관성 입문서](https://msdn.microsoft.com/library/dn589800.aspx)를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="20832-169">For more information about implementing eventual consistency, see the [Data Consistency Primer](https://msdn.microsoft.com/library/dn589800.aspx).</span></span>
+
+   >  <span data-ttu-id="20832-170">Microsoft Azure 저장소 테이블은 동일한 파티션에 보관되는 데이터에 수행된 변경 사항에 대한 트랜잭션 업데이트(엔터티 그룹 트랜잭션)를 지원합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-170">Microsoft Azure storage tables support transactional updates for changes made to data held in the same partition (referred to as entity group transactions).</span></span> <span data-ttu-id="20832-171">동일한 파티션에 있는 하나의 팩트 테이블과 하나 이상의 인덱스 테이블에 데이터를 저장할 수 있는 경우, 이 기능을 사용하면 일관성을 보장하는 데 도움을 줄 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-171">If you can store the data for a fact table and one or more index tables in the same partition, you can use this feature to help ensure consistency.</span></span>
+
+- <span data-ttu-id="20832-172">인덱스 테이블은 나누거나 분할할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-172">Index tables might themselves be partitioned or sharded.</span></span>
+
+## <a name="when-to-use-this-pattern"></a><span data-ttu-id="20832-173">이 패턴을 사용해야 하는 경우</span><span class="sxs-lookup"><span data-stu-id="20832-173">When to use this pattern</span></span>
+
+<span data-ttu-id="20832-174">이 패턴은 응용 프로그램이 기본(또는 분할) 키가 아닌 다른 키를 사용해 데이터를 자주 검색해야 할 때 쿼리 성능을 높이기 위해 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-174">Use this pattern to improve query performance when an application frequently needs to retrieve data by using a key other than the primary (or shard) key.</span></span>
+
+<span data-ttu-id="20832-175">다음의 경우에는 이 패턴이 유용하지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-175">This pattern might not be useful when:</span></span>
+
+- <span data-ttu-id="20832-176">데이터가 휘발성인 경우.</span><span class="sxs-lookup"><span data-stu-id="20832-176">Data is volatile.</span></span> <span data-ttu-id="20832-177">인덱스 테이블은 매우 빠르게 구식이 되어 비효과적이 되거나 인덱스 테이블을 유지하는 오버헤드가 인덱스 테이블의 사용을 통해 절감한 비용보다 커질 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-177">An index table can become out of date very quickly, making it ineffective or making the overhead of maintaining the index table greater than any savings made by using it.</span></span>
+- <span data-ttu-id="20832-178">인덱스 테이블을 위해 보조 키로 선택한 필드가 구분할 수 없고 작은 값의 집합(예: 성별)만 포함할 수 있는 경우</span><span class="sxs-lookup"><span data-stu-id="20832-178">A field selected as the secondary key for an index table is nondiscriminating and can only have a small set of values (for example, gender).</span></span>
+- <span data-ttu-id="20832-179">인덱스 테이블을 위해 보조 키로 선택한 필드에서 데이터 값의 균형이 매우 비대칭인 경우.</span><span class="sxs-lookup"><span data-stu-id="20832-179">The balance of the data values for a field selected as the secondary key for an index table are highly skewed.</span></span> <span data-ttu-id="20832-180">예를 들어 레코드의 90%가 하나의 필드에서 동일한 값을 포함하면 이 필드를 기준으로 데이터를 조회하기 위해 인덱스 테이블을 생성하고 유지하는 것이 데이터 전체를 순차적으로 스캔하는 것보다 많은 오버헤드를 초래할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-180">For example, if 90% of the records contain the same value in a field, then creating and maintaining an index table to look up data based on this field might create more overhead than scanning sequentially through the data.</span></span> <span data-ttu-id="20832-181">그러나 나머지 10%에 있는 대상 값을 굉장히 자주 쿼리하는 경우에는 이 인덱스가 유용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-181">However, if queries very frequently target values that lie in the remaining 10%, this index can be useful.</span></span> <span data-ttu-id="20832-182">사용자는 응용 프로그램이 수행하고 있는 쿼리뿐 아니라 쿼리를 얼마나 자주 수행하는지를 이해해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-182">You should understand the queries that your application is performing, and how frequently they're performed.</span></span>
+
+## <a name="example"></a><span data-ttu-id="20832-183">예</span><span class="sxs-lookup"><span data-stu-id="20832-183">Example</span></span>
+
+<span data-ttu-id="20832-184">Azure 저장소 테이블은 클라우드에서 실행 중인 응용 프로그램에 대한 확장성이 뛰어난 키/값 데이터 저장소를 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-184">Azure storage tables provide a highly scalable key/value data store for applications running in the cloud.</span></span> <span data-ttu-id="20832-185">응용 프로그램은 키를 지정해 데이터 값을 저장하고 검색합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-185">Applications store and retrieve data values by specifying a key.</span></span> <span data-ttu-id="20832-186">데이터 값은 여러 필드를 포함할 수 있지만, 데이터 항목의 구조는 단순히 데이터 항목을 바이트의 배열로 처리하는 테이블 저장소가 이해하기 힘듭니다.</span><span class="sxs-lookup"><span data-stu-id="20832-186">The data values can contain multiple fields, but the structure of a data item is opaque to table storage, which simply handles a data item as an array of bytes.</span></span>
+
+<span data-ttu-id="20832-187">Azure 저장소 테이블은 분할도 지원합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-187">Azure storage tables also support sharding.</span></span> <span data-ttu-id="20832-188">분할 키는 두 요소인 파티션 키와 행 키를 포함합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-188">The sharding key includes two elements, a partition key and a row key.</span></span> <span data-ttu-id="20832-189">파티션 키가 동일한 항목은 동일한 파티션(분할된 데이터베이스)에 저장되고, 항목은 분할된 데이터베이스 내에 행 키 순서로 저장됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-189">Items that have the same partition key are stored in the same partition (shard), and the items are stored in row key order within a shard.</span></span> <span data-ttu-id="20832-190">테이블 저장소는 파티션 내에서 행 키 값의 연속 범위 내에 속한 데이터를 가져오는 쿼리를 수행할 수 있도록 최적화됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-190">Table storage is optimized for performing queries that fetch data falling within a contiguous range of row key values within a partition.</span></span> <span data-ttu-id="20832-191">Azure 테이블에 정보를 저장하는 클라우드 응용 프로그램을 작성하는 경우에는 이런 기능을 염두에 두고 데이터를 구조화해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-191">If you're building cloud applications that store information in Azure tables, you should structure your data with this feature in mind.</span></span>
+
+<span data-ttu-id="20832-192">예를 들면 영화에 대한 정보를 저장하는 응용 프로그램을 생각해볼 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-192">For example, consider an application that stores information about movies.</span></span> <span data-ttu-id="20832-193">응용 프로그램은 장르(액션, 다큐멘터리, 역사, 코메디, 드라마 등)를 기준으로 영화를 자주 쿼리합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-193">The application frequently queries movies by genre (action, documentary, historical, comedy, drama, and so on).</span></span> <span data-ttu-id="20832-194">사용자는 다음 그림에서처럼 장르를 파티션 키로 사용하고 영화 이름을 행 키로 지정해 Azure 테이블을 생성할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-194">You could create an Azure table with partitions for each genre by using the genre as the partition key, and specifying the movie name as the row key, as shown in the next figure.</span></span>
+
+![그림 7 - Azure 테이블에 저장된 영화 데이터](./_images/index-table-figure-7.png)
+
+
+<span data-ttu-id="20832-196">이런 접근 방식은 응용 프로그램이 주연 배우로도 영화를 쿼리해야 하는 경우 효과가 떨어집니다.</span><span class="sxs-lookup"><span data-stu-id="20832-196">This approach is less effective if the application also needs to query movies by starring actor.</span></span> <span data-ttu-id="20832-197">이 경우 인덱스 테이블로 작용하는 별도의 Azure 테이블을 생성할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-197">In this case, you can create a separate Azure table that acts as an index table.</span></span> <span data-ttu-id="20832-198">파티션 키는 배우이고 행 키는 영화 이름입니다.</span><span class="sxs-lookup"><span data-stu-id="20832-198">The partition key is the actor and the row key is the movie name.</span></span> <span data-ttu-id="20832-199">각 배우의 데이터는 별도의 파티션에 저장됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-199">The data for each actor will be stored in separate partitions.</span></span> <span data-ttu-id="20832-200">영화에 주연 배우가 한 명 이상이면 동일한 영화가 여러 파티션에 발생하게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="20832-200">If a movie stars more than one actor, the same movie will occur in multiple partitions.</span></span>
+
+<span data-ttu-id="20832-201">영화 데이터는 위의 해결책 섹션에서 설명한 첫 번째 접근 방식을 채택해 각 파티션에 보관되는 값에 복제할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-201">You can duplicate the movie data in the values held by each partition by adopting the first approach described in the Solution section above.</span></span> <span data-ttu-id="20832-202">그러나 각 영화는 여러 번 중복될 수 있으므로(주연 배우당 한 번) 가장 일반적인 쿼리(다른 주연 배우의 이름)를 지원하고 응용 프로그램이 장르 파티션에서 완전한 정보를 찾는 데 필요한 파티션 키를 삽입해 나머지 세부 정보를 검색할 수 있도록 데이터를 부분적으로 역정규화하는 것이 더 효율적일 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-202">However, it's likely that each movie will be replicated several times (once for each actor), so it might be more efficient to partially denormalize the data to support the most common queries (such as the names of the other actors) and enable an application to retrieve any remaining details by including the partition key necessary to find the complete information in the genre partitions.</span></span> <span data-ttu-id="20832-203">이런 접근 방식은 해결 방법 섹션의 세 번째 옵션에 설명되어 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-203">This approach is described by the third option in the Solution section.</span></span> <span data-ttu-id="20832-204">다음 그림은 이런 접근 방식을 보여 줍니다.</span><span class="sxs-lookup"><span data-stu-id="20832-204">The next figure shows this approach.</span></span>
+
+![그림 8 - 영화 데이터에 대한 인덱스 테이블로 작동하는 배우 파티션](./_images/index-table-figure-8.png)
+
+
+## <a name="related-patterns-and-guidance"></a><span data-ttu-id="20832-206">관련 패턴 및 지침</span><span class="sxs-lookup"><span data-stu-id="20832-206">Related patterns and guidance</span></span>
+
+<span data-ttu-id="20832-207">이 패턴을 구현할 때 다음 패턴 및 지침도 관련이 있을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-207">The following patterns and guidance might also be relevant when implementing this pattern:</span></span>
+
+- <span data-ttu-id="20832-208">[데이터 일관성 입문서](https://msdn.microsoft.com/library/dn589800.aspx).</span><span class="sxs-lookup"><span data-stu-id="20832-208">[Data Consistency Primer](https://msdn.microsoft.com/library/dn589800.aspx).</span></span> <span data-ttu-id="20832-209">인덱스 테이블은 변경 사항을 인덱싱하는 데이터로 유지되어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-209">An index table must be maintained as the data that it indexes changes.</span></span> <span data-ttu-id="20832-210">클라우드에서는 데이터를 수정하는 동일한 트랜잭션의 일부로 인덱스를 업데이트하는 작업을 수행하는 것이 불가능하거나 적절하지 않을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-210">In the cloud, it might not be possible or appropriate to perform operations that update an index as part of the same transaction that modifies the data.</span></span> <span data-ttu-id="20832-211">이 경우 결과적으로 일관되는 접근 방식이 더 적합합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-211">In that case, an eventually consistent approach is more suitable.</span></span> <span data-ttu-id="20832-212">최종 일관성과 관련된 문제에 대한 정보를 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-212">Provides information on the issues surrounding eventual consistency.</span></span>
+- <span data-ttu-id="20832-213">[분할 패턴](https://msdn.microsoft.com/library/dn589797.aspx).</span><span class="sxs-lookup"><span data-stu-id="20832-213">[Sharding pattern](https://msdn.microsoft.com/library/dn589797.aspx).</span></span> <span data-ttu-id="20832-214">인덱스 테이블 패턴은 분할된 데이터베이스를 사용해 분할한 데이터와 함께 자주 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-214">The Index Table pattern is frequently used in conjunction with data partitioned by using shards.</span></span> <span data-ttu-id="20832-215">분할 패턴은 데이터 저장소를 분할된 데이터베이스 집합으로 분할하는 방법에 대한 추가 정보를 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-215">The Sharding pattern provides more information on how to divide a data store into a set of shards.</span></span>
+- <span data-ttu-id="20832-216">[구체화된 뷰 패턴](materialized-view.md).</span><span class="sxs-lookup"><span data-stu-id="20832-216">[Materialized View pattern](materialized-view.md).</span></span> <span data-ttu-id="20832-217">데이터를 요약하는 쿼리를 지원하기 위한 데이터 인덱싱 대신 데이터의 구체화된 뷰를 생성하는 것이 더 적절할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="20832-217">Instead of indexing data to support queries that summarize data, it might be more appropriate to create a materialized view of the data.</span></span> <span data-ttu-id="20832-218">데이터의 미리 채워진 뷰를 생성해 효울적인 요약 쿼리를 지원하는 방법을 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="20832-218">Describes how to support efficient summary queries by generating prepopulated views over data.</span></span>
