@@ -1,139 +1,134 @@
 ---
-title: Run Linux VMs in multiple Azure regions for high availability
-description: >-
-  How to deploy VMs in multiple regions on Azure for high availability and
-  resiliency.
-
+title: "고가용성을 위해 여러 Azure 지역에서 Linux VM 실행"
+description: "고가용성과 복원력을 위해 Azure의 여러 지역에 VM을 배포하는 방법"
 author: MikeWasson
-
-ms.service: guidance
-ms.topic: article
 ms.date: 11/22/2016
-ms.author: pnp
-
 pnp.series.title: Linux VM workloads
 pnp.series.prev: n-tier
+ms.openlocfilehash: 3b68f6fc79ba4b29e41ba2b04537b834bb8859b0
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
+# <a name="run-linux-vms-in-multiple-regions-for-high-availability"></a>고가용성을 위해 여러 지역에서 Linux VM 실행
 
-# 고가용성을 위해 다지역에서 Linux VM 실행
-
-이 참조 아키텍처는 가용성과 견고한 재난 복구 인프라를 확보하기 위해 여러 Aure 지역에 N계층 응용 프로그램을 실행하기 위한 일련의 검증된 사례를 보여줍니다. 
+이 참조 아키텍처는 가용성 및 강력한 재해 복구 인프라를 구축하기 위해, 여러 Azure 지역에서 N 계층 응용 프로그램을 실행하기 위한 일련의 검증된 사례를 보여 줍니다. 
 
 ![[0]][0]
 
-## 아키텍처
+*이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
 
-이 참조 아키텍처는 [N계층 응용 프로그램을 위한 Linux VM 실행](n-tier.md)에 소개된 아키텍처를 기반으로 하고 있습니다.
+## <a name="architecture"></a>건축 
 
-* **주 지역 및 부 지역**. 고가용성을 위해 두 지역을 사용합니다. 하나는 주 지역이고, 다른 하나는 장애 조치를 위한 지역입니다.
-* **Azure Traffic Manager**. [Traffic Manager][traffic-manager]는 들어오는 요청을 이 두 지역 중 하나에 라우팅합니다. 정상적으로 실행되는 경우 Traffic Manager는 요청을 주 지역으로 라우팅하는데, 주 지역이 사용 불가능한 경우에는 부 지역으로 장애조치합니다. 자세한 내용은 [Traffic Manager 구성](#traffic-manager-configuration)을 참조하시기 바랍니다.
-* **리소스 그룹**. 주 지역, 부 지역, Traffic Manager에 대한 별도의 [리소스 그룹][resource groups]을 생성합니다. 이를 통해 각 지역을 단일 리소스 모음으로 보다 유연하게 관리할 수 있습니다. 예를 들면 다른 지역의 실행을 중단하지 않고도 한 지역을 재배포할 수 있습니다. [리소스 그룹을 연결][resource-group-links]하여 해당 응용 프로그램에 대한 모든 리소스 목록을 생성하는 쿼리를 실행할 수 있습니다.
-* **VNets**. 지역별로 별개의 VNet을 생성하는데, 이 때 주소 공간이 겹치지 않도록 주의해야 합니다.
-* **Apache Cassandra**. 고가용성을 위해 여러 Azure 지역의 데이터 센터에 Cassandra를 배포합니다. 각 지역 내 노드를 장애 도메인과 업그레이드 도메인을 사용하여 rack-aware 모드로 구성하여 지역 내 복원성을 확보합니다.
+이 아키텍처는 [N 계층 응용 프로그램에 대한 Linux VM 실행](n-tier.md)에 나와 있는 아키텍처를 사용합니다. 
 
-이 아키텍처에 대한 Visio 파일 [다운로드](https://aka.ms/arch-diagrams).
+* **주 지역 및 보조 지역**. 더 높은 가용성을 달성하기 위해 두 개의 지역을 사용합니다. 하나는 주 지역이고 다른 하나는 장애 조치(failover)를 위한 지역입니다.
+* **Azure Traffic Manager**. [Traffic Manager][traffic-manager]는 들어오는 요청을 이 지역 중 하나에 라우팅합니다. 정상 작동 중에는 요청을 주 지역으로 라우팅합니다. 이 지역을 사용할 수 없게 되면 Traffic Manager가 보조 지역으로 장애 조치(failover)합니다. 자세한 내용은 [Traffic Manager 구성](#traffic-manager-configuration) 섹션을 참조하세요.
+* **리소스 그룹**. 주 지역, 보조 지역 및 Traffic Manager에 대해 별도의 [리소스 그룹][resource groups]을 만듭니다. 따라서 각 지역을 단일 리소스 모음으로 유연하게 관리할 수 있습니다. 예를 들어 다른 지역으로 이동하지 않고 한 지역을 다시 배포할 수 있습니다. [리소스 그룹을 연결][resource-group-links]하므로 응용 프로그램의 모든 리소스를 나열하는 쿼리를 실행할 수 있습니다.
+* **VNet**. 각 지역에 대해 별도의 VNet을 만듭니다. 주소 공간이 겹치지 않도록 합니다.
+* **Apache Cassandra**. 고가용성을 위해 Azure 지역 전반의 데이터 센터에 Cassandra를 배포합니다. 각 지역 내의 노드는 지역 내의 복원력을 위해 장애 및 업그레이드 도메인을 사용하여 랙 인식 모드로 구성됩니다.
 
-## 권장사항
+## <a name="recommendations"></a>권장 사항
 
-다지역 아키텍처는 단일 지역 배포보다 더 높은 가용성을 제공합니다. 주 지역이 지역 정전으로 영향을 받는 경우 [Traffic Manager][traffic-manager]를 사용하여 부 지역으로 장애조치할 수 있습니다. 이 아키텍처는 응용 프로그램의 개별 하위시스템 장애 발생 시에도 유용합니다. 
+다중 지역 아키텍처는 단일 지역에 배포하는 것보다 더 높은 가용성을 제공할 수 있습니다. 지역 가동 중단이 주 지역에 영향을 주는 경우 [Traffic Manager][traffic-manager]를 사용하여 보조 지역으로 장애 조치(failover)할 수 있습니다. 이 아키텍처는 응용 프로그램의 개별 하위 시스템이 고장난 경우에도 도움이 될 수 있습니다.
 
-여러 지역에서 고가용성을 얻을 수 있는 몇 가지 일반적인 접근 방식이 있습니다.   
+지역에서 고가용성을 달성하는 데 몇 가지 일반적인 접근 방식이 있습니다.   
 
-* 액티브/패시브 상시 대기. 트래픽이 한 지역으로 가는 동안 다른 지역은 상시 대기 모드가 됩니다. 상시 대기 모드란 부 지역의 VM이 할당되어 항상 실행되는 상태를 말합니다.
-* 액티브/패시브 수동 대기. 트래픽이 한 지역으로 가는 동안 다른 지역은 수동 대기 모드가 됩니다. 수동 대기 모드란 장애조치를 위해 필요해지기 전까지 부 지역의 VM이 할당되지 않는 상태를 말합니다. 이 접근 방식은 비용을 절감할 수 있지만 장애 복구까지 더 오랜 시간이 소요됩니다.
-* 액티브/액티브. 두 지역 모두 액티브 상태로서 요청 부하는 두 지역에 분산됩니다. 한 지역이 중단되면 로테이션에서 제외됩니다.  
+* 활성/수동(상시 대기). 트래픽이 한 지역으로 이동하면 다른 하나가 상시 대기 상태에서 기다립니다. 상시 대기는 항상 보조 지역의 VM이 할당되고 실행 중이라는 의미입니다.
+* 활성/수동(수동 대기). 트래픽이 한 지역으로 이동하면 다른 하나가 수동 대기에서 기다립니다. 수동 대기는 장애 조치(failover)에 필요할 때까지 보조 지역의 VM이 할당되지 않는다는 것입니다. 이 방법은 실행하는 데 비용이 덜 들지만, 일반적으로 실패 상태에 있을 때 온라인 상태가 되는 데 더 오래 시간이 걸립니다.
+* 활성/활성. 두 지역 모두 활성화되어 있으며, 요청이 두 지역 사이에서 부하 분산됩니다. 한 지역을 사용할 수 없게 되면 회전이 중단됩니다. 
 
-이 참조 아키텍처는 장애조치를 위한 Traffic Manager를 사용하여 상시 대기 모드에서의 액티브/패시브에 초점을 맞추고 있습니다. 상시 대기 모드를 위해 일단 적은 수의 VM만 배포한 후 필요에 따라 확장할 수 있습니다. 
+이 아키텍처는 장애 조치(failover)를 위해 Traffic Manager를 사용하여 활성/수동(상시 대기)을 중점적으로 다룹니다. 상시 대기를 위해 VM을 몇 개만 배포한 다음 필요에 따라 규모를 확장할 수 있습니다.
 
 
-### 지역 연결
+### <a name="regional-pairing"></a>지역을 쌍으로 연결
 
-각 Azure 지역은 동일한 상위 지역 내에 위치한 다른 지역과 연결됩니다. 일반적으로 동일 지역 연결로부터 지역을 선택합니다. (예: East US 2 및 US Central) 이렇게 함으로써 다음과 같은 이점을 얻을 수 있습니다.
+Azure 지역은 동일한 지역 내에서 다른 지역과 쌍을 이룹니다. 일반적으로 같은 지역 쌍에서 지역을 선택합니다. 예를 들어 미국 동부 2와 미국 중부입니다. 이에 따른 장점은 다음과 같습니다.
 
-* 넓은 지역에서 정전이 발생하는 경우 모든 연결 중 최소 한 지역에 대해서 우선적으로 복구를 수행합니다.
-* 계획된 Azure 시스템 업데이트를 연결된 지역들에 순차적으로 발행하여 중단 시간을 최소화합니다.
-* 한 쌍의 연결 지역은 동일 상위 지역 내에 위치해 데이터 상주 요구사항을 충족합니다.
+* 광범위한 가동 중단이 발생한 경우 모든 쌍 중에서 하나 이상의 지역에 대한 복구에 우선 순위가 지정됩니다.
+* 계획된 Azure 시스템 업데이트는 순차적으로 쌍을 이루는 지역으로 출시되어 가동 중지 시간을 최소화할 수 있습니다.
+* 쌍은 데이터 상주 요구 사항을 충족하기 위해 동일한 지역 내에 상주합니다.
 
-그러나 두 지역 모두 응용 프로그램에 필요한 모든 Azure 서비스를 지원해야 합니다. ([지역별 서비스][services-by-region] 참조.) 지역 연결에 대한 자세한 내용은 [비즈니스 연속성 및 재난 복구(BCDR): Azure 연결 지역][regional-pairs]을 참조하시기 바랍니다.
+그러나 두 지역 모두 응용 프로그램에 필요한 모든 Azure 서비스를 지원하는지 확인합니다([지역별 서비스][services-by-region] 참조). 지역 쌍에 대한 자세한 내용은 [BCDR(무중단 업무 방식 및 재해 복구): Azure 쌍을 이루는 지역][regional-pairs]을 참조하세요.
 
-### Traffic Manager 구성
+### <a name="traffic-manager-configuration"></a>Traffic Manager 구성
 
-Traffic Manager를 구성할 때는 다음과 같은 사항을 고려해야 합니다.
+Traffic Manager를 구성할 때 다음 사항을 고려합니다.
 
-* **라우팅**. Traffic Manager는 몇 가지 [라우팅 알고리즘][tm-routing]을 지원합니다. 이 문서에서 설명하는 시나리오의 경우에는 (과거 *장애조치* 라우팅으로 불린) *우선순위* 라우팅을 사용합니다. 우선순위 라우팅 설정 시 Traffic Manager는 주 지역이 통신 불가능한 경우가 아니라면 모든 요청을 주 지역으로 전송합니다. 만약 주 지역이 통신 불가능한 상태라면 Traffic Manager가 부 지역으로 자동 장애조치를 수행합니다. [장애조치 라우팅 메서드 구성][tm-configure-failover]을 참조하시기 바랍니다.
-* **상태 프로브**. Traffic Manager는 HTTP(또는 HTTPS) [프로브][tm-monitoring]를 사용하여 각 지역의 가용성을 모니터링합니다. 이 프로브는 특정 URL 경로에 대한 HTTP 200 응답을 확인합니다. 모범 사례 중 하나는 응용 프로그램의 전반적인 상태를 보고하는 끝점을 생성하여 상태 프로브를 위해 사용하는 것입니다. 그렇지 않으면 이 프로브는 응용 프로그램의 중요한 부분이 실제로는 고장난 경우에도 끝점의 상태를 양호하다고 보고할 수 있습니다. 자세한 내용은 [상태 끝점 모니터링 패턴][health-endpoint-monitoring-pattern]을 참조하시기 바랍니다.
+* **라우팅**. Traffic Manager는 여러 [라우팅 알고리즘][tm-routing]을 지원합니다. 이 문서에 설명된 시나리오는 *우선 순위* 라우팅(이전에는 *장애 조치(failover)* 라우팅이라고 함)을 사용합니다. 이 설정을 사용하면 Traffic Manager가 주 지역에 연결할 수 없는 경우가 아닌 한 모든 요청을 주 지역으로 보냅니다. 이때 자동으로 보조 지역으로 장애 조치(failover)됩니다. [장애 조치(failover) 라우팅 방법 구성][tm-configure-failover]을 참조하세요.
+* **상태 프로브**. Traffic Manager는 HTTP(또는 HTTPS) [프로브][tm-monitoring]를 사용하여 각 지역의 가용성을 모니터링합니다. 프로브는 지정된 URL 경로에 대한 HTTP 200 응답을 확인합니다. 응용 프로그램의 전반적인 상태를 보고하고 이 끝점을 상태 프로브에 사용하는 끝점을 생성하는 것이 좋습니다. 그렇지 않으면 응용 프로그램의 중요한 부분이 실제로 실패할 때 프로브에서 정상 끝점을 보고할 수 있습니다. 자세한 내용은 [상태 끝점 모니터링 패턴][health-endpoint-monitoring-pattern]을 참조하세요.
 
-Traffic Manager가 장애 조치를 수행하는 동안 클라이언트가 해당 응용 프로그램에 접속할 수 없는 시간이 발생하는데, 이 시간은 다음과 같은 요소에 따라 달라집니다.
+Traffic Manager가 장애 조치(failover)할 때 클라이언트가 응용 프로그램에 연결할 수 없는 기간이 있습니다. 그 기간은 다음과 같은 요인에 의해 영향을 받습니다.
 
-* 상태 프로브는 주 지역이 통신할 수 없는 상태인 경우 이를 감지해야 합니다.
-* DNS 서버는 해당 IP 주소에 대한 캐시된 DNS 기록을 업데이트해야 하는데, 이는 DNS TTL(time-to-live)의 영향을 받습니다. TTL은 300초(5분)로 기본 설정되어 있지만 Traffic Manager 프로필을 생성할 때 이 값을 구성할 수 있습니다.
+* 상태 프로브가 주 지역에 연결할 수 없는지 검색해야 합니다.
+* DNS 서버가 DNS TTL(time-to-live)에 따라 IP 주소에 대해 캐시된 DNS 레코드를 업데이트해야 합니다. 기본 TTL은 300초(5분)이지만 Traffic Manager 프로필을 만들 때 이 값을 구성할 수 있습니다.
 
-자세한 내용은 [Traffic Manager 모니터링][tm-monitoring]을 참조하시기 바랍니다.
+자세한 내용은 [Traffic Manager 모니터링 정보][tm-monitoring]를 참조하세요.
 
-Traffic Manager가 장애조치를 실행하는 경우 자동 장애 복구가 아닌 수동 장애 복구 실행을 권장합니다. 그렇지 않으면 해당 응용 프로그램이 여러 지역을 왔다 갔다 하는 상황이 발생할 수 있습니다. 장애 복구를 실시하기 전 모든 응용 프로그램 하위 시스템이 정상적인 상태인지 확인합니다.
+Traffic Manager가 장애 조치(failover)를 수행하는 경우 자동 장애 복구(failback)를 구현하기 보다는 수동 장애 복구(failback)를 수행하는 것이 좋습니다. 그렇지 않으면 응용 프로그램이 지역 간에 앞뒤로 대칭 이동하는 상황이 발생할 수 있습니다. 장애 복구(failback) 전에 모든 응용 프로그램 하위 시스템이 정상 상태인지 확인합니다.
 
-Traffic Manager는 자동 장애 복구로 기본 설정되어 있습니다. 이를 방지하려면 장애 복구 이벤트 발생 후 주 지역의 우선순위를 수동으로 낮춰야 합니다. 예를 들어 주 지역이 우선순위 1이고 부 지역이 우선순위 2인 경우, 장애 조치 후 주 지역을 우선순위 3으로 설정하여 자동 장애 복구를 방지할 수 있습니다. 원상 복구할 준비가 완료되면 그 때 우선순위를 다시 1로 업데이트하면 됩니다.
+Traffic Manager는 기본적으로 자동으로 장애를 복구(failback)합니다. 이를 방지하려면 장애 조치(failover) 이벤트 후 수동으로 주 지역의 우선 순위를 낮춥니다. 예를 들어 주 지역의 우선 순위가 1이고 보조 지역의 우선 순위를 2로 가정합니다. 장애 조치(failover) 후 자동 장애 복구(failback)를 방지하기 위해 주 지역의 우선 순위를 3으로 설정합니다. 다시 전환할 준비가 되면 우선 순위를 1로 업데이트합니다.
 
-우선순위는 다음과 같은 [Azure CLI][install-azure-cli] 명령어를 사용하여 업데이트할 수 있습니다.
+다음 [Azure CLI][install-azure-cli] 명령은 우선 순위를 업데이트합니다.
 
 ```bat
 azure network traffic-manager  endpoint set --resource-group <resource-group> --profile-name <profile>
     --name <traffic-manager-name> --type AzureEndpoints --priority 3
 ```    
 
-또 다른 접근 방식은 장애 복구를 실시할 준비가 완료될 때까지 해당 끝점을 일시적으로 사용하지 않도록 설정하는 것입니다. 
+또 다른 방법은 장애 복구(failback)할 준비가 될 때까지 끝점을 일시적으로 사용하지 않도록 설정하는 것입니다.
 
 ```bat
 azure network traffic-manager  endpoint set --resource-group <resource-group> --profile-name <profile>
     --name <traffic-manager-name> --type AzureEndpoints --status Disabled
 ```    
 
-장애 조치의 원인에 따라 한 지역 내 리소스들을 재배포해야 할 수도 있습니다. 따라서 장애 복구 전에 실행 준비 테스트를 실시하는데, 이 테스트를 통해 다음과 같은 사항을 확인해야 합니다.
+장애 조치(failover)의 원인에 따라 한 지역 내에서 리소스를 다시 배포해야 할 수 있습니다. 장애 복구(failback) 전에 운영 준비 상태 테스트를 수행합니다. 이 테스트는 다음과 같은 사항을 확인해야 합니다.
 
-* VM이 올바르게 구성되었는지 여부. (모든 필요한 소프트웨어 설치 여부, IIS 실행 여부 등)
-* 응용 프로그램 하위 시스템이 정상 상태인지 여부
-* 기능 테스트. (예를 들어, 웹 계층에서 DB 계층으로의 접근 가능 여부.)
+* VM이 올바르게 구성되어 있습니다. 필요한 모든 소프트웨어가 설치되어 있고, IIS가 실행 중인지 확인합니다.
+* 응용 프로그램 하위 시스템이 정상입니다.
+* 기능을 테스트합니다. 예를 들어 웹 계층에서 데이터베이스 계층에 연결 가능한지 테스트합니다.
 
-### 여러 지역에 Cassandra 배포
+### <a name="cassandra-deployment-across-multiple-regions"></a>여러 지역에 Cassandra 배포
 
-Cassandra 데이터 센터는 복제 및 워크로드 분리를 위해 하나의 클러스터 내에 함께 구성되는 관계된 데이터 노드의 집합입니다.
+Cassandra 데이터 센터는 복제와 워크로드 분리를 위해 클러스터 내에서 함께 구성된 관련 데이터 노드의 그룹입니다.
 
-프로덕션을 위해 [DataStax Enterprise][datastax]의 사용을 권장합니다. Azure에서 DataStax 실행에 관한 자세한 내용은 [Azure용 DataStax Enterprise 배포 가이드][cassandra-in-azure]를 참조하시기 바랍니다. Cassandra 에디션에 적용되는 일반적인 권장 사항은 다음과 같습니다. 
+프로덕션 용도의 경우 [DataStax Enterprise][datastax]를 사용하는 것이 좋습니다. Azure에서 DataStax 실행에 대한 자세한 내용은 [DataStax Enterprise Deployment Guide for Azure][cassandra-in-azure](Asure용 DataStax 엔터프라이즈 배포 가이드)를 참조하세요. 다음 일반 권장 사항은 Cassandra 버전에 적용됩니다. 
 
-* 공용 IP 주소를 각 노드에 할당합니다. 이를 통해 클러스터가 Azure 백본 인프라를 사용하는 여러 지역에 걸쳐 통신을 수행할 수 있게 되어 적은 비용으로도 높은 처리율을 얻을 수 있습니다.
-* 적합한 방화벽 및 네트워크 보안 그룹(NSG) 구성을 사용하여 클라이언트나 기타 클러스터 노드 등과 같은 알려진 호스트에 대해서만 트래픽이 허용되도록 설정하여 노드를 보호합니다. Cassandra는 통신, OpsCenter, Spark 등에 대해 서로 다른 포트를 사용합니다. Cassandra의 포트 사용에 관한 내용은 [방화벽 포트 액세스 구성][cassandra-ports]을 참조하시기 바랍니다.
-* 모든 [client-to-node][ssl-client-node] 및 [node-to-node][ssl-node-node] 통신에 대해 SSL 암호화를 사용합니다.
-* 한 지역 내에서 [Cassandra 권장사항](n-tier.md#cassandra)의 지침을 따라야 합니다.
+* 공용 IP 주소를 각 노드에 할당합니다. 이를 통해 클러스터는 Azure 백본 인프라를 사용하여 여러 지역에서 통신할 수 있으므로 낮은 비용으로 높은 처리량을 제공할 수 있습니다.
+* 적절한 방화벽 및 NSG(네트워크 보안 그룹) 구성을 사용하여 노드를 보호하므로 클라이언트 및 다른 클러스터 노드를 포함한 알려진 호스트로의 트래픽만 허용할 수 있습니다. Cassandra는 통신을 위해 OpCoenter, Spark 등의 다른 포트를 사용합니다. Cassandra에서 포트 사용은 [방화벽 포트 액세스 구성][cassandra-ports]을 참조하세요.
+* 모든 [클라이언트-노드][ssl-client-node] 및 [노드-노드][ssl-node-node] 통신을 위해 SSL 암호화를 사용합니다.
+* 지역 내에서 [Cassandra 권장 사항](n-tier.md#cassandra) 지침을 따릅니다.
 
-## 가용성 고려사항
+## <a name="availability-considerations"></a>가용성 고려 사항
 
-복잡한 N계층 앱의 경우 부 지역에 응용 프로그램을 통째로 복제해야 할 수도 있습니다. 반대로 비즈니스 연속성 지원에 필요한 중요한 하위 시스템만을 복제하는 방법도 있습니다. 
+복잡한 N 계층 앱에서는 보조 지역에서 전체 응용 프로그램을 복제하지 않아도 될 수 있습니다. 대신 무중단 업무 방식을 지원하는 데 필요한 중요한 하위 시스템을 복제하기면 하면 됩니다.
 
-이러한 시스템에서는 Traffic Manager가 장애 지점이 됩니다. Traffic Manager 서비스 장애 시, 클라이언트는 중단 시간 동안 응용 프로그램에 액세스할 수 없습니다. [Traffic Manager SLA][tm-sla]를 검토하여 Traffic Manager를 단독으로 사용하는 것이 고가용성을 위한 비즈니스 요구사항을 충족하는지 확인하시기 바랍니다. 만일 요구사항이 충족되지 않는다면, 또 다른 트래픽 관리 솔루션을 장애 복구용으로 추가할 것을 고려해 보아야 합니다. Azure Traffic Manager 서비스 장애 시, DNS의 CNAME 기록을 변경하여 다른 트래픽 관리 서비스를 지정하도록 설정합니다. (이 단계는 수동으로 수행해야 하는데, DNS 변경이 전파될 때까지는 응용 프로그램을 이용할 수 없습니다.) 
+Traffic Manager는 시스템에서 오류가 발생할 수 있는 지점입니다. Traffic Manager 서비스가 실패하면 클라이언트가 가동 중지 시간 동안 응용 프로그램에 액세스할 수 없습니다. [Traffic Manager SLA][tm-sla]를 검토하고 Traffic Manager만 사용하는 것이 고가용성을 위한 비즈니스 요구 사항을 충족하는지 확인합니다. 그렇지 않은 경우 다른 트래픽 관리 솔루션을 장애 복구(failback)로 추가합니다. Azure Traffic Manager 서비스가 실패하면 다른 트래픽 관리 서비스를 가리키도록 DNS의 CNAME 레코드를 변경합니다. (이 단계는 수동으로 수행해야 하며 DNS 변경 사항이 전파될 때까지 응용 프로그램을 사용할 수 없습니다.)
 
-Cassandra 클러스터의 경우 고려해야 할 장애조치 시나리오는 응용 프로그램이 사용하는 일관성 수준과 사용되는 복제본 수에 따라 달라집니다. Cassandra의 일관성 수준과 사용에 관한 자세한 내용은 [데이터 일관성 구성][cassandra-consistency] 및 [Cassandra: 쿼럼에 연결되는 노드 수는?][cassandra-consistency-usage]을 참조하시기 바랍니다. Cassandra의 데이터 가용성은 응용 프로그램과 복제 메커니즘이 사용하는 일관성 수준에 의해 결정됩니다. Cassandra의 복제에 관한 내용은 [NoSQL Databases Explained의 데이터 복제][cassandra-replication]를 참조하시기 바랍니다.
+Cassandra 클러스터의 경우 고려할 장애 조치(failover) 시나리오는 응용 프로그램이 사용하는 일관성 수준과 사용한 복제 수에 따라 달라집니다. Cassandra의 일관성 수준 및 사용에 대해서는 [Configuring data consistency][cassandra-consistency](데이터 일관성 구성) 및 [Cassandra: How many nodes are talked to with Quorum?][cassandra-consistency-usage](Cassandra: Quorum과 연결되는 노드 수)을 참조하세요. Cassandra의 데이터 가용성은 응용 프로그램 및 복제 방법에서 사용되는 일관성 수준에 의해 결정됩니다. Cassandra의 복제에 대해서는 [Data Replication in NoSQL Databases Explained][cassandra-replication](NoSQL 데이터베이스의 데이터 복제 설명)를 참조하세요.
 
-## 관리 효율성 고려사항
+## <a name="manageability-considerations"></a>관리 효율성 고려 사항
 
-배포 업데이트 시 한번에 하나의 지역씩 업데이트함으로써 응용 프로그램의 부정확한 구성 또는 오류에 의한 글로벌 장애의 위험을 완화합니다. 
+배포를 업데이트할 때는 한 번에 하나의 지역만 업데이트하여 잘못된 구성이나 응용 프로그램의 오류로 인한 글로벌 오류 발생 가능성을 줄입니다.
 
-시스템의 장애 복원력을 테스트해야 하는데, 일반적인 테스트 대상 장애 시나리오는 다음과 같습니다.
+장애에 대한 시스템의 복원력을 테스트합니다. 다음은 테스트에 자주 사용되는 몇 가지 일반적인 오류 시나리오입니다.
 
-* VM 인스턴스를 종료합니다.
-* CPU나 메모리와 같은 리소스의 부하를 증가시킵니다.
-* 네트워크를 차단하거나 지연시킵니다.
-* 프로세스를 충돌시킵니다.
-* 인증서의 유효기간이 만료되도록 합니다.
-* 하드웨어 고장을 시뮬레이션합니다.
-* 도메인 컨트롤러의 DNS 서비스를 종료합니다.
+* VM 인스턴스가 중단됩니다.
+* CPU 및 메모리 같은 리소스 사용을 가중시킵니다.
+* 네트워크 연결을 끊거나 지연시킵니다.
+* 프로세스가 충돌합니다.
+* 인증서가 만료됩니다.
+* 하드웨어 오류를 시뮬레이트합니다.
+* 도메인 컨트롤러에서 DNS 서비스를 중단합니다.
 
-복구 시간을 측정하여 비즈니스 요구사항을 충족하는지 확인하고 장애 모드의 조합도 테스트해야 합니다.
+복구 시간을 측정하고 비즈니스 요구 사항이 충족되었는지 확인합니다. 오류 모드를 조합하여 테스트합니다.
 
 
 <!-- Links -->
 [hybrid-vpn]: ../hybrid-networking/vpn.md
 
-[azure-sla]: https://azure.microsoft.com/support/legal/sla/
 [cassandra-in-azure]: https://academy.datastax.com/resources/deployment-guide-azure
 [cassandra-consistency]: http://docs.datastax.com/en/cassandra/2.0/cassandra/dml/dml_config_consistency_c.html
 [cassandra-replication]: http://www.planetcassandra.org/data-replication-in-nosql-databases-explained/
@@ -154,9 +149,6 @@ Cassandra 클러스터의 경우 고려해야 할 장애조치 시나리오는 �
 [tm-routing]: /azure/traffic-manager/traffic-manager-routing-methods
 [tm-sla]: https://azure.microsoft.com/support/legal/sla/traffic-manager/v1_0/
 [traffic-manager]: https://azure.microsoft.com/services/traffic-manager/
-[visio-download]: http://download.microsoft.com/download/1/5/6/1569703C-0A82-4A9C-8334-F13D0DF2F472/RAs.vsdx
-[vnet-dns]: /azure/virtual-network/virtual-networks-manage-dns-in-vnet
-[vnet-to-vnet]: /azure/vpn-gateway/vpn-gateway-vnet-vnet-rm-ps
-[vpn-gateway]: /azure/vpn-gateway/vpn-gateway-about-vpngateways
+[visio-download]: https://archcenter.azureedge.net/cdn/vm-reference-architectures.vsdx
 [wsfc]: https://msdn.microsoft.com/library/hh270278.aspx
-[0]: ./images/multi-region-application-diagram.png "Highly available network architecture for Azure N-tier applications"
+[0]: ./images/multi-region-application-diagram.png "Azure N 계층 응용 프로그램에 대해 고가용성 네트워크 아키텍처"

@@ -1,71 +1,72 @@
 ---
-title: Choose a solution for connecting an on-premises network to Azure
-description: Compares reference architectures for connecting an on-premises network to Azure.
+title: "온-프레미스 네트워크를 Azure에 연결하기 위한 솔루션 선택"
+description: "온-프레미스 네트워크를 Azure에 연결하기 위한 참조 아키텍처를 비교합니다."
 author: telmosampaio
-ms.author: pnp
 ms.date: 04/06/2017
-ms.topic: article
-ms.service: guidance
+ms.openlocfilehash: 274b9df1817632a7f3eaafa8bf02e965fdc3feea
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
+# <a name="choose-a-solution-for-connecting-an-on-premises-network-to-azure"></a>온-프레미스 네트워크를 Azure에 연결하기 위한 솔루션 선택
 
-# 온-프레미스 네트워크를 Azure에 연결하기 위한 솔루션 선택
+이 문서에서는 온-프레미스 네트워크를 Azure VNet(Virtual Network)에 연결하는 옵션을 비교합니다. 각 옵션에 대해 참조 아키텍처와 배포 가능한 솔루션을 제공합니다.
 
-이 문서는 온-프레미스 네트워크를 Azure 가상 네트워크(VNet)에 연결하기 위한 솔루션들을 비교하고 그 장점과 고려사항을 소개합니다. 각 옵션마다 각각 한 개의 참조 아키텍처와 배포가능한 솔루션을 제공합니다. 
+## <a name="vpn-connection"></a>VPN 연결
 
-## 가상 사설 네트워크(VPN) 연결
+IPSec VPN 터널을 통해 Azure VNet과 온-프레미스 네트워크를 연결하기 위해 VPN(가상 사설망)을 사용합니다.
 
-트래픽은 IPSec VPN 터널을 통해 온-프레미스 네트워크와 Azure 가상 네트워크(VNet) 사이를 흐릅니다.
-
-이 아키텍처는 온-프레미스 하드웨어와 클라우드 사이의 트래픽이 적은 경우와 대기 시간이 약간 증가하는 것을 감수하고 클라우드의 유연성과 처리 능력을 높이려는 경우에 사용되는 하이브리드 애플리케이션에 적합합니다. 
-
-**이점**
-
-- 간단한 구성.
-
-**고려사항**
-
-- 온-프레미스 VPN 장치 필요.
-- Microsoft가 각 VPN 게이트웨이에 대해 99.9%의 가용성을 보장하더라도 서비스 수준 계약(SLA)는 VPN 게이트웨이만 다루고 게이트웨이에 대한 네트워크 연결은 다루지 않습니다.
-- Azure VPN 게이트웨이에 대한 VPN 연결은 현재 최대 200 Mbps의 대역폭을 지원합니다. 이 처리율이 초과될 것으로 예상된다면 여러 VPN 연결에 걸쳐 Azure 가상 네트워크를 분할할 필요가 있습니다.
-
-**[자세히 보기][vpn]**
-
-## Azure ExpressRoute 연결
-
-ExpressRoute 연결은 외부 연결성 공급자를 통해 사설 전용 연결을 사용합니다. 사설 연결을 통해 온-프레미스 네트워크를 Azure로 확장할 수 있습니다.  
-
-이 아키텍처는 높은 확장성을 요구하는 대규모의 중요한 워크로드를 실행하는 하이브리드 애플리케이션에 적합합니다. 
+이 아키텍처는 온-프레미스 하드웨어와 클라우드 간의 트래픽이 가벼울 가능성이 높은 하이브리드 응용 프로그램에 적합하거나, 클라우드의 유연성 및 처리 능력을 위해 대기 시간을 약간 연장하고자 하는 경우에 적합합니다.
 
 **이점**
 
-- 연결성 공급자에 따라 최대 10 Gbps까지의 높은 대역폭 가능.
-- 수요가 적을 때 비용을 절약할 수 있는 동적 대역폭 스케일링 지원. 그러나 모든 연결성 공급자가 이 옵션을 제공하지는 않습니다.
-- 연결성 공급자에 따라 조직이 국가 클라우드에 직접 접속할 수도 있습니다.
-- 전체 연결에 대해 99.9% 가용성 SLA
+- 구성이 간단합니다.
 
-**고려사항**
+**과제**
 
-- 연결 생성에는 외부 연결성 공급자의 협력이 필요합니다. 연결성 공급자는 네트워크 연결의 프로비전을 담당합니다.
-- 온-프레미스에 높은 대역폭의 라우터 필요.
+- 온-프레미스 VPN 장치가 필요합니다.
+- Microsoft에서 각 VPN Gateway에 99.9%의 가용성을 보장하지만, 이 SLA는 게이트웨이에 대한 네트워크 연결이 아닌 VPN Gateway만 다룹니다.
+- 현재 Azure VPN Gateway를 통한 VPN 연결은 최대 200Mbps의 대역폭을 지원합니다. 이러한 처리량을 초과할 것으로 예상되는 경우 여러 VPN 연결에 걸쳐 Azure 가상 네트워크를 분할해야 할 수 있습니다.
 
-**[자세히 보기][expressroute]**
+**[자세히 알아보기...][vpn]**
 
-## VPN 장애조치를 지원하는 Expressroute
+## <a name="azure-expressroute-connection"></a>Azure ExpressRoute 연결
 
-이 옵션은 앞선 두 가지 방법을 결합한 것으로, 일반적인 상황에서는 ExpressRoute를 사용하다가 ExpressRoute 회선이 끊어진 경우 VPN으로 우회하게 됩니다.
+ExpressRoute 연결은 타사 연결 공급자를 통해 개인 전용 연결을 사용합니다. 개인 연결에서 온-프레미스 네트워크를 Azure로 확장할 수 있습니다. 
 
-이 아키텍처는 ExpressRoute의 높은 대역폭과 고가용성 네트워크 연결성이 필요한 하이브리드 애플리케이션에 적합합니다.
+이 아키텍처는 높은 수준의 확장성이 필요한 대규모 중요 업무 워크로드를 실행하는 하이브리드 응용 프로그램에 적합합니다. 
 
 **이점**
 
-- ExpressRoute 회로 장애 시 고가용성. 그러나 대체 연결(fallback connection)은 더 낮은 대역폭 네트워크에서 이루어집니다.
+- 연결 공급자에 따라 훨씬 더 높은 대역폭(최대 10Gbps)을 사용할 수 있습니다.
+- 동적 대역폭 확장을 지원하여 수요가 더 낮은 기간 동안 비용을 줄일 수 있습니다. 그러나 모든 연결 공급자에 이 옵션이 있는 것은 아닙니다.
+- 연결 공급자에 따라 조직에서 국가 클라우드에 직접 액세스할 수 있게 할 수 있습니다.
+- 전체 연결에서 99.9%의 가용성 SLA를 실현할 수 있습니다.
 
-**고려사항**
+**과제**
 
-- 복잡한 구성. VPN 연결과 ExpressRoute 회로를 모두 설치해야 합니다.
-- 중복 하드웨어(VPN 어플라이언스) 및 유료 중복 Azure VPN 게이트웨이 연결 필요.
+- 설정이 복잡할 수 있습니다. ExpressRoute 연결을 만들려면 타사 연결 공급자를 함께 사용해야 합니다. 해당 공급자가 네트워크 연결 프로비저닝을 담당합니다.
+- 온-프레미스에 높은 대역폭의 라우터가 필요합니다.
 
-**[추가 정보][expressroute-vpn-failover]**
+**[자세히 알아보기...][expressroute]**
+
+## <a name="expressroute-with-vpn-failover"></a>VPN 장애 조치(failover)를 사용하는 ExpressRoute
+
+이 옵션은 앞에 나온 두 가지 옵션을 결합합니다. 정상적인 조건에서는 ExpressRoute를 사용하고 ExpressRoute 회로에서 연결이 끊기면 VPN 연결로 장애 조치(failover)합니다.
+
+이 아키텍처는 더 높은 ExpressRoute 대역폭도 필요하고 고가용성 네트워크 연결도 필요한 하이브리드 응용 프로그램에 적합합니다. 
+
+**이점**
+
+- ExpressRoute 회로가 고장나는 경우 대체 연결이 더 낮은 대역폭 네트워크에 있더라도 고가용성입니다.
+
+**과제**
+
+- 구성이 복잡합니다. VPN 연결과 ExpressRoute 회로를 모두 설정해야 합니다.
+- 중복 하드웨어(VPN 어플라이언스)와 중복 Azure VPN Gateway 연결이 필요하며 이는 유료입니다.
+
+**[자세히 알아보기...][expressroute-vpn-failover]**
 
 <!-- links -->
 [expressroute]: ./expressroute.md

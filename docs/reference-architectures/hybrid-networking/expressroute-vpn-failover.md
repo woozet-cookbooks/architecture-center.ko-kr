@@ -1,72 +1,65 @@
 ---
-title: Implementing a highly available hybrid network architecture
-description: >-
-  How to implement a secure site-to-site network architecture that spans an
-  Azure virtual network and an on-premises network connected using ExpressRoute
-  with VPN gateway failover.
+title: "고가용성 하이브리드 네트워크 아키텍처 구현"
+description: "VPN Gateway 장애 조치(failover)를 사용하는 ExpressRoute를 사용하여 연결된 Azure 가상 네트워크 및 온-프레미스 네트워크를 포함하는 보안 사이트 간 네트워크 아키텍처를 구축하는 방법"
 author: telmosampaio
-ms.service: guidance
-ms.topic: article
 ms.date: 11/28/2016
-ms.author: pnp
-
 pnp.series.title: Connect an on-premises network to Azure
 pnp.series.prev: expressroute
 cardTitle: Improving availability
+ms.openlocfilehash: 4c101f17e5e91085b61178f9efb2bc5acb61189c
+ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/14/2017
 ---
-# VPN 장애조치를 지원하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결
+# <a name="connect-an-on-premises-network-to-azure-using-expressroute-with-vpn-failover"></a>VPN 장애 조치(failover)를 사용하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결
 
-이 참조 아키텍처는 사이트 간 가상 사설 네트워크(VPN)를 장애조치 연결로 사용하는 ExpressRoute를 통해 온-프레미스 네트워크를 Azure에 연결하는 방법을 보여줍니다. 트래픽은 ExpressRoute 연결을 통해 온-프레미스 네트워크와 Azure 가상 네트워크(VNet) 사이를 흐릅니다. ExpressRoute 회로에서 연결이 중단되면, 트래픽은 IPSec VPN 터널을 통해 라우팅됩니다. [**이 솔루션 배포하기**.](#deploy-the-solution)
+이 참조 아키텍처는 사이트 간 VPN(가상 사설망)을 장애 조치(failover) 연결로 사용하여 ExpressRoute를 통해 온-프레미스 네트워크를 Azure VNet(Virtual Network)에 연결하는 방법을 보여 줍니다. ExpressRoute 연결을 통해 온-프레미스 네트워크와 Azure VNet 사이에서 트래픽이 흐릅니다. ExpressRoute 회로의 연결이 끊어진 경우 트래픽은 IPSec VPN 터널을 통해 라우팅됩니다. [**이 솔루션을 배포합니다**.](#deploy-the-solution)
 
-ExpressRoute 회로를 사용할 수 없는 경우 VPN 루트는 사설 피어링 연결만 처리하게 됩니다. 공개 피어링 및 Microsoft 피어링 연결은 인터넷을 통해 이루어집니다. 
+ExpressRoute 회로를 사용할 수 없는 경우 VPN 경로가 개인 피어링 연결만 처리합니다. 공용 피어링 및 Microsoft 피어링 연결은 인터넷을 통과합니다. 
 
 ![[0]][0]
 
-## 아키텍처 
+*이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
 
-이 아키텍처는 다음과 같은 요소들로 구성되어 있습니다.
+## <a name="architecture"></a>건축 
 
-* **온-프레미스 네트워크**. 조직 내에서 실행되는 사설 로컬 영역 네트워크.
+이 아키텍처는 다음 구성 요소로 구성됩니다.
 
-* **VPN 어플라이언스**. 온-프레미스 네트워크로의 외부 연결을 제공하는 장치 또는 서비스. VPN 어플라이언스는 하드웨어 장치일 수도 있고, Windows Server 2012의 라우팅 및 원격 액세스 서비스(RRAS)와 같은 소프트웨어일 수도 있습니다. 지원되는 VPN 어플라이언스 목록 및 Azure 연결을 위해 선택된 VPN 어플라이언스 설정에 관한 정보는 사이트 간 VPN 게이트웨이 연결을 위한 VPN 장치를 참조하세요.
+* **온-프레미스 네트워크**. 조직 내에서 실행되는 개인 로컬 영역 네트워크입니다.
 
-* **ExpressRoute 회로**. 에지 라우트(edge router)를 통해 온-프레미스 네트워크를 Azure에 연결하는 연결성 공급자가 제공하는 레이어2 또는 레이어3 회로입니다. 이 회로는 연결성 공급자가 관리하는 하드웨어 인프라를 사용합니다.
+* **VPN 어플라이언스**. 온-프레미스 네트워크에 외부 연결을 제공하는 장치 또는 서비스입니다. VPN 어플라이언스는 하드웨어 장치일 수도 있고 Windows Server 2012의 RRAS(라우팅 및 원격 액세스 서비스)와 같은 소프트웨어 솔루션일 수도 있습니다. 지원되는 VPN 어플라이언스 목록 및 선택한 VPN 어플라이언스를 Azure에 연결하도록 구성하는 방법에 대한 자세한 내용은 [사이트 간 VPN Gateway 연결에 대한 VPN 장치 정보][vpn-appliance]를 참조하세요.
 
-* **ExpressRoute 가상 네트워크 게이트웨이**. ExpressRoute 가상 네트워크 게이트웨이를 통해 온-프레미스 네트워크 연결을 위해 사용되는 ExpressRoute 회로에 VNet을 연결할 수 있습니다.
+* **ExpressRoute 회로**. 에지 라우터를 통해 Azure에서 온-프레미스 네트워크를 연결하는 연결 공급자가 공급하는 계층 2 또는 계층 3 회로입니다. 이 회로는 연결 공급자가 관리하는 하드웨어 인프라를 사용합니다.
 
-* **VPN 가상 네트워크 게이트웨이**. VPN 가상 네트워크 게이트웨이를 통해 VNet을 온-프레미스 네트워크의 VPN 어플라이언스에 연결할 수 있습니다. VPN 가상 네트워크 게이트웨이는 VPN 어플라이언스를 통해서만 온-프레미스 네트워크로부터 오는 요청을 수용하도록 설정됩니다. 자세한 내용은 온-프레미스 네트워크를 Microsoft Azure 가상 네트워크에 연결을 참조하세요.
+* **ExpressRoute 가상 네트워크 게이트웨이**. ExpressRoute 가상 네트워크 게이트웨이를 사용하면 VNet을 온-프레미스 네트워크에 연결하는 데 사용되는 ExpressRoute 회로에 연결할 수 있습니다.
 
-* **VPN 연결**. 연결은 연결 유형(IPSec)과 트래픽을 암호화기 위해 온-프레미스 VPN 어플라이언스와 공유하는 키를 지정하는 속성을 갖습니다.
+* **VPN 가상 네트워크 게이트웨이**. VPN 가상 네트워크 게이트웨이를 사용하면 VNet을 온-프레미스 네트워크의 VPN 어플라이언스에 연결할 수 있습니다. VPN 가상 네트워크 게이트웨이는 VPN 어플라이언스를 통해서만 온-프레미스 네트워크의 요청을 수락하도록 구성되어 있습니다. 자세한 내용은 [온-프레미스 네트워크를 Microsoft Azure Virtual Network에 연결][connect-to-an-Azure-vnet]을 참조하세요.
 
-* **Azure 가상 네트워크(VNet)**. 각 VNet은 단일 Azure 지역에 위치하며 여러 애플리케이션 계층을 호스팅할 수 있습니다. 애플리케이션 계층은 각 VNet의 서브넷을 사용하여 나눌 수 있습니다.
+* **VPN 연결**. 이 연결에는 연결 형식(IPSec) 및 트래픽을 암호화하기 위해 온-프레미스 VPN 어플라이언스와 공유되는 키를 지정하는 속성이 있습니다.
 
-* **게이트웨이 서브넷**. 가상 네트워크 게이트웨이들은 동일한 서브넷에 배치됩니다.
+* **Azure VNet(Virtual Network)**. 각 VNet은 단일 Azure 지역에 상주하며 여러 응용 프로그램 계층을 호스트할 수 있습니다. 응용 프로그램 계층은 각 VNet의 서브넷을 사용하여 분할할 수 있습니다.
 
-* **클라우드 애플리케이션**. Azure에 호스팅된 애플리케이션. 여러 계층이 포함될 수 있고, 여러 서브넷이 Azure 부하 분산 장치를 통해 연결됩니다. 어플리케이션 인프라구조에 대해서 정보가 더 필요하시면,  [Windows VM 워크로드][windows-vm-ra] and [리눅스 VM 워크로드][linux-vm-ra] 자료를 참고하시기 바랍니다.
+* **게이트웨이 서브넷**. 가상 네트워크 게이트웨이는 동일한 서브넷에 있습니다.
 
-Visio 파일을 [다운로드](https://aka.ms/arch-diagrams) 하실 수 있습니다.
+* **클라우드 응용 프로그램**. Azure 에서 호스팅되는 응용 프로그램입니다. Azure 부하 분산 장치를 통해 여러 서브넷이 연결된 여러 계층이 포함될 수 있습니다. 응용 프로그램 인프라에 대한 자세한 내용은 [Windows VM 워크로드 실행][windows-vm-ra] 및 [Linux VM 워크로드 실행][linux-vm-ra]을 참조하세요.
 
-> [!참고]
-> Azure는 [Resource Manager](/azure/azure-resource-manager/resource-group-overview) 와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 참조 아키텍처에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다.
-> 
-> 
+## <a name="recommendations"></a>권장 사항
 
-## 추천
+대부분의 시나리오의 경우 다음 권장 사항을 적용합니다. 이러한 권장 사항을 재정의하라는 특정 요구 사항이 있는 경우가 아니면 따릅니다.
 
-다음 권장사항은 대부분의 시나리오에 적용됩니다. 다른 구체적인 요구사항이 없다면 가급적 권장사항을 따르시기 바랍니다.
+### <a name="vnet-and-gatewaysubnet"></a>VNet과 GatewaySubnet
 
-### VNet 및 GatewaySubnet
+동일한 VNet에서 ExpressRoute 가상 네트워크 게이트웨이와 VPN 가상 네트워크 게이트웨이를 만듭니다. 즉, 이름이 *GatewaySubnet*인 동일한 서브넷을 공유해야 한다는 의미입니다.
 
-ExpressRoute 가상 네트워크 게이트웨이와 VPN 가상 네트워크 게이트웨이를 동일한 VNet에 생성합니다. 즉, 두 게이트웨이는 **GatewaySubnet**이라는 이름의 동일한 서브넷을 공유해야 합니다.
-
-VNet이 이미 GatewaySubnet이라는 이름의 서브넷을 포함하고 있는 경우에는 해당 서브넷이 /27 이상의 주소 공간을 가져야 합니다. 기존 서브넷이 너무 작은 경우에는 다음 PowerShell 명령어를 사용하여 해당 서브넷을 삭제합니다. 
+VNet에 이름이*GatewaySubnet*인 서브넷이 이미 포함되어 있는 경우 /27 이상의 주소 공간이 있어야 합니다. 기존 서브넷이 너무 작은 경우 다음 PowerShell 명령을 사용하여 서브넷을 제거합니다. 
 
 ```powershell
 $vnet = Get-AzureRmVirtualNetworkGateway -Name <yourvnetname> -ResourceGroupName <yourresourcegroup>
 Remove-AzureRmVirtualNetworkSubnetConfig -Name GatewaySubnet -VirtualNetwork $vnet
 ```
 
-VNet이 **GatewaySubnet**이라는 이름의 서브넷을 포함하지 않으면, 다음 PowerShell 명령어를 사용하여 새 서브넷을 생성합니다.
+VNet에 이름이 **GatewaySubnet**인 서브넷이 없는 경우 다음 Powershell 명령을 사용하여 새 서브넷을 만듭니다.
 
 ```powershell
 $vnet = Get-AzureRmVirtualNetworkGateway -Name <yourvnetname> -ResourceGroupName <yourresourcegroup>
@@ -74,62 +67,56 @@ Add-AzureRmVirtualNetworkSubnetConfig -Name "GatewaySubnet" -VirtualNetwork $vne
 $vnet = Set-AzureRmVirtualNetwork -VirtualNetwork $vnet
 ```
 
-### VPN 및 ExpressRoute 게이트웨이
+### <a name="vpn-and-expressroute-gateways"></a>VPN 및 ExpressRoute 게이트웨이
 
-귀하의 조직이 Azure 연결을 위한 [ExpressRoute 사전 요구사항][expressroute-prereq]을 충족하는지 확인하세요.
+조직이 Azure에 연결하기 위한 [ExpressRoute 필수 조건 요구 사항][expressroute-prereq]을 충족하는지 확인합니다.
 
-Azure VNet에 VPN 가상 네트워크 게이트웨이가 이미 있다면, 다음 PowerShell 명령어를 사용하여 삭제하세요.
+Azure VNet에 VPN 가상 네트워크 게이트웨이가 이미 포함되어 있는 경우 다음과 같은 Powershell 명령을 사용하여 제거합니다.
 
 ```powershell
 Remove-AzureRmVirtualNetworkGateway -Name <yourgatewayname> -ResourceGroupName <yourresourcegroup>
 ```
 
-[Azure ExpressRoute로 하이브리드 네트워크 아키텍처 구현][implementing-expressroute]에 있는 지침에 따라 ExpressRoute 연결을 구축합니다.
+[Azure ExpressRoute를 사용하여 하이브리드 네트워크 아키텍처 구현][implementing-expressroute]의 지침을 따라 ExpressRoute 연결을 설정합니다.
 
-[Azure 및 온-프레미스 VPN으로 하이브리드 네트워크 아키텍처 구현][implementing-vpn] 에 있는 지침에 따라 VPN 가상 네트워크 게이트웨이 연결을 구축합니다.
+[Azure 및 온-프레미스 VPN을 사용하여 하이브리드 네트워크 아키텍처 구현][implementing-vpn]의 지침을 따라 VPN 가상 네트워크 게이트웨이 연결을 설정합니다.
 
-가상 네트워크 게이트웨이 연결을 구축했으면, 다음과 같이 환경을 테스트합니다.
+가상 네트워크 게이트웨이 연결을 설정한 후 다음과 같이 환경을 테스트합니다.
 
-1. 온-프레미스 네트워크에서 Azure VNet으로 연결이 되는지 확인합니다.
-2. 공급자에게 연락하여 테스트를 위해 ExpressRoute 연결을 중단합니다.
-3. 여전히 VPN 가상 네트워크 게이트웨이 연결을 사용하여 온-프레미스 네트워크로부터 Azure VNet으로 연결이 가능한지 확인합니다.
-4. 공급자에게 연락하여 ExpressRoute 연결을 재구축합니다.
+1. 온-프레미스 네트워크에서 Azure VNet으로 연결할 수 있는지 확인합니다.
+2. 테스트를 위해 ExpressRoute 연결을 중지하려면 공급자에게 문의합니다.
+3. VPN 가상 네트워크 게이트웨이 연결을 사용하여 온-프레미스 네트워크에서 Azure VNet으로 계속 연결할 수 있는지 확인합니다.
+4. ExpressRoute 연결을 재설정하려면 공급자에게 문의합니다.
 
-## 고려사항
+## <a name="considerations"></a>고려 사항
 
-ExpressRoute연결에 대한 내용은 [Azure ExpressRoute로 하이브리드 네트워크 아키텍처 구현][guidance-expressroute] 가이드를 참조하세요.
+ExpressRoute 고려 사항은 [Azure ExpressRoute를 사용하여 하이브리드 네트워크 아키텍처 구현][guidance-expressroute] 지침을 참조하세요.
 
-사이트 간 VPN에 관한 고려사항은 [Azure 및 온-프레미스 VPN으로 하이브리드 네트워크 아키텍처 구현][guidance-vpn] 가이드를 참조하세요.
+사이트 간 VPN 고려 사항은 [Azure 및 온-프레미스 VPN을 사용하여 하이브리드 네트워크 아키텍처 구현][guidance-vpn] 지침을 참조하세요.
 
-Azure 보안 고려사항은 [Microsoft 클라우드 서비스 및 네트워크 보안][best-practices-security]을 참조하세요.
+일반적인 Azure 보안 고려 사항은 [Microsoft Cloud Services 및 네트워크 보안][best-practices-security]을 참조하세요.
 
-## 솔루션 배포
+## <a name="deploy-the-solution"></a>솔루션 배포
 
-**사전 준비 사항.** 적합한 네트워크 어플라이언스를 통해 이미 구성된 기존의 온-프레미스 인프라가 존재해야 합니다.
+**필수 조건.** 적절한 네트워크 어플라이언스를 사용하여 이미 구성된 기존 온-프레미스 인프라가 있어야 합니다.
 
-다음 절차를 통해 이 솔루션을 배포할 수 있습니다.
+솔루션을 배포하려면 다음 단계를 수행합니다.
 
-1. 아래 단추를 우클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute-vpn-failover%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-2. Azure 포털에서 링크가 열리면 다음 절차를 따릅니다.   
-   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-hybrid-vpn-er-rg`를 입력하세요.
-   
-   * **위치** 드롭다운 상자에서 지역을 선택하세요.
-   
-   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
-   * 사용약관을 검토한 후 **위에 명시된 사용약관에 동의함** 확인란을 클릭합니다.
-   
-   * **구입** 단추를 클릭합니다.
-3. 명령이 완료될 때까지 기다립니다.
-4. 아래 단추를 우클릭하여 "새 탭에서 링크 열기" 또는 "새 창에서 링크 열기"를 선택하십시오.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute-vpn-failover%2Fazuredeploy-expressRouteCircuit.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-5. Azure 포털에서 링크가 열리면 엔터를 누른 후 아래의 절차를 따릅니다.
-   * **리소스 그룹** 섹션에서 **기존 사용** 을 선택한 다음 텍스트 상자에 `ra-hybrid-vpn-er-rg`를 입력하세요.
-   
-   * **위치** 드롭다운 상자에서 지역을 선택하세요.
-   
-   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
-   * 사용약관을 검토한 후 **위에 명시된 사용약관에 동의함** 확인란을 클릭합니다.
-   
-   * **구입** 단추를 클릭합니다.
+1. 아래 단추를 클릭합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute-vpn-failover%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+2. Azure Portal에 링크가 열릴 때까지 기다린 후 다음 단계를 수행합니다.   
+   * **리소스 그룹** 이름이 매개 변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택하고 텍스트 상자에 `ra-hybrid-vpn-er-rg`를 입력합니다.
+   * **위치** 드롭다운 상자에서 하위 지역을 선택합니다.
+   * **템플릿 루트 Uri** 또는 **매개 변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
+   * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
+   * **구매** 단추를 클릭합니다.
+3. 배포가 완료될 때가지 기다립니다.
+4. 아래 단추를 클릭합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fhybrid-networking%2Fexpressroute-vpn-failover%2Fazuredeploy-expressRouteCircuit.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+5. Azure Portal에 링크가 열릴 때까지 기다린 후 다음 단계를 수행합니다.
+   * **리소스 그룹** 섹션에서 **기존 항목 사용**을 선택하고 텍스트 상자에 `ra-hybrid-vpn-er-rg`를 입력합니다.
+   * **위치** 드롭다운 상자에서 하위 지역을 선택합니다.
+   * **템플릿 루트 Uri** 또는 **매개 변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
+   * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
+   * **구매** 단추를 클릭합니다.
 
 <!-- links -->
 
@@ -147,10 +134,5 @@ Azure 보안 고려사항은 [Microsoft 클라우드 서비스 및 네트워크 
 [guidance-expressroute]: ./expressroute.md
 [guidance-vpn]: ./vpn.md
 [best-practices-security]: /azure/best-practices-network-security
-[solution-script]: https://github.com/mspnp/reference-architectures/tree/master/hybrid-networking/expressroute-vpn-failover/Deploy-ReferenceArchitecture.ps1
-[azure-powershell-download]: https://azure.microsoft.com/documentation/articles/powershell-install-configure/
-[naming conventions]: /azure/guidance/guidance-naming-conventions
-[azure-cli]: https://azure.microsoft.com/documentation/articles/xplat-cli-install/
-[visio-download]: http://download.microsoft.com/download/1/5/6/1569703C-0A82-4A9C-8334-F13D0DF2F472/RAs.vsdx
-[0]: ../_images/blueprints/hybrid-network-expressroute-vpn-failover.png "Architecture of a highly available hybrid network architecture using ExpressRoute and VPN gateway"
-[ARM-Templates]: https://azure.microsoft.com/documentation/articles/resource-group-authoring-templates/
+[visio-download]: https://archcenter.azureedge.net/cdn/hybrid-network-architectures.vsdx
+[0]: ./images/expressroute-vpn-failover.png "ExpressRoute 및 VPN Gateway를 사용하는 고가용성 하이브리드 네트워크 아키텍처의 아키텍처"
