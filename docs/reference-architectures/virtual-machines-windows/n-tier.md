@@ -1,176 +1,177 @@
 ---
-title: Running Windows VMs for an N-tier architecture
-description: >-
-  How to implement a multi-tier architecture on Azure, paying particular
-  attention to availability, security, scalability, and manageability security.
-
+title: "N 계층 아키텍처에 대한 Windows VM 실행"
+description: "가용성, 보안, 확장성 및 관리 보안에 주의를 기울이며 Azure에서 다중 계층 아키텍처를 구현하는 방법입니다."
 author: MikeWasson
-
-ms.service: guidance
-ms.topic: article
 ms.date: 11/22/2016
-ms.author: pnp
-
 pnp.series.title: Windows VM workloads
 pnp.series.next: multi-region-application
 pnp.series.prev: multi-vm
+ms.openlocfilehash: e25d10d661ac4759f209bd27384303dee2ee454e
+ms.sourcegitcommit: 583e54a1047daa708a9b812caafb646af4d7607b
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 11/28/2017
 ---
+# <a name="run-windows-vms-for-an-n-tier-application"></a>N 계층 응용 프로그램에 대한 Windows VM 실행
 
-# RN계층 응용 프로그램을 위한 Windows VM 실행
-
-이 참조 아키텍처는 N계층 응용 프로그램을 위한 Windows 가상 컴퓨터(VM)를 실행하기 위한 일련의 검증된 사례들을 보여줍니다. [**이 솔루션 배포하기**.](#deploy-the-solution) 
+이 참조 아키텍처는 N 계층 응용 프로그램에 대해 Windows VM(가상 머신)을 실행하는 데 관해 검증된 일련의 사례를 보여줍니다. [**이 솔루션을 배포합니다**.](#deploy-the-solution) 
 
 ![[0]][0]
 
-## 아키텍처
+*이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
 
-N계층 아키텍처를 구현하는 방법은 다양합니다. 아래 다이어그램은 전형적인 3계층 웹 응용 프로그램을 보여줍니다. 이 아키텍처는 [더 높은 확장성 및 가용성을 위한 부하 분산 VM 실행][multi-vm]을 기반으로 합니다. 웹 및 비즈니스 계층은 부하 분산 VM을 사용합니다.
+## <a name="architecture"></a>건축 
 
-* **가용성 집합.** 계층별로 [가용성 집합][azure-availability-sets]을 생성하고 계층당 최소 2개의 VM을 프로비전합니다. 이를 통해 해당 VM들은 더 높은 [서비스 수준 계약(SLA)][vm-sla] 요건을 충족할 수 있습니다.
-* **서브넷.** 계층별로 별개의 서브넷을 생성합니다. [CIDR] 표기법을 사용하여 주소 범위와 서브넷 마스크를 지정합니다. 
-* **부하 분산 장치.** [인터넷 연결 부하 분산 장치][load-balancer-external]를 통해 들어오는 인터넷 트래픽을 웹 계층에 분산시키고 [내부 부하 분산 장치][load-balancer-internal]를 통해 웹 계층의 네트워크 트래픽을 비즈니스 계층에 분산시킵니다.
-* **점프박스.** [배스천 호스트(bastion host)](https://en.wikipedia.org/wiki/Bastion_host)라고도 불리는 점프박스는 관리자가 다른 VM에 연결하기 위해 사용하는 네트워크 상의 보안 VM입니다. 점프박스는 안전 목록에 포함되어 있는 공용 IP 주소로부터의 원격 트래픽만을 허용하는 네트워크 보안 그룹(NSG)을 보유하는데, 네트워크 보안 그룹은 원격 데스크톱(RDP) 트래픽을 허용해야 합니다.
-* **모니터링.** [Nagios], [Zabbix] 또는 [Icinga]와 같은 모니터링 소프트웨어를 사용하여 응답 시간, VM 가동 시간, 전반적인 시스템 상태에 대한 정보를 파악할 수 있습니다.  모니터링 소프트웨어는 별도의 관리 서브넷에 위치한 VM 상에 설치합니다.
-* **네트워크 보안 그룹(NSG).** [네트워크 보안 그룹][nsg] (NSG)을 사용하여 VNet 내 네트워크 트래픽을 제한합니다. 예를 들어, 위의 그림과 같은 3계층 아키텍처에서는 DB 계층이 웹 프런트엔드로부터 오는 트래픽은 수용하지 않고 오직 비즈니스 계층과 관리 서브넷으로부터 오는 트래픽만을 수용합니다.
-* **SQL 서버 Always On 가용성 그룹.** 복제 및 장애조치를 사용하도록 설정하여 데이터 계층에서 고가용성을 제공합니다.
-* **Active Directory 도메인 서비스(AD DS) 서버**. Windows Server 2016에 앞서 SQL 서버 Always On 가용성 그룹을 도메인에 추가해야 합니다. 이는 가용성 그룹이 Windows Server Failover Cluster(WSFC) 기술을 기반으로 하기 때문입니다. Windows Server 2016은 Active Directory 없이 Failover Cluster를 생성할 수 있는 기능을 지원하며 이 경우 이 아키텍처에서는 AD DS 서버가 필요하지 않습니다.  자세한 내용은 [Windows Server 2016의 Failover Clustering의 새로운 특징][wsfc-whats-new]을 참조하시기 바랍니다.
+n 계층 아키텍처를 구현하는 방법은 여러 가지가 있습니다. 이 다이어그램에서는 일반적인 3계층 웹 응용 프로그램을 보여줍니다. 이 아키텍처는 [부하가 분산된 VM을 실행하여 확장성 및 가용성 확보][multi-vm]를 기반으로 합니다. 웹 및 비즈니스 계층은 부하 분산된 VM을 사용합니다.
 
-이 아키텍처에 대한 Visio 파일 [다운로드](https://aka.ms/arch-diagrams).
+* **가용성 집합.** 각 계층에 대해 [가용성 집합][azure-availability-sets]을 만들고 각 계층에서 두 개 이상의 VM을 프로비전합니다. 이렇게 하면 VM이 더 높은 [SLA(서비스 수준 계약)][vm-sla]를 충족할 수 있습니다. 단일 VM을 가용성 집합에서 배포할 수는 있지만, 단일 VM이 모든 OS 및 데이터 디스크에 대한 Azure Premium Storage를 사용하지 않는 한 단일 VM은 SLA를 보장하지 않습니다.  
+* **서브넷.** 각 계층에 대해 별도의 서브넷을 만듭니다. [CIDR] 표기법을 사용하여 주소 범위 및 서브넷 마스크를 지정합니다. 
+* **부하 분산 장치.** [인터넷 연결 부하 분산 장치][load-balancer-external]를 사용하여 들어오는 인터넷 트래픽을 웹 계층에 배포하고, [내부 부하 분산 장치][load-balancer-internal]를 사용하여 네트워크 트래픽을 웹 계층에서 비즈니스 계층으로 분산합니다.
+* **Jumpbox.** [요새 호스트]라고도 합니다. 관리자가 다른 VM에 연결할 때 사용하는 네트워크의 보안 VM입니다. Jumpbox는 안전 목록에 있는 공용 IP 주소의 원격 트래픽만 허용하는 NSG를 사용합니다. NSG는 RDP(원격 데스크톱) 트래픽을 허용해야 합니다.
+* **모니터링.** [Nagios], [Zabbix] 또는 [Icinga]와 같은 모니터링 소프트웨어는 응답 시간, VM 가동 시간 및 시스템의 전반적인 상태에 대한 정보를 제공합니다. 개별 관리 서브넷에 배치되어 있는 VM에 모니터링 소프트웨어를 설치합니다.
+* **NSG.** [NSG(네트워크 보안 그룹)][nsg]을 사용하여 VNet 내 네트워크 트래픽을 제한합니다. 예를 들어 여기에 표시된 3계층 아키텍처에서 데이터베이스 계층은 비즈니스 계층 및 관리 서브넷뿐 아니라 웹 프론트 엔드의 트래픽을 허용하지 않습니다.
+* **SQL Server Always On 가용성 그룹.** 복제 및 장애 조치(failover)를 사용하여 데이터 계층에서 높은 가용성을 제공합니다.
+* **AD DS(Active Directory Domain Services) 서버**. Windows Server 2016 전 버전에서는 SQL Server Always On 가용성 그룹이 도메인에 연결되어야 합니다. 가용성 그룹이 WSFC(Windows Server 장애 조치 클러스터) 기술을 사용하기 때문입니다. Windows Server 2016부터는 Active Directory 없이도 장애 조치(failover) 클러스터를 만들 수 있는 기능이 추가되었기 때문에 이 아키텍처에 AD DS 서버가 필요하지 않습니다. 자세한 내용은 [Windows Server 2016 장애 조치(failover) 클러스터링의 새로운 기능][wsfc-whats-new]을 참조하세요.
 
-> [!참고]
-> Azure는 [Resource Manager][resource-manager-overview]와 클래식 모델의 두 가지 배포 모델을 지원합니다. 이 문서에서는 Microsoft가 새 배포를 위해 권장하는 Resource Manager를 사용합니다. 
-> 
- 
+## <a name="recommendations"></a>권장 사항
 
-## 권장사항
+개발자의 요구 사항이 여기에 설명된 아키텍처와 다를 수 있습니다. 여기서 추천하는 권장 사항을 단지 시작점으로 활용하세요. 
 
-이 문서에서 설명하는 아키텍처는 귀하의 요구사항과 정확히 일치하지 않을 수 있습니다. 따라서 이 문서의 권장사항은 하나의 출발점으로 삼으시기 바랍니다. 
+### <a name="vnet--subnets"></a>VNet/서브넷
 
-### VNet / 서브넷
+VNet을 만들 때는 각 서브넷에 포함된 리소스에 몇 개의 IP 주소가 필요한지 결정해야 합니다. [CIDR] 표기법을 사용하여 필요한 IP 주소를 충족하는 서브넷 마스크와 VNet 주소 범위를 지정합니다. 표준 [사설 IP 주소 블록][private-ip-space](10.0.0.0/8, 172.16.0.0/12 및 192.168.0.0/16)에 해당하는 주소 공간을 사용합니다.
 
-VNet을 생성하는 경우 각 서브넷의 리소스에 필요한 IP 주소의 개수를 확인해야 합니다. [CIDR] 표기법을 사용하여 서브넷 마스크와 해당 IP 주소에 적합한 크기의 VNet 주소 범위를 지정해야 하는데, 표준 [사설 IP 주소 블록][private-ip-space](10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)에 해당하는 주소 공간을 사용합니다.
+추후 VNet과 온-프레미스 네트워크 사이에 게이트웨이를 설정해야 할 경우에 대비하여 온-프레미스 네트워크와 중복되지 않는 주소 범위를 선택합니다. VNet을 만든 뒤에는 주소 범위를 변경할 수 없습니다.
 
-추후 VNet과 온-프레미스 네트워크 사이에 게이트웨이를 설치해야 할 경우에 대비하여 온-프레미스 네트워크와 겹치지 않는 주소 범위를 선택합니다. VNet을 생성한 후에는 주소 범위를 변경할 수 없습니다.
+기능 및 보안 요구 사항을 염두에 두고 서브넷을 구성합니다. 동일한 계층이나 역할에 속한 모든 VM은 동일한 서브넷에 속해야 합니다. 이때 서브넷은 보안 경계가 될 수 있습니다. VNet 및 서브넷 디자인에 대한 자세한 내용은 [Azure 가상 네트워크 계획 및 디자인][plan-network]을 참조하세요.
 
-기능 및 보안 요구사항을 고려하여 서브넷을 설계합니다. 동일한 계층이나 역할 내의 모든 VM은 보안 경계가 될 수 있는 동일한 서브넷에 들어가야 합니다. VNet과 서브넷의 설계에 관한 자세한 내용은 [Azure 가상 네트워크의 계획 및 설계][plan-network]를 참조하시기 바랍니다. 
+각 서브넷에 대해 CIDR 표기법을 사용하여 서브넷의 주소 공간을 지정합니다. 예를 들어 '10.0.0.0/24'는 256개의 IP 주소 범위를 만듭니다. VM은 이 중에서 251개를 사용할 수 있습니다. 나머지 5개는 예약되어 있습니다. 각 서브넷의 주소 공간이 겹치지 않아야 합니다. [가상 네트워크 FAQ][vnet faq]를 참조하세요.
 
-CIDR 표기법을 사용하여 각 서브넷에 대한 주소 공간을 지정합니다. 예를 들어, '10.0.0.0/24'은 256개의 IP 주소 범위를 생성하는데, VM은 이중 251개를 사용할 수 있고 나머지 5개는 예약됩니다. 주소 범위가 서브넷끼리 겹치지 않도록 주의합니다. [가상 네트워크 FAQ][vnet faq]를 참조하시기 바랍니다.
+### <a name="network-security-groups"></a>네트워크 보안 그룹
 
-### 네트워크 보안 그룹(NSG)
+NSG 규칙을 사용하여 계층 사이의 트래픽을 제한합니다. 예를 들어 위에 표시된 3계층 아키텍처에서 웹 계층은 데이터베이스 계층과 직접 통신하지 않습니다. 이를 위해서는 데이터베이스 계층에서 웹 계층 서브넷으로부터 수신되는 트래픽을 차단해야 합니다.  
 
-네트워크 보안 그룹(NSG) 규칙을 사용하여 계층 간 트래픽을 제한할 수 있습니다. 예를 들어, 위에 제시된 3계층 아키텍처에서 웹 계층은 DB 계층과 직접 통신하지 않습니다. 이를 강제로 실행하려면 DB 계층이 웹 계층 서브넷으로부터 오는 트래픽을 차단해야 합니다. 
-
-1. 네트워크 보안 그룹을 생성해 DB 계층 서브넷에 연결합니다.
-2. VNet으로부터 오는 모든 트래픽을 거부하는 규칙을 추가합니다.  (`VIRTUAL_NETWORK` 태그 사용) 
-3. 비즈니스 계층 서브넷으로부터 오는 트래픽을 허용하는 더 높은 우선순위를 가진 규칙을 추가합니다. 기존 규칙에 우선하는 이 규칙 덕분에 비즈니스 계층은 DB 계층과 통신할 수 있습니다.
-4. DB 계층 서브넷 내부로부터 들어오는 트래픽을 허용하는 규칙을 추가합니다. 이 규칙은 DB 복제 및 장애조치에 필요한 DB 계층 내 VM 간 통신을 허용합니다.
-5. 점프박스 서브넷으로부터 오는 RDP 트래픽을 허용하는 규칙을 추가합니다. 이 규칙을 통해 관리자는 점프박스로부터 DB 계층에 접속할 수 있습니다.
+1. NSG를 만든 다음 이를 데이터베이스 계층 서브넷에 연결합니다.
+2. VNet으로부터 수신되는 모든 트래픽을 차단하는 규칙을 추가합니다. (규칙에 `VIRTUAL_NETWORK` 태그를 사용합니다.) 
+3. 비즈니스 계층 서브넷으로부터 수신되는 모든 트래픽을 허용하는 규칙을 높은 우선 순위로 추가합니다. 이 규칙은 이전 규칙을 재정의하며, 비즈니스 계층이 데이터베이스 계층과 통신할 수 있도록 해 줍니다.
+4. 데이터베이스 계층 서브넷 자체로부터 수신되는 트래픽을 허용하는 규칙을 추가합니다. 이 규칙은 데이터베이스 계층에 속한 VM 사이의 통신을 허용합니다. 이것은 데이터베이스 복제와 장애 조치(failover)를 위해 필요합니다.
+5. jumpbox 서브넷으로부터 수신되는 RDP 트래픽을 허용하는 규칙을 추가합니다. 이 규칙은 관리자가 jumpbox에서 데이터베이스 계층에 연결할 수 있도록 해 줍니다.
    
-   > [!참고]
-   > 네트워크 보안 그룹에는 VNet 내부로부터 오는 모든 트래픽을 허용하는 규칙들이 기본 설정되어 있습니다. 이 규칙들을 삭제할 수는 없지만 더 높은 우선순위의 규칙을 만들어 무시할 수 있습니다.
+   > [!NOTE]
+   > NSG는 VNet 내부로부터 수신되는 모든 트래픽을 허용하는 기본 규칙을 갖습니다. 이러한 규칙은 삭제할 수 없지만, 우선 순위가 더 높은 규칙을 만들면 재정의할 수 있습니다.
    > 
    > 
 
-### 부하 분산 장치
+### <a name="load-balancers"></a>부하 분산 장치
 
-인터넷 트래픽을 웹 계층에 분산하는 외부 부하 분산 장치를 위한 공용 IP 주소를 생성합니다. [인터넷 연결 부하 분산 장치 생성][lb-external-create]을 참조하시기 바랍니다.
+외부 부하 분산 장치는 인터넷 트래픽을 웹 계층으로 분산합니다. 부하 분산 장치에 사용할 공용 IP 주소를 만듭니다. [인터넷 연결 부하 분산 장치 만들기][lb-external-create]를 참조하세요.
 
-웹 계층에서 오는 네트워크 트래픽을 비즈니스 계층으로 분산하는 내부 부하 분산 장치에 사설 IP 주소를 제공하려면 프런트엔드 IP 구성을 생성해 비즈니스 계층의 서브넷에 연결합니다. [내부 부하 분산 장치 생성][lb-internal-create]을 참조하시기 바랍니다.
+내부 부하 분산 장치는 웹 계층에서 비즈니스 계층으로 네트워크 트래픽을 분산합니다. 내부 부하 분산 장치에 사설 IP 주소를 부여하기 위해 프론트 엔드 IP 구성을 만든 다음 이를 비즈니스 계층의 서브넷에 연결합니다. [내부 부하 분산 장치 만들기 시작][lb-internal-create]을 참조하세요.
 
-### SQL 서버 Always On 가용성 그룹
+### <a name="sql-server-always-on-availability-groups"></a>SQL Server Always On 가용성 그룹
 
-SQL 서버의 고가용성을 위해 [Always On 가용성 그룹][sql-alwayson]을 사용할 것을 권장합니다.  Windows Server 2016에 앞서 Always On 가용성 그룹에는 도메인 컨트롤러가 필요하고 가용성 그룹 내 모든 노드는 동일한 AD 도메인 내에 있어야 합니다.
+SQL Server의 고가용성을 위해 [Always On 가용성 그룹][sql-alwayson]을 사용하는 것이 좋습니다. Windows Server 2016 전 버전에서는 Always On 가용성 그룹에 도메인 컨트롤러가 필요하며, 가용성 그룹의 모든 노드가 동일한 AD 도메인에 속해야 합니다.
 
-다른 계층은 [가용성 그룹 리스너][sql-alwayson-listeners]를 통해 DB에 접속합니다. SQL 클라이언트가 SQL 서버의 물리적 인스턴스의 이름을 모르더라도 리스너를 통해 연결할 수 있습니다. DB에 접속하는 VM은 도메인에 추가되어야 합니다. 클라이언트(여기서는 다른 계층)는 DNS를 사용하여 리스너의 가상 네트워크 이름을 IP 주소로 변환합니다. 
+다른 계층은 [가용성 그룹 수신기][sql-alwayson-listeners]를 통해 데이터베이스에 연결됩니다. 수신기는 SQL 클라이언트가 SQL Server의 물리적 인스턴스의 이름을 알지 못해도 연결할 수 있도록 해 줍니다. 데이터베이스에 액세스하는 VM은 도메인에 연결되어야 합니다. 클라이언트(여기서는 다른 계층)는 DNS를 사용하여 수신기의 가상 네트워크 이름을 IP 주소로 해석합니다.
 
-SQL 서버 Always On 가용성 그룹은 다음과 같은 방식으로 구성할 수 있습니다.
+다음과 같이 SQL Server Always On 가용성 그룹을 구성합니다.
 
-1. Windows Server Failover Clustering(WSFC) 클러스터, SQL 서버 Always On 가용성 그룹, 주 복제본을 만듭니다. 자세한 내용은 [Always On 가용성 그룹 시작하기][sql-alwayson-getting-started]를 참조하시기 바랍니다.   
-2. 정적 사설 IP 주소를 가진 내부 부하 분산 장치를 만듭니다.
-3. 가용성 그룹 리스너를 만들고 리스너의 DNS 이름을 내부 부하 분산 장치의 IP 주소에 매핑합니다. 
-4. SQL 서버 리스닝 포트(기본 설정은 TCP 포트 1433)에 대한 부하 분산 장치 규칙을 생성합니다. 부하 분산 장치 규칙은 Direct Server Return이라고도 부르는 *유동 IP*를 활성화해야 하는데, 이를 통해 VM이 클라이언트에 직접 응답할 수 있고 주 복제본에 직접 연결할 수 있기 때문입니다.
+1. WSFC(Windows Server 장애 조치 클러스터링) 클러스터, SQL Server Always On 가용성 그룹과 주 복제본을 만듭니다. 자세한 내용은 [Always On 가용성 그룹 시작][sql-alwayson-getting-started]을 참조하세요. 
+2. 고정 사설 IP 주소를 사용하여 내부 부하 분산 장치를 만듭니다.
+3. 가용성 그룹 수신기를 만든 다음 수신기의 DNS 이름을 내부 부하 분산 장치의 IP 주소로 매핑합니다. 
+4. SQL Server 수신 포트(기본값: TCP 포트 1433)에 대한 부하 분산 장치 규칙을 만듭니다. 부하 분산 장치 규칙은 Direct Server Return이라고도 불리는 *부동 IP*를 지원해야 합니다. 이로 인해 VM은 클라이언트에 직접 응답하여 주 복제본에 대한 직접 연결을 지원하게 됩니다.
   
-  > [!참고]
-  > 유동 IP를 사용하도록 설정하는 경우, 프런트엔드 포트 번호는 부하 분산 장치 규칙의 백엔드 포트 번호와 동일해야 합니다.
+  > [!NOTE]
+  > 부동 IP가 지원된 경우에는 부하 분산 장치 규칙의 프론트 엔드 포트 번호가 백엔드 포트 번호와 같아야 합니다.
   > 
   > 
 
-SQL 클라이언트가 연결을 시도하면 부하 분산 장치는 연결 요청을 주 복제본으로 라우팅합니다. 다른 복제본에 대한 장애조치가 있는 경우, 부하 분산 장치는 다음 요청을 새로운 주 복제본으로 자동 라우팅합니다. [SQL 서버 Always On 가용성 그룹에 대한 ILB 리스너 구성][sql-alwayson-ilb]을 참조하시기 바랍니다.
+SQL 클라이언트가 연결을 시도하면 부하 분산 장치가 연결 요청을 주 복제본으로 라우팅합니다. 다른 복제본으로의 장애 조치(failover)가 이루어지면 부하 분산 장치가 이후의 요청을 새로운 주 복제본으로 자동 라우팅합니다. 자세한 내용은 [SQL Server Always On 가용성 그룹에 대한 ILB 수신기 구성][sql-alwayson-ilb]을 참조하세요.
 
-장애조치 중에는 기존 클라이언트 연결이 종료됩니다. 장애조치가 완료된 이후 새로 생성된 연결은 장애조치 시 사용된 새로운 주 복제본으로 라우팅됩니다. 
+장애 조치(failover)가 진행되는 동안에는 기존 클라이언트 연결이 닫힙니다. 장애 조치(failover)가 완료되면 새로운 연결이 새로운 주 복제본으로 라우팅됩니다.
 
-응용 프로그램이 쓰기보다 읽기를 훨씬 더 많이 실행하는 경우에는 일부 읽기 전용 쿼리를 부 복제본으로 오프로드할 수 있습니다. [리스너를 사용하여 읽기 전용 부 복제본에 연결(읽기 전용 라우팅)][sql-alwayson-read-only-routing]을 참조하시기 바랍니다.
+응용 프로그램에서 쓰기보다 읽기가 훨씬 많이 발생한다면 읽기 전용 쿼리 중 일부를 보조 복제본으로 부하 분산할 수 있습니다. [수신기를 사용하여 읽기 전용 보조 복제본에 연결(읽기 전용 라우팅)][sql-alwayson-read-only-routing]을 참조하세요.
 
-가용성 그룹의 [수동 장애조치 강제 실행][sql-alwayson-force-failover]을 통해 배포된 리소스를 테스트합니다.
+가용성 그룹의 [수동 장애 조치(failover)를 강제로 수행][sql-alwayson-force-failover]하여 배포 환경을 테스트합니다.
 
-### 점프박스
+### <a name="jumpbox"></a>Jumpbox
 
-점프박스가 최소한의 성능 요구사항을 만족시킬 수 있도록 Standard A1과 같은 작은 VM 크기를 선택합니다. 
+jumpbox는 최소한의 성능 요구 사항만을 가지므로 jumpbox에 대해 Standard A1과 같이 크기가 작은 VM을 선택합니다. 
 
-점프박스를 위한 [공용 IP 주소]를 생성합니다. 점프박스는 다른 VM과 동일한 VNet에 배치하되 별도의 관리 서브넷에 배치합니다. 
+jumpbox에 대한 [공용 IP 주소]를 만듭니다. jumpbox를 다른 VM과 동일한 VNet 안의 별도의 관리 서브넷에 배치합니다.
 
-공개 인터넷에서 응용 프로그램 워크로드를 실행하는 VM으로의 원격 데스크톱 액세스는 허용하지 않습니다. 대신 이 VM들로의 모든 원격 데스크톱 액세스는 점프박스를 통해 이루어져야 합니다. 관리자는 우선 점프박스로 로그인한 후 점프박스로부터 다른 VM으로 로그인합니다. 점프박스를 통해 알려진 안전한 IP 주소에 한해 인터넷에서 오는 원격 데스크톱 트래픽을 허용할 수 있습니다. 
+공용 인터넷으로부터 응용 프로그램 워크로드를 실행하는 VM에 대한 RDP 액세스를 허용하지 않습니다. 대신 이러한 VM에 대한 모든 RDP 액세스는 jumpbox를 통해 이루어져야 합니다. 관리자는 jumpbox에 로그인한 뒤에 jumpbox에서 다른 VM에 로그인하게 됩니다. jumpbox는 인터넷에서 수신되는 RDP 트래픽 중 알려진 안전한 IP 주소만을 허용합니다.
 
-점프 박스를 안전하게 보호하려면 NSG를 생성하여 점프박스 서브넷에 적용합니다. 안전한 공용 IP 주소 집합으로부터만 원격 데스크톱 연결을 허용하는 NSG 규칙을 추가합니다. NSG는 서브넷 또는 점프박스 네트워크 인터페이스(NIC)에 연결할 수 있습니다. 그러나 동일한 서브넷에 다른 VM을 추가하더라도 원격 데스크톱 트래픽이 점프박스에만 허용될 수 있도록 NSG를 네트워크 인터페이스에 연결할 것을 권장합니다.
+jumpbox를 안전하게 보호하기 위해 NSG을 만든 다음 이를 jumpbox 서브넷에 적용합니다. 안전한 공용 IP 주소 집합으로부터 수신되는 RDP 연결만 허용하는 NSG 규칙을 추가합니다. NSG는 서브넷 또는 jumpbox NIC에 연결할 수 있습니다. 여기서는 동일한 서브넷에 다른 VM을 추가하더라도 RDP 트래픽이 jumpbox에서만 허용되도록 NIC에 연결하는 것이 좋습니다.
 
-다른 서브넷에 대한 네트워크 보안 그룹이 관리 서브넷으로부터 오는 원격 데스크톱 트래픽을 허용하도록 구성합니다. 
+관리 서브넷으로부터 수신되는 RDP 트래픽을 허용하도록 다른 서브넷에 대한 NSG를 구성합니다.
 
-## 가용성 고려사항
+## <a name="availability-considerations"></a>가용성 고려 사항
 
-DB 계층에서는 VM 수가 많다고 무조건 고가용성 DB가 되지 않습니다. 관계형 DB의 경우 고가용성을 얻기 위해서는 일반적으로 복제와 장애조치를 사용해야 합니다. SQL 서버의 경우에는 [Always On 가용성 그룹][sql-alwayson]의 사용을 권장합니다. 
+데이터베이스 계층에 여러 개의 VM이 존재한다고 해서 곧바로 고가용성 데이터베이스가 되는 것은 아닙니다. 관계형 데이터베이스의 고가용성을 달성하기 위해서는 일반적으로 복제와 장애 조치(failover)를 사용해야 합니다. SQL Server의 고가용성을 달성하기 위해서는 [Always On 가용성 그룹][sql-alwayson]을 사용하는 것이 좋습니다. 
 
-[Azure SLA for VMs][vm-sla]이 제공하는 것보다 더 높은 가용성이 필요한 경우에는 응용 프로그램을 두 지역에 복제하고 장애조치를 위해 Azure Traffic Manager를 사용합니다. 자세한 내용은 [고가용성을 위해 다지역에서 Windows VM 실행][multi-dc]을 참조하시기 바랍니다.   
+[VM용 Azure SLA][vm-sla]가 제공하는 가용성보다 높은 가용성이 필요한 경우, 두 지역 간에 응용 프로그램을 복제한 다음 장애 조치(failover)를 위해 Azure Traffic Manager를 사용합니다. 자세한 내용은 [고가용성을 위해 여러 지역에서 Windows VM 실행][multi-dc]을 참조하세요.   
 
-## 보안 고려사항
+## <a name="security-considerations"></a>보안 고려 사항
 
-민감한 데이터를 암호화하고 [Azure Key Vault][azure-key-vault]를 사용하여 DB 암호화 키를 관리합니다. Key Vault는 하드웨어 보안 모듈(HSM)에 암호화 키를 저장할 수 있습니다. 자세한 내용은 [Azure VM SQL 서버를 위한 Azure Key Vault 통합 구성][sql-keyvault]을 참조하시기 바랍니다. DB 연결 문자열과 같은 응용 프로그램 비밀 정보는 Key Vault에 저장할 것을 권장합니다. 
+중요한 미사용 데이터를 암호화하고 [Azure Key Vault][azure-key-vault]를 사용하여 데이터베이스 암호화 키를 관리합니다. Key Vault는 암호화 키를 HSM(하드웨어 보안 모듈)에 저장합니다. 자세한 내용은 [Azure VM에서 SQL Server에 대한 Azure Key Vault 통합 구성][sql-keyvault]을 참조하세요. 데이터베이스 연결 문자열과 같은 응용 프로그램 비밀 데이터를 Key Vault에 저장하는 것이 좋습니다.
 
-네트워크 가상 어플라이언스(NVA)를 추가하여 인터넷과 Azure 가상 네트워크 사이에 DMZ를 생성하는 것을 고려해야 합니다. 네트워크 가상 어플라이언스는 방화벽, 패킷 검사, 감사, 사용자 지정 라우팅과 같은 네트워크 관련 작업을 수행할 수 있는 가상 어플라이언스를 가리키는 용어입니다. 자세한 내용은 [Azure와 인터넷 사이에 DMZ 구현][dmz]을 참조하시기 바랍니다.
+NVA(네트워크 가상 어플라이언스)를 추가하여 인터넷과 Azure 가상 네트워크 사이에 DMZ를 만드는 것도 좋은 방법입니다. NVA는 방화벽, 패킷 조사, 감사, 사용자 지정 라우팅과 같은 네트워크 관련 작업을 수행하는 가상 어플라이언스를 통칭하는 용어입니다. 자세한 내용은 [Azure와 인터넷 사이에 DMZ 구현][dmz]을 참조하세요.
 
-## 확장성 고려사항
+## <a name="scalability-considerations"></a>확장성 고려 사항
 
-부하 분산 장치는 네트워크 트래픽을 웹 계층과 비즈니스 계층으로 분산시킵니다. 새 VM 인스턴스를 추가하여 계층을 확장할 수 있는데, 부하에 따라 웹 계층과 비즈니스 계층을 독립적으로 확장할 수도 있습니다. 클라이언트 선호도 유지 필요성에 따른 문제 발생의 가능성을 낮추려면 웹 계층의 VM은 상태 비저장 상태여야 합니다. 비즈니스 로직을 호스팅하는 VM 또한 상태 비저장 상태여야 합니다. 
+부하 분산 장치는 네트워크 트래픽을 웹 계층과 비즈니스 계층으로 분산합니다. 새 VM 인스턴스를 추가하여 수평 확장합니다. 부하의 정도에 따라 웹 계층과 비즈니스 계층을 각각 독립적으로 확장할 수도 있습니다. 클라이언트 선호도로 인해 발생할 수 있는 복잡성을 줄이기 위해서는 웹 계층에 속한 VM이 상태 비저장이어야 합니다. 비즈니스 로직을 호스팅하는 VM도 상태 비저장이어야 합니다.
 
-## 관리 효율성 고려사항
+## <a name="manageability-considerations"></a>관리 효율성 고려 사항
 
-[Azure Automation][azure-administration], [Microsoft Operations Management Suite][operations-management-suite], [Chef][chef], [Puppet][puppet]과 같은 중앙 집중식 관리 도구를 사용하여 전체 시스템 관리를 간소화합니다. 이 도구들은 여러 VM에서 수집한 진단 및 상태 정보를 통합하여 시스템의 전반적인 상태 정보를 제공합니다. 
+[Azure Automation][azure-administration], [Microsoft Operations Management Suite][operations-management-suite], [Chef][chef] 또는 [Puppet][puppet]과 같은 일원화된 관리 도구를 사용하여 시스템 전체의 관리를 간소화합니다. 이러한 도구를 사용하면 여러 VM으로부터 캡처된 진단 및 상태 정보를 통합하여 시스템을 종합적으로 파악할 수 있습니다.
 
-## 솔루션 배포
+## <a name="deploy-the-solution"></a>솔루션 배포
 
-이 아키텍처는 [GitHub][github-folder]를 통해 배포할 수 있습니다. 이 아키텍처는 세 단계를 거쳐 배포되는데, 이 아키텍처를 배포하려면 아래의 단계들을 수행하십시오.  
+이 참조 아키텍처에 대한 배포는 [GitHub][github-folder]에서 사용할 수 있습니다. 
 
-1. 아래 버튼을 마우스 오른쪽 단추로 클릭한 후 "새 탭에서 열기" 또는 "새 창에서 열기"를 선택하여 배포 1단계를 시작합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fvirtual-machines%2Fn-tier-windows%2FvirtualNetwork.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-2. Azure 포털에서 링크가 열리면 아래의 설정값을 입력합니다. 
-   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-ntier-sql-network-rg`를 입력합니다.
-   * **위치** 드롭다운 상자에서 지역을 선택합니다.
-   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자는 편집하지 않습니다.
-   * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
-   * **구입** 버튼을 클릭합니다.
-3. Azure 포털 알림에서 1단계 배포 완료 메시지를 확인합니다.
-4. 아래 버튼을 마우스 오른쪽 단추로 클릭한 후 "새 탭에서 열기" 또는 "새 창에서 열기"를 선택하여 2단계 배포를 시작합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fvirtual-machines%2Fn-tier-windows%2Fworkload.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-5. Azure 포털에서 링크가 열리면 아래의 설정값을 입력합니다. 
-   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택한 다음 텍스트 상자에 `ra-ntier-sql-workload-rg`를 입력합니다.
-   * **위치** 드롭다운 상자에서 지역을 선택합니다.
-   
-   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자는 편집하지 않습니다.
-   
-   * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
-   
-   * **구입** 버튼을 클릭합니다.
-6. Azure 포털 알림에서 2단계 배포 완료 메시지를 확인합니다.
-7. 아래 버튼을 마우스 오른쪽 단추로 클릭한 후 "새 탭에서 열기" 또는 "새 창에서 열기"를 선택하여 3단계 배포를 시작합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fvirtual-machines%2Fn-tier-windows%2Fsecurity.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-8. Azure 포털에서 링크가 열리면 아래의 설정값을 입력합니다. 
-   
-   * **리소스 그룹** 이름이 매개변수 파일에 이미 정의되어 있으므로 **기존 사용**을 선택한 다음 텍스트 상자에 `ra-ntier-sql-network-rg`를 입력합니다.
-   * **위치** 드롭다운 상자에서 지역을 선택합니다.
-   
-   * **템플릿 루트 Uri** 또는 **매개변수 루트 Uri** 텍스트 상자는 편집하지 않습니다.
-   
-   * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
-   
-   * **구입** 버튼을 클릭합니다.
-9. Azure 포털 알림에서 3단계 배포 완료 메시지를 확인합니다.
-10. 매개변수 파일에는 하드 코딩된 관리자 사용자 이름 및 암호가 포함되어 있는데, 이 둘 모두를 모든 VM에 대해 즉시 변경하는 것이 좋습니다. Azure 포털에서 각 VM을 클릭한 후 **지원 + 문제해결** 블레이드에서 **암호 재설정**을 클릭합니다. **모드** 드롭다운 상자에서 **암호 재설정**을 선택한 후 새 **사용자 이름** 및 **암호**를 선택합니다. **업데이트** 버튼을 클릭하여 새 사용자 이름 및 암호를 저장합니다. 
+### <a name="prerequisites"></a>필수 조건
+
+사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.
+
+1. [AzureCAT 참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
+
+2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI를 설치하려면 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)에 제시된 지침을 참조하세요.
+
+3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
+
+  ```bash
+  npm install -g @mspnp/azure-building-blocks
+  ```
+
+4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령 중 하나를 사용하여 Azure 계정에 로그인한 다음 프롬프트에 따릅니다.
+
+  ```bash
+  az login
+  ```
+
+### <a name="deploy-the-solution-using-azbb"></a>azbb를 사용하여 솔루션 배포
+
+N 계층 응용 프로그램에 대한 Windows VM 참조 아키텍처를 배포하려면 다음 단계를 수행합니다.
+
+1. 위의 필수 조건 단계 중 1단계에서 복제한 리포지토리가 있는 `virtual-machines\n-tier-windows` 폴더로 이동합니다.
+
+2. 매개 변수 파일은 배포 환경의 각 VM에 대해 관리자 사용자 이름과 암호의 기본값을 지정합니다. 참조 아키텍처를 배포하기 전에 먼저 이 값을 변경해야 합니다. `n-tier-windows.json` 파일을 열고 **adminUsername** 필드와 **adminPassword** 필드를 새로운 설정으로 변경합니다.
+  
+  > [!NOTE]
+  > 이 배포가 진행될 때 **VirtualMachineExtension** 개체와 일부 **VirtualMachine** 개체의 **extensions** 설정에서 여러 개의 스크립트가 실행됩니다. 이러한 스크립트 중 일부에서 방금 변경한 관리자 사용자 이름과 암호가 필요합니다. 해당 스크립트를 검토하여 올바른 자격 증명을 지정했는지 확인하는 것이 좋습니다. 올바른 자격 증명을 지정하지 않으면 배포가 실패하게 됩니다.
+  > 
+  > 
+
+파일을 저장합니다.
+
+3. 아래에 표시된 대로 **azbb** 명령줄 도구를 사용하여 참조 아키텍처를 배포합니다.
+
+  ```bash
+  azbb -s <your subscription_id> -g <your resource_group_name> -l <azure region> -p n-tier-windows.json --deploy
+  ```
+
+Azure 빌딩 블록을 사용하여 이 샘플 참조 아키텍처를 배포하는 자세한 방법을 보려면 [GitHub 리포지토리][git]를 방문하세요.
 
 
 <!-- links -->
@@ -178,18 +179,16 @@ DB 계층에서는 VM 수가 많다고 무조건 고가용성 DB가 되지 않�
 [multi-dc]: multi-region-application.md
 [multi-vm]: multi-vm.md
 [n-tier]: n-tier.md
-
-[naming conventions]: /azure/guidance/guidance-naming-conventions
-[arm-templates]: https://azure.microsoft.com/documentation/articles/resource-group-authoring-templates/
+[azbb]: https://github.com/mspnp/template-building-blocks/wiki/Install-Azure-Building-Blocks
 [azure-administration]: /azure/automation/automation-intro
-[azure-audit-logs]: /azure/resource-group-audit
 [azure-availability-sets]: /azure/virtual-machines/virtual-machines-windows-manage-availability#configure-each-application-tier-into-separate-availability-sets
 [azure-cli]: /azure/virtual-machines-command-line-tools
+[azure-cli-2]: https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest
 [azure-key-vault]: https://azure.microsoft.com/services/key-vault
-[azure-load-balancer]: /azure/load-balancer/load-balancer-overview
-[bastion host]: https://en.wikipedia.org/wiki/Bastion_host
+[요새 호스트]: https://en.wikipedia.org/wiki/Bastion_host
 [cidr]: https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing
 [chef]: https://www.chef.io/solutions/azure/
+[git]: https://github.com/mspnp/template-building-blocks
 [github-folder]: https://github.com/mspnp/reference-architectures/tree/master/virtual-machines/n-tier-windows
 [lb-external-create]: /azure/load-balancer/load-balancer-get-started-internet-portal
 [lb-internal-create]: /azure/load-balancer/load-balancer-get-started-ilb-arm-portal
@@ -199,9 +198,9 @@ DB 계층에서는 VM 수가 많다고 무조건 고가용성 DB가 되지 않�
 [operations-management-suite]: https://www.microsoft.com/server-cloud/operations-management-suite/overview.aspx
 [plan-network]: /azure/virtual-network/virtual-network-vnet-plan-design-arm
 [private-ip-space]: https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces
-[public IP address]: /azure/virtual-network/virtual-network-ip-addresses-overview-arm
+[공용 IP 주소]: /azure/virtual-network/virtual-network-ip-addresses-overview-arm
 [puppet]: https://puppetlabs.com/blog/managing-azure-virtual-machines-puppet
-[resource-manager-overview]: /azure/azure-resource-manager/resource-group-overview
+[ref-arch-repo]: https://github.com/mspnp/reference-architectures
 [sql-alwayson]: https://msdn.microsoft.com/library/hh510230.aspx
 [sql-alwayson-force-failover]: https://msdn.microsoft.com/library/ff877957.aspx
 [sql-alwayson-getting-started]: https://msdn.microsoft.com/library/gg509118.aspx
@@ -209,14 +208,11 @@ DB 계층에서는 VM 수가 많다고 무조건 고가용성 DB가 되지 않�
 [sql-alwayson-listeners]: https://msdn.microsoft.com/library/hh213417.aspx
 [sql-alwayson-read-only-routing]: https://technet.microsoft.com/library/hh213417.aspx#ConnectToSecondary
 [sql-keyvault]: /azure/virtual-machines/virtual-machines-windows-ps-sql-keyvault
-[vm-planned-maintenance]: /azure/virtual-machines/virtual-machines-windows-planned-maintenance
 [vm-sla]: https://azure.microsoft.com/support/legal/sla/virtual-machines
 [vnet faq]: /azure/virtual-network/virtual-networks-faq
 [wsfc-whats-new]: https://technet.microsoft.com/windows-server-docs/failover-clustering/whats-new-in-failover-clustering
 [Nagios]: https://www.nagios.org/
 [Zabbix]: http://www.zabbix.com/
 [Icinga]: http://www.icinga.org/
-[VM-sizes]: https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/
-[azure-powershell-download]: https://azure.microsoft.com/documentation/articles/powershell-install-configure/
-[visio-download]: http://download.microsoft.com/download/1/5/6/1569703C-0A82-4A9C-8334-F13D0DF2F472/RAs.vsdx
-[0]: ./images/n-tier-diagram.png "N-tier architecture using Microsoft Azure"
+[visio-download]: https://archcenter.azureedge.net/cdn/vm-reference-architectures.vsdx
+[0]: ./images/n-tier-diagram.png "Microsoft Azure를 사용하는 N 계층 아키텍처"
