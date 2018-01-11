@@ -2,11 +2,11 @@
 title: "Azure 아키텍처 센터"
 description: "Azure 아키텍처 센터는 Microsoft Azure를 사용하여 솔루션을 구축하기 위한 지침, 청사진, 패턴 및 모범 사례를 위한 공식 센터입니다. Microsoft 패턴 및 작업 방식 팀에 의해 엄선됩니다."
 layout: LandingPage
-ms.openlocfilehash: 3afe907b8ea1fe59d6c2eb9505ddb34775fdcd62
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: d48861a1001c9bef8cad152a3664077f2ad915c6
+ms.sourcegitcommit: a8453c4bc7c870fa1a12bb3c02e3b310db87530c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 12/29/2017
 ---
 # <a name="azure-architecture-center"></a>Azure 아키텍처 센터
 
@@ -84,20 +84,20 @@ ms.lasthandoff: 11/14/2017
             </div>
         </a>
     </li>
-    <!-- Performance anti-practices -->
+    <!-- Microservices -->
     <li>
-        <a href="/azure/architecture/antipatterns">
+        <a href="/azure/architecture/microservices">
             <div class="cardSize">
                 <div class="cardPadding">
                     <div class="card">
                         <div class="cardImageOuter">
                             <div class="cardImage">
-                                <img src="_images/performance.svg" alt="Performance antipatterns" />
+                                <img src="_images/new-content.svg" alt="Designing, building, and operating microservices on Azure" />
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>성능 안티패턴</h3>
-                            <p>클라우드 응용 프로그램에서 성능 및 확장성 문제의 일반적인 원인을 감지하고 수정하는 방법입니다.</p>
+                            <h3>Azure에서 마이크로 서비스 구축</h3>
+                            <p>이 다중 파트 시리즈는 Azure에서 마이크로 서비스 아키텍처를 설계하고 구축하는 과정을 안내합니다. 참조 구현이 포함되어 있습니다.</p>
                         </div>
                     </div>
                 </div>
@@ -124,7 +124,27 @@ ms.lasthandoff: 11/14/2017
             </div>
         </a>
     </li>
-    <!-- Azure for AWS Professionals -->
+    <!-- Azure Virtual Datacenter -->
+    <li>
+        <a href="https://aka.ms/vdc">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/virtual-datacenter.svg" alt="Azure Virtual Datacenter e-book" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>Azure 가상 데이터 센터 전자책</h3>
+                            <p>이 전자책은 기본 보안 및 네트워킹 정책을 준수하면서 Azure 클라우드 플랫폼에 엔터프라이즈 워크로드를 배포하는 방법을 보여줍니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+        <!-- Azure for AWS Professionals -->
     <li>
         <a href="/azure/architecture/aws-professional">
             <div class="cardSize">
@@ -178,6 +198,26 @@ ms.lasthandoff: 11/14/2017
                         <div class="cardText">
                             <h3>Azure 구성 요소</h3>
                             <p>Azure 리소스의 배포를 간소화합니다. 단일 설정 파일을 사용하여 Azure에 복잡한 아키텍처를 배포합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- Performance anti-practices -->
+    <li>
+        <a href="/azure/architecture/antipatterns">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/performance.svg" alt="Performance antipatterns" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>성능 안티패턴</h3>
+                            <p>클라우드 응용 프로그램에서 성능 및 확장성 문제의 일반적인 원인을 감지하고 수정하는 방법입니다.</p>
                         </div>
                     </div>
                 </div>
@@ -238,26 +278,6 @@ ms.lasthandoff: 11/14/2017
                         <div class="cardText">
                             <h3>다중 테넌트 응용 프로그램에 대한 ID 관리</h3>
                             <p>Azure AD를 사용하여 ID를 관리하는 경우 다중 테넌트에 대한 모범 사례를 이해합니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </li>
-    <!-- ElasticSearch -->
-    <li>
-        <a href="/azure/architecture/elasticsearch">
-            <div class="cardSize">
-                <div class="cardPadding">
-                    <div class="card">
-                        <div class="cardImageOuter">
-                            <div class="cardImage">
-                                <img src="_images/elasticsearch.svg" alt="Run Elasticsearch on Azure" />
-                            </div>
-                        </div>
-                        <div class="cardText">
-                            <h3>Azure에서 Elasticsearch 실행</h3>
-                            <p>Azure에서 Elasticsearch 클러스터를 배포, 관리 및 조정하는 방법을 알아봅니다.</p>
                         </div>
                     </div>
                 </div>

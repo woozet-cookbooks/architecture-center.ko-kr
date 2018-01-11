@@ -1,176 +1,190 @@
 ---
-title: Naming conventions for Azure resources
-description: Naming conventions for Azure resources. How to name virtual machines, storage accounts, networks, virtual networks, subnets and other Azure entities
-author: dragon119
-ms.service: guidance
-ms.topic: article
-ms.date: 10/31/2016
-ms.author: pnp
-
+title: "Azure 리소스에 대한 명명 규칙"
+description: "Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 계정, 네트워크, 가상 네트워크, 서브넷 및 기타 Azure 엔터티의 이름을 지정하는 방법"
+author: telmosampaio
+ms.date: 05/18/2017
 pnp.series.title: Best Practices
+ms.openlocfilehash: 20f090c4cc39f96887cd58ffd2a9c7736e77de57
+ms.sourcegitcommit: 1c0465cea4ceb9ba9bb5e8f1a8a04d3ba2fa5acd
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 01/02/2018
 ---
-# 명명 규칙
+# <a name="naming-conventions"></a><span data-ttu-id="b13bb-104">명명 규칙</span><span class="sxs-lookup"><span data-stu-id="b13bb-104">Naming conventions</span></span>
 
 [!INCLUDE [header](../_includes/header.md)]
 
-이 문서는 Azure 리소스에 대한 명명 규칙 및 제한 사항의 요약과 명명 규칙에 대한 기본 권장 사항을 수록하고 있습니다. 이러한 권장 사항을 자신의 필요에 맞는 고유한 규칙을 정하기 위한 시작점으로 사용할 수 있습니다.  
+<span data-ttu-id="b13bb-105">이 문서는 Azure 리소스에 대한 명명 규칙 및 제한 사항에 대한 요약과, 명명 규칙에 대한 권장 사항의 기준 집합을 제공합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-105">This article is a summary of the naming rules and restrictions for Azure resources and a baseline set of recommendations for naming conventions.</span></span>  <span data-ttu-id="b13bb-106">필요에 따라 사용자 고유의 규칙에 대한 시작 지점으로 이러한 권장 사항을 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-106">You can use these recommendations as a starting point for your own conventions specific to your needs.</span></span>
 
-Microsoft Azure의 모든 리소스에 대한 이름 선택은 다음과 같은 이유로 중요합니다. 
+<span data-ttu-id="b13bb-107">Microsoft Azure에서 모든 리소스에 대한 이름 선택은 다음 이유로 인해 중요합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-107">The choice of a name for any resource in Microsoft Azure is important because:</span></span>
 
-* 나중에 이름을 변경하기가 어렵습니다.
-* 이름은 해당 리소스 유형의 요구 사항을 충족시켜야 합니다.
+* <span data-ttu-id="b13bb-108">나중에 이름을 변경하는 것은 어렵습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-108">It is difficult to change a name later.</span></span>
+* <span data-ttu-id="b13bb-109">이름은 해당 특정 리소스 유형의 요구 사항을 충족해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-109">Names must meet the requirements of their specific resource type.</span></span>
 
-일관된 명명 규칙을 사용하면 리소스를 보다 쉽게찾을 수 있습니다. 또한 솔루션에서 리소스의 역할을 나타낼 수도 있습니다.   
+<span data-ttu-id="b13bb-110">일관된 명명 규칙은 리소스를 더 쉽게 찾을 수 있도록 합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-110">Consistent naming conventions make resources easier to locate.</span></span> <span data-ttu-id="b13bb-111">솔루션에서 리소스의 역할을 표시할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-111">They can also indicate the role of a resource in a solution.</span></span>
 
-명명 규칙을 성공으로 이끄는 열쇠는 응용 프로그램과 조직 전체에서 이를 수립하고 따르는 것입니다.   
+<span data-ttu-id="b13bb-112">성공적인 명명 규칙이 되기 위한 핵심은 응용 프로그램과 조직 전체에서 규칙을 정하여 따르는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-112">The key to success with naming conventions is establishing and following them across your applications and organizations.</span></span>
 
-## 구독 이름 지정
-Azure 구독의 이름을 지정할 때 자세한 이름을 사용하면 각 구독의 컨텍스트와 목적을 명확하게 이해할 수 있습니다. 구독이 많은 환경에서 작업할 때 공유 명명 규칙을 따르면 명확성을 높일 수 있습니다. 
+## <a name="naming-subscriptions"></a><span data-ttu-id="b13bb-113">구독 명명</span><span class="sxs-lookup"><span data-stu-id="b13bb-113">Naming subscriptions</span></span>
+<span data-ttu-id="b13bb-114">Azure 구독을 명명하는 경우 자세한 이름은 각 구독의 컨텍스트 및 용도에 대한 이해를 명확하게 합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-114">When naming Azure subscriptions, verbose names make understanding the context and purpose of each subscription clear.</span></span>  <span data-ttu-id="b13bb-115">많은 구독이 있는 환경에서 작업하는 경우 공유 명명 규칙을 따르면 명확성을 크게 높일 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-115">When working in an environment with many subscriptions, following a shared naming convention can improve clarity.</span></span>
 
-구독 이름 지정에 권장되는 패턴은 다음과 같습니다. 
+<span data-ttu-id="b13bb-116">구독 명명에 대한 권장되는 패턴은 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-116">A recommended pattern for naming subscriptions is:</span></span>
 
-`<회사> <부서(선택 사항)> <제품 라인(선택 사항)> <환경>`
+`<Company> <Department (optional)> <Product Line (optional)> <Environment>`
 
-* 회사는 일반적으로 각 구독마다 동일합니다. 그러나 일부 회사는 조직 구조 내 하위 회사를 보유하고 있을 수 있습니다. 이러한 회사는 중앙 IT 그룹에서 관리할 수 있습니다. 이 경우, 부모 회사 이름(*Contoso*) 과 자식 회사 이름(*North Wind*) 을 모두 구분하여 차별화할 수 있습니다.
-* 부서는 개인 그룹이 활동하는 조직 내의 이름입니다. 네임스페이스 내의 이 항목은 선택 사항입니다.
-* 제품 라인은 부서 내에서 수행되는 기능 또는 제품의 특정 이름입니다. 이는 일반적으로 내부용 서비스 및 응용 프로그램의 경우 선택 사항입니다. 그러나 쉽게 분리 및 식별해야 하는 공공 서비스(예: 청구 기록의 분명한 분리)에 사용하는 것이 매우 좋습니다.
-* 환경이란 Dev, QA 또는 Prod와 같은 응용 프로그램이나 서비스의 배포 수명 주기를 설명하는 이름입니다.
+* <span data-ttu-id="b13bb-117">일반적으로 회사는 각 구독에 대해 동일할 것입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-117">Company would usually be the same for each subscription.</span></span> <span data-ttu-id="b13bb-118">그러나 일부 회사에서는 조직 구조 내에 자식 회사가 있을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-118">However, some companies may have child companies within the organizational structure.</span></span> <span data-ttu-id="b13bb-119">이러한 회사는 중앙 IT 그룹에서 관리될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-119">These companies may be managed by a central IT group.</span></span> <span data-ttu-id="b13bb-120">이 경우 부모 회사 이름(*Contoso*) 및 자식 회사 이름(*Northwind*)을 모두 사용하여 구분할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-120">In these cases, they could be differentiated by having both the parent company name (*Contoso*) and child company name (*Northwind*).</span></span>
+* <span data-ttu-id="b13bb-121">부서는 개인 작업의 그룹인 조직 내에서 이름입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-121">Department is a name within the organization where a group of individuals work.</span></span> <span data-ttu-id="b13bb-122">네임스페이스 내에서 이 항목은 선택적입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-122">This item within the namespace as optional.</span></span>
+* <span data-ttu-id="b13bb-123">제품 라인은 부서 내에서 수행되는 제품 또는 기능에 대한 특정 이름입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-123">Product line is a specific name for a product or function that is performed from within the department.</span></span> <span data-ttu-id="b13bb-124">일반적으로 내부 전용 서비스 및 응용 프로그램에는 선택 사항입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-124">This is generally optional for internal-facing services and applications.</span></span> <span data-ttu-id="b13bb-125">쉬운 분리 및 ID(예: 청구 레코드의 명확한 분리)가 필요한 공용 서비스에 사용하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-125">However, it is highly recommended to use for public-facing services that require easy separation and identification (such as for clear separation of billing records).</span></span>
+* <span data-ttu-id="b13bb-126">환경은 개발, QA 또는 프로덕션 등의 응용 프로그램 또는 서비스의 배포 수명 주기를 설명하는 이름입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-126">Environment is the name that describes the deployment lifecycle of the applications or services, such as Dev, QA, or Prod.</span></span>
 
-| 회사 | 부서 | 제품 라인 또는 서비스 | 환경 | 전체 이름 |
+| <span data-ttu-id="b13bb-127">회사</span><span class="sxs-lookup"><span data-stu-id="b13bb-127">Company</span></span> | <span data-ttu-id="b13bb-128">부서</span><span class="sxs-lookup"><span data-stu-id="b13bb-128">Department</span></span> | <span data-ttu-id="b13bb-129">제품 라인 또는 서비스</span><span class="sxs-lookup"><span data-stu-id="b13bb-129">Product Line or Service</span></span> | <span data-ttu-id="b13bb-130">환경</span><span class="sxs-lookup"><span data-stu-id="b13bb-130">Environment</span></span> | <span data-ttu-id="b13bb-131">전체 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-131">Full Name</span></span> |
 | --- | --- | --- | --- | --- |
-| Contoso |SocialGaming |AwesomeService |Production |Contoso SocialGaming AwesomeService Production |
-| Contoso |SocialGaming |AwesomeService |Dev |Contoso SocialGaming AwesomeService Dev |
-| Contoso |IT |InternalApps |Production |Contoso IT InternalApps Production |
-| Contoso |IT |InternalApps |Dev |Contoso IT InternalApps Dev |
+| <span data-ttu-id="b13bb-132">Contoso</span><span class="sxs-lookup"><span data-stu-id="b13bb-132">Contoso</span></span> |<span data-ttu-id="b13bb-133">SocialGaming</span><span class="sxs-lookup"><span data-stu-id="b13bb-133">SocialGaming</span></span> |<span data-ttu-id="b13bb-134">AwesomeService</span><span class="sxs-lookup"><span data-stu-id="b13bb-134">AwesomeService</span></span> |<span data-ttu-id="b13bb-135">프로덕션</span><span class="sxs-lookup"><span data-stu-id="b13bb-135">Production</span></span> |<span data-ttu-id="b13bb-136">Contoso SocialGaming AwesomeService 프로덕션</span><span class="sxs-lookup"><span data-stu-id="b13bb-136">Contoso SocialGaming AwesomeService Production</span></span> |
+| <span data-ttu-id="b13bb-137">Contoso</span><span class="sxs-lookup"><span data-stu-id="b13bb-137">Contoso</span></span> |<span data-ttu-id="b13bb-138">SocialGaming</span><span class="sxs-lookup"><span data-stu-id="b13bb-138">SocialGaming</span></span> |<span data-ttu-id="b13bb-139">AwesomeService</span><span class="sxs-lookup"><span data-stu-id="b13bb-139">AwesomeService</span></span> |<span data-ttu-id="b13bb-140">개발</span><span class="sxs-lookup"><span data-stu-id="b13bb-140">Dev</span></span> |<span data-ttu-id="b13bb-141">Contoso SocialGaming AwesomeService 개발</span><span class="sxs-lookup"><span data-stu-id="b13bb-141">Contoso SocialGaming AwesomeService Dev</span></span> |
+| <span data-ttu-id="b13bb-142">Contoso</span><span class="sxs-lookup"><span data-stu-id="b13bb-142">Contoso</span></span> |<span data-ttu-id="b13bb-143">IT</span><span class="sxs-lookup"><span data-stu-id="b13bb-143">IT</span></span> |<span data-ttu-id="b13bb-144">InternalApps</span><span class="sxs-lookup"><span data-stu-id="b13bb-144">InternalApps</span></span> |<span data-ttu-id="b13bb-145">프로덕션</span><span class="sxs-lookup"><span data-stu-id="b13bb-145">Production</span></span> |<span data-ttu-id="b13bb-146">Contoso IT InternalApps 프로덕션</span><span class="sxs-lookup"><span data-stu-id="b13bb-146">Contoso IT InternalApps Production</span></span> |
+| <span data-ttu-id="b13bb-147">Contoso</span><span class="sxs-lookup"><span data-stu-id="b13bb-147">Contoso</span></span> |<span data-ttu-id="b13bb-148">IT</span><span class="sxs-lookup"><span data-stu-id="b13bb-148">IT</span></span> |<span data-ttu-id="b13bb-149">InternalApps</span><span class="sxs-lookup"><span data-stu-id="b13bb-149">InternalApps</span></span> |<span data-ttu-id="b13bb-150">개발</span><span class="sxs-lookup"><span data-stu-id="b13bb-150">Dev</span></span> |<span data-ttu-id="b13bb-151">Contoso IT InternalApps 개발</span><span class="sxs-lookup"><span data-stu-id="b13bb-151">Contoso IT InternalApps Dev</span></span> |
 
-<!-- TODO; include more information about organizing subscriptions for application deployment, pods, etc. -->
+<span data-ttu-id="b13bb-152">대규모 기업에 대해 구독을 구성하는 방법에 대한 자세한 내용은 [규범적인 구독 거버넌스 지침][scaffold]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="b13bb-152">For more information on how to organize subscriptions for larger enterprises, read our [prescriptive subscription governance guidance][scaffold].</span></span>
 
-## 모호함을 피하기 위해 접속어 사용
-Azure에서 리소스의 이름을 지정할 때 공통 접두어나 접미어를 사용하여 리소스의 유형과 컨텍스트를 식별하는 것이 좋습니다. 유형, 메타데이터, 컨텍스트에 대한 모든 정보는 프로그래밍 방식으로 사용할 수 있지만 공통 접미어를 적용하면 시각적 식별이 간단해집니다. 접속어를 명명 규칙에 포함시키려면 접속어가 이름의 시작 부분(접두사) 또는 끝에 있는지(접미어) 명확하게 지정하는 것이 중요합니다.  
+## <a name="use-affixes-to-avoid-ambiguity"></a><span data-ttu-id="b13bb-153">모호성을 예방하기 위해 접사 사용</span><span class="sxs-lookup"><span data-stu-id="b13bb-153">Use affixes to avoid ambiguity</span></span>
 
-예를 들어, 다음은 계산 엔진을 호스팅하는 서비스의 두 가지 가능한 이름입니다. 
+<span data-ttu-id="b13bb-154">Azure에서 리소스를 명명하는 경우 리소스의 유형 및 컨텍스트를 확인하도록 공통 접두사 또는 접미사를 사용하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-154">When naming resources in Azure, it is recommended to use common prefixes or suffixes to identify the type and context of the resource.</span></span>  <span data-ttu-id="b13bb-155">유형, 메타데이터, 컨텍스트에 대한 모든 정보는 프로그래밍 방식으로 사용할 수 있지만 공통 접사를 적용하면 시각적 식별이 간편해집니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-155">While all the information about type, metadata, context, is available programmatically, applying common affixes simplifies visual identification.</span></span>  <span data-ttu-id="b13bb-156">명명 규칙에 접사를 통합할 때 접사를 이름의 시작 부분(접두사) 또는 끝 부분(접미사)에 붙여야 하는지 여부를 명확하게 지정하는 것이 중요합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-156">When incorporating affixes into your naming convention, it is important to clearly specify whether the affix is at the beginning of the name (prefix) or at the end (suffix).</span></span>
 
-* SvcCalculationEngine (접두어)
-* CalculationEngineSvc (접미어)
+<span data-ttu-id="b13bb-157">예를 들어 다음은 계산 엔진을 호스팅하는 서비스에 가능한 두 이름입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-157">For instance, here are two possible names for a service hosting a calculation engine:</span></span>
 
-접속어는 특정 리소스를 설명하는 다양한 측면을 나타낼 수 있습니다. 다음 표는 일반적으로 사용되는 몇 가지 예를 보여줍니다. 
+* <span data-ttu-id="b13bb-158">SvcCalculationEngine(접두사)</span><span class="sxs-lookup"><span data-stu-id="b13bb-158">SvcCalculationEngine (prefix)</span></span>
+* <span data-ttu-id="b13bb-159">CalculationEngineSvc(접미사)</span><span class="sxs-lookup"><span data-stu-id="b13bb-159">CalculationEngineSvc (suffix)</span></span>
 
-| 측면 | 예 | 참고 |
+<span data-ttu-id="b13bb-160">접사는 특정 리소스를 설명하는 다양한 측면을 참조할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-160">Affixes can refer to different aspects that describe the particular resources.</span></span> <span data-ttu-id="b13bb-161">다음 표에서 일반적으로 사용하는 일부 예를 보여줍니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-161">The following table shows some examples typically used.</span></span>
+
+| <span data-ttu-id="b13bb-162">측면</span><span class="sxs-lookup"><span data-stu-id="b13bb-162">Aspect</span></span> | <span data-ttu-id="b13bb-163">예</span><span class="sxs-lookup"><span data-stu-id="b13bb-163">Example</span></span> | <span data-ttu-id="b13bb-164">메모</span><span class="sxs-lookup"><span data-stu-id="b13bb-164">Notes</span></span> |
 | --- | --- | --- |
-| 환경 |dev, prod, QA |리소스의 환경을 식별합니다. |
-| 위치 |uw (US West), ue (US East) |리소스가 배포되는 지역을 식별합니다. |
-| 인스턴스 |01, 02 |둘 이상의 명명된 인스턴스(웹 서버 등)가 있는 리소스의 경우 |
-| 제품 또는 서비스 |서비스 |리소스가 지원하는 제품, 응용 프로그램 또는 서비스를 식별합니다. |
-| 역할 |sql, web, messaging |관련 리소스의 역할을 식별합니다. |
+| <span data-ttu-id="b13bb-165">Environment</span><span class="sxs-lookup"><span data-stu-id="b13bb-165">Environment</span></span> |<span data-ttu-id="b13bb-166">개발, 프로덕션, QA</span><span class="sxs-lookup"><span data-stu-id="b13bb-166">dev, prod, QA</span></span> |<span data-ttu-id="b13bb-167">리소스에 대한 환경 식별</span><span class="sxs-lookup"><span data-stu-id="b13bb-167">Identifies the environment for the resource</span></span> |
+| <span data-ttu-id="b13bb-168">위치</span><span class="sxs-lookup"><span data-stu-id="b13bb-168">Location</span></span> |<span data-ttu-id="b13bb-169">uw(미국 서부), ue(미국 동부)</span><span class="sxs-lookup"><span data-stu-id="b13bb-169">uw (US West), ue (US East)</span></span> |<span data-ttu-id="b13bb-170">리소스가 배포되는 지역 식별</span><span class="sxs-lookup"><span data-stu-id="b13bb-170">Identifies the region into which the resource is deployed</span></span> |
+| <span data-ttu-id="b13bb-171">인스턴스</span><span class="sxs-lookup"><span data-stu-id="b13bb-171">Instance</span></span> |<span data-ttu-id="b13bb-172">01, 02</span><span class="sxs-lookup"><span data-stu-id="b13bb-172">01, 02</span></span> |<span data-ttu-id="b13bb-173">둘 이상의 명명된 인스턴스가 있는 리소스의 경우(웹 서버 등).</span><span class="sxs-lookup"><span data-stu-id="b13bb-173">For resources that have more than one named instance (web servers, etc.).</span></span> |
+| <span data-ttu-id="b13bb-174">제품 또는 서비스</span><span class="sxs-lookup"><span data-stu-id="b13bb-174">Product or Service</span></span> |<span data-ttu-id="b13bb-175">서비스</span><span class="sxs-lookup"><span data-stu-id="b13bb-175">service</span></span> |<span data-ttu-id="b13bb-176">리소스가 지원하는 제품, 응용 프로그램 또는 서비스 식별</span><span class="sxs-lookup"><span data-stu-id="b13bb-176">Identifies the product, application, or service that the resource supports</span></span> |
+| <span data-ttu-id="b13bb-177">역할</span><span class="sxs-lookup"><span data-stu-id="b13bb-177">Role</span></span> |<span data-ttu-id="b13bb-178">sql, 웹, 메시징</span><span class="sxs-lookup"><span data-stu-id="b13bb-178">sql, web, messaging</span></span> |<span data-ttu-id="b13bb-179">연결된 리소스의 역할 식별</span><span class="sxs-lookup"><span data-stu-id="b13bb-179">Identifies the role of the associated resource</span></span> |
 
-회사나 프로젝트에 대한 특정 명명 규칙을 개발할 때는 공통 접속어 세트와 위치(접미어 또는 접두어)를 선택하는 것이 중요합니다. 
+<span data-ttu-id="b13bb-180">회사 또는 프로젝트에 대한 특정 명명 규칙을 개발할 때 접사의 공통 집합과 해당 위치(접미사 또는 접두사)를 선택하는 것이 중요합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-180">When developing a specific naming convention for your company or projects, it is importantly to choose a common set of affixes and their position (suffix or prefix).</span></span>
 
-## 명명 규칙 및 제한 사항
-Azure의 각 리소스 또는 서비스 유형은 일련의 명명 제한과 범위를 시행합니다. 모든 명명 규칙 또는 패턴은 필수 명명 규칙과 범위를 준수해야 합니다. 예를 들어, VM의 이름이 DNS 이름에 매핑되기 때문에(따라서 모든 Azure에서 고유해야 함) VNET의 이름은 해당 호스트가 생성된 리소스 그룹으로 범위 지정됩니다. 
+## <a name="naming-rules-and-restrictions"></a><span data-ttu-id="b13bb-181">명명 규칙 및 제한 사항</span><span class="sxs-lookup"><span data-stu-id="b13bb-181">Naming rules and restrictions</span></span>
 
-일반적으로 특수 문자(`-` 또는 `_`)를 어떤 이름의 첫 번째 또는 마지막 문자로 사용하지 마십시오. 이러한 문자로 인해 대부분의 유효성 검사 규칙이 실패하게 됩니다. 
+<span data-ttu-id="b13bb-182">Azure의 각 리소스 또는 서비스 유형은 명명 제한 및 범위 집합을 적용하며 모든 명명 규칙이나 패턴은 필수 명명 규칙과 범위를 따라야 합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-182">Each resource or service type in Azure enforces a set of naming restrictions and scope; any naming convention or pattern must adhere to the requisite naming rules and scope.</span></span>  <span data-ttu-id="b13bb-183">예를 들어 VM의 이름은 DNS 이름에 매핑되며(따라서 Azure 전체에서 고유해야 함) VNET의 이름은 해당 항목이 생성된 리소스 그룹 안으로 범위가 지정됩니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-183">For example, while the name of a VM maps to a DNS name (and is thus required to be unique across all of Azure), the name of a VNET is scoped to the Resource Group that it is created within.</span></span>
 
-| 카테고리 | 서비스 또는 엔터티 | 범위 | 길이 | 대/소문자 | 유효한 문자 | 제안 패턴 | 예 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 리소스 그룹 |리소스 그룹 |전역 |1-64 |대소문자 구분 안 함 |영숫자, 밑줄 및 하이픈 |`<서비스 약식 이름>-<환경>-rg` |`profx-prod-rg` |
-| 리소스 그룹 |가용성 설정 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 밑줄 및 하이픈 |`<서비스 약식 이름>-<컨텍스트>-as` |`profx-sql-as` |
-| 일반 |태그 |관련 엔터티 |512 (이름), 256 (값) |대소문자 구분 안 함 |영숫자 |`"키" : "값"` |`"부서" : "중앙 IT"` |
-| 컴퓨팅 |가상 컴퓨터 |리소스 그룹 |1-15 |대소문자 구분 안 함 |영숫자, 밑줄 및 하이픈 |`<이름>-<역할>-vm<번호>` |`profx-sql-vm1` |
-| 저장소 |저장소 계정 이름(데이터) |전역 |3-24 |소문자 |영숫자 |`<전역으로 고유한 이름><번호>` (저장소 계정 이름 지정을 위한 고유한 GUID를 계산하는 함수 사용) |`profxdata001` |
-| 저장소 |저장소 계정 이름(디스크) |전역 |3-24 |소문자 |영숫자 |`<대시를 제외한 vm 이름>st<번호>` |`profxsql001st0` |
-| 저장소 |컨테이너 이름 |저장소 계정 |3-63 |소문자 |영숫자 및 대시 |`<컨텍스트>` |`로그` |
-| 저장소 |Blob 이름 |컨테이너 |1-1024 |대소문자 구분 |모든 URL 문자 |`<Blob 사용에 따라 가변적>` |`<Blob 사용에 따라 가변적>` |
-| 저장소 |대기열 이름 |저장소 계정 |3-63 |소문자 |영숫자 및 대시 |`<서비스 약식 이름>-<컨텍스트>-<번호>` |`awesomeservice-messages-001` |
-| 저장소 |테이블 이름 |저장소 계정 |3-63 |대소문자 구분 안 함 |영숫자 |`<서비스 약식 이름>-<컨텍스트>` |`awesomeservice-logs` |
-| 저장소 |파일 이름 |저장소 계정 |3-63 |소문자 |영숫자 |`<Blob 사용에 따라 가변적>` |`<Blob 사용에 따라 가변적>` |
-| 네트워킹 |가상 네트워크(VNet) |리소스 그룹 |2-64 |대소문자 구분 안 함 |영숫자, 밑줄, 대시 및 마침표 |`<서비스 약식 이름>-[섹션]-vnet` |`profx-vnet` |
-| 네트워킹 |서브넷 |상위 VNet |2-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<설명적 텍스트>` |`웹` |
-| 네트워킹 |네트워크 인터페이스 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<vmname>-nic<num>` |`profx-sql1-nic1` |
-| 네트워킹 |네트워크 보안 그룹 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<서비스 약식 이름>-<컨텍스트>-nsg` |`profx-app-nsg` |
-| 네트워킹 |네트워크 보안 그룹 역할 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<설명적 텍스트>` |`sql-allow` |
-| 네트워킹 |공용 IP 주소 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<vm 또는 서비스 이름>-pip` |`profx-sql1-pip` |
-| 네트워킹 |부하 분산 장치 |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<서비스 또는 역할>-lb` |`profx-lb` |
-| 네트워킹 |부하 분산된 규칙 구성 |부하 분산 장치 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<설명적 텍스트>` |`http` |
-| 네트워킹 |Azure Application Gateway |리소스 그룹 |1-80 |대소문자 구분 안 함 |영숫자, 대시, 밑줄 및 마침표 |`<서비스 또는 역할>-aag` |`profx-agw` |
-| 네트워킹 |Traffic Manager Profile |리소스 그룹 |1-63 |대소문자 구분 안 함 |영숫자, 대시 및 마침표 |`<설명적 텍스트>` |`app1` |
+<span data-ttu-id="b13bb-184">일반적으로 모든 이름의 처음과 마지막 글자로 특수 문자(`-` 또는 `_`)는 사용하지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-184">In general, avoid having any special characters (`-` or `_`) as the first or last character in any name.</span></span> <span data-ttu-id="b13bb-185">대부분의 유효성 검사 실패는 특수 문자로 인해 발생합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-185">These characters will cause most validation rules to fail.</span></span>
 
+### <a name="general"></a><span data-ttu-id="b13bb-186">일반</span><span class="sxs-lookup"><span data-stu-id="b13bb-186">General</span></span>
 
-## 태그를 사용하여 리소스 구성
-Azure Resource Manager는 컨텍스트를 식별하고 자동화를 능률화하기 위해 임의의 텍스트 문자열로 태그 지정된 엔터티를 지원합니다. 예를 들어, `"sqlVersion: "sql2014ee"` 태그는 SQL Server 2014 Enterprise Edition을 실행하는 배포에서 자동 스크립트를 실행하는 VM을 식별할 수 있습니다. 선택한 명명 규칙의 측면에서 컨텍스트를 보강하고 향상시키는 데 태그를 사용해야 합니다. 
+| <span data-ttu-id="b13bb-187">엔터티</span><span class="sxs-lookup"><span data-stu-id="b13bb-187">Entity</span></span> | <span data-ttu-id="b13bb-188">범위</span><span class="sxs-lookup"><span data-stu-id="b13bb-188">Scope</span></span> | <span data-ttu-id="b13bb-189">길이</span><span class="sxs-lookup"><span data-stu-id="b13bb-189">Length</span></span> | <span data-ttu-id="b13bb-190">대/소문자 구분</span><span class="sxs-lookup"><span data-stu-id="b13bb-190">Casing</span></span> | <span data-ttu-id="b13bb-191">사용할 수 있는 문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-191">Valid Characters</span></span> | <span data-ttu-id="b13bb-192">제안된 패턴</span><span class="sxs-lookup"><span data-stu-id="b13bb-192">Suggested Pattern</span></span> | <span data-ttu-id="b13bb-193">예</span><span class="sxs-lookup"><span data-stu-id="b13bb-193">Example</span></span> |
+| --- | --- | --- | --- | --- | --- | --- |
+|<span data-ttu-id="b13bb-194">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-194">Resource Group</span></span> |<span data-ttu-id="b13bb-195">구독</span><span class="sxs-lookup"><span data-stu-id="b13bb-195">Subscription</span></span> |<span data-ttu-id="b13bb-196">1-90</span><span class="sxs-lookup"><span data-stu-id="b13bb-196">1-90</span></span> |<span data-ttu-id="b13bb-197">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-197">Case insensitive</span></span> |<span data-ttu-id="b13bb-198">영숫자, 밑줄, 괄호, 하이픈 및 마침표(맨 끝 제외)</span><span class="sxs-lookup"><span data-stu-id="b13bb-198">Alphanumeric, underscore, parentheses, hyphen, and period (except at end)</span></span> |`<service short name>-<environment>-rg` |`profx-prod-rg` |
+|<span data-ttu-id="b13bb-199">가용성 집합</span><span class="sxs-lookup"><span data-stu-id="b13bb-199">Availability Set</span></span> |<span data-ttu-id="b13bb-200">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-200">Resource Group</span></span> |<span data-ttu-id="b13bb-201">1-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-201">1-80</span></span> |<span data-ttu-id="b13bb-202">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-202">Case insensitive</span></span> |<span data-ttu-id="b13bb-203">영숫자, 밑줄 및 하이픈</span><span class="sxs-lookup"><span data-stu-id="b13bb-203">Alphanumeric, underscore, and hyphen</span></span> |`<service-short-name>-<context>-as` |`profx-sql-as` |
+|<span data-ttu-id="b13bb-204">태그</span><span class="sxs-lookup"><span data-stu-id="b13bb-204">Tag</span></span> |<span data-ttu-id="b13bb-205">연결된 엔터티</span><span class="sxs-lookup"><span data-stu-id="b13bb-205">Associated Entity</span></span> |<span data-ttu-id="b13bb-206">512(이름), 256(값)</span><span class="sxs-lookup"><span data-stu-id="b13bb-206">512 (name), 256 (value)</span></span> |<span data-ttu-id="b13bb-207">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-207">Case insensitive</span></span> |<span data-ttu-id="b13bb-208">영숫자</span><span class="sxs-lookup"><span data-stu-id="b13bb-208">Alphanumeric</span></span> |`"key" : "value"` |`"department" : "Central IT"` |
 
-> [!팁]
-> 태그의 또 다른 장점 중 하나는 태그가 여러 리소스 그룹에 걸쳐져 있어서 서로 다른 배포 사이에 엔터티를 연결하고 상호 연관시킬 수 있다는 것입니다. 
-> 
-> 
+### <a name="compute"></a><span data-ttu-id="b13bb-209">컴퓨팅</span><span class="sxs-lookup"><span data-stu-id="b13bb-209">Compute</span></span>
 
-각 리소스 또는 리소스 그룹은 최대 **15** 개의 태그를 가질 수 있습니다. 태그 이름은 512자로 제한되며 태그 값은 256자로 제한됩니다.
+| <span data-ttu-id="b13bb-210">엔터티</span><span class="sxs-lookup"><span data-stu-id="b13bb-210">Entity</span></span> | <span data-ttu-id="b13bb-211">범위</span><span class="sxs-lookup"><span data-stu-id="b13bb-211">Scope</span></span> | <span data-ttu-id="b13bb-212">길이</span><span class="sxs-lookup"><span data-stu-id="b13bb-212">Length</span></span> | <span data-ttu-id="b13bb-213">대/소문자 구분</span><span class="sxs-lookup"><span data-stu-id="b13bb-213">Casing</span></span> | <span data-ttu-id="b13bb-214">사용할 수 있는 문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-214">Valid Characters</span></span> | <span data-ttu-id="b13bb-215">제안된 패턴</span><span class="sxs-lookup"><span data-stu-id="b13bb-215">Suggested Pattern</span></span> | <span data-ttu-id="b13bb-216">예</span><span class="sxs-lookup"><span data-stu-id="b13bb-216">Example</span></span> |
+| --- | --- | --- | --- | --- | --- | --- |
+|<span data-ttu-id="b13bb-217">Virtual Machine</span><span class="sxs-lookup"><span data-stu-id="b13bb-217">Virtual Machine</span></span> |<span data-ttu-id="b13bb-218">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-218">Resource Group</span></span> |<span data-ttu-id="b13bb-219">1-15(Windows), 1-64(Linux)</span><span class="sxs-lookup"><span data-stu-id="b13bb-219">1-15 (Windows), 1-64 (Linux)</span></span> |<span data-ttu-id="b13bb-220">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-220">Case insensitive</span></span> |<span data-ttu-id="b13bb-221">영숫자, 밑줄 및 하이픈</span><span class="sxs-lookup"><span data-stu-id="b13bb-221">Alphanumeric, underscore, and hyphen</span></span> |`<name>-<role>-vm<number>` |`profx-sql-vm1` |
+|<span data-ttu-id="b13bb-222">함수 앱</span><span class="sxs-lookup"><span data-stu-id="b13bb-222">Function App</span></span> | <span data-ttu-id="b13bb-223">전역</span><span class="sxs-lookup"><span data-stu-id="b13bb-223">Global</span></span> |<span data-ttu-id="b13bb-224">1-60</span><span class="sxs-lookup"><span data-stu-id="b13bb-224">1-60</span></span> |<span data-ttu-id="b13bb-225">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-225">Case insensitive</span></span> |<span data-ttu-id="b13bb-226">영숫자 및 하이픈</span><span class="sxs-lookup"><span data-stu-id="b13bb-226">Alphanumeric and hyphen</span></span> |`<name>-func` |`calcprofit-func` |
 
-리소스 태그 지정에 대한 자세한 내용은 [태그를 사용하여 Azure 리소스 구성](/azure/azure-resource-manager/resource-group-using-tags/)을 참조하십시오. 
+> [!NOTE]
+> <span data-ttu-id="b13bb-227">Azure의 가상 머신에는 가상 머신 이름과 호스트 이름 등 두 가지 이름이 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-227">Virtual machines in Azure have two distinct names: virtual machine name, and host name.</span></span> <span data-ttu-id="b13bb-228">포털에서 VM을 만들 때 호스트 이름과 가상 머신 리소스 이름 모두에 동일한 이름을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-228">When you create a VM in the portal, the same name is used for both the host name, and the virtual machine resource name.</span></span> <span data-ttu-id="b13bb-229">위의 제한은 호스트 이름에 대한 것입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-229">The restrictions above are for the host name.</span></span> <span data-ttu-id="b13bb-230">실제 리소스 이름은 최대 64자까지 가능합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-230">The actual resource name can have up to 64 characters.</span></span>
 
-몇 가지 일반적인 태그 지정의 사용 사례는 다음과 같습니다. 
+### <a name="storage"></a><span data-ttu-id="b13bb-231">Storage</span><span class="sxs-lookup"><span data-stu-id="b13bb-231">Storage</span></span>
 
-* **청구**; 리소스를 그룹화하고 청구 또는 환급 코드와 연관시킵니다.
-* **서비스 컨텍스트 식별**; 일반적인 작업 및 그룹화를 위해 전체 리소스 그룹에서 리소스의 그룹을 식별합니다.
-* **액세스 제어 및 보안 컨텍스트**; 포트폴리오, 시스템, 서비스, 응용 프로그램, 인스턴스 등을 기반으로 하는 관리 역할 식별
+| <span data-ttu-id="b13bb-232">엔터티</span><span class="sxs-lookup"><span data-stu-id="b13bb-232">Entity</span></span> | <span data-ttu-id="b13bb-233">범위</span><span class="sxs-lookup"><span data-stu-id="b13bb-233">Scope</span></span> | <span data-ttu-id="b13bb-234">길이</span><span class="sxs-lookup"><span data-stu-id="b13bb-234">Length</span></span> | <span data-ttu-id="b13bb-235">대/소문자 구분</span><span class="sxs-lookup"><span data-stu-id="b13bb-235">Casing</span></span> | <span data-ttu-id="b13bb-236">사용할 수 있는 문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-236">Valid Characters</span></span> | <span data-ttu-id="b13bb-237">제안된 패턴</span><span class="sxs-lookup"><span data-stu-id="b13bb-237">Suggested Pattern</span></span> | <span data-ttu-id="b13bb-238">예</span><span class="sxs-lookup"><span data-stu-id="b13bb-238">Example</span></span> |
+| --- | --- | --- | --- | --- | --- | --- |
+|<span data-ttu-id="b13bb-239">Storage 계정 이름(데이터)</span><span class="sxs-lookup"><span data-stu-id="b13bb-239">Storage account name (data)</span></span> |<span data-ttu-id="b13bb-240">전역</span><span class="sxs-lookup"><span data-stu-id="b13bb-240">Global</span></span> |<span data-ttu-id="b13bb-241">3-24</span><span class="sxs-lookup"><span data-stu-id="b13bb-241">3-24</span></span> |<span data-ttu-id="b13bb-242">소문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-242">Lowercase</span></span> |<span data-ttu-id="b13bb-243">영숫자</span><span class="sxs-lookup"><span data-stu-id="b13bb-243">Alphanumeric</span></span> |<span data-ttu-id="b13bb-244">`<globally unique name><number>`(저장소 계정 명명을 위한 고유 GUID를 계산하는 함수 사용)</span><span class="sxs-lookup"><span data-stu-id="b13bb-244">`<globally unique name><number>` (use a function to calculate a unique guid for naming storage accounts)</span></span> |`profxdata001` |
+|<span data-ttu-id="b13bb-245">Storage 계정 이름(디스크)</span><span class="sxs-lookup"><span data-stu-id="b13bb-245">Storage account name (disks)</span></span> |<span data-ttu-id="b13bb-246">전역</span><span class="sxs-lookup"><span data-stu-id="b13bb-246">Global</span></span> |<span data-ttu-id="b13bb-247">3-24</span><span class="sxs-lookup"><span data-stu-id="b13bb-247">3-24</span></span> |<span data-ttu-id="b13bb-248">소문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-248">Lowercase</span></span> |<span data-ttu-id="b13bb-249">영숫자</span><span class="sxs-lookup"><span data-stu-id="b13bb-249">Alphanumeric</span></span> |`<vm name without dashes>st<number>` |`profxsql001st0` |
+| <span data-ttu-id="b13bb-250">컨테이너 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-250">Container name</span></span> |<span data-ttu-id="b13bb-251">Storage 계정</span><span class="sxs-lookup"><span data-stu-id="b13bb-251">Storage account</span></span> |<span data-ttu-id="b13bb-252">3-63</span><span class="sxs-lookup"><span data-stu-id="b13bb-252">3-63</span></span> |<span data-ttu-id="b13bb-253">소문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-253">Lowercase</span></span> |<span data-ttu-id="b13bb-254">영숫자 및 대시</span><span class="sxs-lookup"><span data-stu-id="b13bb-254">Alphanumeric and dash</span></span> |`<context>` |`logs` |
+|<span data-ttu-id="b13bb-255">Blob 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-255">Blob name</span></span> | <span data-ttu-id="b13bb-256">컨테이너</span><span class="sxs-lookup"><span data-stu-id="b13bb-256">Container</span></span> |<span data-ttu-id="b13bb-257">1-1024</span><span class="sxs-lookup"><span data-stu-id="b13bb-257">1-1024</span></span> |<span data-ttu-id="b13bb-258">대/소문자 구분</span><span class="sxs-lookup"><span data-stu-id="b13bb-258">Case sensitive</span></span> |<span data-ttu-id="b13bb-259">모든 URL 문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-259">Any URL characters</span></span> |`<variable based on blob usage>` |`<variable based on blob usage>` |
+|<span data-ttu-id="b13bb-260">큐 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-260">Queue name</span></span> |<span data-ttu-id="b13bb-261">Storage 계정</span><span class="sxs-lookup"><span data-stu-id="b13bb-261">Storage account</span></span> |<span data-ttu-id="b13bb-262">3-63</span><span class="sxs-lookup"><span data-stu-id="b13bb-262">3-63</span></span> |<span data-ttu-id="b13bb-263">소문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-263">Lowercase</span></span> |<span data-ttu-id="b13bb-264">영숫자 및 대시</span><span class="sxs-lookup"><span data-stu-id="b13bb-264">Alphanumeric and dash</span></span> |`<service short name>-<context>-<num>` |`awesomeservice-messages-001` |
+|<span data-ttu-id="b13bb-265">테이블 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-265">Table name</span></span> | <span data-ttu-id="b13bb-266">Storage 계정</span><span class="sxs-lookup"><span data-stu-id="b13bb-266">Storage account</span></span> |<span data-ttu-id="b13bb-267">3-63</span><span class="sxs-lookup"><span data-stu-id="b13bb-267">3-63</span></span> |<span data-ttu-id="b13bb-268">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-268">Case insensitive</span></span> |<span data-ttu-id="b13bb-269">영숫자</span><span class="sxs-lookup"><span data-stu-id="b13bb-269">Alphanumeric</span></span> |`<service short name><context>` |`awesomeservicelogs` |
+|<span data-ttu-id="b13bb-270">파일 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-270">File name</span></span> | <span data-ttu-id="b13bb-271">Storage 계정</span><span class="sxs-lookup"><span data-stu-id="b13bb-271">Storage account</span></span> |<span data-ttu-id="b13bb-272">3-63</span><span class="sxs-lookup"><span data-stu-id="b13bb-272">3-63</span></span> |<span data-ttu-id="b13bb-273">소문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-273">Lowercase</span></span> | <span data-ttu-id="b13bb-274">영숫자</span><span class="sxs-lookup"><span data-stu-id="b13bb-274">Alphanumeric</span></span> |`<variable based on blob usage>` |`<variable based on blob usage>` |
+|<span data-ttu-id="b13bb-275">Data Lake Store</span><span class="sxs-lookup"><span data-stu-id="b13bb-275">Data Lake Store</span></span> | <span data-ttu-id="b13bb-276">전역</span><span class="sxs-lookup"><span data-stu-id="b13bb-276">Global</span></span> |<span data-ttu-id="b13bb-277">3-24</span><span class="sxs-lookup"><span data-stu-id="b13bb-277">3-24</span></span> |<span data-ttu-id="b13bb-278">소문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-278">Lowercase</span></span> | <span data-ttu-id="b13bb-279">영숫자</span><span class="sxs-lookup"><span data-stu-id="b13bb-279">Alphanumeric</span></span> |`<name>-dls` |`telemetry-dls` |
 
-> [!팁]
-> 태그를 일찍, 자주 처리하십시오. 사실에 기반하여 사후 처리하는 것보다 기본 태그 처리 방침을 마련해 놓고 시간에 따라 조정하는 것이 좋습니다.  
-> 
-> 
+### <a name="networking"></a><span data-ttu-id="b13bb-280">네트워킹</span><span class="sxs-lookup"><span data-stu-id="b13bb-280">Networking</span></span>
 
-일반적인 태그 처리 접근법의 예: 
+| <span data-ttu-id="b13bb-281">엔터티</span><span class="sxs-lookup"><span data-stu-id="b13bb-281">Entity</span></span> | <span data-ttu-id="b13bb-282">범위</span><span class="sxs-lookup"><span data-stu-id="b13bb-282">Scope</span></span> | <span data-ttu-id="b13bb-283">길이</span><span class="sxs-lookup"><span data-stu-id="b13bb-283">Length</span></span> | <span data-ttu-id="b13bb-284">대/소문자 구분</span><span class="sxs-lookup"><span data-stu-id="b13bb-284">Casing</span></span> | <span data-ttu-id="b13bb-285">사용할 수 있는 문자</span><span class="sxs-lookup"><span data-stu-id="b13bb-285">Valid Characters</span></span> | <span data-ttu-id="b13bb-286">제안된 패턴</span><span class="sxs-lookup"><span data-stu-id="b13bb-286">Suggested Pattern</span></span> | <span data-ttu-id="b13bb-287">예</span><span class="sxs-lookup"><span data-stu-id="b13bb-287">Example</span></span> |
+| --- | --- | --- | --- | --- | --- | --- |
+|<span data-ttu-id="b13bb-288">Virtual Network(VNet)</span><span class="sxs-lookup"><span data-stu-id="b13bb-288">Virtual Network (VNet)</span></span> |<span data-ttu-id="b13bb-289">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-289">Resource Group</span></span> |<span data-ttu-id="b13bb-290">2-64</span><span class="sxs-lookup"><span data-stu-id="b13bb-290">2-64</span></span> |<span data-ttu-id="b13bb-291">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-291">Case insensitive</span></span> |<span data-ttu-id="b13bb-292">영숫자, 대시, 밑줄 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-292">Alphanumeric, dash, underscore, and period</span></span> |`<service short name>-vnet` |`profx-vnet` |
+|<span data-ttu-id="b13bb-293">서브넷</span><span class="sxs-lookup"><span data-stu-id="b13bb-293">Subnet</span></span> |<span data-ttu-id="b13bb-294">부모 VNet</span><span class="sxs-lookup"><span data-stu-id="b13bb-294">Parent VNet</span></span> |<span data-ttu-id="b13bb-295">2-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-295">2-80</span></span> |<span data-ttu-id="b13bb-296">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-296">Case insensitive</span></span> |<span data-ttu-id="b13bb-297">영숫자, 밑줄, 대시 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-297">Alphanumeric, underscore, dash, and period</span></span> |`<descriptive context>` |`web` |
+|<span data-ttu-id="b13bb-298">네트워크 인터페이스</span><span class="sxs-lookup"><span data-stu-id="b13bb-298">Network Interface</span></span> |<span data-ttu-id="b13bb-299">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-299">Resource Group</span></span> |<span data-ttu-id="b13bb-300">1-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-300">1-80</span></span> |<span data-ttu-id="b13bb-301">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-301">Case insensitive</span></span> |<span data-ttu-id="b13bb-302">영숫자, 대시, 밑줄 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-302">Alphanumeric, dash, underscore, and period</span></span> |`<vmname>-nic<num>` |`profx-sql1-nic1` |
+|<span data-ttu-id="b13bb-303">네트워크 보안 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-303">Network Security Group</span></span> |<span data-ttu-id="b13bb-304">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-304">Resource Group</span></span> |<span data-ttu-id="b13bb-305">1-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-305">1-80</span></span> |<span data-ttu-id="b13bb-306">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-306">Case insensitive</span></span> |<span data-ttu-id="b13bb-307">영숫자, 대시, 밑줄 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-307">Alphanumeric, dash, underscore, and period</span></span> |`<service short name>-<context>-nsg` |`profx-app-nsg` |
+|<span data-ttu-id="b13bb-308">네트워크 보안 그룹 규칙</span><span class="sxs-lookup"><span data-stu-id="b13bb-308">Network Security Group Rule</span></span> |<span data-ttu-id="b13bb-309">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-309">Resource Group</span></span> |<span data-ttu-id="b13bb-310">1-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-310">1-80</span></span> |<span data-ttu-id="b13bb-311">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-311">Case insensitive</span></span> |<span data-ttu-id="b13bb-312">영숫자, 대시, 밑줄 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-312">Alphanumeric, dash, underscore, and period</span></span> |`<descriptive context>` |`sql-allow` |
+|<span data-ttu-id="b13bb-313">공용 IP 주소</span><span class="sxs-lookup"><span data-stu-id="b13bb-313">Public IP Address</span></span> |<span data-ttu-id="b13bb-314">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-314">Resource Group</span></span> |<span data-ttu-id="b13bb-315">1-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-315">1-80</span></span> |<span data-ttu-id="b13bb-316">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-316">Case insensitive</span></span> |<span data-ttu-id="b13bb-317">영숫자, 대시, 밑줄 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-317">Alphanumeric, dash, underscore, and period</span></span> |`<vm or service name>-pip` |`profx-sql1-pip` |
+|<span data-ttu-id="b13bb-318">Load Balancer</span><span class="sxs-lookup"><span data-stu-id="b13bb-318">Load Balancer</span></span> |<span data-ttu-id="b13bb-319">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-319">Resource Group</span></span> |<span data-ttu-id="b13bb-320">1-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-320">1-80</span></span> |<span data-ttu-id="b13bb-321">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-321">Case insensitive</span></span> |<span data-ttu-id="b13bb-322">영숫자, 대시, 밑줄 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-322">Alphanumeric, dash, underscore, and period</span></span> |`<service or role>-lb` |`profx-lb` |
+|<span data-ttu-id="b13bb-323">부하 분산된 규칙 구성</span><span class="sxs-lookup"><span data-stu-id="b13bb-323">Load Balanced Rules Config</span></span> |<span data-ttu-id="b13bb-324">Load Balancer</span><span class="sxs-lookup"><span data-stu-id="b13bb-324">Load Balancer</span></span> |<span data-ttu-id="b13bb-325">1-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-325">1-80</span></span> |<span data-ttu-id="b13bb-326">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-326">Case insensitive</span></span> |<span data-ttu-id="b13bb-327">영숫자, 대시, 밑줄 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-327">Alphanumeric, dash, underscore, and period</span></span> |`<descriptive context>` |`http` |
+|<span data-ttu-id="b13bb-328">Azure Application Gateway</span><span class="sxs-lookup"><span data-stu-id="b13bb-328">Azure Application Gateway</span></span> |<span data-ttu-id="b13bb-329">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-329">Resource Group</span></span> |<span data-ttu-id="b13bb-330">1-80</span><span class="sxs-lookup"><span data-stu-id="b13bb-330">1-80</span></span> |<span data-ttu-id="b13bb-331">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-331">Case insensitive</span></span> |<span data-ttu-id="b13bb-332">영숫자, 대시, 밑줄 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-332">Alphanumeric, dash, underscore, and period</span></span> |`<service or role>-agw` |`profx-agw` |
+|<span data-ttu-id="b13bb-333">Traffic Manager 프로필</span><span class="sxs-lookup"><span data-stu-id="b13bb-333">Traffic Manager Profile</span></span> |<span data-ttu-id="b13bb-334">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="b13bb-334">Resource Group</span></span> |<span data-ttu-id="b13bb-335">1-63</span><span class="sxs-lookup"><span data-stu-id="b13bb-335">1-63</span></span> |<span data-ttu-id="b13bb-336">대/소문자 구분하지 않음</span><span class="sxs-lookup"><span data-stu-id="b13bb-336">Case insensitive</span></span> |<span data-ttu-id="b13bb-337">영숫자, 대시 및 마침표</span><span class="sxs-lookup"><span data-stu-id="b13bb-337">Alphanumeric, dash, and period</span></span> |`<descriptive context>` |`app1` |
 
-| 태그 이름 | 키 | 예 | 설명 |
+## <a name="organize-resources-with-tags"></a><span data-ttu-id="b13bb-338">태그로 리소스 정리</span><span class="sxs-lookup"><span data-stu-id="b13bb-338">Organize resources with tags</span></span>
+
+<span data-ttu-id="b13bb-339">Azure Resource Manager는 임의적인 텍스트 문자열로 태그 지정 엔터티를 지원하여 컨텍스트를 식별하고 자동화를 간소화합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-339">The Azure Resource Manager supports tagging entities with arbitrary text strings to identify context and streamline automation.</span></span>  <span data-ttu-id="b13bb-340">예를 들어 `"sqlVersion: "sql2014ee"` 태그는 자동화된 스크립트 실행을 위해 SQL Server 2014 Enterprise Edition을 실행하는 배포의 모든 VM을 식별할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-340">For example, the tag `"sqlVersion: "sql2014ee"` could identify VMs in a deployment running SQL Server 2014 Enterprise Edition for running an automated script against them.</span></span>  <span data-ttu-id="b13bb-341">태그는 선택한 명명 규칙에 대한 컨텍스트를 보강 및 향상하는 데 사용되어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-341">Tags should be used to augment and enhance context along side of the naming conventions chosen.</span></span>
+
+> [!TIP]
+> <span data-ttu-id="b13bb-342">태그의 다른 한 장점은 태그는 서로 다른 배포 전체에서 엔터티를 연결 및 상관 관계를 지정할 수 있도록 하는 리소스 그룹을 확장한다는 점입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-342">One other advantage of tags is that tags span resource groups, allowing you to link and correlate entities across disparate deployments.</span></span>
+
+<span data-ttu-id="b13bb-343">각 리소스 또는 리소스 그룹에는 최대 **15** 개의 태그가 포함될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-343">Each resource or resource group can have a maximum of **15** tags.</span></span> <span data-ttu-id="b13bb-344">태그 이름은 512자로 제한되며 태그 값은 256자로 제한됩니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-344">The tag name is limited to 512 characters, and the tag value is limited to 256 characters.</span></span>
+
+<span data-ttu-id="b13bb-345">리소스 태그 지정에 대한 자세한 내용은 [태그를 사용하여 Azure 리소스 구성](/azure/azure-resource-manager/resource-group-using-tags/)을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="b13bb-345">For more information on resource tagging, refer to [Using tags to organize your Azure resources](/azure/azure-resource-manager/resource-group-using-tags/).</span></span>
+
+<span data-ttu-id="b13bb-346">일반적인 태그 사용 사례는 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-346">Some of the common tagging use cases are:</span></span>
+
+* <span data-ttu-id="b13bb-347">**청구**; 리소스를 그룹화하고 청구 또는 차지 백 코드와 연결합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-347">**Billing**; Grouping resources and associating them with billing or charge back codes.</span></span>
+* <span data-ttu-id="b13bb-348">**서비스 컨텍스트 ID**; 일반 작업 및 그룹화에 대한 리소스 그룹의 리소스 그룹 식별</span><span class="sxs-lookup"><span data-stu-id="b13bb-348">**Service Context Identification**; Identify groups of resources across Resource Groups for common operations and grouping</span></span>
+* <span data-ttu-id="b13bb-349">**Access Control 및 보안 컨텍스트**; 포트폴리오, 시스템, 서비스, 앱, 인스턴스 등을 기준으로 관리 역할 식별</span><span class="sxs-lookup"><span data-stu-id="b13bb-349">**Access Control and Security Context**; Administrative role identification based on portfolio, system, service, app, instance, etc.</span></span>
+
+> [!TIP]
+> <span data-ttu-id="b13bb-350">태그 초기 - 태그인 경우가 많습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-350">Tag early - tag often.</span></span>  <span data-ttu-id="b13bb-351">사후에 개/보수하는 것보다 기준 태그 지정 체계를 준비하고 시간에 따라 조정하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-351">Better to have a baseline tagging scheme in place and adjust over time rather than having to retrofit after the fact.</span></span>
+
+<span data-ttu-id="b13bb-352">일부 일반적인 태그 지정 방법의 예:</span><span class="sxs-lookup"><span data-stu-id="b13bb-352">An example of some common tagging approaches:</span></span>
+
+| <span data-ttu-id="b13bb-353">태그 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-353">Tag Name</span></span> | <span data-ttu-id="b13bb-354">키</span><span class="sxs-lookup"><span data-stu-id="b13bb-354">Key</span></span> | <span data-ttu-id="b13bb-355">예</span><span class="sxs-lookup"><span data-stu-id="b13bb-355">Example</span></span> | <span data-ttu-id="b13bb-356">주석</span><span class="sxs-lookup"><span data-stu-id="b13bb-356">Comment</span></span> |
 | --- | --- | --- | --- |
-| 청구 주소/내부 환급 ID |billTo |`IT-Chargeback-1234` |내부 I/O 또는 청구 코드 |
-| 운영자 또는 직속 담당자(DRI) |managedBy |`joe@contoso.com` |별칭 또는 이메일 주소 |
-| 프로젝트 이름 |project-name |`myproject` |프로젝트 또는 제품 라인 이름 |
-| 프로젝트 버전 |project-version |`3.4` |프로젝트 또는 제품 라인 버전 |
-| 환경 |환경 |`<생산, 단계, QA >` |환경 식별자 |
-| 계층 |계층 |`전면 끝, 후면 끝, 데이터` |계층 또는 역할/컨텍스트 식별 |
-| 데이터 프로파일 |dataProfile |`공용, 기밀, 제한, 내부` |리소스에 저장된 데이터의 민감도 |
+| <span data-ttu-id="b13bb-357">청구 대상 / 내부 차지백 ID</span><span class="sxs-lookup"><span data-stu-id="b13bb-357">Bill To / Internal Chargeback ID</span></span> |<span data-ttu-id="b13bb-358">청구 대상</span><span class="sxs-lookup"><span data-stu-id="b13bb-358">billTo</span></span> |`IT-Chargeback-1234` |<span data-ttu-id="b13bb-359">내부 I/O 또는 청구 코드</span><span class="sxs-lookup"><span data-stu-id="b13bb-359">An internal I/O or billing code</span></span> |
+| <span data-ttu-id="b13bb-360">운영자 또는 DRI(직접적인 책임자)</span><span class="sxs-lookup"><span data-stu-id="b13bb-360">Operator or Directly Responsible Individual (DRI)</span></span> |<span data-ttu-id="b13bb-361">managedBy</span><span class="sxs-lookup"><span data-stu-id="b13bb-361">managedBy</span></span> |`joe@contoso.com` |<span data-ttu-id="b13bb-362">별칭 또는 메일 주소</span><span class="sxs-lookup"><span data-stu-id="b13bb-362">Alias or email address</span></span> |
+| <span data-ttu-id="b13bb-363">프로젝트 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-363">Project Name</span></span> |<span data-ttu-id="b13bb-364">projectName</span><span class="sxs-lookup"><span data-stu-id="b13bb-364">projectName</span></span> |`myproject` |<span data-ttu-id="b13bb-365">프로젝트 또는 제품 라인 이름</span><span class="sxs-lookup"><span data-stu-id="b13bb-365">Name of the project or product line</span></span> |
+| <span data-ttu-id="b13bb-366">프로젝트 버전</span><span class="sxs-lookup"><span data-stu-id="b13bb-366">Project Version</span></span> |<span data-ttu-id="b13bb-367">projectVersion</span><span class="sxs-lookup"><span data-stu-id="b13bb-367">projectVersion</span></span> |`3.4` |<span data-ttu-id="b13bb-368">프로젝트 또는 제품 라인 버전</span><span class="sxs-lookup"><span data-stu-id="b13bb-368">Version of the project or product line</span></span> |
+| <span data-ttu-id="b13bb-369">Environment</span><span class="sxs-lookup"><span data-stu-id="b13bb-369">Environment</span></span> |<span data-ttu-id="b13bb-370">환경</span><span class="sxs-lookup"><span data-stu-id="b13bb-370">environment</span></span> |`<Production, Staging, QA >` |<span data-ttu-id="b13bb-371">환경 식별자</span><span class="sxs-lookup"><span data-stu-id="b13bb-371">Environmental identifier</span></span> |
+| <span data-ttu-id="b13bb-372">계층</span><span class="sxs-lookup"><span data-stu-id="b13bb-372">Tier</span></span> |<span data-ttu-id="b13bb-373">계층</span><span class="sxs-lookup"><span data-stu-id="b13bb-373">tier</span></span> |`Front End, Back End, Data` |<span data-ttu-id="b13bb-374">계층 또는 역할/컨텍스트 식별</span><span class="sxs-lookup"><span data-stu-id="b13bb-374">Tier or role/context identification</span></span> |
+| <span data-ttu-id="b13bb-375">데이터 프로필</span><span class="sxs-lookup"><span data-stu-id="b13bb-375">Data Profile</span></span> |<span data-ttu-id="b13bb-376">dataProfile</span><span class="sxs-lookup"><span data-stu-id="b13bb-376">dataProfile</span></span> |`Public, Confidential, Restricted, Internal` |<span data-ttu-id="b13bb-377">리소스에 저장된 데이터의 민감도</span><span class="sxs-lookup"><span data-stu-id="b13bb-377">Sensitivity of data stored in the resource</span></span> |
 
-## 팁과 트릭
-일부 리소스 유형은 명명 및 규칙과 관련해 추가적인 주의가 필요할 수 있습니다. 
+## <a name="tips-and-tricks"></a><span data-ttu-id="b13bb-378">팁과 요령</span><span class="sxs-lookup"><span data-stu-id="b13bb-378">Tips and tricks</span></span>
 
-### 가상 컴퓨터
-특히 규모가 큰 토폴로지에서는 가상 컴퓨터를 신중하게 명명하면 각 컴퓨터의 역할과 용도를 보다 효과적으로 파악하고 스크립트를 예측 가능하게 작성할 수 있습니다. 
+<span data-ttu-id="b13bb-379">일부 리소스 유형은 이름 지정 및 규칙에 주의해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-379">Some types of resources may require additional care on naming and conventions.</span></span>
 
-> [!경고]
-> Azure의 모든 가상 컴퓨터에는 Azure 리소스 이름과 운영 체제 호스트 이름이 둘 다 있습니다. 
-> 리소스 이름과 호스트 이름이 다른 경우 VM 관리가 어려울 수 있으므로 이런 경우가 발생하지 않도록 주의해야 합니다. 
-> 호스트 이름이 구성된 운영 체제를 이미 포함하고 있는 .vhd에서 가상 컴퓨터를 생성하는 경우를 예로 들 수 있습니다. 
-> 
-> 
+### <a name="virtual-machines"></a><span data-ttu-id="b13bb-380">가상 머신</span><span class="sxs-lookup"><span data-stu-id="b13bb-380">Virtual machines</span></span>
 
-* [Microsoft NetBIOS 컴퓨터 명명 규칙](https://support.microsoft.com/en-us/help/188997/microsoft-netbios-computer-naming-conventions)
+<span data-ttu-id="b13bb-381">특히 더 큰 토폴로지에서 신중하게 가상 머신을 명명하는 것은 각 컴퓨터의 역할 및 용도 식별을 간소화하고 예측 가능성이 더욱 뛰어난 스크립팅을 활성화합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-381">Especially in larger topologies, carefully naming virtual machines streamlines identifying the role and purpose of each machine, and enabling more predictable scripting.</span></span>
 
-### 저장소 계정 및 저장소 엔터티
-저장소 계정에는 VM용 디스크를 백업하고 BLOB, 대기열 및 테이블에 데이터를 저장하는 두 가지 주요 사용 사례가 있습니다. VM 디스크에 사용되는 저장소 계정은 상위 VM 이름과 연관시키는 명명 규칙을 따라야 합니다(및 하이엔드 VM SKU의 경우 여러 저장소 계정이 필요할 수 있으며 번호 접미어도 추가해야 함). 
+### <a name="storage-accounts-and-storage-entities"></a><span data-ttu-id="b13bb-382">Storage 계정 및 저장소 엔터티</span><span class="sxs-lookup"><span data-stu-id="b13bb-382">Storage accounts and storage entities</span></span>
 
-> [!팁]
-> 저장소 계정(데이터 또는 디스크)은 여러 저장소 계정을 활용할 수 있도록 하는 명명 규칙(즉, 항상 숫자 접미어 사용)을 따라야 합니다. 
-> 
-> 
+<span data-ttu-id="b13bb-383">저장소 계정에는 VM에 대한 디스크 지원과 Blob, 큐, 테이블에 데이터 저장 등, 두 가지 기본 사용 사례가 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-383">There are two primary use cases for storage accounts - backing disks for VMs, and storing data in blobs, queues and tables.</span></span>  <span data-ttu-id="b13bb-384">VM 디스크에 사용되는 저장소 계정은 부모 VM 이름과 연결하는 명명 규칙을 따라야 합니다(고급 VM SKU에 대해 여러 저장소 계정이 필요할 수 있음, 숫자 접미사도 사용).</span><span class="sxs-lookup"><span data-stu-id="b13bb-384">Storage accounts used for VM disks should follow the naming convention of associating them with the parent VM name (and with the potential need for multiple storage accounts for high-end VM SKUs, also apply a number suffix).</span></span>
 
-Azure 저장소 계정의 Blob 데이터에 액세스하기 위한 사용자 지정 도메인 이름을 구성할 수 있습니다. Blob 서비스의 기본 끝점은 `https://mystorage.blob.core.windows.net` 입니다. 
+> [!TIP]
+> <span data-ttu-id="b13bb-385">저장소 계정(데이터 또는 디스크에 대한)은 여러 저장소 계정을 활용되도록 허용하는 명명 규칙을 따라야 합니다(즉 항상 숫자 접미사 사용).</span><span class="sxs-lookup"><span data-stu-id="b13bb-385">Storage accounts - whether for data or disks - should follow a naming convention that allows for multiple storage accounts to be leveraged (i.e. always using a numeric suffix).</span></span>
 
-그러나 사용자 지정 도메인(예: www.contoso.com) 을 저장소 계정의 Blob 끝점에 매핑하면 해당 도메인을 사용하여 저장소 계정의 BLOB 데이터에 액세스할 수도 있습니다. 예를 들어, 사용자 지정 도메인 이름을 사용하면 `http://mystorage.blob.core.windows.net/mycontainer/myblob` 에
-`http://www.contoso.com/mycontainer/myblob` 로 액세스할 수 있습니다. 
+<span data-ttu-id="b13bb-386">Azure Storage 계정에서 Blob 데이터에 액세스할 수 있도록 사용자 지정 도메인 이름을 구성할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-386">It's possible to configure a custom domain name for accessing blob data in your Azure Storage account.</span></span> <span data-ttu-id="b13bb-387">Blob Service의 기본 끝점은 https://<name>.blob.core.windows.net\`입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-387">The default endpoint for the Blob service is https://<name>.blob.core.windows.net\`.</span></span>
 
-이 기능 구성에 대한 자세한 내용은 [Blob 저장소 끝점에 대한 사용자 지정 도메인 이름 구성](/azure/storage/storage-custom-domain-name/)을 참조하십시오. 
+<span data-ttu-id="b13bb-388">그러나 사용자 지정 도메인(예: www.contoso.com)을 저장소 계정의 Blob 끝점에 매핑하는 경우 해당 도메인을 사용하여 저장소 계정의 Blob 데이터에 액세스할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-388">But if you map a custom domain (such as www.contoso.com) to the blob endpoint for your storage account, you can also access blob data in your storage account by using that domain.</span></span> <span data-ttu-id="b13bb-389">예를 들어 사용자 지정 도메인 이름을 통해 `http://mystorage.blob.core.windows.net/mycontainer/myblob`에 `http://www.contoso.com/mycontainer/myblob`로 액세스할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-389">For example, with a custom domain name, `http://mystorage.blob.core.windows.net/mycontainer/myblob` could be accessed as `http://www.contoso.com/mycontainer/myblob`.</span></span>
 
-Blob, 컨테이너 및 테이블의 이름 지정에 대한 자세한 내용은 다음을 참조하십시오. 
+<span data-ttu-id="b13bb-390">이 기능 구성에 대한 자세한 내용은 [Blob 저장소 끝점에 대한 사용자 지정 도메인 이름 구성](/azure/storage/storage-custom-domain-name/)을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="b13bb-390">For more information about configuring this feature, refer to [Configure a custom domain name for your Blob storage endpoint](/azure/storage/storage-custom-domain-name/).</span></span>
 
-* [컨테이너, Blob 및 메타데이터 명명 및 참조](https://msdn.microsoft.com/library/dd135715.aspx)
-* [대기열 및 메타데이터 명명](https://msdn.microsoft.com/library/dd179349.aspx)
-* [명명 테이블](https://msdn.microsoft.com/library/azure/dd179338.aspx)
+<span data-ttu-id="b13bb-391">Blob, 컨테이너 및 테이블 명명에 대한 자세한 내용은 다음 목록을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="b13bb-391">For more information on naming blobs, containers and tables, refer to the following list:</span></span>
 
-Blob 이름은 임의의 문자 조합을 포함할 수 있지만 예약된 URL 문자는 올바르게 이스케이프시켜야 합니다. 마침표(.), 슬래시(/) 또는 시퀀스, 또는 이들의 두 조합으로 끝나는 Blob 이름은 사용하지 마십시오. 규칙에 따라 슬래시는 **가상** 디렉터리 구분 기호입니다. Blob 이름에 백슬래시(\)를 사용하지 마십시오. 클라이언트 API가 이를 허용할 수 있지만 제대로 해시되지 못하면 서명이 일치하지 않습니다. 
+* [<span data-ttu-id="b13bb-392">컨테이너, BLOB, 메타데이터 이름 명명 및 참조</span><span class="sxs-lookup"><span data-stu-id="b13bb-392">Naming and Referencing Containers, Blobs, and Metadata</span></span>](https://msdn.microsoft.com/library/dd135715.aspx)
+* [<span data-ttu-id="b13bb-393">큐 및 메타데이터 명명</span><span class="sxs-lookup"><span data-stu-id="b13bb-393">Naming Queues and Metadata</span></span>](https://msdn.microsoft.com/library/dd179349.aspx)
+* [<span data-ttu-id="b13bb-394">테이블 명명</span><span class="sxs-lookup"><span data-stu-id="b13bb-394">Naming Tables</span></span>](https://msdn.microsoft.com/library/azure/dd179338.aspx)
 
-저장소 계정 또는 컨테이너를 만든 후에는 이름을 수정할 수 없습니다. 새 이름을 사용하려면 일단 삭제하고 새 이름을 만들어야 합니다. 
+<span data-ttu-id="b13bb-395">Blob 이름은 문자 조합을 포함할 수 있지만 예약된 URL 문자는 적절히 이스케이프되어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-395">A blob name can contain any combination of characters, but reserved URL characters must be properly escaped.</span></span> <span data-ttu-id="b13bb-396">마침표(.), 슬래시(/) 또는 시퀀스 또는 둘의 조합으로 끝나는 Blob 이름은 피합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-396">Avoid blob names that end with a period (.), a forward slash (/), or a sequence or combination of the two.</span></span> <span data-ttu-id="b13bb-397">규칙에 따라 슬래시는 **가상** 디렉터리 구분 문자입니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-397">By convention, the forward slash is the **virtual** directory separator.</span></span> <span data-ttu-id="b13bb-398">Blob 이름에 백슬래시(\\)를 사용하지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-398">Do not use a backward slash (\\) in a blob name.</span></span> <span data-ttu-id="b13bb-399">클라이언트 API는 이를 허용할 수도 있지만 이 경우 제대로 해시하지 않고 서명이 일치하지 않게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-399">The client APIs may allow it, but then fail to hash properly, and the signatures will not match.</span></span>
 
-> [!팁]
-> 새 서비스 또는 응용 프로그램을 개발하기 전에 모든 저장소 계정 및 유형에 대한 명명 규칙을 수립하는 것이 좋습니다.
-> 
-> 
+<span data-ttu-id="b13bb-400">만든 후 저장소 계정 또는 컨테이너의 이름을 수정하는 것이 불가능합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-400">It is not possible to modify the name of a storage account or container after it has been created.</span></span> <span data-ttu-id="b13bb-401">새 이름을 사용하려면 이름을 삭제하고 새로 만들어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-401">If you want to use a new name, you must delete it and create a new one.</span></span>
+
+> [!TIP]
+> <span data-ttu-id="b13bb-402">새 서비스 또는 응용 프로그램의 개발을 시작하기 전에 모든 저장소 계정 및 유형에 대한 명명 규칙을 설정하는 것이 좋습니다.</span><span class="sxs-lookup"><span data-stu-id="b13bb-402">We recommend that you establish a naming convention for all storage accounts and types before embarking on the development of a new service or application.</span></span>
+
+<!-- links -->
+
+[scaffold]: /azure/azure-resource-manager/resource-manager-subscription-governance
