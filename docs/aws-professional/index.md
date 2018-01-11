@@ -5,11 +5,11 @@ keywords: "AWS 전문가, Azure 비교, AWS 비교, azure와 aws의 차이점, a
 author: lbrader
 ms.date: 03/24/2017
 pnp.series.title: Azure for AWS Professionals
-ms.openlocfilehash: 75fda82ee5ca7ca3665501fe428d1d01995e7422
-ms.sourcegitcommit: c53adf50d3a787956fc4ebc951b163a10eeb5d20
+ms.openlocfilehash: b576b11bc152ef721f56e79609cb7a03f2d31dd3
+ms.sourcegitcommit: 1c0465cea4ceb9ba9bb5e8f1a8a04d3ba2fa5acd
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/23/2017
+ms.lasthandoff: 01/02/2018
 ---
 # <a name="azure-for-aws-professionals"></a>AWS 전문가를 위한 Azure
 
@@ -142,7 +142,7 @@ Azure [지역 중복 저장소](https://azure.microsoft.com/documentation/articl
 
 -   [Azure 응용 프로그램에 대한 재해 복구](../resiliency/disaster-recovery-azure-applications.md)
 
--   [Azure에서 Linux 가상 컴퓨터에 대한 계획된 유지 관리](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-planned-maintenance/)
+-   [Azure에서 Linux 가상 머신에 대한 계획된 유지 관리](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-planned-maintenance/)
 
 ## <a name="services"></a>Services
 
@@ -217,7 +217,7 @@ Azure는 AWS와 약간 차이가 있는 여러 계산 서비스를 제공합니�
 
 -   [첫 번째 Azure Function 만들기](https://azure.microsoft.com/documentation/articles/functions-create-first-azure-function/)
 
-### <a name="storage"></a>저장소
+### <a name="storage"></a>Storage
 
 #### <a name="s3ebsefs-and-azure-storage"></a>S3/EBS/EFS 및 Azure Storage
 
@@ -237,14 +237,12 @@ Azure Storage에서는 구독에 바인딩된 [저장소 계정](https://azure.m
 -   [Queue Storage](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-queues/) - 워크플로 처리 및 클라우드 서비스 구성 요소 사이의 통신을 위한 메시지를 제공합니다.
 
 -   [File Storage](https://azure.microsoft.com/documentation/articles/storage-java-how-to-use-file-storage/) - 표준 SMB(서버 메시지 블록) 프로토콜을 사용하는 기존 응용 프로그램을 위한 공유 저장소를 제공합니다. File Storage는 AWS 플랫폼의 EFS와 비슷한 방식으로 사용됩니다.
-
-
-
-
  
 #### <a name="glacier-and-azure-storage"></a>Glacier 및 Azure Storage 
-[Azure Storage 표준 아카이브](/azure/storage/blobs/storage-blob-storage-tiers)는 AWS의 장기 보관 Glacier 저장소에 직접 해당하는 서비스를 제공합니다. Azure는 액세스 빈도가 낮고 오래 보관되는 데이터를 위해 [Azure 쿨 BLOB 저장소 계층](/azure/storage/blobs/storage-blob-storage-tiers)을 제공합니다.
-쿨 저장소는 표준 BLOB 저장소보다 저렴한 저성능 저장소를 제공하며 AWS의 S3 - Infrequent Access와 비슷합니다.
+
+[Azure Archive Blob Storage](/azure/storage/blobs/storage-blob-storage-tiers#archive-access-tier)는 AWS Glacier 저장소 서비스에 해당합니다. 180일 이상 저장되면서 거의 액세스하지 않으며 몇 시간 동안의 검색 대기 시간도 용인할 수 있는 데이터를 대상으로 합니다. 
+
+자주 액세스하지 않지만 액세스할 때 즉시 사용 가능해야 하는 데이터의 경우 [Azure Cool Blob Storage 계층](/azure/storage/blobs/storage-blob-storage-tiers#cool-access-tier)에서 표준 Blob 저장소보다 저렴한 저장소를 제공합니다. 이 저장소 계층은 AWS S3 - 자주 액세스하지 않는 저장소 서비스에 해당합니다.
 
 #### <a name="see-also"></a>참고 항목
 
@@ -396,7 +394,7 @@ AWS Device Farm은 장치 간 테스트 서비스를 제공합니다. Azure에�
 
 ### <a name="mobile-services"></a>모바일 서비스
 
-#### <a name="notifications"></a>알림
+#### <a name="notifications"></a>공지
 
 Notification Hubs는 SMS 또는 전자 메일 메시지 보내기를 지원하지 않으므로 이러한 기능을 제공하는 타사 서비스가 필요합니다.
 

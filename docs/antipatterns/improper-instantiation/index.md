@@ -3,11 +3,11 @@ title: "부적절한 인스턴스화 안티패턴"
 description: "한 번 만든 다음 공유하는 개체의 새 인스턴스를 계속 만들지 마십시오."
 author: dragon119
 ms.date: 06/05/2017
-ms.openlocfilehash: 3387eca45119b105b68cd60ab842d033df84727c
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: d6ea27b0ea88ad7527353d263d900626c0aff720
+ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 12/08/2017
 ---
 # <a name="improper-instantiation-antipattern"></a>부적절한 인스턴스화 안티패턴
 
