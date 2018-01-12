@@ -5,11 +5,11 @@ keywords: "AWS 전문가, Azure 비교, AWS 비교, azure와 aws의 차이점, a
 author: lbrader
 ms.date: 03/24/2017
 pnp.series.title: Azure for AWS Professionals
-ms.openlocfilehash: b576b11bc152ef721f56e79609cb7a03f2d31dd3
-ms.sourcegitcommit: 1c0465cea4ceb9ba9bb5e8f1a8a04d3ba2fa5acd
+ms.openlocfilehash: ac96110e3fe69b4bb69714e18fd0f193208bc244
+ms.sourcegitcommit: 744ad1381e01bbda6a1a7eff4b25e1a337385553
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/02/2018
+ms.lasthandoff: 01/08/2018
 ---
 # <a name="azure-for-aws-professionals"></a>AWS 전문가를 위한 Azure
 
@@ -103,36 +103,45 @@ Azure는 리소스를 관리하는 여러 방법을 제공합니다.
 
 ## <a name="regions-and-zones-high-availability"></a>지역 및 영역(고가용성)
 
-AWS에서 가용성의 핵심은 가용성 영역이라는 개념입니다. Azure에서 장애 도메인 및 가용성 집합은 고가용성 솔루션 구축과 관련되어 있습니다. 쌍을 이루는 지역이 추가적인 재해 복구 기능을 제공합니다.
+오류는 해당 영향의 범위가 다를 수 있습니다. 실패한 디스크와 같은 일부 하드웨어 오류는 단일 호스트 컴퓨터에 영향을 줄 수 있습니다. 실패한 네트워크 스위치는 전체 서버 랙에 영향을 줄 수 있습니다. 데이터 센터의 전원 손실 등 전체 데이터 센터를 방해하는 오류는 일반적이지 않습니다. 가끔 전체 지역을 사용할 수 없게 될 수 있습니다.
 
-### <a name="availability-zones-azure-fault-domains-and-availability-sets"></a>가용성 영역, Azure 장애 도메인 및 가용성 집합
+중복성을 통해 응용 프로그램을 복원력 있게 만들 수 있습니다. 그러나 응용 프로그램을 디자인할 때 이러한 중복성에 대해 계획해야 합니다. 또한 필요한 중복성 수준은 비즈니스 요구 사항에 따라 달라집니다. &mdash; 지역 가동 중단으로부터 보호하기 위해 일부 응용 프로그램에 지역 간 중복성이 필요합니다. 일반적으로 중복성과 안정성 및 비용과 복잡성 간에 균형을 조절해야 합니다.  
 
-AWS에서는 한 영역이 두 개 이상의 가용성 영역으로 나뉩니다. 가용성 영역은 지리적 지역에 물리적으로 격리된 데이터 센터와 일치합니다.
-응용 프로그램 서버를 별도의 가용성 영역에 배포하면 한 영역에 영향을 주는 하드웨어 또는 연결 중단이 발생해도 다른 영역에 호스팅된 서버에 영향을 주지 않습니다.
+AWS에서는 한 영역이 두 개 이상의 가용성 영역으로 나뉩니다. 가용성 영역은 지리적 지역에 물리적으로 격리된 데이터 센터와 일치합니다. Azure에는 **가용성 집합**, **가용성 영역** 및 **쌍을 이루는 지역** 등 각 응용 프로그램 오류 수준에서 중복되는 응용 프로그램을 만드는 여러 기능이 있습니다. 
 
-Azure에서 [장애 도메인](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/)이란 물리적 전원과 네트워크 스위치를 공유하는 VM 그룹을 말합니다.
-[가용성 집합](https://azure.microsoft.com/documentation/articles/virtual-machines-windows-manage-availability/)을 사용하여 여러 장애 도메인에 VM을 분산합니다. 여러 인스턴스가 동일한 가용성 집합에 할당되면 Azure가 해당 인스턴스를 여러 장애 도메인에 균등하게 분산합니다. 한 장애 도메인에서 정전 또는 네트워크 오류가 발생하더라도 최소한 해당 집합의 VM 중 일부는 다른 장애 도메인에 있기 때문에 영향을 받지 않습니다.
+![](../resiliency/images/redundancy.svg)
 
-![AWS 가용성 영역과 Azure 장애 도메인 및 가용성 집합의 비교](./images/zone-fault-domains.png "AWS 가용성 영역과 Azure 장애 도메인 및 가용성 집합의 비교")
-<br/>*Azure 장애 도메인 및 가용성 집합과 비교한 AWS 가용성 영역*
-<br/><br/>
+다음 표에서는 각 옵션을 요약합니다.
 
-각 역할의 한 인스턴스가 정상적으로 작동하려면 응용 프로그램의 인스턴스 역할을 통해 가용성 집합을 구성해야 합니다. 예를 들어 표준 3계층 웹 응용 프로그램에서는 프런트 엔드, 응용 프로그램 및 데이터 인스턴스에 대한 별도의 가용성 집합을 만듭니다.
+| &nbsp; | 가용성 집합 | 가용성 영역 | 쌍을 이루는 지역 |
+|--------|------------------|-------------------|---------------|
+| 오류의 범위 | 랙 | 데이터 센터 | 지역 |
+| 요청 라우팅 | Load Balancer | 영역 간 부하 분산 장치 | Traffic Manager |
+| 네트워크 대기 시간 | 매우 낮음 | 낮음 | 중간부터 높음 |
+| 가상 네트워킹  | VNet | VNet | 지역 간 VNet 피어링(미리 보기) |
+
+### <a name="availability-sets"></a>가용성 집합 
+
+디스크 또는 네트워크 전환이 실패한 경우 하드웨어 오류로부터 보호하려면 가용성 집합에 둘 이상의 VM을 배포합니다. 가용성 집합은 공통 전원 소스 및 네트워크 스위치를 공유하는 두 개 이상의 *장애 도메인*으로 구성됩니다. 가용성 집합의 VM은 장애 도메인에 분산되어 있으므로 하드웨어 오류가 하나의 장애 도메인에 영향을 주는 경우 네트워크 트래픽은 다른 오류 도메인에서 VM을 라우팅할 수 있습니다. 가용성 집합에 대한 자세한 내용은 [Azure에서 Windows 가상 머신의 가용성 관리](/azure/virtual-machines/windows/manage-availability)를 참조하세요.
+
+가용성 집합에 추가되는 VM 인스턴스에는 [업데이트 도메인](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/)이 할당됩니다. 업데이트 도메인은 동시에 계획된 유지 관리 이벤트를 수행하도록 설정된 VM 그룹입니다. VM을 여러 업데이트 도메인에 분산하면 계획된 업데이트 및 패치 이벤트가 지정된 시간에 이러한 VM의 하위 집합에만 영향을 줍니다.
+
+각 역할의 한 인스턴스가 정상적으로 작동하려면 응용 프로그램의 인스턴스 역할을 통해 가용성 집합을 구성해야 합니다. 예를 들어 3계층 웹 응용 프로그램에서는 프런트 엔드, 응용 프로그램 및 데이터 계층에 대한 별도의 가용성 집합을 만듭니다.
 
 ![각 응용 프로그램 역할에 대한 Azure 가용성 집합](./images/three-tier-example.png "각 응용 프로그램 역할에 대한 Azure 가용성 집합")
-<br/>*각 응용 프로그램 역할에 대한 Azure 가용성 집합*
-<br/><br/>
 
-가용성 집합에 추가되는 VM 인스턴스에는 [업데이트 도메인](https://azure.microsoft.com/documentation/articles/virtual-machines-linux-manage-availability/)이 할당됩니다.
-업데이트 도메인은 동시에 계획된 유지 관리 이벤트를 수행하도록 설정된 VM 그룹입니다. VM을 여러 업데이트 도메인에 분산하면 계획된 업데이트 및 패치 이벤트가 지정된 시간에 이러한 VM의 하위 집합에만 영향을 줍니다.
+### <a name="availability-zones-preview"></a>가용성 영역(미리 보기)
+
+[가용성 영역](/azure/availability-zones/az-overview)은 Azure 지역 내에서 물리적으로 별도의 영역입니다. 각 가용성 영역에는 고유한 소스, 네트워크 및 냉각 장치가 있습니다. 가용성 영역 간에 VM을 배포하면 데이터 센터 전체의 오류로부터 응용 프로그램을 보호할 수 있습니다. 
 
 ### <a name="paired-regions"></a>쌍을 이루는 지역
 
-Azure에서는 [쌍을 이루는 지역](https://azure.microsoft.com/documentation/articles/best-practices-availability-paired-regions/)을 사용하여 미리 정의된 두 지리적 지역 간에 이중화를 지원하므로 전체 Azure 지역에 영향을 미치는 정전이 발생하더라도 솔루션은 여전히 작동합니다.
+지역 가동 중단으로부터 응용 프로그램을 보호하려면 인터넷 트래픽을 서로 다른 지역에 배포하는 [Azure Traffic Manager][traffic-manager]를 사용하여 응용 프로그램을 여러 지역에 배포할 수 있습니다. 각 Azure 지역은 다른 지역과 쌍을 이룹니다. 이러한 지역은 함께 [지역 쌍][paired-regions]을 구성합니다. 브라질 남부를 제외하고 지역 쌍은 세금 및 법률 집행 관할 구역의 데이터 상주 요구 사항을 충족하기 위해 동일한 지리적 위치 내에 위치합니다.
 
-데이터 센터가 물리적으로 떨어져 있지만 비교적 가까운 영역에 있는 AWS 가용성 영역과는 달리, 쌍을 이루는 지역은 일반적으로 480킬로미터 이상 떨어져 있습니다. 이는 대규모 재해가 발생하더라도 쌍을 이루는 지역의 한 쪽 지역만 영향을 받게 하려는 의도입니다. 인접한 쌍은 데이터베이스 및 저장소 서비스 데이터를 동기화할 때 설정할 수 있으며, 쌍을 이루는 지역 중 한 번에 한 영역에서만 플랫폼 업데이트가 수행되도록 구성됩니다.
+데이터 센터가 물리적으로 떨어져 있지만 비교적 가까운 영역에 있는 가용성 영역과는 달리, 쌍을 이루는 지역은 일반적으로 480킬로미터 이상 떨어져 있습니다. 이는 대규모 재해가 발생하더라도 쌍을 이루는 지역의 한 쪽 지역만 영향을 받게 하려는 의도입니다. 인접한 쌍은 데이터베이스 및 저장소 서비스 데이터를 동기화할 때 설정할 수 있으며, 쌍을 이루는 지역 중 한 번에 한 영역에서만 플랫폼 업데이트가 수행되도록 구성됩니다.
 
 Azure [지역 중복 저장소](https://azure.microsoft.com/documentation/articles/storage-redundancy/#geo-redundant-storage)는 적절한 쌍을 이루는 지역에 자동으로 백업됩니다. 그 외 리소스의 경우 쌍을 이루는 지역을 사용하여 완전한 이중화 솔루션을 만든다는 것은 두 영역 모두에 솔루션 전체 복사본을 만든다는 의미입니다.
+
 
 ### <a name="see-also"></a>참고 항목
 
@@ -266,9 +275,9 @@ Azure Storage에서는 구독에 바인딩된 [저장소 계정](https://azure.m
 
 AWS의 Route 53은 DNS 이름 관리 및 DNS 수준 트래픽 라우팅과 장애 조치(failover) 서비스를 모두 제공합니다. Azure에서 이러한 작업이 다음 두 서비스를 통해 처리됩니다.
 
--   [Azure DNS](https://azure.microsoft.com/documentation/services/dns/) - 도메인 및 DNS 관리를 제공합니다.
+-   [Azure DNS](https://azure.microsoft.com/documentation/services/dns/)는 도메인 및 DNS 관리를 제공합니다.
 
--   [Traffic Manager](https://azure.microsoft.com/documentation/articles/traffic-manager-overview/) - DNS 수준 트래픽 라우팅, 부하 분산 및 장애 조치(failover) 기능을 제공합니다.
+-   [Traffic Manager][traffic-manager]는 DNS 수준 트래픽 라우팅, 부하 분산 및 장애 조치(failover) 기능을 제공합니다.
 
 #### <a name="direct-connect-and-azure-expressroute"></a>Direct Connect 및 Azure ExpressRoute
 
@@ -431,3 +440,9 @@ Notification Hubs는 SMS 또는 전자 메일 메시지 보내기를 지원하�
 -   [패턴 및 연습: Azure 지침](https://azure.microsoft.com/documentation/articles/guidance/)
 
 -   [무료 온라인 강좌: AWS 전문가를 위한 Microsoft Azure](http://aka.ms/azureforaws)
+
+
+<!-- links -->
+
+[paired-regions]: https://azure.microsoft.com/documentation/articles/best-practices-availability-paired-regions/
+[traffic-manager]: /azure/traffic-manager/
