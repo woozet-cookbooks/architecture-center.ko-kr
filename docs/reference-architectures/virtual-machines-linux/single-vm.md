@@ -6,11 +6,11 @@ ms.date: 12/12/2017
 pnp.series.title: Linux VM workloads
 pnp.series.next: multi-vm
 pnp.series.prev: ./index
-ms.openlocfilehash: a51e0d7ed4e35c5331241cf78d1715e63f9b4d86
-ms.sourcegitcommit: 1c0465cea4ceb9ba9bb5e8f1a8a04d3ba2fa5acd
+ms.openlocfilehash: 7caef46e53b42011b5a12ef53384c0352b9b9a72
+ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/02/2018
+ms.lasthandoff: 01/08/2018
 ---
 # <a name="run-a-linux-vm-on-azure"></a>Azure에서 Linux VM 실행
 
@@ -20,7 +20,7 @@ ms.lasthandoff: 01/02/2018
 
 *이 아키텍처 다이어그램이 포함된 [Visio 파일][visio-download]을 다운로드합니다.*
 
-## <a name="architecture"></a>아키텍처
+## <a name="architecture"></a>건축
 
 Azure VM을 프로비전하려면 계산, 네트워킹 및 저장소 리소스와 같은 추가 구성 요소가 필요합니다.
 
@@ -31,7 +31,7 @@ Azure VM을 프로비전하려면 계산, 네트워킹 및 저장소 리소스�
 * **데이터 디스크.** [데이터 디스크][data-disk]는 응용 프로그램 데이터에 사용되는 영구 VHD입니다. 데이터 디스크는 OS 디스크와 같은 Azure Storage에 저장됩니다.
 * **가상 네트워크(VNet) 및 서브넷.** 모든 Azure VM은 VNet에 배포되어 여러 서브넷으로 분할될 수 있습니다.
 * **공용 IP 주소.** 공용 IP 주소는 예를 들어 SSH를 통해 VM과 통신하는 데 필요합니다.
-* **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다.  
+* **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다.
 * **NIC(네트워크 인터페이스)**. 할당된 NIC를 통해 VM을 가상 네트워크와 통신하도록 할 수 있습니다.
 * **NSG(네트워크 보안 그룹)**. [네트워크 보안 그룹][nsg]은 네트워크 리소스에 대한 네트워크 트래픽을 허용하거나 거부하는 데 사용됩니다. NSG를 개별 NIC 또는 서브넷에 연결할 수 있습니다. 서브넷에 연결하는 경우 NSG 규칙이 해당 서브넷의 모든 VM에 적용됩니다.
 * **진단** VM을 관리 및 문제 해결하는 데 진단 로깅이 중요합니다.
@@ -42,7 +42,7 @@ Azure VM을 프로비전하려면 계산, 네트워킹 및 저장소 리소스�
 
 ### <a name="vm-recommendations"></a>VM 권장 사항
 
-Azure는 다양한 가상 머신 크기를 제공합니다. [프리미엄 저장소][premium-storage]는 높은 성능과 짧은 대기 시간으로 인해 권장되며 [특정 VM 크기에서 지원][premium-storage-supported]됩니다. 고성능 컴퓨팅과 같은 특수한 워크로드가 발생하지 않는다면 이러한 크기 중 하나를 선택합니다. 자세한 내용은 [가상 머신 크기][virtual-machine-sizes]를 참조하세요.
+Azure는 다양한 가상 머신 크기를 제공합니다. [Premium Storage][premium-storage]는 높은 성능과 짧은 대기 시간으로 인해 권장되며 [특정 VM 크기에서 지원][premium-storage-supported]됩니다. 고성능 컴퓨팅과 같은 특수한 워크로드가 발생하지 않는다면 이러한 크기 중 하나를 선택합니다. 자세한 내용은 [가상 머신 크기][virtual-machine-sizes]를 참조하세요.
 
 기존 워크로드를 Azure로 이동하는 경우 온-프레미스 서버와 가장 근접하게 일치하는 VM 크기부터 사용하기 시작합니다. 그런 다음 CPU, 메모리, 디스크 IOPS(초당 입력/출력 작업 수)에 따라 실제 워크로드의 성능을 측정하고 필요에 따라 크기를 조정합니다. VM에 여러 개의 NIC가 필요한 경우 각 [VM 크기][vm-size-tables]에 대한 최대 NIC 수가 정의되어 있습니다.
 
@@ -60,11 +60,11 @@ az vm list-sizes --location <location>
 
 최상의 디스크 I/O 성능을 위해서는 SSD(반도체 드라이브)에 데이터를 저장하는 [Premium Storage][premium-storage]가 권장됩니다. 비용은 프로비전된 디스크 용량을 기준으로 산정됩니다. IOPS 및 처리량(즉, 데이터 전송 속도)도 디스크 크기에 따라 달라지므로 디스크를 프로비전할 때 세 가지 요소(용량, IOPS, 처리량)를 모두 고려합니다. 
 
-또한 [관리되는 디스크](/azure/storage/storage-managed-disks-overview)를 사용하는 것이 좋습니다. 관리 디스크에는 저장소 계정이 필요하지 않습니다. 디스크의 크기와 유형을 지정하기만 하면 고가용성 리소스로 배포됩니다.
+또한 [관리 디스크](/azure/storage/storage-managed-disks-overview)를 사용하는 것이 좋습니다. 관리 디스크에는 저장소 계정이 필요하지 않습니다. 디스크의 크기와 유형을 지정하기만 하면 고가용성 리소스로 배포됩니다.
 
 관리되지 않는 디스크를 사용 중인 경우 저장소 계정에 대한 [IOPS 제한][vm-disk-limits]에 도달하지 않도록 하기 위해 VHD(가상 하드 디스크)를 보유하는 각 VM에 대한 별도 Azure Storage 계정을 만듭니다.
 
-하나 이상의 데이터 디스크를 추가합니다. VHD를 만들 때 형식은 지정되지 않습니다. 디스크를 포맷하려면 VM에 로그인합니다. 관리되는 디스크를 사용하고 있지 않고 데이터 디스크가 많은 경우 저장소 계정의 총 I/O 제한을 알아두어야 합니다. 자세한 내용은 [가상 머신 디스크 제한][vm-disk-limits]을 참조하세요.
+하나 이상의 데이터 디스크를 추가합니다. VHD를 만들 때 형식은 지정되지 않습니다. 디스크를 포맷하려면 VM에 로그인합니다. 관리 디스크를 사용하고 있지 않고 데이터 디스크가 많은 경우 저장소 계정의 총 I/O 제한을 알아두어야 합니다. 자세한 내용은 [가상 머신 디스크 제한][vm-disk-limits]을 참조하세요.
 
 Linux 셸에서 데이터 디스크는 `/dev/sdc`, `/dev/sdd` 등으로 표시됩니다. `lsblk` 를 실행하여 디스크를 포함하는 블록 장치를 나열할 수 있습니다. 데이터 디스크를 사용하려면 파티션 및 파일 시스템을 만들고 디스크를 탑재합니다. 예: 
 
@@ -129,9 +129,9 @@ Azure Portal에서 **중지** 버튼은 VM 할당을 취소합니다. 로그인�
 
 [Azure Security Center][security-center]를 사용하여 Azure 리소스의 보안 상태를 중앙에서 살펴볼 수 있습니다. Security Center는 잠재적인 보안 문제를 모니터링하고 배포의 보안 상태에 대한 종합적인 그림을 제공합니다. 보안 센터는 각 Azure 구독을 기준으로 구성됩니다. [Azure Security Center 빠른 시작 가이드][security-center-get-started]에 설명된 것처럼 보안 데이터 수집을 사용하도록 설정합니다. 데이터 수집이 사용되도록 설정되면 보안 센터는 해당 구독에서 만든 모든 VM을 자동으로 검색합니다.
 
-**패치 관리.** 이 기능이 설정된 경우 보안 센터는 보안 및 중요 업데이트 누락 여부를 확인합니다. 
+**패치 관리.** 이 기능이 설정된 경우 Security Center는 보안 및 중요 업데이트 누락 여부를 확인합니다. 
 
-**맬웨어 방지.** 이 기능이 설정되면 보안 센터는 맬웨어 방지 소프트웨어 설치 여부를 확인합니다. 또한 보안 센터를 사용하여 Azure Portal 내에서 맬웨어 방지 소프트웨어를 설치할 수도 있습니다.
+**맬웨어 방지.** 이 기능이 설정되면 보안 센터는 맬웨어 방지 소프트웨어 설치 여부를 확인합니다. 또한 보안 센터를 사용하여 Azure 포털 내에서 맬웨어 방지 소프트웨어를 설치할 수도 있습니다.
 
 **작업.** [RBAC(역할 기반 액세스 제어)][rbac]를 사용하여 배포하는 Azure 리소스에 대한 액세스를 제어합니다. RBAC를 통해 DevOps 팀의 구성원에게 권한 역할을 할당할 수 있습니다. 예를 들어 읽기 권한자 역할은 Azure 리소스를 볼 수 있지만 만들거나 관리하거나 삭제할 수는 없습니다. 일부 역할은 특정 Azure 리소스 유형에 따라 다릅니다. 예를 들어 Virtual Machine Contributor 역할은 VM을 다시 시작하거나 할당을 취소하고, 관리자 암호를 재설정하고, 새 VM을 만드는 등의 작업을 수행할 수 있습니다. 이 아키텍처에 유용할 수 있는 기타 [기본 제공 RBAC 역할][rbac-roles]에는 [DevTest Labs 사용자][rbac-devtest] 및 [네트워크 참가자][rbac-network]가 포함됩니다. 한 명의 사용자가 여러 역할에 할당될 수 있으며 좀 더 세분화된 권한의 사용자 지정 역할을 만들 수도 있습니다.
 
@@ -151,7 +151,7 @@ Azure Portal에서 **중지** 버튼은 VM 할당을 취소합니다. 로그인�
   * 최신 버전의 Ubuntu16.04.3 LTS를 실행하는 VM
   * 두 개의 데이터 디스크를 포맷하고 Apache HTTP Server를 Ubuntu VM에 배포하는 샘플 사용자 지정 스크립트 확장
 
-### <a name="prerequisites"></a>필수 조건
+### <a name="prerequisites"></a>필수 구성 요소
 
 사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.
 

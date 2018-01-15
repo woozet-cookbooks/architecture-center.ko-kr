@@ -4,11 +4,11 @@ description: "Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: 20f090c4cc39f96887cd58ffd2a9c7736e77de57
-ms.sourcegitcommit: 1c0465cea4ceb9ba9bb5e8f1a8a04d3ba2fa5acd
+ms.openlocfilehash: 364735dec9658b4d2a9d21330f38c57f6fa694bd
+ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/02/2018
+ms.lasthandoff: 01/08/2018
 ---
 # <a name="naming-conventions"></a>명명 규칙
 
@@ -109,7 +109,7 @@ Azure의 각 리소스 또는 서비스 유형은 명명 제한 및 범위 집�
 | 엔터티 | 범위 | 길이 | 대/소문자 구분 | 사용할 수 있는 문자 | 제안된 패턴 | 예 |
 | --- | --- | --- | --- | --- | --- | --- |
 |Virtual Network(VNet) |리소스 그룹 |2-64 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<service short name>-vnet` |`profx-vnet` |
-|서브넷 |부모 VNet |2-80 |대/소문자 구분하지 않음 |영숫자, 밑줄, 대시 및 마침표 |`<descriptive context>` |`web` |
+|서브넷 |부모 VNet |2-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<descriptive context>` |`web` |
 |네트워크 인터페이스 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<vmname>-nic<num>` |`profx-sql1-nic1` |
 |네트워크 보안 그룹 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<service short name>-<context>-nsg` |`profx-app-nsg` |
 |네트워크 보안 그룹 규칙 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<descriptive context>` |`sql-allow` |

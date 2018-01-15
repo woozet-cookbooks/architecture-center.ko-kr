@@ -6,11 +6,11 @@ ms.date: 11/16/2017
 pnp.series.title: Linux VM workloads
 pnp.series.next: n-tier
 pnp.series.prev: single-vm
-ms.openlocfilehash: b1b3c94524d50d05c90b46d26cab54fea8c8061a
-ms.sourcegitcommit: 115db7ee008a0b1f2b0be50a26471050742ddb04
+ms.openlocfilehash: 8f081baa40355b4f02b83c308466df8333d7ad87
+ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/17/2017
+ms.lasthandoff: 01/08/2018
 ---
 # <a name="run-load-balanced-vms-for-scalability-and-availability"></a>확장성 및 가용성을 위해 부하 분산된 VM 실행
 
@@ -32,6 +32,7 @@ ms.lasthandoff: 11/17/2017
 * **가상 네트워크(VNet) 및 서브넷.** 모든 Azure VM은 VNet에 배포되어 여러 서브넷으로 분할될 수 있습니다.
 * **Azure Load Balancer**. [부하 분산 장치][load-balancer]는 수신되는 인터넷 요청을 여러 VM 인스턴스로 분산합니다. 
 * **공용 IP 주소**. 부하 분산 장치가 인터넷 트래픽을 수신하려면 공용 IP 주소가 필요합니다.
+* **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다.
 * **VM 확장 집합**. [VM 확장 집합][vm-scaleset]은 워크로드를 호스팅하는 데 사용되는 동일한 VM들의 집합입니다. 확장 집합을 사용하면 여러 VM을 수동 확장 또는 축소하거나 사전 정의된 규칙을 바탕으로 자동 확장 또는 축소할 수 있습니다.
 * **가용성 집합**. [가용성 집합][availability-set]은 여러 VM을 포함합니다. 포함된 VM은 더 높은 [SLA(서비스 수준 계약)][vm-sla]를 충족할 수 있게 됩니다. 더 높은 SLA를 적용하기 위해서는 가용성 집합에 둘 이상의 VM이 포함되어야 합니다. 가용성 집합은 확장 집합에 내포되어 있습니다. VM을 확장 집합 외부에 만든 경우에는 가용성 집합을 독립적으로 만들어야 합니다.
 * **관리 디스크**. Azure 관리 디스크는 VM 디스크의 VHD(가상 하드 디스크) 파일을 관리합니다. 
@@ -124,7 +125,7 @@ VM이 여러 개인 경우에는 프로세스를 안정적이고 반복적으로
   * VM 확장 집합 앞에 위치한 부하 분산 장치.
   * VM 확장 집합에서 HTTP 트래픽을 수신할 수 있도록 허용하는 수신 규칙을 갖는 NSG.
 
-### <a name="prerequisites"></a>필수 조건
+### <a name="prerequisites"></a>필수 구성 요소
 
 사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.
 
@@ -169,6 +170,7 @@ VM이 여러 개인 경우에는 프로세스를 안정적이고 반복적으로
 [azure-automation]: /azure/automation/automation-intro
 [azure-cli]: /azure/virtual-machines-command-line-tools
 [azure-cli-2]: /azure/install-azure-cli?view=azure-cli-latest
+[azure-dns]: /azure/dns/dns-overview
 [git]: https://github.com/mspnp/reference-architectures/tree/master/virtual-machines/multi-vm
 [github-folder]: https://github.com/mspnp/reference-architectures/tree/master/virtual-machines/multi-vm
 [health-probe-log]: /azure/load-balancer/load-balancer-monitor-log

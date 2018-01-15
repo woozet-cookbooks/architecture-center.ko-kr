@@ -5,11 +5,11 @@ author: MikeWasson
 ms.date: 11/22/2016
 pnp.series.title: Linux VM workloads
 pnp.series.prev: n-tier
-ms.openlocfilehash: 3b68f6fc79ba4b29e41ba2b04537b834bb8859b0
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 7d720a004d21edbffc0ddeba54e291aa817550e0
+ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/08/2018
 ---
 # <a name="run-linux-vms-in-multiple-regions-for-high-availability"></a>고가용성을 위해 여러 지역에서 Linux VM 실행
 
@@ -24,6 +24,7 @@ ms.lasthandoff: 11/14/2017
 이 아키텍처는 [N 계층 응용 프로그램에 대한 Linux VM 실행](n-tier.md)에 나와 있는 아키텍처를 사용합니다. 
 
 * **주 지역 및 보조 지역**. 더 높은 가용성을 달성하기 위해 두 개의 지역을 사용합니다. 하나는 주 지역이고 다른 하나는 장애 조치(failover)를 위한 지역입니다.
+* **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다.
 * **Azure Traffic Manager**. [Traffic Manager][traffic-manager]는 들어오는 요청을 이 지역 중 하나에 라우팅합니다. 정상 작동 중에는 요청을 주 지역으로 라우팅합니다. 이 지역을 사용할 수 없게 되면 Traffic Manager가 보조 지역으로 장애 조치(failover)합니다. 자세한 내용은 [Traffic Manager 구성](#traffic-manager-configuration) 섹션을 참조하세요.
 * **리소스 그룹**. 주 지역, 보조 지역 및 Traffic Manager에 대해 별도의 [리소스 그룹][resource groups]을 만듭니다. 따라서 각 지역을 단일 리소스 모음으로 유연하게 관리할 수 있습니다. 예를 들어 다른 지역으로 이동하지 않고 한 지역을 다시 배포할 수 있습니다. [리소스 그룹을 연결][resource-group-links]하므로 응용 프로그램의 모든 리소스를 나열하는 쿼리를 실행할 수 있습니다.
 * **VNet**. 각 지역에 대해 별도의 VNet을 만듭니다. 주소 공간이 겹치지 않도록 합니다.
@@ -128,7 +129,7 @@ Cassandra 클러스터의 경우 고려할 장애 조치(failover) 시나리오�
 
 <!-- Links -->
 [hybrid-vpn]: ../hybrid-networking/vpn.md
-
+[azure-dns]: /azure/dns/dns-overview
 [cassandra-in-azure]: https://academy.datastax.com/resources/deployment-guide-azure
 [cassandra-consistency]: http://docs.datastax.com/en/cassandra/2.0/cassandra/dml/dml_config_consistency_c.html
 [cassandra-replication]: http://www.planetcassandra.org/data-replication-in-nosql-databases-explained/

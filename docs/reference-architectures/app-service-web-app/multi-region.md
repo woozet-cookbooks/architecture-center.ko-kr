@@ -4,11 +4,11 @@ description: "Microsoft Azure에서 실행되고 고가용성을 요구하는 �
 author: MikeWasson
 ms.date: 11/23/2016
 cardTitle: Run in multiple regions
-ms.openlocfilehash: 2d7d0c38bef3efc73a7ba2dd61e4190d07deb1b5
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 60caa121d0ce2f1aa2638650229bed8048804c22
+ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/08/2018
 ---
 # <a name="run-a-web-application-in-multiple-regions"></a>여러 지역에서 웹 응용 프로그램 실행
 [!INCLUDE [header](../../_includes/header.md)]
@@ -24,6 +24,7 @@ ms.lasthandoff: 11/14/2017
 이 아키텍처는 [웹 응용 프로그램에서 확장성 향상][guidance-web-apps-scalability]에 표시된 아키텍처를 기반으로 합니다. 주요 차이점은 다음과 같습니다.
 
 * **주 지역 및 보조 지역**. 이 아키텍처는 더 높은 가용성을 달성하기 위해 두 지역을 사용합니다. 응용 프로그램이 각 지역에 배포됩니다. 정상적으로 작동하는 동안에는 네트워크 트래픽이 주 지역으로 라우팅됩니다. 주 지역을 사용할 수 없는 경우에는 트래픽이 보조 지역으로 라우팅됩니다. 
+* **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다.
 * **Azure Traffic Manager**. [Traffic Manager][traffic-manager]는 들어오는 요청을 주 지역으로 라우팅합니다. 해당 지역을 실행하는 응용 프로그램을 사용할 수 없게 되면 Traffic Manager가 보조 지역으로 장애 조치(failover)합니다.
 * SQL Database와 Cosmos DB의 **지역에서 복제** 
 
@@ -147,6 +148,7 @@ azure network traffic-manager endpoint set --name <endpoint> --profile-name <pro
 <!-- links -->
 
 [azure-sql-db]: https://azure.microsoft.com/documentation/services/sql-database/
+[azure-dns]: /azure/dns/dns-overview
 [docdb-geo]: /azure/documentdb/documentdb-distribute-data-globally
 [guidance-web-apps-scalability]: ./scalable-web-app.md
 [health-endpoint-monitoring-pattern]: https://msdn.microsoft.com/library/dn589789.aspx
