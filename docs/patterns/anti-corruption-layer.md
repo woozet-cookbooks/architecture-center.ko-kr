@@ -3,15 +3,15 @@ title: "손상 방지 레이어 패턴"
 description: "현대식 응용 프로그램과 레거시 시스템 사이에 외관 또는 어댑터 레이어를 구현합니다."
 author: dragon119
 ms.date: 06/23/2017
-ms.openlocfilehash: 590d5f3676c92f5f18661360106e2b2fdd4efbe1
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: e41f080abbef772596ee7f8b10ad72bb03a3b829
+ms.sourcegitcommit: c93f1b210b3deff17cc969fb66133bc6399cfd10
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/05/2018
 ---
 # <a name="anti-corruption-layer-pattern"></a>손상 방지 레이어 패턴
 
-최신 응용 프로그램과 이 응용 프로그램이 의존하는 레거시 시스템 사이에 외관 또는 어댑터 레이어를 구현합니다. 이 레이어는 최신 응용 프로그램과 레거시 시스템 간에 요청을 변환합니다. 이 패턴을 사용하여 응용 프로그램의 디자인이 레거시 시스템에 대한 종속성으로 제한되지 않도록 할 수 있습니다.
+최신 응용 프로그램과 이 응용 프로그램이 의존하는 레거시 시스템 사이에 외관 또는 어댑터 레이어를 구현합니다. 이 레이어는 최신 응용 프로그램과 레거시 시스템 간에 요청을 변환합니다. 이 패턴을 사용하여 응용 프로그램의 디자인이 레거시 시스템에 대한 종속성으로 제한되지 않도록 할 수 있습니다. 이 패턴은 *도메인 중심 디자인*에서 Eric Evans가 처음으로 설명했습니다.
 
 ## <a name="context-and-problem"></a>컨텍스트 및 문제점
 
@@ -42,7 +42,7 @@ ms.lasthandoff: 11/14/2017
 
 ## <a name="when-to-use-this-pattern"></a>이 패턴을 사용해야 하는 경우
 
-다음의 경우에 이 패턴을 사용합니다.
+다음 경우에 이 패턴을 사용합니다.
 
 - 마이그레이션이 여러 단계를 통해 진행되도록 계획되어 있지만 새 시스템과 레거시시 스템 간의 통합을 유지 관리해야 하는 경우
 - 새 시스템과 레거시 시스템이 서로 다른 의미 체계를 갖지만 여전히 통신해야 하는 경우

@@ -3,11 +3,11 @@ title: "마이크로 서비스에 대한 도메인 분석"
 description: "마이크로 서비스에 대한 도메인 분석"
 author: MikeWasson
 ms.date: 12/08/2017
-ms.openlocfilehash: dc07c5195299c88a946accbe4e13a997afaaff90
-ms.sourcegitcommit: a8453c4bc7c870fa1a12bb3c02e3b310db87530c
+ms.openlocfilehash: c3c353a6b30507369357af4b520a51f8afc2fb8d
+ms.sourcegitcommit: 3d6dba524cc7661740bdbaf43870de7728d60a01
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/29/2017
+ms.lasthandoff: 01/11/2018
 ---
 # <a name="designing-microservices-domain-analysis"></a>마이크로 서비스 설계: 도메인 분석 
 

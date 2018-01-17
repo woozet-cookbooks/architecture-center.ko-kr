@@ -3,11 +3,11 @@ title: "마이크로 서비스 경계 식별"
 description: "마이크로 서비스 경계 식별"
 author: MikeWasson
 ms.date: 12/08/2017
-ms.openlocfilehash: 046749191bd565813218b3834cb4674c4c5100e2
-ms.sourcegitcommit: a8453c4bc7c870fa1a12bb3c02e3b310db87530c
+ms.openlocfilehash: e4f11da9f970724c55ad99824f808a10c4558971
+ms.sourcegitcommit: 744ad1381e01bbda6a1a7eff4b25e1a337385553
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/29/2017
+ms.lasthandoff: 01/08/2018
 ---
 # <a name="designing-microservices-identifying-microservice-boundaries"></a>마이크로 서비스 디자인: 마이크로 서비스 경계 식별
 
@@ -116,7 +116,7 @@ ms.lasthandoff: 12/29/2017
 
 **이식성**. 여기에 나열된 모든 오케스트레이터(Kubernetes, DC/OS, Docker Swarm 및 Service Fabric)는 온-프레미스 또는 다수의 공용 클라우드에서 실행할 수 있습니다. 
 
-**응용 프로그램 통합**. 서버리스 아키텍처를 사용하면 복잡한 응용 프로그램을 개발하기 어려울 수 있습니다. Azure의 한 가지 옵션은 [Azure Logic Apps](/azure/logic-apps/)를 사용하여 Azure Functions 집합을 조정하는 것입니다. 이러한 방법에 대한 예제는 [Azure Logic Apps와 통합하는 함수 만들기](/azure/azure-functions/functions-twitter-email.)를 참조하세요.
+**응용 프로그램 통합**. 서버리스 아키텍처를 사용하면 복잡한 응용 프로그램을 개발하기 어려울 수 있습니다. Azure의 한 가지 옵션은 [Azure Logic Apps](/azure/logic-apps/)를 사용하여 Azure Functions 집합을 조정하는 것입니다. 이러한 방법에 대한 예제는 [Azure Logic Apps와 통합하는 함수 만들기](/azure/azure-functions/functions-twitter-email)를 참조하세요.
 
 **비용**. 오케스트레이터를 사용하면 클러스터에서 실행 중인 VM에 대한 비용을 지불합니다. 서버리스 응용 프로그램을 사용하면 소비한 실제 계산 리소스에 대해서만 비용을 지불합니다. 두 경우 모두 저장소, 데이터베이스 및 메시징 서비스와 같은 추가 서비스에 대한 비용을 고려해야 합니다.
 

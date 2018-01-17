@@ -4,11 +4,11 @@ description: "성능 및 확장성을 향상하기 위한 캐시에 대한 지�
 author: dragon119
 ms.date: 05/24/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: f8bc25ef10847e8308e830b745e87a176438d200
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 7968c1578dfef2c7ad28576b9aafbbe2b6672cd9
+ms.sourcegitcommit: 3d6dba524cc7661740bdbaf43870de7728d60a01
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/11/2018
 ---
 # <a name="caching"></a>구성
 
@@ -185,23 +185,13 @@ HTTP 연결을 통해 데이터를 제공하는 웹 응용 프로그램을 작�
 또한 데이터가 캐시 안팎으로 이동할 때 해당 데이터를 보호해야 합니다. 이를 위해 클라이언트 응용 프로그램에서 캐시에 연결하는 데 사용하는 네트워크 인프라에서 제공하는 보안 기능을 사용해야 합니다. 클라이언트 응용 프로그램을 호스트하는 같은 조직 내의 온사이트 서버를 사용하여 캐시가 구현되면 추가 단계를 수행하기 위해 네트워크 자체의 격리가 필요하지 않을 수 있습니다. 캐시가 원격에 위치하고 공용 네트워크를 통해 TCP 또는 HTTP 연결(인터넷과 같은)이 필요한 경우 SSL을 구현하는 것이 좋습니다.
 
 ## <a name="considerations-for-implementing-caching-with-microsoft-azure"></a>Microsoft Azure로 캐싱을 구현하기 위한 고려 사항
-Azure는 Azure Redis Cache를 제공합니다. 이는 Azure 데이터 센터에서 서비스로 실행되는 오픈 소스 Redis 캐시를 구현합니다. 응용 프로그램이 웹사이트, 클라우드 서비스로 구현되거나 Azure 가상 머신 내에서 구현되거나 무관히 모든 Azure 응용 프로그램에서 액세스할 수 있는 캐싱 서비스를 제공합니다. 적절한 액세스 키가 있는 클라이언트 응용 프로그램이 캐시를 공유할 수 있습니다.
+
+[Azure Redis Cache](/azure/redis-cache/)는 Azure 데이터 센터에서 서비스로 실행되는 오픈 소스 Redis 캐시를 구현합니다. 응용 프로그램이 웹사이트, 클라우드 서비스로 구현되거나 Azure 가상 머신 내에서 구현되거나 무관히 모든 Azure 응용 프로그램에서 액세스할 수 있는 캐싱 서비스를 제공합니다. 적절한 액세스 키가 있는 클라이언트 응용 프로그램이 캐시를 공유할 수 있습니다.
 
 Azure Redis Cache는 가용성, 확장성 및 보안을 제공하는 고성능 캐싱 솔루션입니다. 일반적으로 하나 이상의 전용 컴퓨터에 분산된 서비스로 실행됩니다. 빠른 액세스를 보장하기 위해 메모리에 가능한 한 많은 정보를 저장하려고 합니다. 이 아키텍처는 느린 I/O 작업을 수행할 필요를 줄여 짧은 대기 시간과 높은 처리량을 제공하도록 합니다.
 
  Azure Redis Cache는 클라이언트 응용 프로그램에서 사용되는 많고 다양한 API와 호환됩니다. 온-프레미스를 실행하는 Azure Redis Cache를 이미 사용하는 기존 응용 프로그램이 있는 경우 Azure Redis Cache는 클라우드에서 캐시에 빠른 마이그레이션 경로를 제공합니다.
 
-> [!NOTE]
-> 또한 Azure는 Managed Cache Service를 제공합니다. 이 서비스는 Azure 서비스 패브릭 캐시 엔진을 기반으로 합니다. 이것으로 느슨하게 결합된 응용 프로그램이 공유할 수 있는 분산된 캐시를 만들 수 있습니다. 캐시는 Azure 데이터 센터에서 실행하는 고성능 서버에서 호스팅됩니다.
-> 그러나 이 옵션은 더 이상 추천하지 않으며 이것을 사용하여 구축된 기존의 응용 프로그램을 지원하기 위해 제공됩니다. 모든 신규 개발에서 Azure Redis Cache를 대신 사용합니다.
-> 
-> 또한 Azure는 In-Role Cach를 지원합니다. 이 기능을 사용하면 클라우드 서비스와 관련된 캐시를 만들 수 있습니다.
-> 캐시는 웹 또는 작업자 역할의 인스턴스에서 호스트되고 같은 클라우드 서비스 배포 단위의 일부로 작동하는 역할만 액세스할 수 있습니다. (배포 단위는 특정 지역에 클라우드 서비스로 배포되는 역할 인스턴스 집합임) 캐시는 클러스터되고 캐시를 호스트하는 동일한 배포 단위 내에서 역할의 모든 인스턴스가 동일한 캐시 클러스터의 일부가 됩니다. 그러나 이 옵션은 더이상 추천하지 않으며 이것을 사용하여 구축된 기존의 응용 프로그램을 지원하기 위해 제공됩니다. 모든 신규 개발에서 Azure Redis Cache를 대신 사용합니다.
-> 
-> Azure Managed Cache Service와 Azure In-Role Cache 둘 다 2016년 11월 16일에 사용 중지될 것으로 현재 예정되어 있습니다.
-> 이러한 사용 중지에 대비하기 위해 Azure Redis Cache로 마이그레이션하는 것이 좋습니다. 자세한 내용은 [어떤 Redis Cache 제품 및 크기를 사용해야 하나요?](/azure/redis-cache/cache-faq#what-redis-cache-offering-and-size-should-i-use)를 참조하세요.
-> 
-> 
 
 ### <a name="features-of-redis"></a>Redis의 기능
  Redis는 간단한 캐시 서버 이상입니다. 여러 일반적인 시나리오를 지원하는 광범위한 명령 집합과 함께 분산된 메모리 내 데이터베이스를 제공합니다. 이러한 내용은 이 문서의 뒷부분, Redis 캐싱 사용 섹션에 설명되어 있습니다. 이 섹션은 Redis를 제공하는 주요 기능 중 일부를 요약합니다.

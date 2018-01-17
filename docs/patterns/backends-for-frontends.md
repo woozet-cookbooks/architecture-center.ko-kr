@@ -3,15 +3,15 @@ title: "프런트 엔드에 대한 백 엔드 패턴"
 description: "특정 프런트 엔드 응용 프로그램 또는 인터페이스에서 사용할 별도의 백 엔드 서비스를 만듭니다."
 author: dragon119
 ms.date: 06/23/2017
-ms.openlocfilehash: dd71b65e99ae21dff1443f5728ae5f0f54f8122c
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 87acd39d021c5e44594a2e7c9574e4dd363ce83b
+ms.sourcegitcommit: c93f1b210b3deff17cc969fb66133bc6399cfd10
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/05/2018
 ---
 # <a name="backends-for-frontends-pattern"></a>프런트 엔드에 대한 백 엔드 패턴
 
-특정 프런트 엔드 응용 프로그램 또는 인터페이스에서 사용할 별도의 백 엔드 서비스를 만듭니다. 이 패턴은 단일 백 엔드를 여러 인터페이스에 맞게 사용자 지정하지 않으려는 경우에 유용합니다.
+특정 프런트 엔드 응용 프로그램 또는 인터페이스에서 사용할 별도의 백 엔드 서비스를 만듭니다. 이 패턴은 단일 백 엔드를 여러 인터페이스에 맞게 사용자 지정하지 않으려는 경우에 유용합니다. 이 패턴은 Sam Newman이 처음으로 설명했습니다.
 
 ## <a name="context-and-problem"></a>컨텍스트 및 문제점
 
@@ -33,6 +33,8 @@ ms.lasthandoff: 11/14/2017
 
 각 백 엔드는 하나의 인터페이스에 맞춰지므로 해당 인터페이스에 대해 최적화할 수 있습니다. 결과적으로 모든 인터페이스의 요구 사항을 충족하는 일반 백 엔드보다 더 작고, 덜 복잡하고, 더 빠를 수 있습니다. 각 인터페이스 팀은 자율적으로 자체 백 엔드를 제어할 수 있으며, 중앙 집중식 백 엔드 개발 팀에 의존하지 않습니다. 이를 통해 인터페이스 팀은 언어 선택, 릴리스 일정, 작업 우선 순위, 백 엔드의 기능 통합 문제를 유연하게 처리할 수 있습니다.
 
+자세한 내용은 [패턴: 프런트 엔드에 대한 백 엔드](http://samnewman.io/patterns/architectural/bff/)를 참조하세요.
+
 ## <a name="issues-and-considerations"></a>문제 및 고려 사항
 
 - 배포할 백 엔드 수를 고려합니다.
@@ -44,7 +46,7 @@ ms.lasthandoff: 11/14/2017
 
 ## <a name="when-to-use-this-pattern"></a>이 패턴을 사용해야 하는 경우
 
-다음의 경우에 이 패턴을 사용합니다.
+다음 경우에 이 패턴을 사용합니다.
 
 - 공유 또는 범용 백 엔드 서비스를 유지 관리하는 데 상당량의 개발 오버헤드가 발생합니다.
 - 특정 클라이언트 인터페이스의 요구 사항에 맞게 백 엔드를 최적화하려고 할 수 있습니다.

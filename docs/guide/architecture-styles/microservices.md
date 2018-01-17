@@ -2,15 +2,15 @@
 title: "마이크로 서비스 아키텍처 스타일"
 description: "Azure에서 마이크로 서비스 아키텍처의 혜택, 과제 및 모범 사례를 설명합니다."
 author: MikeWasson
-ms.openlocfilehash: 6426b3342a319832baf5eec35e9c783ba9348bdd
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 08fd39b6cf0b3c88af654b27e21b2d7dd9fb19b1
+ms.sourcegitcommit: 7764a804f000180c37a4f8dbab946b525f784f58
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/09/2018
 ---
 # <a name="microservices-architecture-style"></a>마이크로 서비스 아키텍처 스타일
 
-마이크로 서비스 아키텍처는 작은 자율 서비스 컬렉션으로 구성됩니다. 각 서비스는 자체 포함되며 단일 비즈니스 기능을 구현해야 합니다. 
+마이크로 서비스 아키텍처는 작은 자율 서비스 컬렉션으로 구성됩니다. 각 서비스는 자체 포함되며 단일 비즈니스 기능을 구현해야 합니다. Azure에서 마이크로 서비스 아키텍처를 빌드하는 방법에 대한 자세한 지침은 [Azure에서 마이크로 서비스 설계, 구축 및 운영](../../microservices/index.md)을 참조하세요.
 
 ![](./images/microservices-logical.svg)
  
@@ -111,7 +111,7 @@ API 게이트웨이를 사용할 경우의 장점은 다음과 같습니다.
 
 ## <a name="microservices-using-azure-container-service"></a>Azure Container Service를 사용하는 마이크로 서비스 
 
-Azure Container Service를 사용하여 Docker 클러스터를 구성 및 프로비전할 수 있습니다. Azure Container Service는 Kubernetes, DC/OS 및 Docker Swarm을 포함하여 여러 인기 컨테이너 오케스트레이터를 지원합니다.
+[Azure Container Service](/azure/container-service/)를 사용하여 Docker 클러스터를 구성 및 프로비전할 수 있습니다. Azure Container Service는 Kubernetes, DC/OS 및 Docker Swarm을 포함하여 여러 인기 컨테이너 오케스트레이터를 지원합니다.
 
 ![](./images/microservices-acs.png)
  
@@ -133,7 +133,7 @@ Azure Container Service를 사용하여 Docker 클러스터를 구성 및 프로
 
 ## <a name="microservices-using-azure-service-fabric"></a>Azure Service Fabric을 사용하는 마이크로 서비스
 
-다음 다이어그램은 Azure Service Fabric을 사용하는 마이크로 서비스 아키텍처를 보여 줍니다.
+다음 다이어그램은 [Azure Service Fabric](/azure/service-fabric/)을 사용하는 마이크로 서비스 아키텍처를 보여 줍니다.
 
 ![](./images/service-fabric.png)
 
