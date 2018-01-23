@@ -4,11 +4,11 @@ description: "성능 및 확장성을 향상하기 위한 캐시에 대한 지�
 author: dragon119
 ms.date: 05/24/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: 7968c1578dfef2c7ad28576b9aafbbe2b6672cd9
-ms.sourcegitcommit: 3d6dba524cc7661740bdbaf43870de7728d60a01
+ms.openlocfilehash: fde1c3e8c65d357746e4ccaddebeebace943cf9d
+ms.sourcegitcommit: 441185360db49cfb3cf39527b68f318d17d4cb3d
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/11/2018
+ms.lasthandoff: 01/19/2018
 ---
 # <a name="caching"></a>구성
 
@@ -131,7 +131,7 @@ HTTP 연결을 통해 데이터를 제공하는 웹 응용 프로그램을 작�
 
 공유 캐시 서비스의 가용성에 대한 높은 종속성을 솔루션에 도입하지 않도록 주의하십시오. 공유 캐시를 제공하는 서비스를 사용할 수 없는 경우 응용 프로그램이 계속 작동될 수 있어야 합니다. 캐시 서비스가 다시 시작되기를 기다리는 동안 응용 프로그램이 중단되거나 실패하지 않아야 합니다.
 
-따라서 응용 프로그램은 캐시 서비스의 가용성을 검색하여 준비하고 캐시에 액세스할 수 없는 경우 원래 데이터 저장소로 대체해야 합니다. [회로 차단기 패턴](http://msdn.microsoft.com/library/dn589784.aspx)은 시나리오를 처리하는데 유용합니다. [캐시 배제 패턴](http://msdn.microsoft.com/library/dn589799.aspx)과 같은 전략을 따라 캐시를 제공하는 서비스를 복구할 수 있으며 원래 데이터 저장소에서 데이터를 읽을 때 서비스를 사용할 수 있게 되면 캐시를 다시 채울 수 있습니다.
+따라서 응용 프로그램은 캐시 서비스의 가용성을 검색하여 준비하고 캐시에 액세스할 수 없는 경우 원래 데이터 저장소로 대체해야 합니다. [회로 차단기 패턴](http://msdn.microsoft.com/library/dn589784.aspx)은 시나리오를 처리하는데 유용합니다. [캐시 배제 패턴](http://msdn.microsoft.com/library/dn589799.aspx)과 같은 전략을 따라 캐시를 제공하는 서비스를 복구할 수 있으며, 원래 데이터 저장소에서 데이터를 읽을 때 서비스를 사용할 수 있게 되면 캐시를 다시 채울 수 있습니다.
 
 그러나 캐시를 일시적으로 사용할 수 없을 때 응용 프로그램이 다시 원래 데이터 저장소로 되돌아가는 경우 시스템의 확장성에 영향을 미칠 수 있습니다.
 데이터 저장소가 복구 중인 동안 원래 데이터 저장소에 데이터 요청이 너무 많아 시간이 초과되고 연결되지 않을 수 있습니다.
