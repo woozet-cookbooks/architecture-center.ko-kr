@@ -4,11 +4,11 @@ description: "설계하는 동안 가용성 문제에 대한 지침을 제공하
 author: dragon119
 ms.date: 01/10/2018
 ms.custom: checklist
-ms.openlocfilehash: b66968f8e0e4cdde9b5ce9aea11c2b4011958b38
-ms.sourcegitcommit: 3d6dba524cc7661740bdbaf43870de7728d60a01
+ms.openlocfilehash: 324d8200d822eb1a7dce95ba4b2a7f29b00fb291
+ms.sourcegitcommit: 441185360db49cfb3cf39527b68f318d17d4cb3d
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/11/2018
+ms.lasthandoff: 01/19/2018
 ---
 # <a name="availability-checklist"></a>가용성 검사 목록
 
