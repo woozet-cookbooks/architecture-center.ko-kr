@@ -27,7 +27,7 @@ ms.lasthandoff: 11/14/2017
 * **가용성 향상**. 데이터를 여러 서버에 분리하면 단일 장애 지점이 발생하지 않습니다. 서버에 오류가 발생하거나 계획된 유지 관리를 수행 중인 경우 해당 파티션의 데이터만 사용할 수 없게 됩니다. 다른 파티션에 대한 작업은 계속 진행할 수 있습니다. 파티션 수를 늘리면 사용할 수 없는 데이터의 비율이 줄어 단일 서버 오류의 상대적 영향이 줄어듭니다. 각 파티션을 복제하면 작업에 영향을 미치는 단일 파티션 오류가 발생할 가능성을 더 줄일 수 있습니다. 또한 가용성이 지속적이고 높아야 하는 중요 데이터와 가용성 요구 사항이 더 낮은, 덜 중요한 데이터(예: 로그 파일)를 분리할 수도 있습니다.
 * **보안 기능 향상**. 데이터 특성 및 분할 방법에 따라 중요한 데이터 및 중요하지 않은 데이터를 다른 파티션, 다른 서버나 데이터 저장소로 분리할 수 있습니다. 그러면 특별히 보안 기능을 중요 데이터에 최적화할 수 있습니다.
 * **유연한 운영**. 분할을 수행하면 작업을 미세 조정하고, 관리 효율성을 극대화하며, 비용을 최소화할 수 있는 기회가 늘어납니다. 예를 들어 각 파티션의 데이터 중요도에 따라 관리, 모니터링, 백업 및 복원, 기타 관리 작업에 다양한 전략을 정의할 수 있습니다.
-* **사용 패턴에 맞게 데이터 저장소 조정**. 분할은 데이터 저장소에서 제공하는 기본 제공 기능 및 비용에 따라 각 파티션을 다양한 유형의 데이터 저장소에 배포할 수 있습니다. 예를 들어 대용량 이진 데이터는 BLOB 데이터 저장소에 저장할 수 있으며, 더 구조화된 데이터는 문서 데이터베이스에 보관할 수 있습니다. 자세한 내용은 패턴 및 사례 지침의 [Polyglot 솔루션 빌드]와 Microsoft 웹 사이트의 [확장성이 뛰어난 솔루션에 대한 데이터 액세스: SQL, NoSQL 및 Polyglot 지속성 사용]을 참조하세요.
+* **사용 패턴에 맞게 데이터 저장소 조정**. 분할은 데이터 저장소에서 제공하는 기본 제공 기능 및 비용에 따라 각 파티션을 다양한 유형의 데이터 저장소에 배포할 수 있습니다. 예를 들어 대용량 이진 데이터는 BLOB 데이터 저장소에 저장할 수 있으며, 더 구조화된 데이터는 문서 데이터베이스에 보관할 수 있습니다. 자세한 내용은 패턴 및 사례 지침의 [Polyglot 솔루션 빌드]와 Microsoft 웹 사이트의 [확장성이 뛰어난 솔루션에 대한 데이터 액세스: SQL, NoSQL 및 Polyglot 지속성 사용] 을 참조하세요.
 
 일부 시스템에서는 분할이 장점이 아닌 비용으로 간주되어 구현되지 않습니다. 이러한 원리에 대한 일반적인 이유는 다음과 같습니다.
 
@@ -342,7 +342,7 @@ Azure Service Bus는 메시지 브로커를 사용하여 Service Bus 큐 또는 
 
 Service Bus에서 조각에 메시지를 할당하는 방법은 다음과 같습니다.
 
-* 메시지가 세션에 속하는 경우 *SessionId* 속성 값이 동일한 모든 메시지를 동일한 조각으로 전송합니다.
+* 메시지가 세션에 속하는 경우 * SessionId*  속성 값이 동일한 모든 메시지를 동일한 조각으로 전송합니다.
 * 메시지가 세션에 속하지 않지만 발신자가 *PartitionKey* 속성 값을 지정한 경우 *PartitionKey* 값이 동일한 모든 메시지를 동일한 조각으로 전송합니다.
 
   > [!NOTE]
@@ -569,7 +569,7 @@ Event Hubs에서 파티션을 사용하는 방법에 대한 자세한 내용은 
 [Azure Storage Table Design Guide]: /azure/storage/storage-table-design-guide
 [Polyglot 솔루션 빌드]: https://msdn.microsoft.com/library/dn313279.aspx
 [cosmos-db-ru]: /azure/documentdb/documentdb-request-units
-[Data Access for Highly-Scalable Solutions: Using SQL, NoSQL, and Polyglot Persistence]: https://msdn.microsoft.com/library/dn271399.aspx
+[확장성이 뛰어난 솔루션에 대한 데이터 액세스: SQL, NoSQL 및 Polyglot 지속성 사용]: https://msdn.microsoft.com/library/dn271399.aspx
 [데이터 일관성 입문서]: http://aka.ms/Data-Consistency-Primer
 [Data Partitioning Guidance]: https://msdn.microsoft.com/library/dn589795.aspx
 [Data Types]: http://redis.io/topics/data-types
