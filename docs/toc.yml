@@ -17,12 +17,14 @@
 - name: 참조 아키텍처
   href: reference-architectures/index.md
   items:
-    - name: ID 관리
-      href: reference-architectures/identity/index.md
-    - name: 하이브리드 네트워크
-      href: reference-architectures/hybrid-networking/index.md
     - name: App Service 웹 응용 프로그램
       href: reference-architectures/app-service-web-app/index.md
+    - name: 하이브리드 네트워크
+      href: reference-architectures/hybrid-networking/index.md
+    - name: ID 관리
+      href: reference-architectures/identity/index.md
+    - name: Jenkins 서버
+      href: reference-architectures/jenkins/index.md
     - name: 네트워크 DMZ
       href: reference-architectures/dmz/index.md
     - name: SAP NetWeaver 및 SAP HANA

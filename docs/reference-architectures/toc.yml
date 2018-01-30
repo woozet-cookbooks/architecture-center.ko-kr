@@ -12,19 +12,6 @@
           href: app-service-web-app/scalable-web-app.md
         - name: 다중 지역 배포
           href: app-service-web-app/multi-region.md
-    - name: ID 관리
-      href: identity/index.md
-      items:
-        - name: 어떤 것을 선택해야 하나요?
-          href: identity/considerations.md
-        - name: 온-프레미스 AD와 Azure AD 통합
-          href: identity/azure-ad.md
-        - name: AD DS를 Azure로 확장
-          href: identity/adds-extend-domain.md
-        - name: Azure에 AD DS 포리스트 만들기
-          href: identity/adds-forest.md
-        - name: AD FS를 Azure로 확장
-          href: identity/adfs.md
     - name: 하이브리드 네트워크
       href: hybrid-networking/index.md
       items:
@@ -38,6 +25,19 @@
           href: hybrid-networking/expressroute-vpn-failover.md
         - name: 허브-스포크 토폴로지
           href: hybrid-networking/hub-spoke.md
+    - name: ID 관리
+      href: identity/index.md
+      items:
+        - name: 어떤 것을 선택해야 하나요?
+          href: identity/considerations.md
+        - name: 온-프레미스 AD와 Azure AD 통합
+          href: identity/azure-ad.md
+        - name: AD DS를 Azure로 확장
+          href: identity/adds-extend-domain.md
+        - name: Azure에 AD DS 포리스트 만들기
+          href: identity/adds-forest.md
+        - name: AD FS를 Azure로 확장
+          href: identity/adfs.md
     - name: 네트워크 DMZ
       href: dmz/index.md
       items:
@@ -69,6 +69,8 @@
           href: virtual-machines-windows/n-tier.md
         - name: 다중 지역 응용 프로그램
           href: virtual-machines-windows/multi-region-application.md
+    - name: Jenkins 서버
+      href: jenkins/index.md
     - name: SAP NetWeaver 및 SAP HANA
       href: sap/index.md
     - name: SharePoint Server 2016
