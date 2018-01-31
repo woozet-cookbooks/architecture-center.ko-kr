@@ -5,11 +5,11 @@ keywords: "AWS 전문가, Azure 비교, AWS 비교, azure와 aws의 차이점, a
 author: lbrader
 ms.date: 03/24/2017
 pnp.series.title: Azure for AWS Professionals
-ms.openlocfilehash: ac96110e3fe69b4bb69714e18fd0f193208bc244
-ms.sourcegitcommit: 744ad1381e01bbda6a1a7eff4b25e1a337385553
+ms.openlocfilehash: e5f7cb5062b0b4a8526f3b29a9fa4ddaff399fc0
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/08/2018
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="azure-for-aws-professionals"></a>AWS 전문가를 위한 Azure
 
@@ -311,7 +311,7 @@ AWS RDS의 비용은 CPU, RAM, 저장소, 네트워크 대역폭 등 인스턴�
 
 -   [Azure Portal로 Azure SQL Database에 대한 지역에서 복제 구성](https://azure.microsoft.com/documentation/articles/sql-database-geo-replication-portal/)
 
--   [Cosmos DB 소개: NoSQL JSON 데이터베이스](https://azure.microsoft.com/documentation/articles/documentdb-introduction/)
+-   [Cosmos DB 소개: NoSQL JSON 데이터베이스](/azure/cosmos-db/sql-api-introduction)
 
 -   [Node.js에서 Azure Table Storage를 사용하는 방법](https://azure.microsoft.com/documentation/articles/storage-nodejs-how-to-use-table-storage/)
 
