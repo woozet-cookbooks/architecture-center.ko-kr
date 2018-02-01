@@ -18,11 +18,11 @@ ms.lasthandoff: 11/14/2017
 
 [!INCLUDE [header](../_includes/header.md)]
 
-Load data on demand into a cache from a data store. This can improve performance and also helps to maintain consistency between data held in the cache and data in the underlying data store.
+필요할 때 데이터를 데이터 저장소에서 캐시로 로드합니다. 이렇게 하면 성능이 개선되고 캐시에 저장된 데이터 및 기본 데이터 저장소의 데이터 간 일관성을 유지할 수 있습니다.
 
 ## <a name="context-and-problem"></a>컨텍스트 및 문제점
 
-Applications use a cache to improve repeated access to information held in a data store. However, it's impractical to expect that cached data will always be completely consistent with the data in the data store. 응용 프로그램은 캐시에 보관된 데이터를 최신 상태로 유지할 수 있도록 지원하는 전략을 구현하는 동시에, 캐시에 보관된 오래된 데이터로 인해 발생하는 상황을 감지하고 처리할 수 있어야 합니다.
+응용 프로그램에서 캐시를 사용하여 데이터 저장소에 저장된 정보에 반복되는 액세스를 개선합니다. 그러나, 캐시된 데이터가 언제나 데이터 저장소에 저장된 데이터와 일관성을 완전히 유지하지는 것은 불가능합니다. 응용 프로그램은 캐시에 보관된 데이터를 최신 상태로 유지할 수 있도록 지원하는 전략을 구현하는 동시에, 캐시에 보관된 오래된 데이터로 인해 발생하는 상황을 감지하고 처리할 수 있어야 합니다.
 
 ## <a name="solution"></a>해결 방법
 
