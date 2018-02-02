@@ -3,11 +3,11 @@ title: "모두 중복으로 구성"
 description: "응용 프로그램에 중복성을 구축하여 단일 실패 지점을 피합니다."
 author: MikeWasson
 layout: LandingPage
-ms.openlocfilehash: 89a1e6d2d3b1217ab07c9a99a4c4fb3e8cd2cd29
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 05ccf78c2cfbcd4e2d26200e70463d388d54f671
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="make-all-things-redundant"></a>모두 중복으로 구성
 
@@ -25,7 +25,7 @@ ms.lasthandoff: 11/14/2017
 
 **데이터베이스 복제** Azure SQL Database 및 Cosmos DB는 지역 내에 데이터를 자동으로 복제하고 여러 지역에 걸쳐 지리적 복제를 사용하도록 설정할 수 있습니다. IaaS 데이터베이스 솔루션을 사용하는 경우 복제 및 장애 조치(Failover)를 지원하는 솔루션(예: [SQL Server Always On 가용성 그룹][sql-always-on])을 선택합니다. 
 
-**지리적 복제 사용** [Azure SQL Database][sql-geo-replication] 및 [Cosmos DB][docdb-geo-replication]에 대한 지리적 복제는 하나 이상의 보조 지역에 읽기 가능한 데이터 보조 복제본을 만듭니다. 중단이 발생할 경우 데이터베이스는 쓰기 작업을 위해 보조 지역으로 장애 조치(Failover)될 수 있습니다.
+**지리적 복제 사용** [Azure SQL Database][sql-geo-replication] 및 [Cosmos DB][cosmosdb-geo-replication]에 대한 지리적 복제는 하나 이상의 보조 지역에 읽기 가능한 데이터 보조 복제본을 만듭니다. 중단이 발생할 경우 데이터베이스는 쓰기 작업을 위해 보조 지역으로 장애 조치(Failover)될 수 있습니다.
 
 **가용성을 위한 분할** 데이터베이스 분할은 확장성을 높이기 위해 자주 사용되지만 가용성을 높이는 결과도 가져올 수 있습니다. 하나의 분할된 데이터베이스가 다운되면 다른 분할된 데이터베이스에 계속 연결할 수 있습니다. 하나의 분할된 데이터베이스가 실패하는 경우 총 트랜잭션의 일부만 중단됩니다. 
 
@@ -46,6 +46,6 @@ ms.lasthandoff: 11/14/2017
 [multi-vm-blueprint]: ../../reference-architectures/virtual-machines-windows/multi-vm.md
 
 [cassandra]: http://cassandra.apache.org/
-[docdb-geo-replication]: /azure/documentdb/documentdb-distribute-data-globally
+[cosmosdb-geo-replication]: /azure/cosmos-db/distribute-data-globally
 [sql-always-on]: https://msdn.microsoft.com/library/hh510230.aspx
 [sql-geo-replication]: /azure/sql-database/sql-database-geo-replication-overview
