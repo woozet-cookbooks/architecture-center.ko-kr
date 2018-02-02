@@ -7,11 +7,11 @@ pnp.series.prev: basic-web-app
 pnp.series.next: multi-region-web-app
 ms.date: 11/23/2016
 cardTitle: Improve scalability
-ms.openlocfilehash: 1fdaf6e3695cb814fa4c275a4a273f9fa9a7b71b
-ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
+ms.openlocfilehash: 4ad12fb041a79fcb706530c9968fd0f96211d7f9
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/08/2018
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="improve-scalability-in-a-web-application"></a>웹 응용 프로그램의 확장성 향상
 
@@ -31,7 +31,7 @@ ms.lasthandoff: 01/08/2018
 * **큐**. 여기에 표시된 아키텍처에서는 응용 프로그램이 [Azure Queue Storage][queue-storage] 큐에 메시지를 넣어 백그라운드 작업을 큐에 넣습니다. 메시지가 WebJob의 함수를 트리거합니다. 또는 Service Bus 큐를 사용할 수 있습니다. 비교하려면 [Azure 큐 및 Service Bus 큐 - 비교 및 대조][queues-compared]를 참조하세요.
 * **캐시**. [Azure Redis Cache][azure-redis]의 반정적 데이터를 저장합니다.  
 * **CDN**. [Azure CDN(Content Delivery Network)][azure-cdn]을 사용하여 지연 시간을 단축하고 더 신속한 콘텐츠 배달을 위해 공개적으로 사용 가능한 콘텐츠를 캐시합니다.
-* **데이터 저장소**. 관계형 데이터의 경우 [Azure SQL Database][sql-db]를 사용합니다. 비관계형 데이터의 경우 [Cosmos DB][documentdb] 같은 NoSQL 저장소를 고려합니다.
+* **데이터 저장소**. 관계형 데이터의 경우 [Azure SQL Database][sql-db]를 사용합니다. 비관계형 데이터의 경우 [Cosmos DB][cosmosdb] 같은 NoSQL 저장소를 고려합니다.
 * **Azure Search**. [Azure Search][azure-search]를 사용하여 검색 제안, 유사 항목 검색 및 언어별 검색과 같은 검색 기능을 추가합니다. Azure Search는 일반적으로 다른 데이터 저장소와 함께 사용되는데, 특히 기본 데이터 저장소에 엄격한 일관성이 필요한 경우 그렇습니다. 이러한 접근 방식에서는 신뢰할 수 있는 데이터를 다른 데이터 저장소에 저장하고 검색 인덱스를 Azure Search에 저장합니다. 또한 Azure Search는 여러 데이터 저장소의 단일 검색 인덱스를 통합하는 데 사용할 수 있습니다.  
 * **메일/SMS**. SendGrid 또는 Twilio와 같은 타사 서비스를 사용하여 응용 프로그램에 직접 이 기능을 빌드하는 대신 메일이나 SMS 메시지를 전송합니다.
 * **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다.
@@ -140,7 +140,7 @@ App Services에서는 응용 프로그램 코드를 작성할 필요 없이 기�
 [cdn-storage-account]: /azure/cdn/cdn-create-a-storage-account-with-cdn
 [cdn-guidance]: ../../best-practices/cdn.md
 [cors]: /azure/app-service-api/app-service-api-cors-consume-javascript
-[documentdb]: https://azure.microsoft.com/documentation/services/documentdb/
+[cosmosdb]: /azure/cosmos-db/
 [queue-storage]: /azure/storage/storage-dotnet-how-to-use-queues
 [queues-compared]: /azure/service-bus-messaging/service-bus-azure-and-service-bus-queues-compared-contrasted
 [resource-group]: /azure/azure-resource-manager/resource-group-overview#resource-groups

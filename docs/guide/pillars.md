@@ -2,11 +2,11 @@
 title: "소프트웨어 품질 핵심 요소"
 description: "확장성, 가용성, 복원력, 관리 및 보안이라는 5가지 소프트웨어 품질 핵심 요소를 설명합니다."
 author: MikeWasson
-ms.openlocfilehash: 78e613368a07718f5923d619ace335d399b0cc80
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 1d5e30602cafa0d39f92de3101974e77ae258595
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="pillars-of-software-quality"></a>소프트웨어 품질 핵심 요소 
 
@@ -153,7 +153,7 @@ Azure 네트워크와 온-프레미스 Active Directory 환경을 통합하려�
 
 Azure를 항상 사용 가능한 경우 데이터가 올바른 지리적 영역에서 유지되는지 확인합니다. Azure 지역에서 복제된 저장소는 동일한 지역에서 [쌍을 이루는 지역][paired-region]이라는 개념을 사용합니다. 
 
-Key Vault를 사용하여 암호화 키 및 암호를 보호합니다. Key Vault를 사용하여 HSM(하드웨어 보안 모듈)에서 보호하는 키를 사용하여 키 및 암호를 암호화할 수 있습니다. 많은 Azure Storage 및 DB 서비스는 [Azure Storage][storage-encryption], [Azure SQL Database][sql-db-encryption], [Azure SQL Data Warehouse][data-warehouse-encryption] 및 [Cosmos DB][documentdb-encryption]를 비롯한 미사용 데이터 암호화를 지원합니다.
+Key Vault를 사용하여 암호화 키 및 암호를 보호합니다. Key Vault를 사용하여 HSM(하드웨어 보안 모듈)에서 보호하는 키를 사용하여 키 및 암호를 암호화할 수 있습니다. 많은 Azure Storage 및 DB 서비스는 [Azure Storage][storage-encryption], [Azure SQL Database][sql-db-encryption], [Azure SQL Data Warehouse][data-warehouse-encryption] 및 [Cosmos DB][cosmosdb-encryption]를 비롯한 미사용 데이터 암호화를 지원합니다.
 
 ### <a name="security-resources"></a>보안 리소스
 
@@ -171,7 +171,7 @@ Key Vault를 사용하여 암호화 키 및 암호를 보호합니다. Key Vault
 
 [ad-subscriptions]: /azure/active-directory/active-directory-how-subscriptions-associated-directory
 [data-warehouse-encryption]: /azure/data-lake-store/data-lake-store-security-overview#data-protection
-[documentdb-encryption]: /azure/documentdb/documentdb-nosql-database-security
+[cosmosdb-encryption]: /azure/cosmos-db/database-security
 [rbac]: /azure/active-directory/role-based-access-control-what-is
 [paired-region]: /azure/best-practices-availability-paired-regions
 [resource-manager-auditing]: /azure/azure-resource-manager/resource-group-audit
