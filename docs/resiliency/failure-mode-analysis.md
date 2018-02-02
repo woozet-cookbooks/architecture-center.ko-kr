@@ -5,11 +5,11 @@ author: MikeWasson
 ms.date: 03/24/2017
 ms.custom: resiliency
 pnp.series.title: Design for Resiliency
-ms.openlocfilehash: 09d09468eebe5c6fe1c9cdab14e142ff46cf0b25
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: aca2088cb007728c5717a968969000c0a19bcd07
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="failure-mode-analysis"></a>실패 모드 분석
 [!INCLUDE [header](../_includes/header.md)]
@@ -133,7 +133,7 @@ Application_End 로깅은 응용 프로그램 도메인 종료(소프트 프로�
 * SDK에서 실패한 시도를 자동으로 다시 시도합니다. 다시 시도 횟수 및 최대 대기 시간을 설정하려면 `ConnectionPolicy.RetryOptions`를 구성합니다. 클라이언트에서 발생시키는 예외는 재시도 정책 시도 횟수를 초과하거나 일시적인 오류가 아닙니다.
 * Cosmos DB에서 클라이언트를 제한하는 경우 HTTP 429 오류를 반환합니다. `DocumentClientException`에서 상태 코드를 확인합니다. 429 오류가 지속적으로 발생하면 컬렉션의 처리량 값을 늘리는 것이 좋습니다.
     * MongoDB API를 사용하는 경우 제한할 때 서비스에서 16500 오류 코드를 반환합니다.
-* 둘 이상의 지역에서 Cosmos DB 데이터베이스를 복제합니다. 모든 복제본은 읽을 수 있습니다. 클라이언트 SDK를 사용하여 `PreferredLocations` 매개 변수를 지정합니다. 이는 순서가 지정된 Azure 지역 목록입니다. 모든 읽기는 목록에서 사용 가능한 첫 번째 지역으로 보내집니다. 요청이 실패하면 클라이언트에서 목록의 다른 지역을 순서대로 시도합니다. 자세한 내용은 [DocumentDB API를 사용하여 Azure Cosmos DB 전역 배포를 설정하는 방법][docdb-multi-region]을 참조하세요.
+* 둘 이상의 지역에서 Cosmos DB 데이터베이스를 복제합니다. 모든 복제본은 읽을 수 있습니다. 클라이언트 SDK를 사용하여 `PreferredLocations` 매개 변수를 지정합니다. 이는 순서가 지정된 Azure 지역 목록입니다. 모든 읽기는 목록에서 사용 가능한 첫 번째 지역으로 보내집니다. 요청이 실패하면 클라이언트에서 목록의 다른 지역을 순서대로 시도합니다. 자세한 내용은 [SQL API를 사용하여 Azure Cosmos DB 전역 배포를 설정하는 방법][cosmosdb-multi-region]을 참조하세요.
 
 **진단**. 클라이언트 쪽에서 모든 오류를 기록합니다.
 
@@ -145,7 +145,7 @@ Application_End 로깅은 응용 프로그램 도메인 종료(소프트 프로�
 * SDK에서 실패한 시도를 자동으로 다시 시도합니다. 다시 시도 횟수 및 최대 대기 시간을 설정하려면 `ConnectionPolicy.RetryOptions`를 구성합니다. 클라이언트에서 발생시키는 예외는 재시도 정책 시도 횟수를 초과하거나 일시적인 오류가 아닙니다.
 * Cosmos DB에서 클라이언트를 제한하는 경우 HTTP 429 오류를 반환합니다. `DocumentClientException`에서 상태 코드를 확인합니다. 429 오류가 지속적으로 발생하면 컬렉션의 처리량 값을 늘리는 것이 좋습니다.
 * 둘 이상의 지역에서 Cosmos DB 데이터베이스를 복제합니다. 주 지역이 실패하면 다른 지역이 쓰기 지역으로 승격됩니다. 또한 장애 조치를 수동으로 트리거할 수도 있습니다. SDK에서 자동 검색 및 라우팅을 수행하므로 장애 조치 후에 응용 프로그램 코드가 계속 작동합니다. 장애 조치 기간(일반적으로 몇 분) 동안 SDK에서 새 쓰기 지역을 찾으므로 쓰기 작업의 대기 시간이 길어집니다.
-  자세한 내용은 [DocumentDB API를 사용하여 Azure Cosmos DB 전역 배포를 설정하는 방법][docdb-multi-region]을 참조하세요.
+  자세한 내용은 [SQL API를 사용하여 Azure Cosmos DB 전역 배포를 설정하는 방법][cosmosdb-multi-region]을 참조하세요.
 * 대체(fallback) 방식으로, 백업 큐에 문서를 유지하고 나중에 큐를 처리합니다.
 
 **진단**. 클라이언트 쪽에서 모든 오류를 기록합니다.
@@ -453,7 +453,7 @@ FMA 프로세스에 대한 자세한 내용은 [클라우드 서비스 디자인
 [BrokeredMessage.TimeToLive]: https://msdn.microsoft.com/library/microsoft.servicebus.messaging.brokeredmessage.timetolive.aspx
 [cassandra-error-handling]: http://www.datastax.com/dev/blog/cassandra-error-handling-done-right
 [circuit-breaker]: https://msdn.microsoft.com/library/dn589784.aspx
-[docdb-multi-region]: /azure/documentdb/documentdb-developing-with-multiple-regions/
+[cosmosdb-multi-region]: /azure/cosmos-db/tutorial-global-distribution-sql-api
 [elasticsearch-azure]: ../elasticsearch/index.md
 [elasticsearch-client]: https://www.elastic.co/guide/en/elasticsearch/client/index.html
 [health-endpoint-monitoring-pattern]: https://msdn.microsoft.com/library/dn589789.aspx

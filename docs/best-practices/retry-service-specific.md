@@ -4,11 +4,11 @@ description: "재시도 메커니즘 설정에 대한 서비스 관련 지침입
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices
-ms.openlocfilehash: 0a416bc6297c7406de92fbc695b62c39c637de8f
-ms.sourcegitcommit: 1c0465cea4ceb9ba9bb5e8f1a8a04d3ba2fa5acd
+ms.openlocfilehash: da1145e2f2f91befd69505ae9ef2734d6110c1d0
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/02/2018
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="retry-guidance-for-specific-services"></a>특정 서비스에 대한 다시 시도 지침
 
@@ -26,7 +26,7 @@ ms.lasthandoff: 01/02/2018
 | **[ADO.NET을 사용하는 SQL Database](#sql-database-using-adonet-retry-guidelines)** |[Polly](#transient-fault-handling-with-polly) |선언적 방식 및 프로그래밍 방식 |코드의 단일 문 또는 블록 |사용자 지정 |
 | **[Service Bus](#service-bus-retry-guidelines)** |클라이언트의 네이티브 |프로그래밍 방식 |네임스페이스 관리자, 메시징 팩터리 및 클라이언트 |ETW |
 | **[Azure Redis Cache](#azure-redis-cache-retry-guidelines)** |클라이언트의 네이티브 |프로그래밍 방식 |클라이언트 |TextWriter |
-| **[DocumentDB API](#documentdb-api-retry-guidelines)** |서비스의 네이티브 |구성할 수 없음 |전역 |TraceSource |
+| **[Cosmos DB](#cosmos-db-retry-guidelines)** |서비스의 네이티브 |구성할 수 없음 |전역 |TraceSource |
 | **[Azure Search](#azure-storage-retry-guidelines)** |클라이언트의 네이티브 |프로그래밍 방식 |클라이언트 |ETW 또는 사용자 지정 |
 | **[Azure Active Directory](#azure-active-directory-retry-guidelines)** |ADAL 라이브러리에서 기본 |ADAL 라이브러리에 포함 |내부 |없음 |
 | **[Service Fabric](#service-fabric-retry-guidelines)** |클라이언트의 네이티브 |프로그래밍 방식 |클라이언트 |없음 | 
@@ -858,14 +858,14 @@ namespace RetryCodeSamples
 ### <a name="more-information"></a>자세한 정보
 * [Redis 웹 사이트](http://redis.io/)
 
-## <a name="documentdb-api-retry-guidelines"></a>DocumentDB API 재시도 지침
+## <a name="cosmos-db-retry-guidelines"></a>Cosmos DB 재시도 지침
 
-Cosmos DB는 [DocumentDB API][documentdb-api]를 사용하여 스키마 없는 JSON 데이터를 지원하는 완전 관리되는 다중 모델 데이터베이스입니다. DocumentDB는 구성 가능하고 안정적인 성능, 네이티브 JavaScript 트랜잭션 처리를 제공하며 탄력적인 확장성으로 클라우드에 대해 구축됩니다.
+Cosmos DB는 스키마 없는 JSON 데이터를 지원하는 완전 관리 다중 model 데이터베이스입니다. DocumentDB는 구성 가능하고 안정적인 성능, 네이티브 JavaScript 트랜잭션 처리를 제공하며 탄력적인 확장성으로 클라우드에 대해 구축됩니다.
 
 ### <a name="retry-mechanism"></a>재시도 메커니즘
 `DocumentClient` 클래스는 실패 횟수를 자동으로 다시 시도합니다. 재시도 횟수와 최대 대기 시간을 설정하려면 [ConnectionPolicy.RetryOptions]을 구성합니다. 클라이언트에서 발생시키는 예외는 재시도 정책 시도 횟수를 초과하거나 일시적인 오류가 아닙니다.
 
-Cosmos DB가 클라이언트를 제한하는 경우 HTTP 429 오류를 반환합니다. `DocumentClientException`에서 상태 코드를 확인합니다.
+Cosmos DB에서 클라이언트를 제한하는 경우 HTTP 429 오류를 반환합니다. `DocumentClientException`에서 상태 코드를 확인합니다.
 
 ### <a name="policy-configuration"></a>정책 구성
 다음 표에서는 `RetryOptions` 클래스의 기본 설정을 보여 줍니다.
@@ -897,7 +897,7 @@ options.MaxRetryWaitTimeInSeconds = 15;
     <sources>
       <source name="DocDBTrace" switchName="SourceSwitch" switchType="System.Diagnostics.SourceSwitch" >
         <listeners>
-          <add name="MyTextListener" type="System.Diagnostics.TextWriterTraceListener" traceOutputOptions="DateTime,ProcessId,ThreadId" initializeData="DocumentDBTrace.txt"></add>
+          <add name="MyTextListener" type="System.Diagnostics.TextWriterTraceListener" traceOutputOptions="DateTime,ProcessId,ThreadId" initializeData="CosmosDBTrace.txt"></add>
         </listeners>
       </source>
     </sources>
@@ -1036,7 +1036,6 @@ Azure 또는 타사 서비스에 액세스하는 경우 다음 사항을 고려�
 [autorest]: https://github.com/Azure/autorest/tree/master/docs
 [circuit-breaker]: ../patterns/circuit-breaker.md
 [ConnectionPolicy.RetryOptions]: https://msdn.microsoft.com/library/azure/microsoft.azure.documents.client.connectionpolicy.retryoptions.aspx
-[documentdb-api]: /azure/documentdb/documentdb-introduction
 [dotnet-foundation]: https://dotnetfoundation.org/
 [polly]: http://www.thepollyproject.org
 [redis-cache-troubleshoot]: /azure/redis-cache/cache-how-to-troubleshoot

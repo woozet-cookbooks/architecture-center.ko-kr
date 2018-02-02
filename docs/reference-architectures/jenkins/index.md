@@ -3,11 +3,11 @@ title: "Azure에서 Jenkins 서버 실행"
 description: "이 참조 아키텍처는 SSO(Single Sign-On)로 보호된 Azure에서 확장성 있는 엔터프라이즈급 Jenkins 서버를 배포하고 작동하는 방법을 보여 줍니다."
 author: njray
 ms.date: 01/21/18
-ms.openlocfilehash: d06b16c212951c629612d69b13fa2b32b1030475
-ms.sourcegitcommit: 9998334bebccb86be0f715ac7dffc0c3175aea68
+ms.openlocfilehash: 9cab4990b259695f310da339bfef3060b0905640
+ms.sourcegitcommit: 3426a9c5ed937f097725c487cf3d073ae5e2a347
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/26/2018
+ms.lasthandoff: 02/01/2018
 ---
 # <a name="run-a-jenkins-server-on-azure"></a>Azure에서 Jenkins 서버 실행
 
@@ -27,7 +27,7 @@ ms.lasthandoff: 01/26/2018
 
 -   **리소스 그룹.** [리소스 그룹][rg]은 Azure 자산을 수명, 소유자를 비롯한 기준으로 관리할 수 있도록 Azure 자산을 그룹화하는 데 사용됩니다. 리소스 그룹을 사용하여 Azure 자산을 그룹 단위로 배포 및 모니터링하고, 리소스 그룹별로 청구 비용을 추적할 수 있습니다. 리소스를 하나의 집합으로 삭제할 수도 있습니다. 이러한 기능은 테스트 배포에서 매우 유용합니다.
 
--   **Jenkins 서버**. 가상 머신은 [Jenkins][azure-market]를 자동화 서버로 실행하고 Jenkins 마스터 역할을 수행하도록 배포됩니다. 이 참조 아키텍처는 Azure의 Linux(Ubuntu 14.04 LTS) 가상 머신에 설치된 [Azure의 Jenkins용 솔루션 템플릿][solution]을 사용합니다. 다른 Jenkins 제품은 Azure Marketplace에서 제공됩니다.
+-   **Jenkins 서버**. 가상 머신은 [Jenkins][azure-market]를 자동화 서버로 실행하고 Jenkins 마스터 역할을 수행하도록 배포됩니다. 이 참조 아키텍처는 Azure의 Linux(Ubuntu 16.04 LTS) 가상 머신에 설치된 [Azure의 Jenkins용 솔루션 템플릿][solution]을 사용합니다. 다른 Jenkins 제품은 Azure Marketplace에서 제공됩니다.
 
     > [!NOTE]
     > Nginx는 VM에 설치되어 Jenkins에 대한 역방향 프록시 역할을 합니다. Jenkins 서버에 SSL을 사용하도록 Nginx를 구성할 수 있습니다.

@@ -3,11 +3,11 @@ title: "조정 최소화"
 description: "확장성을 위해 응용 프로그램 서비스 간의 조정 최소화"
 author: MikeWasson
 layout: LandingPage
-ms.openlocfilehash: 1f8caa8b7cd85593c937f1d99d582492d4cf9a8b
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 3cab05b539612234fd8e66517b140ac5257c3e70
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="minimize-coordination"></a>조정 최소화 
 
@@ -49,7 +49,7 @@ ms.lasthandoff: 11/14/2017
 
 **가능한 경우 낙관적 동시성 사용**. 비관적 동시성 제어는 데이터베이스 잠금을 사용하여 충돌을 방지합니다. 이로 인해 성능이 저하되고 가용성이 감소할 수 있습니다. 낙관적 동시성 제어를 사용하여 각 트랜잭션이 데이터 복사본 또는 스냅숏을 수정합니다. 트랜잭션이 커밋되면 데이터베이스 엔진이 트랜잭션의 유효성을 검사하고 데이터베이스 일관성에 영향을 주는 트랜잭션을 거부합니다. 
 
-Azure SQL Database 및 SQL Server는 [스냅숏 격리][sql-snapshot-isolation]를 통해 낙관적 동시성을 지원합니다. [DocumentDB API][docdb-faq] 및 [Azure Storage][storage-concurrency]를 비롯한 일부 Azure Storage 서비스는 Etags를 사용하여 낙관적 동시성을 지원합니다.
+Azure SQL Database 및 SQL Server는 [스냅숏 격리][sql-snapshot-isolation]를 통해 낙관적 동시성을 지원합니다. [Azure Cosmos DB][cosmosdb-faq] 및 [Azure Storage][storage-concurrency]를 비롯한 일부 Azure Storage 서비스는 Etags를 사용하여 낙관적 동시성을 지원합니다.
 
 **MapReduce 또는 기타 병렬 분산 알고리즘 고려**. 수행할 작업 유형과 데이터에 따라 병렬로 작동하는 여러 노드에서 수행할 수 있는 독립 태스크로 작업을 분할할 수 있습니다. [큰 계산 아키텍처 스타일][big-compute]을 참조하세요.
 
@@ -62,7 +62,7 @@ Azure SQL Database 및 SQL Server는 [스냅숏 격리][sql-snapshot-isolation]�
 [compensating-transaction]: ../../patterns/compensating-transaction.md
 [cqrs-style]: ../architecture-styles/cqrs.md
 [cqrs-pattern]: ../../patterns/cqrs.md
-[docdb-faq]: /azure/documentdb/documentdb-faq
+[cosmosdb-faq]: /azure/cosmos-db/faq
 [domain-event]: https://martinfowler.com/eaaDev/DomainEvent.html
 [event-sourcing]: ../../patterns/event-sourcing.md
 [leader-election]: ../../patterns/leader-election.md

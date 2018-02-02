@@ -4,11 +4,11 @@ description: "Microsoft Azure에서 실행되고 고가용성을 요구하는 �
 author: MikeWasson
 ms.date: 11/23/2016
 cardTitle: Run in multiple regions
-ms.openlocfilehash: 60caa121d0ce2f1aa2638650229bed8048804c22
-ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
+ms.openlocfilehash: 50ac9636e1e3c25bd0403c89281a3a06915d065f
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/08/2018
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="run-a-web-application-in-multiple-regions"></a>여러 지역에서 웹 응용 프로그램 실행
 [!INCLUDE [header](../../_includes/header.md)]
@@ -71,7 +71,7 @@ Azure 지역은 동일한 지역 내에서 다른 지역과 쌍을 이룹니다.
 ### <a name="cosmos-db"></a>Cosmos DB
 Cosmos DB는 지역 간 지역에서 복제를 지원합니다. 한 지역은 쓰기 가능으로 지정되고 다른 지역은 읽기 전용 복제본으로 지정됩니다.
 
-지역 가동 중단이 발생하면 다른 지역을 쓰기 지역으로 선택하여 장애 조치(failover)할 수 있습니다. 클라이언트 SDK에서는 현재 쓰기 지역에 쓰기 요청을 자동으로 보내므로 장애 조치(failover) 후에 클라이언트 구성을 업데이트할 필요가 없습니다. 자세한 내용은 [Azure Cosmos DB로 데이터를 전역적으로 배포하는 방법][docdb-geo]을 참조하세요.
+지역 가동 중단이 발생하면 다른 지역을 쓰기 지역으로 선택하여 장애 조치(failover)할 수 있습니다. 클라이언트 SDK에서는 현재 쓰기 지역에 쓰기 요청을 자동으로 보내므로 장애 조치(failover) 후에 클라이언트 구성을 업데이트할 필요가 없습니다. 자세한 내용은 [Azure Cosmos DB로 데이터를 전역적으로 배포하는 방법][cosmosdb-geo]을 참조하세요.
 
 > [!NOTE]
 > 모든 복제본은 동일한 리소스 그룹에 속합니다.
@@ -149,7 +149,7 @@ azure network traffic-manager endpoint set --name <endpoint> --profile-name <pro
 
 [azure-sql-db]: https://azure.microsoft.com/documentation/services/sql-database/
 [azure-dns]: /azure/dns/dns-overview
-[docdb-geo]: /azure/documentdb/documentdb-distribute-data-globally
+[cosmosdb-geo]: /azure/cosmos-db/distribute-data-globally
 [guidance-web-apps-scalability]: ./scalable-web-app.md
 [health-endpoint-monitoring-pattern]: https://msdn.microsoft.com/library/dn589789.aspx
 [ra-grs]: /azure/storage/storage-redundancy#read-access-geo-redundant-storage

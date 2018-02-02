@@ -4,11 +4,11 @@ description: "설계하는 동안 복원력 문제에 대한 지침을 제공하
 author: petertaylor9999
 ms.date: 01/10/2018
 ms.custom: resiliency, checklist
-ms.openlocfilehash: 66ff802c1f7b35db147ffe4279982c827570c3c1
-ms.sourcegitcommit: 3d6dba524cc7661740bdbaf43870de7728d60a01
+ms.openlocfilehash: 51f807715d0ac929806b9a5a13da4efa00566592
+ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/11/2018
+ms.lasthandoff: 01/30/2018
 ---
 # <a name="resiliency-checklist"></a>복원력 검사 목록
 
@@ -140,7 +140,7 @@ ms.lasthandoff: 01/11/2018
 
 **비동기 패턴을 사용하여 로깅을 구현합니다.** 로깅 작업들이 동기화되면 응용 프로그램 코드를 차단할 수 있습니다. 로깅 작업이 비동기 작업으로 구현되도록 합니다.
 
-**서비스 경계에 걸쳐 로그 데이터를 상호 연결합니다.** 일반적인 n계층 응용 프로그램에서 사용자 요청은 여러 서비스 경계를 횡단할 수 있습니다. 예를 들어 사용자 요청은 일반적으로 웹 계층에서 시작하여 비즈니스 계층에 전달되며 마지막으로 데이터 계층에 유지됩니다. 더 복잡한 시나리오에서 사용자 요청은 여러 다른 서비스 및 데이터 저장소에 배포될 수 있습니다. 응용 프로그램 전체에 걸쳐 요청을 추적할 수 있도록 로깅 시스템이 서비스 경계에 걸쳐 호출을 상호 연결하도록 합니다.
+**서비스 경계에 걸쳐 로그 데이터를 상호 연결합니다.** 일반적인 n계층 응용 프로그램에서 사용자 요청은 여러 서비스 경계를 횡단할 수 있습니다. 예를 들어 사용자 요청은 일반적으로 웹 계층에서 시작하여 비즈니스 계층에 전달되며 마지막으로 데이터 계층에 유지됩니다. 더 복잡한 시나리오에서 사용자 요청은 여러 다른 서비스 및 데이터 저장소에 배포될 수 있습니다.더 복잡한 시나리오에서 사용자 요청은 여러 다른 서비스 및 데이터 저장소에 배포될 수 있습니다. 응용 프로그램 전체에 걸쳐 요청을 추적할 수 있도록 로깅 시스템이 서비스 경계에 걸쳐 호출을 상호 연결하도록 합니다.
 
 ## <a name="azure-resources"></a>Azure 리소스
 
@@ -163,7 +163,7 @@ ms.lasthandoff: 01/11/2018
 - [Application Gateway](#application-gateway)
 - [Cosmos DB](#cosmos-db)
 - [Redis Cache](#redis-cache)
-- [이를 통해 검색](#search)
+- [검색](#search)
 - [Storage](#storage)
 - [SQL Database](#sql-database)
 - [VM에서 실행되는 SQL Server](#sql-server-running-in-a-vm)
@@ -203,17 +203,17 @@ ms.lasthandoff: 01/11/2018
 
 ### <a name="cosmos-db"></a>Cosmos DB
 
-**지역에 걸쳐 데이터베이스를 복제합니다.** Cosmos DB를 사용하면 개수에 관계없이 Azure 지역을 원하는 만큼 Cosmos DB 데이터베이스 계정에 연결할 수 있습니다. Cosmos DB 데이터베이스는 하나의 쓰기 지역 및 다중 읽기 지역을 포함할 수 있습니다. 쓰기 지역에 오류가 있으면 다른 복제본에서 읽을 수 있습니다. 클라이언트 SDK는 이 작업을 자동으로 처리합니다. 또한 쓰기 지역을 다른 지역으로 장애 조치할 수도 있습니다. 자세한 내용은 [Azure Cosmos DB로 데이터를 전역적으로 배포하는 방법](/azure/documentdb/documentdb-distribute-data-globally)을 참조하세요.
+**지역에 걸쳐 데이터베이스를 복제합니다.** Cosmos DB를 사용하면 개수에 관계없이 Azure 지역을 원하는 만큼 Cosmos DB 데이터베이스 계정에 연결할 수 있습니다. Cosmos DB 데이터베이스는 하나의 쓰기 지역 및 다중 읽기 지역을 포함할 수 있습니다. 쓰기 지역에 오류가 있으면 다른 복제본에서 읽을 수 있습니다. 클라이언트 SDK는 이 작업을 자동으로 처리합니다. 또한 쓰기 지역을 다른 지역으로 장애 조치할 수도 있습니다. 자세한 내용은 [Azure Cosmos DB로 데이터를 전역적으로 배포하는 방법](/azure/cosmos-db/distribute-data-globally)을 참조하세요.
 
 ### <a name="redis-cache"></a>Redis Cache
 
-**지역에서 복제 구성**. 지역에서 복제는 두 개의 프리미엄 계층 Azure Redis Cache 인스턴스를 연결하는 메커니즘을 제공합니다. 기본 캐시에 작성된 데이터는 읽기 전용 보조 캐시에 복제됩니다. 자세한 내용은 [Azure Redis Cache에 대해 지역에서 복제를 구성하는 방법](/azure/redis-cache/cache-how-to-geo-replication)을 참조하세요.
+**지역 복제 구성**. 지역에서 복제는 두 개의 프리미엄 계층 Azure Redis Cache 인스턴스를 연결하는 메커니즘을 제공합니다. 기본 캐시에 작성된 데이터는 읽기 전용 보조 캐시에 복제됩니다. 자세한 내용은 [Azure Redis Cache에 대해 지역 복제를 구성하는 방법](/azure/redis-cache/cache-how-to-geo-replication)을 참조하세요.
 
 **데이터 지속성 구성.** Redis 지속성을 사용하면 Redis에 저장된 데이터를 유지할 수 있습니다. 또한 스냅숏을 만들고, 하드웨어 오류 시 로드할 수 있게 데이터를 백업할 수 있습니다. 자세한 내용은 [프리미엄 Azure Redis Cache에 데이터 지속성을 구성하는 방법](/azure/redis-cache/cache-how-to-premium-persistence)을 참조하세요.
 
 Redis Cache를 영구 저장소가 아닌 임시 데이터 캐시로 사용하는 경우 이러한 권장 사항이 적용되지 않을 수 있습니다. 
 
-### <a name="search"></a>Search
+### <a name="search"></a>검색
 
 **복제본을 두 개 이상 프로비전합니다.** 읽기 고가용성을 위해서는 복제를 두 개 이상, 또는 읽기-쓰기 고가용성을 위해서는 세 개 이상 사용합니다.
 

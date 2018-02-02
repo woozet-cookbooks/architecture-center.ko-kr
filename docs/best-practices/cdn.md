@@ -4,16 +4,16 @@ description: "Azure에서 호스팅되는 고대역폭 콘텐츠를 제공하는
 author: dragon119
 ms.date: 09/30/2016
 pnp.series.title: Best Practices
-ms.openlocfilehash: 94036c803552d5e7061f99e6dd0ca9e563a32690
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: fffe0b0523c0a9c817f4346744ff3b5e3f11dede
+ms.sourcegitcommit: cf207fd10110f301f1e05f91eeb9f8dfca129164
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 01/29/2018
 ---
 # <a name="content-delivery-network"></a>Content Delivery Network
 [!INCLUDE [header](../_includes/header.md)]
 
-Microsoft Azure Content Delivery Network(CDN)는 개발자에게 Azure 또는 기타 위치에서 호스트되는 고대역폭 콘텐츠를 제공하기 위한 글로벌 솔루션을 제공합니다. CDN을 사용하여 Azure Blob Storage, 웹 응용 프로그램, 가상 머신, 응용 프로그램 폴더 또는 기타 HTTP/HTTPS 위치에서 로드된 공개적으로 사용 가능한 개체를 캐시할 수 있습니다. 전략적 위치에 CDN 캐시를 보유하여 사용자에게 콘텐츠를 배달하기 위해 최대 대역폭을 제공할 수 있습니다. CDN은 일반적으로 이미지, 스타일 시트, 문서, 파일, 클라이언트쪽 스크립트 및 HTML 페이지와 같은 정적 콘텐츠를 제공하기 위해 사용됩니다.
+Microsoft Azure [CDN(Content Delivery Network)](/azure/cdn/cdn-overview)은 개발자에게 Azure 또는 기타 위치에서 호스트되는 고대역폭 콘텐츠를 제공하기 위한 글로벌 솔루션을 제공합니다. CDN을 사용하여 Azure Blob Storage, 웹 응용 프로그램, 가상 머신, 응용 프로그램 폴더 또는 기타 HTTP/HTTPS 위치에서 로드된 공개적으로 사용 가능한 개체를 캐시할 수 있습니다. 전략적 위치에 CDN 캐시를 보유하여 사용자에게 콘텐츠를 배달하기 위해 최대 대역폭을 제공할 수 있습니다. CDN은 일반적으로 이미지, 스타일 시트, 문서, 파일, 클라이언트쪽 스크립트 및 HTML 페이지와 같은 정적 콘텐츠를 제공하기 위해 사용됩니다.
 
 또한 지정된 입력을 기반으로 하는 PDF 보고서 또는 그래프와 같은 동적 콘텐츠를 제공하기 위해 CDN을 캐시로 사용할 수 있습니다. 여러 사용자가 동일한 입력 값을 제공하는 경우 결과는 동일해야 합니다.
 
@@ -74,7 +74,7 @@ CDN을 사용하려고 계획할 때 고려해야 할 몇 가지 과제가 있�
 CDN 사용은 응용 프로그램에 대한 부하를 최소화하고 가용성과 성능을 극대화하는 좋은 방법입니다. 따라서 응용 프로그램이 사용하는 모든 적절한 콘텐츠 및 리소스에서 이 전략을 채택할지를 고려합니다. CDN을 사용하는 전략을 설계할 때 다음 섹션에 있는 요소를 고려합니다.  
 
 ### <a name="origin"></a>원본
-CDN을 통해 콘텐츠를 배포하려면 CDN 서비스가 콘텐츠에 액세스하고 콘텐츠를 캐시하는 데 사용하는 HTTP 및/또는 HTTPS 끝점을 지정해야 합니다.
+CDN을 통해 콘텐츠를 배포하려면 CDN 서비스가 콘텐츠에 액세스하고 콘텐츠를 캐시하는 데 사용하는 HTTP 및/또는 HTTPS [끝점](/azure/cdn/cdn-create-new-endpoint)을 지정해야 합니다.
 
 끝점은 CDN을 통해 전달하려는 정적 콘텐츠를 보유하는 Azure Blob Storage 컨테이너를 지정할 수 있습니다. 컨테이너는 공용으로 표시되어야 합니다. 공용 읽기 액세스 권한이 있는 공용 컨테이너의 BLOB만 CDN을 통해 사용할 수 있습니다.
 

@@ -4,11 +4,11 @@ description: "사용자 인터페이스와 독립적으로 실행되는 백그�
 author: dragon119
 ms.date: 05/24/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: d8c1d4dfe12208b72fd6991def805f90a830b5f0
-ms.sourcegitcommit: a8453c4bc7c870fa1a12bb3c02e3b310db87530c
+ms.openlocfilehash: 10c24afee4b880cfbf8ee534f4d7f945d2b046a9
+ms.sourcegitcommit: 3426a9c5ed937f097725c487cf3d073ae5e2a347
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/29/2017
+ms.lasthandoff: 02/01/2018
 ---
 # <a name="background-jobs"></a>백그라운드 작업
 [!INCLUDE [header](../_includes/header.md)]
@@ -244,7 +244,7 @@ Cloud Services 웹 및 작업자 역할을 허용하는 경우 백그라운드 �
     }
     ```
     
-    * 역할에 대한 ServiceDefinition.csdef 및 ServiceConfiguration.cscfg 파일에 부울 값 **Freeze** 설정의 정의를 추가하고 값을 **false**로 설정합니다. 역할이 반복된 다시 시작 모드로 전환된 경우에는 이 설정을 **true**로 변경하여 역할 실행을 중지하고 이전 버전으로 교환할 수 있습니다.
+  * 역할에 대한 ServiceDefinition.csdef 및 ServiceConfiguration.\*.cscfg 파일에 부울 값 **동결** 설정의 정의를 추가하고 해당 값을 **false**로 설정합니다. 역할이 반복된 다시 시작 모드로 전환된 경우에는 이 설정을 **true**로 변경하여 역할 실행을 중지하고 이전 버전으로 교환할 수 있습니다.
 
 #### <a name="more-information"></a>자세한 정보
 * [Compute 리소스 통합 패턴](http://msdn.microsoft.com/library/dn589778.aspx)
