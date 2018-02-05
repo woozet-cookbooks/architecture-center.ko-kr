@@ -123,6 +123,8 @@
       href: multitenant-identity/index.md
     - name: Cloud Services에서 Service Fabric으로 마이그레이션
       href: service-fabric/migrate-from-cloud-services.md
+    - name: Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램 리팩터링
+      href: service-fabric/refactor-migrated-app.md
     - name: Azure에서 Elasticsearch 실행
       href: elasticsearch/index.md
     - name: Azure Resource Manager 템플릿 기능 확장
