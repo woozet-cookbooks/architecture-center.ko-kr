@@ -3,11 +3,11 @@ title: "Azure Service Fabric으로 Azure Cloud Services 응용 프로그램 마�
 description: "Azure Cloud Services에서 Azure Service Fabric으로 응용 프로그램을 마이그레이션하는 방법입니다."
 author: MikeWasson
 ms.date: 04/27/2017
-ms.openlocfilehash: 22b6cca0d4714dd4cde0fd7449340d6e1f45e65b
-ms.sourcegitcommit: fbcf9a1c25db13b2627a8a58bbc985cd01ea668d
+ms.openlocfilehash: 73e34c53ffd2f2eeb466d12a5f6c65dcfdaae389
+ms.sourcegitcommit: 2c9a8edf3e44360d7c02e626ea8ac3b03fdfadba
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/16/2017
+ms.lasthandoff: 02/03/2018
 ---
 # <a name="migrate-an-azure-cloud-services-application-to-azure-service-fabric"></a>Azure Service Fabric으로 Azure Cloud Services 응용 프로그램 마이그레이션 
 
@@ -289,9 +289,9 @@ Azure에 배포할 때 각 노드 형식이 별도 VM 확장 집합에 배포됩
 
 또한 배포가 Cloud Services에서 VM 확장 집합에서 실행되는 Service Fabric 클러스터로 변경되었습니다.
 
-그러나 이 시점에서 응용 프로그램은 독립 서비스 배포 및 버전 관리와 같은 마이크로 서비스의 이점을 모두 제공하지는 않습니다. Service Fabric의 이점을 모두 활용하려면 Tailspin에서 좀더 최적화해야 합니다.
+## <a name="next-steps"></a>다음 단계
 
-
+설문 조사 응용 프로그램이 성공적으로 이식되었으므로 Tailspin은 독립적인 서비스 배포 및 버전 관리와 같은 Service Fabric 기능을 활용하려고 합니다. Tailspin에서 이러한 서비스를 더 세부적인 아키텍처로 분해하여 [Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램을 리팩터링][refactor-surveys]에서 이러한 Service Fabric 기능을 활용하는 방법을 알아봅니다.
 
 <!-- links -->
 
@@ -308,6 +308,7 @@ Azure에 배포할 때 각 노드 형식이 별도 VM 확장 집합에 배포됩
 [kestrel]: https://docs.microsoft.com/aspnet/core/fundamentals/servers/kestrel
 [lb-probes]: /azure/load-balancer/load-balancer-custom-probe-overview
 [owin]: https://www.asp.net/aspnet/overview/owin-and-katana
+[refactor-surveys]: refactor-migrated-app.md
 [sample-code]: https://github.com/mspnp/cloud-services-to-service-fabric
 [sf-application-model]: /azure/service-fabric/service-fabric-application-model
 [sf-aspnet-core]: /azure/service-fabric/service-fabric-add-a-web-frontend
