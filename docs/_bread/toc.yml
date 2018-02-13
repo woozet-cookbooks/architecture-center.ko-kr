@@ -2,7 +2,7 @@
   tocHref: /azure/
   topicHref: /azure
   items:
-    - name: 아키텍처
+    - name: 건축
       tocHref: /azure/architecture/
       topicHref: /azure/architecture
       items:
@@ -32,6 +32,9 @@
         - name: 리소스
           tocHref: /azure/architecture/resources
           topicHref: /azure/architecture/resources
+        - name: 도입 가이드
+          tocHref: /azure/architecture/cloud-adoption-guide/
+          topicHref: /azure/architecture/cloud-adoption-guide
         - name: 가이드
           tocHref: /azure/architecture/guide
           topicHref: /azure/architecture/guide
