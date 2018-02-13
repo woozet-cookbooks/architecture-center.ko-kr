@@ -1,5 +1,10 @@
 - name: Azure 아키텍처 센터
   href: index.md
+- name: Azure 클라우드 도입 가이드
+  href: cloud-adoption-guide/index.md
+  items:
+    - name: 기본 도입 단계
+      href: cloud-adoption-guide/adoption-intro/overview.md
 - name: 응용 프로그램 아키텍처 가이드
   href: guide/index.md
   items:
