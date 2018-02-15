@@ -1,0 +1,60 @@
+{
+    "series": [
+        {
+            "title": "Windows VM 워크로드",
+            "url": "./virtual-machines-windows/index.md",
+            "image": "./virtual-machines-windows/images/n-tier.svg",
+            "summary": "이 시리즈에서는 단일 Windows VM을 실행하는 모범 사례를 먼저 살펴본 후 다중 부하 분산 VM, 그리고 마지막으로 다중 지역 N 계층 응용 프로그램을 살펴봅니다."
+        },
+        {
+            "title": "Linux VM 워크로드",
+            "url": "./virtual-machines-linux/index.md",
+            "image": "./virtual-machines-linux/images/n-tier.svg",
+            "summary": "이 시리즈에서는 단일 Linux VM을 실행하는 모범 사례를 먼저 살펴본 후 다중 부하 분산 VM, 그리고 마지막으로 다중 지역 N 계층 응용 프로그램을 살펴봅니다."
+        },
+        {
+            "title": "하이브리드 네트워크",
+            "url": "./hybrid-networking/index.md",
+            "image": "./hybrid-networking/images/vpn.svg",
+            "summary": "이 시리즈에서는 온-프레미스 네트워크와 Azure 사이에 네트워크 연결을 만드는 옵션을 보여 줍니다."
+        },
+        {
+            "title": "네트워크 DMZ",
+            "url": "./dmz/index.md",
+            "image": "./dmz/images/secure-vnet-dmz.svg",
+            "summary": "이 시리즈에서는 Azure 가상 네트워크와 온-프레미스 네트워크 또는 인터넷 사이에 경계를 보호하는 네트워크 DMZ를 만드는 방법을 보여 줍니다."
+        },
+        {
+            "title": "ID 관리",
+            "url": "./identity/index.md",
+            "image": "./identity/images/adds-extend-domain.svg",
+            "summary": "이 시리즈에서는 온-프레미스 AD(Active Directory) 환경을 Azure 네트워크와 통합하는 옵션을 보여줍니다."
+        },
+        {
+            "title": "App Service 웹 응용 프로그램",
+            "url": "./app-service-web-app/index.md",
+            "image": "./app-service-web-app/images/scalable-web-app.svg",
+            "summary": "이 시리즈에서는 Azure App Service를 사용하는 웹 응용 프로그램 모범 사례를 보여 줍니다."
+        }
+    ],
+    "individuals": [
+        {
+            "title": "Jenkins 빌드 서버",
+            "url": "./jenkins/index.md",
+            "image": "./jenkins/images/logo.svg",
+            "summary": "Azure에서 확장성 있는 엔터프라이즈급 Jenkins 서버를 배포 및 작동합니다."
+        },
+        {
+            "title": "SharePoint Server 2016 팜",
+            "url": "./sharepoint/index.md",
+            "image": "./sharepoint/images/sharepoint.svg",
+            "summary": "Azure에서 SQL Server Always On 가용성 그룹을 사용하여 고가용성 SharePoint Server 2016 팜을 배포 및 실행합니다."
+        },
+        {
+            "title": "SAP NetWeaver 및 SAP HANA",
+            "url": "./sap/index.md",
+            "image": "./sap/images/sap.svg",
+            "summary": "Azure의 고가용성 환경에 SAP NetWeaver 및 SAP HANA를 배포하고 실행합니다."
+        }
+    ]
+}
