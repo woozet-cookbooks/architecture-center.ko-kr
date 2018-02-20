@@ -2,11 +2,11 @@
 title: "Azure 아키텍처 센터"
 description: "Azure 아키텍처 센터는 Microsoft Azure를 사용하여 솔루션을 구축하기 위한 지침, 청사진, 패턴 및 모범 사례를 위한 공식 센터입니다. Microsoft 패턴 및 작업 방식 팀에 의해 엄선됩니다."
 layout: LandingPage
-ms.openlocfilehash: 204d32c8de934665fff7b1a321bfdf893ac69983
-ms.sourcegitcommit: 441185360db49cfb3cf39527b68f318d17d4cb3d
+ms.openlocfilehash: eb069ae80ce70eb66ef57b1e0e21f7181d17d21f
+ms.sourcegitcommit: 475064f0a3c2fac23e1286ba159aaded287eec86
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/19/2018
+ms.lasthandoff: 02/19/2018
 ---
 # <a name="azure-architecture-center"></a>Azure 아키텍처 센터
 
@@ -64,26 +64,6 @@ ms.lasthandoff: 01/19/2018
 
 <!-- Second panel -->
 <ul class="panelContent cardsI">
-    <!-- Best practices -->
-    <li>
-        <a href="/azure/architecture/best-practices/">
-            <div class="cardSize">
-                <div class="cardPadding">
-                    <div class="card">
-                        <div class="cardImageOuter">
-                            <div class="cardImage">
-                                <img src="_images/best-practices.svg" alt="Best Practices" height="100%" />
-                            </div>
-                        </div>
-                        <div class="cardText">
-                            <h3>클라우드 응용 프로그램에 대한 모범 사례</h3>
-                            <p>자동 크기 조정, 캐싱, 데이터 분할, API 디자인 등과 같은 측면을 다루는 클라우드 응용 프로그램에 대한 모범 사례입니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </li>
     <!-- Microservices -->
     <li>
         <a href="/azure/architecture/microservices">
@@ -98,6 +78,86 @@ ms.lasthandoff: 01/19/2018
                         <div class="cardText">
                             <h3>Azure에서 마이크로 서비스 구축</h3>
                             <p>이 다중 파트 시리즈는 Azure에서 마이크로 서비스 아키텍처를 설계하고 구축하는 과정을 안내합니다. 참조 구현이 포함되어 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- data guide -->
+    <li>
+        <a href="/azure/architecture/data-guide/">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/data-guide.svg" alt="Data Architecture Guide"  />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>Azure Data Architecture 가이드</h3>
+                            <p>Microsoft Azure에서 데이터 중심 솔루션을 디자인하는 구조적 접근 방식입니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- Best practices -->
+    <li>
+        <a href="/azure/architecture/best-practices/">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/best-practices.svg" alt="Best Practices" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>클라우드 응용 프로그램에 대한 모범 사례</h3>
+                            <p>자동 크기 조정, 캐싱, 데이터 분할, API 디자인 등과 같은 측면을 다루는 클라우드 응용 프로그램에 대한 모범 사례입니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- Resiliency -->
+    <li>
+        <a href="/azure/architecture/resiliency">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/resiliency.svg" alt="Designing for Resiliency" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>복원력을 위한 디자인</h3>
+                            <p>Azure용 복원력 있는 응용 프로그램을 설계하는 방법을 알아봅니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    <!-- Building blocks -->
+    <li>
+        <a href="https://github.com/mspnp/template-building-blocks/wiki">
+            <div class="cardSize">
+                <div class="cardPadding">
+                    <div class="card">
+                        <div class="cardImageOuter">
+                            <div class="cardImage">
+                                <img src="_images/azbb.svg" alt="Azure Building Blocks" />
+                            </div>
+                        </div>
+                        <div class="cardText">
+                            <h3>Azure 구성 요소</h3>
+                            <p>Azure 리소스의 배포를 간소화합니다. 단일 설정 파일을 사용하여 Azure에 복잡한 아키텍처를 배포합니다.</p>
                         </div>
                     </div>
                 </div>
@@ -158,46 +218,6 @@ ms.lasthandoff: 01/19/2018
                         <div class="cardText">
                             <h3>AWS 전문가를 위한 Azure</h3>
                             <p>Microsoft Azure에서 AWS 환경을 활용합니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </li>
-    <!-- Resiliency -->
-    <li>
-        <a href="/azure/architecture/resiliency">
-            <div class="cardSize">
-                <div class="cardPadding">
-                    <div class="card">
-                        <div class="cardImageOuter">
-                            <div class="cardImage">
-                                <img src="_images/resiliency.svg" alt="Designing for Resiliency" />
-                            </div>
-                        </div>
-                        <div class="cardText">
-                            <h3>복원력을 위한 디자인</h3>
-                            <p>Azure용 복원력 있는 응용 프로그램을 설계하는 방법을 알아봅니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </li>
-    <!-- Building blocks -->
-    <li>
-        <a href="https://github.com/mspnp/template-building-blocks/wiki">
-            <div class="cardSize">
-                <div class="cardPadding">
-                    <div class="card">
-                        <div class="cardImageOuter">
-                            <div class="cardImage">
-                                <img src="_images/azbb.svg" alt="Azure Building Blocks" />
-                            </div>
-                        </div>
-                        <div class="cardText">
-                            <h3>Azure 구성 요소</h3>
-                            <p>Azure 리소스의 배포를 간소화합니다. 단일 설정 파일을 사용하여 Azure에 복잡한 아키텍처를 배포합니다.</p>
                         </div>
                     </div>
                 </div>
