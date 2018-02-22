@@ -2,14 +2,14 @@
 title: "Azure에서 허브-스포크 네트워크 토폴로지 구현"
 description: "Azure에서 허브-스포크 네트워크 토폴로지를 구현하는 방법입니다."
 author: telmosampaio
-ms.date: 05/05/2017
+ms.date: 02/14/2018
 pnp.series.title: Implement a hub-spoke network topology in Azure
 pnp.series.prev: expressroute
-ms.openlocfilehash: e6f07a7962dd5728226b023700268340590d97a3
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: c03ecd4ba5ddbe50cfb17e56d75c18102b751cfb
+ms.sourcegitcommit: 475064f0a3c2fac23e1286ba159aaded287eec86
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 02/19/2018
 ---
 # <a name="implement-a-hub-spoke-network-topology-in-azure"></a>Azure에서 허브-스포크 네트워크 토폴로지 구현
 
@@ -339,68 +339,6 @@ VNet 피어링은 두 VNet 사이에 존재하는 비전이적 관계입니다. 
 
   ```bash
   ping 10.1.1.37
-  ```
-
-### <a name="add-connectivity-between-spokes"></a>스포크 사이의 연결 추가
-
-각 스포크 사이의 연결을 허용하려면 목적지가 다른 스포크인 트래픽을 허브 VNet의 게이트웨이로 전달하는 UDR을 각 스포크에 배포해야 합니다. 아래의 단계를 수행하여 현재 하나의 스포크에서 다른 스포크로 연결할 수 없음을 확인한 다음 UDR을 배포하고 연결을 다시 테스트합니다.
-
-1. 더 이상 jumpbox VM에 연결되어 있지 않다면 위의 1~4단계를 반복합니다.
-
-2. 스포크 1에 있는 웹 서버 중 하나에 연결합니다.
-
-  ```bash
-  ssh 10.1.1.37
-  ```
-
-3. 스포크 1과 스포크 2 사이의 연결을 테스트합니다. 연결되지 않는 것이 정상입니다.
-
-  ```bash
-  ping 10.1.2.37
-  ```
-
-4. 컴퓨터의 명령 프롬프트로 이동합니다.
-
-5. 위의 필수 조건 단계에서 다운로드한 리포지토리가 있는 `hybrid-networking\hub-spoke\spokes` 폴더로 이동합니다.
-
-6. 아래의 bash 또는 PowerShell 명령을 실행하여 첫 번째 스포크에 UDR을 배포합니다. 값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.
-
-  ```bash
-  sh ./spoke.udr.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-spoke1-rg \
-    --location westus \
-    --spoke 1
-  ```
-
-  ```powershell
-  ./spoke.udr.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-spoke1-rg `
-    -Location westus `
-    -Spoke 1
-  ```
-
-7. 아래의 bash 또는 PowerShell 명령을 실행하여 두 번째 스포크에 UDR을 배포합니다. 값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.
-
-  ```bash
-  sh ./spoke.udr.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-spoke2-rg \
-    --location westus \
-    --spoke 2
-  ```
-
-  ```powershell
-  ./spoke.udr.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-spoke2-rg `
-    -Location westus `
-    -Spoke 2
-  ```
-
-8. 다시 ssh 터미널로 이동합니다.
-
-9. 스포크 1과 스포크 2 사이의 연결을 테스트합니다. 이번에는 연결에 성공해야 합니다.
-
-  ```bash
-  ping 10.1.2.37
   ```
 
 <!-- links -->
