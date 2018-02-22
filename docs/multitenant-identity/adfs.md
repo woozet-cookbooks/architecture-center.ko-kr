@@ -6,11 +6,11 @@ ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: token-cache
 pnp.series.next: client-assertion
-ms.openlocfilehash: bf385ccc988a709a61d9bee5fb1ee084a133138d
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: a5dc25a4b61ffd13d86f1abb2b839054e5fb4c7f
+ms.sourcegitcommit: 475064f0a3c2fac23e1286ba159aaded287eec86
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 02/19/2018
 ---
 # <a name="federate-with-a-customers-ad-fs"></a>고객의 AD FS로 페더레이션
 
