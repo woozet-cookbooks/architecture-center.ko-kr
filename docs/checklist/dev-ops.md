@@ -4,11 +4,11 @@ description: "DevOps와 관련된 지침을 제공하는 검사 목록입니다.
 author: dragon119
 ms.date: 01/10/2018
 ms.custom: checklist
-ms.openlocfilehash: c435ea0aed9571cb6508d7d23f93414a138998fe
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: 356fef2415347ae132915695a25fd9b50779bd8b
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="devops-checklist"></a>DevOps 검사 목록
 
@@ -126,7 +126,7 @@ DevOps는 개발, 품질 보증 및 IT 운영을 통합된 문화권으로 통�
 
 **구성 관리를 사용합니다.** 운영에 명시적으로 기록된 구성 변경 내용을 계획해야 합니다. 그러려면 구성 관리 데이터베이스 형식 또는 configuration-as-code 방법을 사용할 수 있습니다. 구성은 예상되는 작업이 실제로 준비되도록 정기적으로 감사해야 합니다.
 
-**Azure 지원 계획을 가져오고 프로세스를 이해합니다.** Azure에서는 다양한 [지원 계획][azure-support-plans]을 제공합니다. 요구 사항에 대한 올바른 계획을 결정하고 전체 팀이 사용하는 방법을 알고 있어야 합니다. 팀 멤버는 계획의 세부 정보, 지원 프로세스의 작동 방식 및 Azure에서 지원 티켓을 여는 방법을 이해해야 합니다. 확장성이 높은 이벤트를 사용하는 경우 Azure 지원에서는 서비스 제한을 증가시켜 지원할 수 있습니다. 자세한 내용은 [Azure 지원 FAQ](https://azure.microsoft.com/en-us/support/faq/)를 참조하세요.
+**Azure 지원 계획을 가져오고 프로세스를 이해합니다.** Azure에서는 다양한 [지원 계획][azure-support-plans]을 제공합니다. 요구 사항에 대한 올바른 계획을 결정하고 전체 팀이 사용하는 방법을 알고 있어야 합니다. 팀 멤버는 계획의 세부 정보, 지원 프로세스의 작동 방식 및 Azure에서 지원 티켓을 여는 방법을 이해해야 합니다. 확장성이 높은 이벤트를 사용하는 경우 Azure 지원에서는 서비스 제한을 증가시켜 지원할 수 있습니다. 자세한 내용은 [Azure 지원 FAQ](https://azure.microsoft.com/support/faq/)를 참조하세요.
 
 **리소스에 대한 액세스 권한을 부여할 때 최소 권한 원칙을 따릅니다.** 리소스에 대한 액세스를 주의 깊게 관리합니다. 사용자에게 리소스에 대한 액세스 권한이 명시적으로 지정되지 않으면 기본적으로 액세스는 거부되어야 합니다. 해당 작업을 완료하기 위해 필요한 액세스 권한만을 사용자에게 부여합니다. 사용자 사용 권한을 추적하고 기본 보안 감사를 수행합니다.
 

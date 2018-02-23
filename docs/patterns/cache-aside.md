@@ -8,21 +8,21 @@ pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories:
 - data-management
 - performance-scalability
-ms.openlocfilehash: e0a6a91fda6ea43236f6eea552f7b8f8d31160ad
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 1536a33884c9c9faa1e3702c951067249e691bf8
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="cache-aside-pattern"></a>캐시 배제 패턴
 
 [!INCLUDE [header](../_includes/header.md)]
 
-필요할 때 데이터를 데이터 저장소에서 캐시로 로드합니다. 이렇게 하면 성능이 개선되고 캐시에 저장된 데이터 및 기본 데이터 저장소의 데이터 간 일관성을 유지할 수 있습니다.
+필요할 때 데이터를 데이터 저장소에서 캐시로 로드합니다. This can improve performance and also helps to maintain consistency between data held in the cache and data in the underlying data store.
 
 ## <a name="context-and-problem"></a>컨텍스트 및 문제점
 
-응용 프로그램에서 캐시를 사용하여 데이터 저장소에 저장된 정보에 반복되는 액세스를 개선합니다. 그러나, 캐시된 데이터가 언제나 데이터 저장소에 저장된 데이터와 일관성을 완전히 유지하지는 것은 불가능합니다. 응용 프로그램은 캐시에 보관된 데이터를 최신 상태로 유지할 수 있도록 지원하는 전략을 구현하는 동시에, 캐시에 보관된 오래된 데이터로 인해 발생하는 상황을 감지하고 처리할 수 있어야 합니다.
+Applications use a cache to improve repeated access to information held in a data store. 그러나, 캐시된 데이터가 언제나 데이터 저장소에 저장된 데이터와 일관성을 완전히 유지하지는 것은 불가능합니다. 응용 프로그램은 캐시에 보관된 데이터를 최신 상태로 유지할 수 있도록 지원하는 전략을 구현하는 동시에, 캐시에 보관된 오래된 데이터로 인해 발생하는 상황을 감지하고 처리할 수 있어야 합니다.
 
 ## <a name="solution"></a>해결 방법
 
@@ -55,7 +55,7 @@ ms.lasthandoff: 11/14/2017
 
 ## <a name="when-to-use-this-pattern"></a>이 패턴을 사용해야 하는 경우
 
-다음의 경우에 이 패턴을 사용합니다.
+다음 경우에 이 패턴을 사용합니다.
 
 - 캐시가 기본 read-through 및 write-through 작업을 제공하지 않는 경우.
 - 리소스 수요를 예측할 수 없는 경우. 이 패턴을 사용하면 응용 프로그램이 주문형 데이터를 로드할 수 있습니다. 이 패턴은 응용 프로그램에 필요할 데이터에 대해 사전에 가정하지 않습니다.
@@ -125,7 +125,7 @@ public async Task<MyEntity> GetMyEntityAsync(int id)
 }
 ```
 
->  위의 예제는 Azure Redis Cache API를 사용해 저장소에 액세스하고 캐시에서 정보를 검색합니다. 자세한 내용은 [Microsoft Azure Redis Cache 사용](https://docs.microsoft.com/en-us/azure/redis-cache/cache-dotnet-how-to-use-azure-redis-cache) 및 [Redis Cache를 사용하여 웹앱을 만드는 방법](https://docs.microsoft.com/en-us/azure/redis-cache/cache-web-app-howto)을 참조하세요.
+>  위의 예제는 Azure Redis Cache API를 사용해 저장소에 액세스하고 캐시에서 정보를 검색합니다. 자세한 내용은 [Microsoft Azure Redis Cache 사용](https://docs.microsoft.com/azure/redis-cache/cache-dotnet-how-to-use-azure-redis-cache) 및 [Redis Cache를 사용하여 웹앱을 만드는 방법](https://docs.microsoft.com/azure/redis-cache/cache-web-app-howto)을 참조하세요.
 
 아래에 표시된 `UpdateEntityAsync` 메서드는 응용 프로그램에서 값이 변경될 때 캐시의 개체를 무효화하는 방법을 보여 줍니다. 다음 코드는 원래 데이터 저장소를 업데이트한 다음, 캐시에서 캐시된 항목을 제거합니다.
 
@@ -151,6 +151,6 @@ public async Task UpdateEntityAsync(MyEntity entity)
 
 이 패턴의 구현과 관련된 정보는 다음과 같습니다.
 
-- [캐싱 지침](https://docs.microsoft.com/en-us/azure/architecture/best-practices/caching) 클라우드 솔루션에서 데이터를 캐시할 수 있는 방법에 대한 추가 정보뿐 아니라 캐시 구현 시 고려해야 하는 문제를 제공합니다.
+- [캐싱 지침](https://docs.microsoft.com/azure/architecture/best-practices/caching) 클라우드 솔루션에서 데이터를 캐시할 수 있는 방법에 대한 추가 정보뿐 아니라 캐시 구현 시 고려해야 하는 문제를 제공합니다.
 
 - [데이터 일관성 입문서](https://msdn.microsoft.com/library/dn589800.aspx). 보통 클라우드 응용 프로그램은 여러 데이터 저장소에 걸쳐 있는 데이터를 사용합니다. 이런 환경에서는 데이터 일관성의 관리와 유지가 시스템에서 중요한 측면으로 작용하는데, 구체적으로 동시성과 가용성 문제가 발생할 수 있습니다. 이 입문서는 분산 데이터의 일관성 문제를 설명할 뿐 아니라 응용 프로그램에서 일관성을 구현해 데이터의 가용성을 유지하는 방법도 요약하고 있습니다.

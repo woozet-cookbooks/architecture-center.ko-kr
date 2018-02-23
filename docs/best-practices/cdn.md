@@ -4,11 +4,11 @@ description: "Azure에서 호스팅되는 고대역폭 콘텐츠를 제공하는
 author: dragon119
 ms.date: 02/02/2018
 pnp.series.title: Best Practices
-ms.openlocfilehash: 73da41edec246b672564dd4a52b317eacf8ad649
-ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242
+ms.openlocfilehash: 9ee9099c85818af9486408f6ece41d3f6fcd9b44
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/09/2018
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="best-practices-for-using-content-delivery-networks-cdns"></a>CDN(콘텐츠 배달 네트워크) 사용에 대한 모범 사례
 
@@ -95,5 +95,3 @@ CDN을 사용하여 글꼴 파일 같은 정적 자산을 배달하는 경우 *X
 
 ### <a name="cdn-fallback"></a>CDN 대체
 응용 프로그램이 CDN의 오류 또는 일시적인 중단에 대처하는 방법을 고려합니다. 클라이언트 응용 프로그램은 이전 요청 중에 로컬로 캐시(클라이언트에)된 리소스의 복사본을 사용하거나, CDN을 사용할 수 없는 경우 오류를 감지하고 대신 원본(리소스가 있는 응용 프로그램 폴더 또는 Azure Blob 컨테이너)의 리소스를 요청하는 코드를 포함할 수 있습니다.
-
-다음 예제에서는 대체 메커니즘을 보여 줍니다.

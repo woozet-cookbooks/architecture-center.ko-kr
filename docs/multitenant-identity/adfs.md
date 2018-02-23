@@ -6,11 +6,11 @@ ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: token-cache
 pnp.series.next: client-assertion
-ms.openlocfilehash: a5dc25a4b61ffd13d86f1abb2b839054e5fb4c7f
-ms.sourcegitcommit: 475064f0a3c2fac23e1286ba159aaded287eec86
+ms.openlocfilehash: 08bf567085a940287de310f61b9f447d0ce5d5ec
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/19/2018
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="federate-with-a-customers-ad-fs"></a>고객의 AD FS로 페더레이션
 
@@ -63,10 +63,10 @@ ASP.NET 4에서 WS-Federation을 사용하는 예제는 [active-directory-dotnet
 | exp |[만료 시간]. 이 시간 후에는 토큰이 더 이상 허용되지 않는 시간입니다. |
 | iat |발급 시간. 토큰이 발급된 시간입니다. |
 | iss |발급자. 이 클레임 값은 항상 리소스 파트너의 AD FS입니다. |
-| 이름 |사용자 이름. 예: `john@corp.fabrikam.com`. |
+| 이름 |사용자 이름. 예제: `john@corp.fabrikam.com` |
 | nameidentifier |[이름 식별자]. 토큰이 발급된 엔터티 이름의 식별자입니다. |
 | nonce |세션 nonce. AD FS에서 재생 공격을 방지하기 위해 생성하는 고유 값입니다. |
-| upn |사용자 계정 이름(UPN). 예제: john@corp.fabrikam.com |
+| upn |사용자 계정 이름(UPN). 예제: `john@corp.fabrikam.com` |
 | pwd_exp |암호 만료 기간. 사용자 암호 또는 유사한 인증 비밀(예: PIN)이 만료되기까지의 시간(초)입니다. |
 
 > [!NOTE]

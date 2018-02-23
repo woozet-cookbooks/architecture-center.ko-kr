@@ -4,11 +4,11 @@ description: "자동 크기 조정이 응용 프로그램에 필요한 리소스
 author: dragon119
 ms.date: 05/17/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: f2d42e9d6f4baa2da111c61fe12b48fdec785b92
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: a8489aaabab2b8523fbc9f026f4f435bb6d1ad29
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="autoscaling"></a>자동 확장
 [!INCLUDE [header](../_includes/header.md)]
@@ -78,7 +78,7 @@ Azure 자동 크기 조정을 사용하는 경우에는 다음 사항을 고려�
 * 자동 크기 조정 규칙을 구성하고 시간 경과에 따른 응용 프로그램의 성능 변화를 모니터링합니다. 이 모니터링 결과를 사용하여 필요한 경우 시스템 크기 조정 방법을 조정합니다. 그러나 자동 크기 조정은 즉각적인 프로세스가 아님을 명심하세요. 지정된 임계값을 초과하는(또는 미달하는) 평균 CPU 사용률과 같은 메트릭에 반응하는 데에는 시간이 걸립니다.
 * 측정된 트리거 특성(CPU 사용량이나 큐 길이 등)을 기반으로 하는 감지 메커니즘을 사용하는 자동 크기 조정 규칙은 즉각적인 값보다는 시간 경과에 따라 집계되는 값을 사용하여 자동 크기 조정 작업을 트리거합니다. 기본적으로 집계는 값의 평균입니다. 이는 시스템이 너무 신속하게 반응하거나 빠른 진동을 일으키는 것을 방지합니다. 또한 자동으로 시작된 새 인스턴스가 실행 모드로 안정되는 시간을 허용하여 새 인스턴스가 시작되는 동안 추가 자동 크기 조정 작업이 발생하는 것을 방지합니다. Azure Cloud Services 및 Azure Virtual Machines의 경우 집계에 대한 기본 기간은 45분이므로, 수요 급증에 응답하여 자동 크기 조정을 트리거하는 메트릭에 대해 이 기간을 확보할 수 있습니다. SDK를 사용하여 집계 기간을 변경할 수 있지만 25분 미만의 기간은 예기치 않은 결과를 초래할 수 있음에 주의하세요( [Azure 모니터링 서비스 관리 라이브러리를 사용하여 CPU 비율로 Cloud Services 자동 크기 조정](http://rickrainey.com/2013/12/15/auto-scaling-cloud-services-on-cpu-percentage-with-the-windows-azure-monitoring-services-management-library/)참조). Web Apps의 경우, 평균 기간은 더 짧아서 평균 트리거 측정값을 변경한 후 약 5분 후에 새 인스턴스를 사용할 수 있습니다.
 * 포털 대신 SDK를 사용하여 자동 크기 조정을 구성하면 규칙이 활성화된 동안 더 상세한 일정을 지정할 수 있습니다. 또한 고유의 메트릭을 만들고 사용자의 자동 크기 조정 규칙에 존재하는 내용과 함께 또는 별도로 사용할 수도 있습니다. 예를 들어, 초당 요청 수나 평균 메모리 가용성과 같은 대체 카운터를 사용하거나 특정 비즈니스 프로세스를 측정하는 사용자 지정 카운터를 사용하고자 할 수 있습니다.
-* Service Fabric의 크기를 자동으로 조정할 경우 클러스터의 노드 유형은 백 엔드에서 VM 확장 집합으로 구성되므로 각 노드 유형에 대한 자동 크기 조정 규칙을 설정해야 합니다. 자동 크기 조정을 수행하기 전에 포함해야 할 노드 수를 고려합니다. 기본 노드 형식에 대해 포함해야 할 최소 노드 수는 선택한 안정성 수준에 따라 달라집니다. 자세한 내용은 [자동 크기 조정 규칙을 사용하여 Service Fabric 클러스터 크기 조정](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-scale-up-down)을 참조하세요.
+* Service Fabric의 크기를 자동으로 조정할 경우 클러스터의 노드 유형은 백 엔드에서 VM 확장 집합으로 구성되므로 각 노드 유형에 대한 자동 크기 조정 규칙을 설정해야 합니다. 자동 크기 조정을 수행하기 전에 포함해야 할 노드 수를 고려합니다. 기본 노드 형식에 대해 포함해야 할 최소 노드 수는 선택한 안정성 수준에 따라 달라집니다. 자세한 내용은 [자동 크기 조정 규칙을 사용하여 Service Fabric 클러스터 크기 조정](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-scale-up-down)을 참조하세요.
 * 포털을 사용하여 SQL Database 인스턴스 및 큐와 같은 리소스를 Cloud Service 인스턴스에 연결할 수 있습니다. 따라서 연결된 각 리소스에 대한 별도의 수동 및 자동 크기 조정 구성 옵션에 더 쉽게 액세스할 수 있습니다. 자세한 내용은 [방법: 클라우드 서비스에 리소스 연결](/azure/cloud-services/cloud-services-how-to-manage)을 참조하세요.
 * 복수의 정책 및 규칙을 구성하는 경우, 서로 충돌할 수 있습니다. 자동 크기 조정은 다음 충돌 해결 규칙을 사용하여 언제나 충분한 수의 인스턴스가 실행되도록 합니다.
   * 규모 확장 작업은 언제나 규모 감축 작업보다 우선됩니다.

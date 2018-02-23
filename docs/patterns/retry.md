@@ -5,12 +5,13 @@ keywords: "디자인 패턴"
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
-pnp.pattern.categories: resiliency
-ms.openlocfilehash: 6c02b384e71c068ecbc78f3170d28cea406538e2
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+pnp.pattern.categories:
+- resiliency
+ms.openlocfilehash: 73fdcbcc2bd75593a4c8e33dc2259c90593e14db
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="retry-pattern"></a>다시 시도 패턴
 
@@ -48,13 +49,13 @@ ms.lasthandoff: 11/14/2017
 
 응용 프로그램은 오류 및 실패 작업의 세부 정보를 기록해야 합니다. 이 정보는 작업자에게 유용 합니다. 서비스를 자주 사용할 수 없거나 사용 중인 경우는 서비스가 종종 해당 리소스를 모두 사용했기 때문에 발생합니다. 서비스를 확장하여 이러한 오류 발생 빈도를 줄일 수 있습니다. 예를 들어 데이터베이스 서비스가 지속적으로 과부하가 걸리는 경우 데이터베이스를 분할하고 여러 서버에 부하를 분산하는 것이 유용할 수 있습니다.
 
-> [Microsoft Entity Framework](https://docs.microsoft.com/ef/)는 데이터베이스 작업 다시 시도를 위한 기능을 제공합니다. 또한 대부분의 Azure 서비스 및 클라이언트 SDK는 다시 시도 메커니즘을 제공합니다. 자세한 내용은 [특정 서비스에 대한 다시 시도 지침](https://docs.microsoft.com/en-us/azure/architecture/best-practices/retry-service-specific)을 참조하세요.
+> [Microsoft Entity Framework](https://docs.microsoft.com/ef/)는 데이터베이스 작업 다시 시도를 위한 기능을 제공합니다. 또한 대부분의 Azure 서비스 및 클라이언트 SDK는 다시 시도 메커니즘을 제공합니다. 자세한 내용은 [특정 서비스에 대한 다시 시도 지침](https://docs.microsoft.com/azure/architecture/best-practices/retry-service-specific)을 참조하세요.
 
 ## <a name="issues-and-considerations"></a>문제 및 고려 사항
 
 이 패턴을 구현할 방법을 결정할 때 다음 사항을 고려해야 합니다.
 
-다시 시도 정책은 응용 프로그램의 비즈니스 요구 사항 및 장애의 특성에 맞게 튜닝해야 합니다. 중요하지 않은 일부 작업의 경우 여러 번 다시 시도하는 것보다 빠르게 실패로 처리하여 응용 프로그램의 처리량에 영향을 주지 않도록 하는 것이 좋습니다. 예를 들어 원격 서비스에 액세스하는 대화형 웹 응용 프로그램의 경우, 다시 시도 간 지연 시간을 짧게 하여 몇 번의 다시 시도 후 실패로 처리하고 사용자에게 적절한 메시지(예: "나중에 다시 시도하십시오.")를 표시하는 것이 좋습니다. 배치 응용 프로그램의 경우 시도 간 지연 시간을 대폭 늘려 다시 시도 횟수를 증가시키는 것이 더 적절할 수 있습니다.
+다시 시도 정책은 응용 프로그램의 비즈니스 요구 사항 및 장애의 특성에 맞게 튜닝해야 합니다. 중요하지 않은 일부 작업의 경우 여러 번 다시 시도하는 것보다 페일 패스트로 처리하여 응용 프로그램의 처리량에 영향을 주지 않도록 하는 것이 좋습니다. 예를 들어 원격 서비스에 액세스하는 대화형 웹 응용 프로그램의 경우, 다시 시도 간 지연 시간을 짧게 하여 몇 번의 다시 시도 후 실패로 처리하고 사용자에게 적절한 메시지(예: "나중에 다시 시도하십시오.")를 표시하는 것이 좋습니다. 배치 응용 프로그램의 경우 시도 간 지연 시간을 대폭 늘려 다시 시도 횟수를 증가시키는 것이 더 적절할 수 있습니다.
 
 시도간 지연 시간을 최소화한 적극적인 다시 시도 정책과 많은 다시 시도 횟수는 최대 용량에 근접하거나 최대 용량으로 실행 중인 서비스를 저하시킬 수 있습니다. 계속해서 실패한 작업을 수행하려고 시도하려는 경우 이 다시 시도 정책은 응용 프로그램의 응답성에 영향을 줄 수도 있습니다.
 
@@ -68,7 +69,7 @@ ms.lasthandoff: 11/14/2017
 
 다양한 오류 상태에 대해 다시 시도 코드를 모두 테스트되는지 확인합니다. 응용 프로그램의 성능이 나 안정성에 심각하게 영향을 주지 않는지, 서비스와 리소스에 과도한 부하를 주지 않는지, 경합 상태 또는 병목 현상이 발생하지 않는지 확인합니다.
 
-실패한 작업의 전체 컨텍스트를 이해하는 위치에서만 재시도 논리를 구현합니다. 예를 들어 다시 시도 정책이 다시 시도 정책을 포함하는 또 다른 작업을 호출하는 경우, 이 다시 시도 추가 계층으로 처리하는 데 더욱 오래 걸릴 수 있습니다. 이 경우 빠르게 실패로 처리하고 호출한 작업에 실패한 이유를 보고하도록 하위 수준 작업을 구성하는 것이 더 나을 수 있습니다. 그런 다음 이 상위 수준 작업은 자체 정책에 따라 실패를 처리할 수 있습니다.
+실패한 작업의 전체 컨텍스트를 이해하는 위치에서만 재시도 논리를 구현합니다. 예를 들어 다시 시도 정책이 다시 시도 정책을 포함하는 또 다른 작업을 호출하는 경우, 이 다시 시도 추가 계층으로 처리하는 데 더욱 오래 걸릴 수 있습니다. 이 경우 페일 패스트로 처리하고 호출한 작업에 실패한 이유를 보고하도록 하위 수준 작업을 구성하는 것이 더 나을 수 있습니다. 그런 다음 이 상위 수준 작업은 자체 정책에 따라 실패를 처리할 수 있습니다.
 
 응용 프로그램, 서비스 또는 리소스와 관련된 기본 문제를 식별할 수 있도록 다시 시도를 발생시키는 모든 연결 실패를 기록하는 것이 중요합니다.
 
@@ -172,5 +173,5 @@ private bool IsTransient(Exception ex)
 ## <a name="related-patterns-and-guidance"></a>관련 패턴 및 지침
 
 - [회로 차단기 패턴](circuit-breaker.md). 다시 시도 패턴은 일시적인 오류 처리 하는 데 유용합니다. 오류가 오래 지속될 것 같은 경우 회로 차단기 패턴을 구현하는 것이 적절할 수도 있습니다. 또한 다시 시도 패턴은 오류를 처리하기 위해 포괄적인 접근 방법을 제공하는 회로 차단기와 함께 사용할 수 있습니다.
-- [특정 서비스에 대한 다시 시도 지침](https://docs.microsoft.com/en-us/azure/architecture/best-practices/retry-service-specific)
-- [연결 복원력](https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency)
+- [특정 서비스에 대한 다시 시도 지침](https://docs.microsoft.com/azure/architecture/best-practices/retry-service-specific)
+- [연결 복원력](https://docs.microsoft.com/ef/core/miscellaneous/connection-resiliency)

@@ -6,11 +6,11 @@ ms.date: 12/12/2017
 pnp.series.title: Windows VM workloads
 pnp.series.next: multi-vm
 pnp.series.prev: ./index
-ms.openlocfilehash: 71eeebae1f557ecbb6f33c4a7e37a278204f3dcd
-ms.sourcegitcommit: 1c0465cea4ceb9ba9bb5e8f1a8a04d3ba2fa5acd
+ms.openlocfilehash: ffc8ddcbdd5422f1e38922fc6735ab1579289c7b
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/02/2018
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="run-a-windows-vm-on-azure"></a>Azure에서 Windows VM 실행
 
@@ -60,7 +60,7 @@ az vm list-sizes --location <location>
 
 최상의 디스크 I/O 성능을 위해서는 SSD(반도체 드라이브)에 데이터를 저장하는 [Premium Storage][premium-storage]가 권장됩니다. 비용은 프로비전된 디스크 용량을 기준으로 산정됩니다. IOPS 및 처리량(즉, 데이터 전송 속도)도 디스크 크기에 따라 달라지므로 디스크를 프로비전할 때 세 가지 요소(용량, IOPS, 처리량)를 모두 고려합니다. 
 
-또한 [관리 디스크](/azure/storage/storage-managed-disks-overview)를 사용하는 것이 좋습니다. 관리 디스크는 저장소 계정이 필요하지 않습니다. 디스크의 크기와 유형을 지정하기만 하면 고가용성 리소스로 배포됩니다.
+또한 [관리 디스크](/azure/storage/storage-managed-disks-overview)를 사용하는 것이 좋습니다. 관리 디스크에는 저장소 계정이 필요하지 않습니다. 디스크의 크기와 유형을 지정하기만 하면 고가용성 리소스로 배포됩니다.
 
 관리되지 않는 디스크를 사용 중인 경우 저장소 계정에 대한 [IOPS 제한][vm-disk-limits]에 도달하지 않도록 하기 위해 VHD(가상 하드 디스크)를 보유하는 각 VM에 대한 별도 Azure Storage 계정을 만듭니다.
 
@@ -87,7 +87,7 @@ RDP를 사용하도록 설정하려면 TCP 포트 3389에 인바운드 트래픽
 
 ## <a name="availability-considerations"></a>가용성 고려 사항
 
-더 높은 가용성을 위해 가용성 집합에 여러 VM을 배포합니다. 또한 더 높은 SLA([서비스 수준 계약][vm-sla])를 제공합니다.
+더 높은 가용성을 위해 가용성 집합에 여러 VM을 배포합니다. 그러면 [SLA(서비스 수준 계약)][vm-sla]도 높아집니다.
 
 사용자의 VM은 [계획된 유지 관리][planned-maintenance] 또는 [계획되지 않은 유지 관리][manage-vm-availability]의 영향을 받을 수 있습니다. [VM 다시 부팅 로그][reboot-logs]를 사용하여 VM 재부팅이 계획된 유지 관리로 발생했는지 여부를 결정할 수 있습니다.
 
@@ -115,7 +115,7 @@ Azure Portal에서 **중지** 버튼은 VM 할당을 취소합니다. 로그인�
 
 **맬웨어 방지.** 이 기능이 설정되면 보안 센터는 맬웨어 방지 소프트웨어 설치 여부를 확인합니다. 또한 보안 센터를 사용하여 Azure 포털 내에서 맬웨어 방지 소프트웨어를 설치할 수도 있습니다.
 
-**작업.** RBAC([역할 기반 액세스 제어][rbac])를 사용하여 배포하는 Azure 리소스에 대한 액세스를 제어합니다. RBAC를 통해 DevOps 팀의 구성원에게 권한 역할을 할당할 수 있습니다. 예를 들어 읽기 권한자 역할은 Azure 리소스를 볼 수 있지만 만들거나 관리하거나 삭제할 수는 없습니다. 일부 역할은 특정 Azure 리소스 유형에 따라 다릅니다. 예를 들어 Virtual Machine 참가자 역할은 VM을 다시 시작하거나 할당을 취소하고, 관리자 암호를 재설정하고, 새 VM을 만드는 등의 작업을 수행할 수 있습니다. 이 아키텍처에 유용할 수 있는 기타 [기본 제공 RBAC 역할][rbac-roles]에는 [DevTest Labs 사용자][rbac-devtest] 및 [네트워크 참가자][rbac-network]가 포함됩니다. 한 명의 사용자가 여러 역할에 할당될 수 있으며 좀 더 세분화된 권한의 사용자 지정 역할을 만들 수도 있습니다.
+**작업.** [RBAC(역할 기반 액세스 제어)][rbac]를 사용하여 배포하는 Azure 리소스에 대한 액세스를 제어합니다. RBAC를 통해 DevOps 팀의 구성원에게 권한 역할을 할당할 수 있습니다. 예를 들어 읽기 권한자 역할은 Azure 리소스를 볼 수 있지만 만들거나 관리하거나 삭제할 수는 없습니다. 일부 역할은 특정 Azure 리소스 유형에 따라 다릅니다. 예를 들어 Virtual Machine Contributor 역할은 VM을 다시 시작하거나 할당을 취소하고, 관리자 암호를 재설정하고, 새 VM을 만드는 등의 작업을 수행할 수 있습니다. 이 아키텍처에 유용할 수 있는 기타 [기본 제공 RBAC 역할][rbac-roles]에는 [DevTest Labs 사용자][rbac-devtest] 및 [네트워크 참가자][rbac-network]가 포함됩니다. 한 명의 사용자가 여러 역할에 할당될 수 있으며 좀 더 세분화된 권한의 사용자 지정 역할을 만들 수도 있습니다.
 
 > [!NOTE]
 > RBAC는 VM에 로그온한 사용자가 수행할 수 있는 작업을 제한하지 않습니다. 이러한 사용 권한은 게스트 OS의 계정 유형에 따라 결정됩니다.   
@@ -126,7 +126,7 @@ Azure Portal에서 **중지** 버튼은 VM 할당을 취소합니다. 로그인�
 
 ## <a name="deploy-the-solution"></a>솔루션 배포
 
-이 아키텍처에 대한 배포는[GitHub][github-folder]에서 사용할 수 있습니다. 다음을 배포합니다.
+이 아키텍처에 대한 배포는 [GitHub][github-folder]에서 사용할 수 있습니다. 다음을 배포합니다.
 
   * VM을 호스트하는 데 사용되는 **웹**이라는 이름의 단일 서브넷을 가진 가상 네트워크
   * RDP 및 HTTP 트래픽이 VM으로 이동할 수 있도록 허용하는 두 개의 들어오는 규칙이 있는 NSG
@@ -135,15 +135,15 @@ Azure Portal에서 **중지** 버튼은 VM 할당을 취소합니다. 로그인�
 
 ### <a name="prerequisites"></a>필수 조건
 
-참조 아키텍처를 고유한 구독에 배포하려면 먼저 다음 단계를 수행해야 합니다.
+사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.
 
-1. [AzureCAT 참조 아키텍처][ref-arch-repo] GitHub 리포지토리에 대한 zip 파일을 복제, 포크 또는 다운로드합니다.
+1. [AzureCAT 참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
 
-2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI 설치 지침은 [Azure CLI 2.0 설치][azure-cli-2]를 참조하세요.
+2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI 설치 지침은 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)을 참조하세요.
 
-3. [Azure 문서 블록][azbb] npm 패키지를 설치합니다.
+3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
 
-4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령 중 하나를 사용하여 Azure 계정에 로그인하여 프롬프트를 따릅니다.
+4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령 중 하나를 사용하여 Azure 계정에 로그인한 다음 프롬프트에 따릅니다.
 
   ```bash
   az login
@@ -168,11 +168,11 @@ Azure Portal에서 **중지** 버튼은 VM 할당을 취소합니다. 로그인�
   azbb -s <subscription_id> -g <resource_group_name> -l <location> -p single-vm-v2.json --deploy
   ```
 
-이 샘플 참조 아키텍처를 배포하는 방법에 대한 자세한 내용은 [GitHub 리포지토리][git]를 방문하세요.
+이 샘플 참조 아키텍처를 배포하는 방법에 대한 자세한 내용은 [GitHub 리포지토리][git]를 참조하세요.
 
 ## <a name="next-steps"></a>다음 단계
 
-- [Azure 문서 블록][azbbv2]에 대해 알아봅니다.
+- [Azure 빌딩 블록][azbbv2]에 대해 알아봅니다.
 - Azure에서 [여러 VM][multi-vm]을 배포합니다.
 
 <!-- links -->
@@ -193,7 +193,7 @@ Azure Portal에서 **중지** 버튼은 VM 할당을 취소합니다. 로그인�
 [fqdn]: /azure/virtual-machines/virtual-machines-windows-portal-create-fqdn
 [git]: https://github.com/mspnp/reference-architectures/tree/master/virtual-machines/single-vm
 [github-folder]: https://github.com/mspnp/reference-architectures/tree/master/virtual-machines/single-vm
-[group-policy]: https://technet.microsoft.com/en-us/library/dn595129.aspx
+[group-policy]: https://docs.microsoft.com/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/dn595129(v=ws.11)
 [log-collector]: https://azure.microsoft.com/blog/simplifying-virtual-machine-troubleshooting-using-azure-log-collector/
 [manage-vm-availability]: /azure/virtual-machines/virtual-machines-windows-manage-availability
 [multi-vm]: multi-vm.md

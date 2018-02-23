@@ -1,11 +1,11 @@
 ---
 title: "아키텍처 다이어그램의 아이콘 및 자산"
 description: "고유한 아키텍처 다이어그램을 생성하는 데 도움이 되는 아이콘, Viso 템플릿, PNG 파일 및 SVG 파일"
-ms.openlocfilehash: 863c5cd479e6c4b6d57299176b80d02661e5466b
-ms.sourcegitcommit: 662f27f37d45f778ad1b6355fb6fb66e3c65558c
+ms.openlocfilehash: 58a2046c0d463c1f331ea3f950f0c11c273ffc36
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/11/2017
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="icons-and-diagrams"></a>아이콘 및 다이어그램
 
@@ -18,7 +18,7 @@ ms.lasthandoff: 12/11/2017
 
 ![클라우드 및 엔터프라이즈 기호/아이콘 집합](./_images/CnESymbols.png)
 
-Microsoft Office 및 관련 기술에 대한 추가 기호는 [Microsoft Office Visio 스텐실](http://www.microsoft.com/en-us/download/details.aspx?id=35772)에서 사용할 수 있습니다. 아키텍처 다이어그램에 대해서는 최적화되지 않았습니다.   
+Microsoft Office 및 관련 기술에 대한 추가 기호는 [Microsoft Office Visio 스텐실](http://www.microsoft.com/download/details.aspx?id=35772)에서 사용할 수 있습니다. 아키텍처 다이어그램에 대해서는 최적화되지 않았습니다.   
 
 > [!NOTE]
 > 이러한 자산은 사용자 인터페이스에서 사용할 수 없습니다. 타사 기호는 Microsoft에서 소유하지 않습니다.

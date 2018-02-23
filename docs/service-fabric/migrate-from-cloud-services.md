@@ -3,11 +3,11 @@ title: "Azure Service Fabric으로 Azure Cloud Services 응용 프로그램 마�
 description: "Azure Cloud Services에서 Azure Service Fabric으로 응용 프로그램을 마이그레이션하는 방법입니다."
 author: MikeWasson
 ms.date: 04/27/2017
-ms.openlocfilehash: 73e34c53ffd2f2eeb466d12a5f6c65dcfdaae389
-ms.sourcegitcommit: 2c9a8edf3e44360d7c02e626ea8ac3b03fdfadba
+ms.openlocfilehash: ce9c138a6b093fb7f0329c619c75bd4f4aacc2e7
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/03/2018
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="migrate-an-azure-cloud-services-application-to-azure-service-fabric"></a>Azure Service Fabric으로 Azure Cloud Services 응용 프로그램 마이그레이션 
 
@@ -227,7 +227,7 @@ Service Fabric 클러스터가 [VM 확장 집합][vm-scale-sets]에 배포되었
 
 ### <a name="layer-7-routing"></a>계층 7 라우팅
 
-[원래 설문 조사 응용 프로그램](https://msdn.microsoft.com/en-us/library/hh534477.aspx#sec21)에서 한 웹 역할은 포트 80에서, 다른 웹 역할은 포트 443에서 수신 대기합니다. 
+[원래 설문 조사 응용 프로그램](https://msdn.microsoft.com/library/hh534477.aspx#sec21)에서 한 웹 역할은 포트 80에서, 다른 웹 역할은 포트 443에서 수신 대기합니다. 
 
 | 공용 사이트 | 설문 조사 관리 사이트 |
 |-------------|------------------------|
@@ -328,7 +328,7 @@ Azure에 배포할 때 각 노드 형식이 별도 VM 확장 집합에 배포됩
 [sf-reverse-proxy]: /azure/service-fabric/service-fabric-reverseproxy
 [sf-security]: /azure/service-fabric/service-fabric-cluster-security
 [sf-why-microservices]: /azure/service-fabric/service-fabric-overview-microservices
-[tailspin-book]: https://msdn.microsoft.com/en-us/library/ff966499.aspx
-[tailspin-scenario]: https://msdn.microsoft.com/en-us/library/hh534482.aspx
-[unity]: https://msdn.microsoft.com/en-us/library/ff647202.aspx
+[tailspin-book]: https://msdn.microsoft.com/library/ff966499.aspx
+[tailspin-scenario]: https://msdn.microsoft.com/library/hh534482.aspx
+[unity]: https://msdn.microsoft.com/library/ff647202.aspx
 [vm-scale-sets]: /azure/virtual-machine-scale-sets/virtual-machine-scale-sets-overview

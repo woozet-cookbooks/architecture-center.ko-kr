@@ -3,11 +3,11 @@ title: "Azure 응용 프로그램에 대한 재해 복구"
 description: "Microsoft Azure에서 재해 복구를 위한 응용 프로그램 설계에 대한 기술 개요와 자세한 정보입니다."
 author: adamglick
 ms.date: 05/26/2017
-ms.openlocfilehash: 5ed6e2cec149571724f1545b40f628d6bbe1ad71
-ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
+ms.openlocfilehash: 7235e752cf1b96e392a700b223d63b07c0f85b66
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/08/2017
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="disaster-recovery-for-azure-applications"></a>Azure 응용 프로그램에 대한 재해 복구
 
@@ -268,7 +268,7 @@ Microsoft Azure의 광범위한 기능이 조직에서 필요한 내부 준수 �
 DR 전략이 여러 클라우드 플랫폼을 사용하는 경우 솔루션 디자인에서 추상화 레이어를 포함하는 것이 유용합니다. 이렇게 하면 재해 발생 시 다른 클라우드 플랫폼에 두 가지 버전의 동일한 응용 프로그램을 개발하고 유지 관리할 필요가 없습니다. 이러한 경우에 하이브리드 시나리오처럼 Azure Virtual Machines 또는 Azure 컨테이너 서비스를 사용하는 작업은 클라우드에 지정된 PaaS 설계를 사용하는 것보다 쉬울 수 있습니다.
 
 ## <a name="automation"></a>Automation
-앞서 설명한 패턴 중 일부는 시스템의 특정 부분을 복원해야 할 뿐만 아니라 오프라인 배포를 신속하게 실행해야 합니다. Automation 스크립트는 주문형 리소스를 활성화하고 솔루션을 신속하게 배포할 수 있습니다. 아래 DR 관련 자동화 예제는 [Azure PowerShell](https://msdn.microsoft.com/library/azure/jj156055.aspx)을 사용하지만 [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli) 또는 [Service Management REST API](https://msdn.microsoft.com/library/azure/ee460799.aspx)를 사용하는 것도 좋은 옵션입니다.
+앞서 설명한 패턴 중 일부는 시스템의 특정 부분을 복원해야 할 뿐만 아니라 오프라인 배포를 신속하게 실행해야 합니다. Automation 스크립트는 주문형 리소스를 활성화하고 솔루션을 신속하게 배포할 수 있습니다. 아래 DR 관련 자동화 예제는 [Azure PowerShell](https://msdn.microsoft.com/library/azure/jj156055.aspx)을 사용하지만 [Azure CLI](https://docs.microsoft.com/cli/azure/get-started-with-azure-cli) 또는 [Service Management REST API](https://msdn.microsoft.com/library/azure/ee460799.aspx)를 사용하는 것도 좋은 옵션입니다.
 
 Automation 스크립트는 Azure에 의해 투명하게 처리되지 않는 DR의 측면을 관리합니다. 이는 인적 오류를 최소화하여 일관적이고 반복적인 결과를 생성합니다. 또한 미리 정의된 DR 스크립트는 재해 중 시스템과 해당 구성 요소를 다시 빌드하는 데 필요한 시간을 줄입니다. 사이트가 중단되어 매초마다 비용이 손실되는 경우 사이트를 복원하는 방법을 수동으로 확인하기는 어렵습니다.
 
@@ -277,7 +277,7 @@ Automation 스크립트는 Azure에 의해 투명하게 처리되지 않는 DR�
 자동화의 모범 사례는 Azure 재해 복구에 대한 PowerShell 스크립트 또는 CLI(명령줄 인터페이스) 스크립트의 리포지토리를 만드는 것입니다. 빠른 액세스를 위해 명확하게 표시하고 분류합니다. 리포지토리 및 스크립트의 버전을 관리할 기본 사용자를 지정합니다. 매개 변수에 대한 설명 및 스크립트 사용 예를 사용하여 문서화합니다. 또한 이 설명서가 Azure 배포와 동기화되었는지 확인합니다. 리포지토리의 모든 부분을 담당하는 기본 사용자가 필요하다는 목적을 달성합니다.
 
 ## <a name="failure-detection"></a>실패 감지
-가용성 및 재해 복구와 관련된 문제를 올바르게 처리하려면 오류를 감지하고 진단할 수 있어야 합니다. 시스템 또는 해당 구성 요소가 갑자기 사용할 수 없게 되는 경우를 빠르게 인식하도록 고급 서버 및 배포 모니터링을 수행합니다. 클라우드 서비스 및 해당 종속성의 전반적인 상태를 평가하는 모니터링 도구는 이러한 작업의 일부를 수행할 수 있습니다. 적합한 Microsoft 도구는 [System Center 2016](https://www.microsoft.com/en-us/server-cloud/products/system-center-2016/)입니다. 타사 도구가 모니터링 기능을 제공할 수도 있습니다. 대부분의 모니터링 솔루션은 주요 성능 카운터 및 서비스 가용성을 추적합니다.
+가용성 및 재해 복구와 관련된 문제를 올바르게 처리하려면 오류를 감지하고 진단할 수 있어야 합니다. 시스템 또는 해당 구성 요소가 갑자기 사용할 수 없게 되는 경우를 빠르게 인식하도록 고급 서버 및 배포 모니터링을 수행합니다. 클라우드 서비스 및 해당 종속성의 전반적인 상태를 평가하는 모니터링 도구는 이러한 작업의 일부를 수행할 수 있습니다. 적합한 Microsoft 도구는 [System Center 2016](https://www.microsoft.com/server-cloud/products/system-center-2016/)입니다. 타사 도구가 모니터링 기능을 제공할 수도 있습니다. 대부분의 모니터링 솔루션은 주요 성능 카운터 및 서비스 가용성을 추적합니다.
 
 이러한 도구가 중요하지만 클라우드 서비스 내에서 오류 감지 및 보고에 대해 계획해야 합니다. 또한 Azure 진단을 올바르게 사용하기 위해 계획해야 합니다. 사용자 지정 성능 카운터 또는 이벤트 로그 항목도 전반적인 전략의 일부가 될 수 있습니다. 오류 중에 더 많은 데이터를 제공하여 신속하게 문제를 진단하고 전체 기능을 복원합니다. 또한 모니터링 도구가 응용 프로그램 상태를 확인하는 데 사용할 수 있는 추가 메트릭을 제공합니다. 자세한 내용은 [Azure Cloud Services에서 Azure 진단 사용](/azure/cloud-services/cloud-services-dotnet-diagnostics/)을 참조하세요. 전반적인 “상태 모델”에 대한 계획하는 방법은 [Failsafe: 복원력 있는 클라우드 아키텍처에 대한 지침](https://channel9.msdn.com/Series/FailSafe)을 참조하세요.
 
