@@ -3,11 +3,11 @@ title: "Azure Cloud Services에서 마이그레이션된 Azure Service Fabric �
 description: "Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램을 리팩터링하는 방법입니다."
 author: petertay
 ms.date: 01/30/2018
-ms.openlocfilehash: 4889fae8f157b0f1205e7d8223f125974be59ba9
-ms.sourcegitcommit: 2c9a8edf3e44360d7c02e626ea8ac3b03fdfadba
+ms.openlocfilehash: 18af7c7fe0c0933b1a2a132ee2ee0d8479d41b2a
+ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/03/2018
+ms.lasthandoff: 02/09/2018
 ---
 # <a name="refactor-an-azure-service-fabric-application-migrated-from-azure-cloud-services"></a>Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램 리팩터링
 
@@ -64,15 +64,15 @@ Tailspin에서 설문 조사 응용 프로그램을 더 세부적인 아키텍�
 
 **Tailspin.Web**은 Tailspin 고객이 설문 조사를 만들고 설문 조사 결과를 보기 위해 방문하는 ASP.NET MVC 응용 프로그램을 자체 호스팅하는 상태 비저장 서비스입니다. 이 서비스는 대부분의 코드를 이식된 Service Fabric 응용 프로그램의 *Tailspin.Web* 서비스와 공유합니다. 앞에서 언급했듯이, 이 서비스는 ASP.NET Core 및 웹 프런트 엔드로 Kestrel을 사용하여 WebListener를 구현하는 스위치를 사용합니다.
 
-**Tailspin.Web.Surveys.Public**은 ASP.NET MVC 사이트를 자체 호스팅하는 상태 비저장 서비스입니다. 사용자는 이 사이트를 방문하여 목록에서 설문 조사를 선택한 다음, 작성합니다. 이 서비스는 대부분의 코드를 이식된 Service Fabric 응용 프로그램의 *Tailspin.Web.Survey.Public* 서비스와 공유합니다. 또한 이 서비스는 ASP.NET Core를 사용하고, Kestrel을 웹 프런트 엔드로 사용하는 방식에서 WebListener를 구현하는 방식으로 전환합니다.
+**Tailspin.Web.Survey.Public**은 ASP.NET MVC 사이트를 자체 호스팅하는 상태 비저장 서비스입니다. 사용자는 이 사이트를 방문하여 목록에서 설문 조사를 선택한 다음, 작성합니다. 이 서비스는 대부분의 코드를 이식된 Service Fabric 응용 프로그램의 *Tailspin.Web.Survey.Public* 서비스와 공유합니다. 또한 이 서비스는 ASP.NET Core를 사용하고, Kestrel을 웹 프런트 엔드로 사용하는 방식에서 WebListener를 구현하는 방식으로 전환합니다.
 
-**Tailspin.SurveyResponseService**는 Azure Blob Storage에 설문 조사 응답을 저장하는 상태 저장 서비스입니다. 또한 응답을 설문 조사 분석 데이터에 병합합니다. 이 서비스는 [ReliableConcurrentQueue][reliable-concurrent-queue]를 사용하여 설문 조사 응답을 일괄적으로 처리하므로 상태 저장 서비스로 구현됩니다. 이 기능은 원래 이식된 Service Fabric 응용 프로그램의 *Tailspin.Web.Survey.Public* 서비스에서 구현되었습니다. Tailspin은 원래의 기능을 이 서비스로 리팩터링하여 크기를 독립적으로 조정할 수 있도록 했습니다.
+**Tailspin.SurveyResponseService**는 Azure Blob Storage에 설문 조사 응답을 저장하는 상태 저장 서비스입니다. 또한 응답을 설문 조사 분석 데이터에 병합합니다. 이 서비스는 [ReliableConcurrentQueue][reliable-concurrent-queue]를 사용하여 설문 조사 응답을 일괄적으로 처리하므로 상태 저장 서비스로 구현됩니다. 이 기능은 원래 이식된 Service Fabric 응용 프로그램의 *Tailspin.AnswerAnalysisService* 서비스에서 구현되었습니다.
 
-**Tailspin.SurveyManagementService**는 설문 조사 및 설문 조사 질문을 저장하고 검색하는 상태 비저장 서비스입니다. 이 서비스는 Azure Blob Storage를 사용합니다. 이 기능도 원래 이식된 Service Fabric 응용 프로그램의 *Tailspin.AnswerAnalysisService* 서비스에서 구현되었습니다. Tailspin도 원래의 기능을 이 서비스로 리팩터링하여 크기를 독립적으로 조정할 수 있도록 했습니다.
+**Tailspin.SurveyManagementService**는 설문 조사 및 설문 조사 질문을 저장하고 검색하는 상태 비저장 서비스입니다. 이 서비스는 Azure Blob Storage를 사용합니다. 이 기능도 원래 이식된 Service Fabric 응용 프로그램의 *Tailspin.Web* 및 *Tailspin.Web.Survey.Public* 서비스의 데이터 액세스 구성 요소에서 구현되었습니다. Tailspin은 원래의 기능을 이 서비스로 리팩터링하여 크기를 독립적으로 조정할 수 있도록 했습니다.
 
-**Tailspin.SurveyAnswerService**는 설문 조사 응답 및 설문 조사 분석을 검색하는 상태 비저장 서비스입니다. 이 서비스도 Azure Blob Storage를 사용합니다. 이 기능도 원래 이식된 Service Fabric 응용 프로그램의 *Tailspin.AnswerAnalysisService* 서비스에서 구현되었습니다. Tailspin은 부하를 줄이고 더 적은 수의 인스턴스를 사용하여 리소스를 절약할 필요가 있어 원래의 기능을 이 서비스로 리팩터링했습니다.
+**Tailspin.SurveyAnswerService**는 설문 조사 응답 및 설문 조사 분석을 검색하는 상태 비저장 서비스입니다. 이 서비스도 Azure Blob Storage를 사용합니다. 이 기능도 원래 이식된 Service Fabric 응용 프로그램의 *Tailspin.Web* 서비스의 데이터 액세스 구성 요소에서 구현되었습니다. Tailspin은 부하를 줄이고 더 적은 수의 인스턴스를 사용하여 리소스를 절약할 필요가 있어 원래의 기능을 이 서비스로 리팩터링했습니다.
 
-**Tailspin.SurveyAnalysisService**는 설문 조사 응답 요약 데이터를 빠르게 검색할 수 있도록 이 데이터를 Redis 캐시에 유지하는 상태 비저장 서비스입니다. 이 서비스는 설문 조사에 응답하고 새 설문 조사 응답 데이터를 요약 데이터에 병합할 때마다 *Tailspin.SurveyResponseService*에서 호출됩니다. 이 서비스에는 이식된 Service Fabric 응용 프로그램에 있는 *Tailspin.SurveyAnalysisService* 서비스의 나머지 기능이 포함되어 있습니다.
+**Tailspin.SurveyAnalysisService**는 설문 조사 응답 요약 데이터를 빠르게 검색할 수 있도록 이 데이터를 Redis 캐시에 유지하는 상태 비저장 서비스입니다. 이 서비스는 설문 조사에 응답하고 새 설문 조사 응답 데이터를 요약 데이터에 병합할 때마다 *Tailspin.SurveyResponseService*에서 호출됩니다. 이 서비스는 이식된 Service Fabric 응용 프로그램의 *Tailspin.AnswerAnalysisService* 서비스에서 구현된 기능을 포함합니다.
 
 ## <a name="stateless-versus-stateful-services"></a>상태 저장 및 상태 비저장 서비스
 
@@ -82,7 +82,7 @@ Azure Service Fabric에서 지원하는 프로그래밍 모델은 다음과 같�
 * 신뢰할 수 있는 서비스 프로그래밍 모델을 사용하면 모든 Service Fabric 플랫폼 기능과 통합되는 상태 저장 또는 상태 비저장 서비스를 만들 수 있습니다. 상태 저장 서비스는 복제 상태가 Service Fabric 클러스터에 저장되도록 합니다. 상태 비저장 서비스는 그렇지 않습니다.
 * 신뢰할 수 있는 행위자 프로그래밍 모델을 사용하면 가상 행위자 패턴을 구현하는 서비스를 만들 수 있습니다.
 
-설문 조사 응용 프로그램의 모든 서비스는 *Tailspin.SurveyResponseService* 서비스를 제외하고는 신뢰할 수 있는 상태 비저장 서비스입니다. 이 서비스는 설문 조사 응답을 받을 때 이를 처리하기 위해 [ReliableConcurrentQueue][reliable-concurrent-queue]를 구현합니다. ReliableConcurrentQueue의 응답은 Azure Blob Storage에 저장되고, *Tailspin.SurveyAnalysisService*로 전달되어 분석됩니다. Tailspin은 Azure Service Bus와 같은 큐에서 제공하는 엄격한 FIFO(선입 선출) 순서를 요구하지 않으므로 ReliableConcurrentQueue 기반을 선택합니다. 또한 ReliableConcurrentQueue는 큐에 넣기 및 큐에서 제거 작업에 대해 높은 처리량과 짧은 대기 시간을 제공하도록 설계되었습니다.
+설문 조사 응용 프로그램의 모든 서비스는 *Tailspin.SurveyResponseService* 서비스를 제외하고는 신뢰할 수 있는 상태 비저장 서비스입니다. 이 서비스는 설문 조사 응답을 받을 때 이를 처리하기 위해 [ReliableConcurrentQueue][reliable-concurrent-queue]를 구현합니다. ReliableConcurrentQueue의 응답은 Azure Blob Storage에 저장되고, *Tailspin.SurveyAnalysisService*로 전달되어 분석됩니다. Tailspin은 Azure Service Bus와 같은 큐에서 제공하는 엄격한 FIFO(선입 선출) 순서를 요구하지 않으므로 ReliableConcurrentQueue를 선택합니다. 또한 ReliableConcurrentQueue는 큐에 넣기 및 큐에서 제거 작업에 대해 높은 처리량과 짧은 대기 시간을 제공하도록 설계되었습니다.
 
 큐에서 제거된 항목을 ReliableConcurrentQueue에서 유지하는 작업은 원칙적으로 idempotent(멱등원)여야 합니다. 큐에서 항목을 처리하는 중에 예외가 throw되면 동일한 항목이 두 번 이상 처리될 수 있습니다. 설문 조사 응용 프로그램에서 설문 조사 분석 데이터는 분석 데이터에 대한 현재 스냅숏일 뿐이며 일관성이 필요하지 않으므로, 설문 조사 응답을 *Tailspin.SurveyAnalysisService*에 병합하는 작업은 idempotent가 아닙니다. 결국에는 Azure Blob Storage에 저장된 설문 조사 응답이 일관되므로 최종적인 설문 조사 분석은 항상 이 데이터에서 정확하게 다시 계산할 수 있습니다.
 

@@ -1,3 +1,15 @@
+---
+title: "DevOps 검사 목록"
+description: "DevOps와 관련된 지침을 제공하는 검사 목록입니다."
+author: dragon119
+ms.date: 01/10/2018
+ms.custom: checklist
+ms.openlocfilehash: c435ea0aed9571cb6508d7d23f93414a138998fe
+ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.translationtype: HT
+ms.contentlocale: ko-KR
+ms.lasthandoff: 02/14/2018
+---
 # <a name="devops-checklist"></a>DevOps 검사 목록
 
 DevOps는 개발, 품질 보증 및 IT 운영을 통합된 문화권으로 통합하고 소프트웨어를 제공하는 일련의 프로세스입니다. 이 검사 목록을 시작점으로 사용하여 DevOps 문화권 및 프로세스를 평가합니다.

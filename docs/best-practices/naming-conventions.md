@@ -4,11 +4,11 @@ description: "Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: 364735dec9658b4d2a9d21330f38c57f6fa694bd
-ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
+ms.openlocfilehash: f814201901af69b816d7f1588e58057b252b22db
+ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/08/2018
+ms.lasthandoff: 02/09/2018
 ---
 # <a name="naming-conventions"></a>명명 규칙
 
@@ -96,10 +96,10 @@ Azure의 각 리소스 또는 서비스 유형은 명명 제한 및 범위 집�
 | 엔터티 | 범위 | 길이 | 대/소문자 구분 | 사용할 수 있는 문자 | 제안된 패턴 | 예 |
 | --- | --- | --- | --- | --- | --- | --- |
 |Storage 계정 이름(데이터) |전역 |3-24 |소문자 |영숫자 |`<globally unique name><number>`(저장소 계정 명명을 위한 고유 GUID를 계산하는 함수 사용) |`profxdata001` |
-|Storage 계정 이름(디스크) |전역 |3-24 |소문자 |영숫자 |`<vm name without dashes>st<number>` |`profxsql001st0` |
-| 컨테이너 이름 |Storage 계정 |3-63 |소문자 |영숫자 및 대시 |`<context>` |`logs` |
+|Storage 계정 이름(디스크) |전역 |3-24 |소문자 |영숫자 |`<vm name without hyphens>st<number>` |`profxsql001st0` |
+| 컨테이너 이름 |Storage 계정 |3-63 |소문자 |영숫자 및 하이픈 |`<context>` |`logs` |
 |Blob 이름 | 컨테이너 |1-1024 |대/소문자 구분 |모든 URL 문자 |`<variable based on blob usage>` |`<variable based on blob usage>` |
-|큐 이름 |Storage 계정 |3-63 |소문자 |영숫자 및 대시 |`<service short name>-<context>-<num>` |`awesomeservice-messages-001` |
+|큐 이름 |Storage 계정 |3-63 |소문자 |영숫자 및 하이픈 |`<service short name>-<context>-<num>` |`awesomeservice-messages-001` |
 |테이블 이름 | Storage 계정 |3-63 |대/소문자 구분하지 않음 |영숫자 |`<service short name><context>` |`awesomeservicelogs` |
 |파일 이름 | Storage 계정 |3-63 |소문자 | 영숫자 |`<variable based on blob usage>` |`<variable based on blob usage>` |
 |Data Lake Store | 전역 |3-24 |소문자 | 영숫자 |`<name>-dls` |`telemetry-dls` |
@@ -108,16 +108,16 @@ Azure의 각 리소스 또는 서비스 유형은 명명 제한 및 범위 집�
 
 | 엔터티 | 범위 | 길이 | 대/소문자 구분 | 사용할 수 있는 문자 | 제안된 패턴 | 예 |
 | --- | --- | --- | --- | --- | --- | --- |
-|Virtual Network(VNet) |리소스 그룹 |2-64 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<service short name>-vnet` |`profx-vnet` |
-|서브넷 |부모 VNet |2-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<descriptive context>` |`web` |
-|네트워크 인터페이스 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<vmname>-nic<num>` |`profx-sql1-nic1` |
-|네트워크 보안 그룹 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<service short name>-<context>-nsg` |`profx-app-nsg` |
-|네트워크 보안 그룹 규칙 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<descriptive context>` |`sql-allow` |
-|공용 IP 주소 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<vm or service name>-pip` |`profx-sql1-pip` |
-|Load Balancer |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<service or role>-lb` |`profx-lb` |
-|부하 분산된 규칙 구성 |Load Balancer |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<descriptive context>` |`http` |
-|Azure Application Gateway |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 대시, 밑줄 및 마침표 |`<service or role>-agw` |`profx-agw` |
-|Traffic Manager 프로필 |리소스 그룹 |1-63 |대/소문자 구분하지 않음 |영숫자, 대시 및 마침표 |`<descriptive context>` |`app1` |
+|Virtual Network(VNet) |리소스 그룹 |2-64 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<service short name>-vnet` |`profx-vnet` |
+|서브넷 |부모 VNet |2-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<descriptive context>` |`web` |
+|네트워크 인터페이스 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<vmname>-nic<num>` |`profx-sql1-nic1` |
+|네트워크 보안 그룹 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<service short name>-<context>-nsg` |`profx-app-nsg` |
+|네트워크 보안 그룹 규칙 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<descriptive context>` |`sql-allow` |
+|공용 IP 주소 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<vm or service name>-pip` |`profx-sql1-pip` |
+|Load Balancer |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<service or role>-lb` |`profx-lb` |
+|부하 분산된 규칙 구성 |Load Balancer |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<descriptive context>` |`http` |
+|Azure Application Gateway |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<service or role>-agw` |`profx-agw` |
+|Traffic Manager 프로필 |리소스 그룹 |1-63 |대/소문자 구분하지 않음 |영숫자, 하이픈 및 마침표 |`<descriptive context>` |`app1` |
 
 ## <a name="organize-resources-with-tags"></a>태그로 리소스 정리
 

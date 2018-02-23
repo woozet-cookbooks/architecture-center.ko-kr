@@ -1,0 +1,93 @@
+- name: Azure 아키텍처 센터
+  href: /azure/architecture
+- name: 데이터 아키텍처 가이드
+  href: index.md
+  items:
+    - name: 일반적인 RDBMS
+      items:
+        - name: 개념
+          items:
+            - name: 관계형 데이터
+              href: concepts/relational-data.md
+            - name: 트랜잭션 데이터
+              href: concepts/transactional-data.md
+            - name: 의미 체계 모델링
+              href: concepts/semantic-modeling.md
+        - name: 시나리오
+          items:
+            - name: OLTP(온라인 트랜잭션 처리)
+              href: scenarios/online-transaction-processing.md
+            - name: OLAP(온라인 분석 처리)
+              href: scenarios/online-analytical-processing.md
+            - name: 데이터 웨어하우징
+              href: scenarios/data-warehousing.md
+            - name: 'ETL(추출, 변환 및 로드)'
+              href: scenarios/etl.md
+        - name: 기술 선택
+          items:
+            - name: 데이터 웨어하우스
+              href: technology-choices/data-warehouses.md
+            - name: OLAP(온라인 분석 처리)
+              href: technology-choices/olap-data-stores.md
+            - name: OLTP(온라인 트랜잭션 처리)
+              href: technology-choices/oltp-data-stores.md
+    - name: 빅 데이터 및 NoSQL
+      items:
+        - name: 개념
+          items:
+            - name: 비관계형 데이터 저장소
+              href: concepts/non-relational-data.md
+            - name: CSV 및 JSON 파일 사용
+              href: concepts/csv-and-json.md
+            - name: 빅 데이터 아키텍처
+              href: concepts/big-data.md
+            - name: 고급 분석
+              href: concepts/advanced-analytics.md
+            - name: 규모에 맞는 기계 학습
+              href: concepts/machine-learning-at-scale.md
+        - name: 시나리오
+          items:
+            - name: 일괄 처리
+              href: scenarios/batch-processing.md
+            - name: 실시간 처리
+              href: scenarios/real-time-processing.md
+            - name: 자유 형식 텍스트 검색
+              href: scenarios/search.md
+            - name: 대화형 데이터 탐색
+              href: scenarios/interactive-data-exploration.md
+            - name: 자연어 처리
+              href: scenarios/natural-language-processing.md
+            - name: 시계열 솔루션
+              href: scenarios/time-series.md
+        - name: 기술 선택
+          items:
+            - name: 분석 데이터 저장소
+              href: technology-choices/analytical-data-stores.md
+            - name: 분석 및 보고
+              href: technology-choices/analysis-visualizations-reporting.md
+            - name: 일괄 처리
+              href: technology-choices/batch-processing.md
+            - name: Cognitive Services
+              href: technology-choices/cognitive-services.md
+            - name: 데이터 저장소
+              href: technology-choices/data-storage.md
+            - name: Machine Learning
+              href: technology-choices/data-science-and-machine-learning.md
+            - name: 자연어 처리
+              href: technology-choices/natural-language-processing.md
+            - name: 파이프라인 오케스트레이션
+              href: technology-choices/pipeline-orchestration-data-movement.md
+            - name: 실시간 메시지 수집
+              href: technology-choices/real-time-ingestion.md
+            - name: 검색 데이터 저장소
+              href: technology-choices/search-options.md
+            - name: 스트림 처리
+              href: technology-choices/stream-processing.md
+    - name: 복합적인 문제
+      items:
+        - name: 데이터 전송
+          href: scenarios/data-transfer.md
+        - name: 클라우드로 온-프레미스 데이터 솔루션 확장
+          href: scenarios/hybrid-on-premises-and-cloud.md
+        - name: 데이터 솔루션 보안
+          href: scenarios/securing-data-solutions.md
