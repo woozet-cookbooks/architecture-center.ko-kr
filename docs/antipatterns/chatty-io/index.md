@@ -2,11 +2,11 @@
 title: "번잡한 I/O 안티패턴"
 description: "다수의 I/O 요청으로 인해 성능과 응답성이 저하될 수 있습니다."
 author: dragon119
-ms.openlocfilehash: 50001316939b56c9b57a119f6ae20f0878f54c0f
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 4f0e0e455ceb58317d3029d8ab4631d476802499
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 02/23/2018
 ---
 # <a name="chatty-io-antipattern"></a>번잡한 I/O 안티패턴
 
@@ -215,7 +215,7 @@ await SaveCustomerListToFileAsync(customers);
 
 - 오래 걸리는 작업을 수행하는 동안 경합 가능성을 줄이기 위해, 데이터를 쓸 때 리소스를 필요 이상으로 오래 잠그지 않도록 하십시오. 쓰기 작업이 다수의 데이터 저장소, 파일 또는 서비스에 걸쳐있는 경우 최종적으로 일관된 방식을 채택합니다. [데이터 일관성 지침][data-consistency-guidance]을 참조하세요.
 
-- 데이터를 쓰기 전에 메모리에 버퍼링하면 프로세스가 충돌하는 경우 데이터가 손상될 수 있습니다. 데이터 속도가 일반적으로 급격히 증가하거나 상대적으로 약한 경우 [Event Hubs](http://azure.microsoft.com/en-us/services/event-hubs/)와 같은 내구성이 있는 외부 큐에 데이터를 버퍼링하는 것이 더 안전할 수 있습니다.
+- 데이터를 쓰기 전에 메모리에 버퍼링하면 프로세스가 충돌하는 경우 데이터가 손상될 수 있습니다. 데이터 속도가 일반적으로 급격히 증가하거나 상대적으로 약한 경우 [Event Hubs](http://azure.microsoft.com/services/event-hubs/)와 같은 내구성이 있는 외부 큐에 데이터를 버퍼링하는 것이 더 안전할 수 있습니다.
 
 - 서비스 또는 데이터베이스에서 검색하는 데이터를 캐시하는 것이 좋습니다. 이렇게 하면 동일한 데이터에 반복되는 요청을 피하여 I/O 볼륨을 줄이는 데 도움이 됩니다. 자세한 내용은 [캐싱 모범 사례][caching-guidance]를 참조하세요.
 
