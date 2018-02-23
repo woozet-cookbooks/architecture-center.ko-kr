@@ -2,13 +2,16 @@
 title: "Azure 참조 아키텍처"
 description: "Azure의 일반 워크로드에 대한 참조 아키텍처, 청사진 및 규범적 구현 지침입니다."
 layout: LandingPage
-NOTE: edit the template in ./build/reference-architectures !!!
-ms.openlocfilehash: e513e2545fb95b486b11a067479e879f4abd4a8f
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: cd7f4b066ba7a4af16767db013c607bc0697dd98
+ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 02/23/2018
 ---
+<!-- This file is generated! -->
+<!-- See the templates in ./build/reference-architectures  -->
+<!-- See data in index.json -->
+
 # <a name="azure-reference-architectures"></a>Azure 참조 아키텍처
 
 Azure 참조 아키텍처는 시나리오별로 정리되며, 관련 아키텍처가 함께 그룹화됩니다. 각 아키텍처는 확장성, 가용성, 관리성 및 보안에 대한 고려 사항과 함께 권장 방법을 포함하고 있습니다. 또한 대부분은 배포 가능한 솔루션을 포함하고 있습니다.
