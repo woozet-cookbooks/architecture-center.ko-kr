@@ -1,6 +1,6 @@
 - name: Azure 아키텍처 센터
   href: /azure/architecture
-- name: Azure 클라우드 도입 가이드
+- name: 클라우드 도입 가이드
   href: index.md
   items:
     - name: 기본 Azure 도입
