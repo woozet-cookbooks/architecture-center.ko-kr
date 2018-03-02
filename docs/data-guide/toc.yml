@@ -39,11 +39,13 @@
               href: concepts/non-relational-data.md
             - name: CSV 및 JSON 파일 사용
               href: concepts/csv-and-json.md
+            - name: 데이터 레이크
+              href: concepts/data-lake.md
             - name: 빅 데이터 아키텍처
               href: concepts/big-data.md
             - name: 고급 분석
               href: concepts/advanced-analytics.md
-            - name: 규모에 맞는 기계 학습
+            - name: 대규모 Machine Learning
               href: concepts/machine-learning-at-scale.md
         - name: 시나리오
           items:
