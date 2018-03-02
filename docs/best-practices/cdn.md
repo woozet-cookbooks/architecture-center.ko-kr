@@ -4,11 +4,11 @@ description: "Azure에서 호스팅되는 고대역폭 콘텐츠를 제공하는
 author: dragon119
 ms.date: 02/02/2018
 pnp.series.title: Best Practices
-ms.openlocfilehash: 9ee9099c85818af9486408f6ece41d3f6fcd9b44
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: 42b73db08ecef858f5279ea292cf8c0df77b847c
+ms.sourcegitcommit: 29fbcb1eec44802d2c01b6d3bcf7d7bd0bae65fc
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 02/27/2018
 ---
 # <a name="best-practices-for-using-content-delivery-networks-cdns"></a>CDN(콘텐츠 배달 네트워크) 사용에 대한 모범 사례
 
@@ -91,7 +91,7 @@ CDN을 사용하여 글꼴 파일 같은 정적 자산을 배달하는 경우 *X
 
 * 응답에 CORS 헤더를 추가하도록 CDN을 구성합니다. 자세한 내용은 [CORS에서 Azure CDN 사용](/azure/cdn/cdn-cors)을 참조하세요. 
 * 원본이 Azure Blob 저장소인 경우 저장소 끝점에 CORS 규칙을 추가합니다. 자세한 내용은 [Azure Storage 서비스에 대한 크로스-원본 자원 공유(CORS) 지원](http://msdn.microsoft.com/library/azure/dn535601.aspx)을 참조하세요.
-* CORS 헤더를 설정하도록 응용 프로그램을 구성합니다. 예를 들어, ASP.NET Core 설명서에서 [CORS(원본 간 요청) 사용](/aspnet/core/security/cors)을 참조하세요.
+* CORS 헤더를 설정하도록 응용 프로그램을 구성합니다. 예를 들어 ASP.NET Core 설명서에서 [CORS(원본 간 요청) 사용](/aspnet/core/security/cors)을 참조하세요.
 
 ### <a name="cdn-fallback"></a>CDN 대체
 응용 프로그램이 CDN의 오류 또는 일시적인 중단에 대처하는 방법을 고려합니다. 클라이언트 응용 프로그램은 이전 요청 중에 로컬로 캐시(클라이언트에)된 리소스의 복사본을 사용하거나, CDN을 사용할 수 없는 경우 오류를 감지하고 대신 원본(리소스가 있는 응용 프로그램 폴더 또는 Azure Blob 컨테이너)의 리소스를 요청하는 코드를 포함할 수 있습니다.

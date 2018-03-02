@@ -3,11 +3,11 @@ title: "Azure에서 Jenkins 서버 실행"
 description: "이 참조 아키텍처는 SSO(Single Sign-On)로 보호된 Azure에서 확장성 있는 엔터프라이즈급 Jenkins 서버를 배포하고 작동하는 방법을 보여 줍니다."
 author: njray
 ms.date: 01/21/18
-ms.openlocfilehash: 9cab4990b259695f310da339bfef3060b0905640
-ms.sourcegitcommit: 3426a9c5ed937f097725c487cf3d073ae5e2a347
+ms.openlocfilehash: 724185e43ed743013f52ded04b779552dd8e48c1
+ms.sourcegitcommit: 29fbcb1eec44802d2c01b6d3bcf7d7bd0bae65fc
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/01/2018
+ms.lasthandoff: 02/27/2018
 ---
 # <a name="run-a-jenkins-server-on-azure"></a>Azure에서 Jenkins 서버 실행
 
@@ -44,7 +44,7 @@ ms.lasthandoff: 02/01/2018
 
 -   **Azure Blob Storage**. [Windows Azure Storage 플러그 인][configure-storage]은 Azure Blob Storage를 사용하여 다른 Jenkins 빌드로 생성 및 공유되는 빌드 아티팩트를 저장합니다.
 
--   **Azure AD(Azure Active Directory)**. [Azure AD][azure-ad]는 SSO를 설정할 수 있도록 사용자 인증을 지원합니다. Azure AD [서비스 주체][service-principal]는 RBAC([역할 기반 액세스 제어][rbac])를 통해 워크플로에서 각 역할 권한 부여에 대한 정책 및 사용 권한을 정의합니다. 각 서비스 주체는 Jenkins 작업과 연결됩니다.
+-   **Azure AD(Azure Active Directory)**. [Azure AD][azure-ad]는 SSO를 설정할 수 있도록 사용자 인증을 지원합니다. Azure AD [서비스 주체][service-principal]는 RBAC([역할 기반 액세스 제어][rbac])를 사용하여 워크플로에서 각 역할 권한 부여에 대한 정책 및 사용 권한을 정의합니다. 각 서비스 주체는 Jenkins 작업과 연결됩니다.
 
 -   **Azure Key Vault.** 비밀이 요구될 때 Azure 자원을 프로비전하는 데 사용되는 비밀 및 암호화 키를 관리하기 위해 이 아키텍처는 [Key Vault][key-vault]를 사용합니다. 파이프라인에 있는 응용 프로그램과 관련된 비밀을 저장하는 추가 도움말은 Jenkins의 [Azure 자격 증명][configure-credential] 플러그 인을 참조하세요.
 
@@ -139,7 +139,7 @@ VM 크기를 변경하여 Jenkins 서버 VM의 규모를 확장 또는 축소할
 
 -   Key Vault를 사용하여 Azure 자산, 파이프라인의 에이전트 및 타사 구성 요소의 비밀을 처리하도록 [Azure 자격 증명][configure-credential] 플러그 인을 설치합니다.
 
--   사용자, 서비스 및 파이프라인 에이전트가 작업을 수행하는 데 필요한 리소스를 정의하지만 더 이상 필요하지 않은 리소스를 정의하는 보안 프로필을 만듭니다. 이 단계는 보안 설정을 고려할 때 중요합니다.
+-   RBAC를 사용하여 서비스 사용자의 액세스 권한을 작업 실행에 필요한 최소 수준으로 제한합니다. 이렇게 하면 rogue 작업의 손상 범위를 제한할 수 있습니다.
 
 Jenkins 작업에서는 Azure Container Service와 같은 권한 부여를 요구하는 Azure 서비스에 액세스하는 데 보통 비밀을 요구합니다. [Azure 자격 증명 플러그 인][configure-credential]과 함께 [Key Vault][key-vault]를 사용하여 이러한 비밀은 안전하게 관리합니다. Key Vault를 사용하여 서비스 주체 자격 증명, 암호, 토큰 및 기타 비밀을 저장합니다.
 
