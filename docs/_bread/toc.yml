@@ -18,9 +18,6 @@
         - name: 디자인 검토 검사 목록
           tocHref: /azure/architecture/checklist
           topicHref: /azure/architecture/checklist
-        - name: Elasticsearch
-          tocHref: /azure/architecture/elasticsearch
-          topicHref: /azure/architecture/elasticsearch
         - name: 다중 테넌트 응용 프로그램의 ID 관리
           tocHref: /azure/architecture/multitenant-identity
         - name: 참조 아키텍처
