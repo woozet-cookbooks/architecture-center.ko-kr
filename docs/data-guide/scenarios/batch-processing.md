@@ -3,11 +3,11 @@ title: "일괄 처리"
 description: 
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: 55113b61c2684a7826fa6c0034503f842cdb840f
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: d3d3b92034c251586ecc9caff2785ecd0808b2a7
+ms.sourcegitcommit: 943e671a8d522cef5ddc8c6e04848134b03c2de4
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 03/05/2018
 ---
 # <a name="batch-processing"></a>일괄 처리
 
@@ -19,7 +19,7 @@ ms.lasthandoff: 02/14/2018
 
 ## <a name="when-to-use-this-solution"></a>이 솔루션을 사용해야 하는 경우
 
-일괄 처리는 간단한 데이터 변환에서 보다 완전한 ETL(추출-변환-로드) 파이프라인에 이르는 다양한 시나리오에서 사용됩니다. 빅 데이터 컨텍스트에서 일괄 처리는 계산에 상당한 시간이 소요되는 매우 큰 데이터 집합에 작동될 수 있습니다. (예를 들어, [람다 아키텍처](../concepts/big-data.md##lambda-architecture)를 참조하세요.) 일괄 처리는 일반적으로 추가적인 대화형 탐색으로 이어지며, 기계 학습을 위한 모델링 지원 데이터를 제공하거나 분석 및 시각화에 최적화된 데이터 저장소로 데이터를 씁니다.
+일괄 처리는 간단한 데이터 변환에서 보다 완전한 ETL(추출-변환-로드) 파이프라인에 이르는 다양한 시나리오에서 사용됩니다. 빅 데이터 컨텍스트에서 일괄 처리는 계산에 상당한 시간이 소요되는 매우 큰 데이터 집합에 작동될 수 있습니다. (예를 들어, [람다 아키텍처](../concepts/big-data.md#lambda-architecture)를 참조하세요.) 일괄 처리는 일반적으로 추가적인 대화형 탐색으로 이어지며, 기계 학습을 위한 모델링 지원 데이터를 제공하거나 분석 및 시각화에 최적화된 데이터 저장소로 데이터를 씁니다.
 
 일괄 처리의 한 가지 예는 반구조화된 대규모 플랫 CSV 또는 JSON 파일 집합을 추가 쿼리 준비가 완료된 스키마화 및 구조화 형식으로 변환하는 것입니다. 일반적으로 데이터가 수집에 사용되는 원시 형식(예: CSV)에서 쿼리 성능을 높일 수 있는 이진 형식으로 변환됩니다. 이 방법에서는 데이터를 열 형식으로 저장하고, 종종 데이터에 대한 인덱스 및 인라인 통계를 제공하기 때문에 성능이 향상됩니다.
 
