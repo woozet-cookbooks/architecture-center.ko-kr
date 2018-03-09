@@ -2,349 +2,326 @@
 title: "Azure에서 허브-스포크 네트워크 토폴로지 구현"
 description: "Azure에서 허브-스포크 네트워크 토폴로지를 구현하는 방법입니다."
 author: telmosampaio
-ms.date: 02/14/2018
+ms.date: 02/23/2018
 pnp.series.title: Implement a hub-spoke network topology in Azure
 pnp.series.prev: expressroute
-ms.openlocfilehash: c03ecd4ba5ddbe50cfb17e56d75c18102b751cfb
-ms.sourcegitcommit: 475064f0a3c2fac23e1286ba159aaded287eec86
+ms.openlocfilehash: 1a2855f0d4a903fc4d7a022aef20ea73fe763e2c
+ms.sourcegitcommit: 2123c25b1a0b5501ff1887f98030787191cf6994
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/19/2018
+ms.lasthandoff: 03/08/2018
 ---
-# <a name="implement-a-hub-spoke-network-topology-in-azure"></a><span data-ttu-id="efe44-103">Azure에서 허브-스포크 네트워크 토폴로지 구현</span><span class="sxs-lookup"><span data-stu-id="efe44-103">Implement a hub-spoke network topology in Azure</span></span>
+# <a name="implement-a-hub-spoke-network-topology-in-azure"></a><span data-ttu-id="c196f-103">Azure에서 허브-스포크 네트워크 토폴로지 구현</span><span class="sxs-lookup"><span data-stu-id="c196f-103">Implement a hub-spoke network topology in Azure</span></span>
 
-<span data-ttu-id="efe44-104">이 참조 아키텍처는 Azure에서 허브-스포크 토폴로지를 구현하는 방법을 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-104">This reference architecture shows how to implement a hub-spoke topology in Azure.</span></span> <span data-ttu-id="efe44-105">*허브*는 Azure의 가상 네트워크(VNet)로서 사용자의 온-프레미스 네트워크에 대한 연결의 중심으로 기능합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-105">The *hub* is a virtual network (VNet) in Azure that acts as a central point of connectivity to your on-premises network.</span></span> <span data-ttu-id="efe44-106">*스포크*는 허브와 피어링하는 VNet으로서 워크로드를 격리하는 데 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-106">The *spokes* are VNets that peer with the hub, and can be used to isolate workloads.</span></span> <span data-ttu-id="efe44-107">트래픽은 ExpressRoute 또는 VPN 게이트웨이 연결을 통해 온-프레미스 데이터 센터와 허브 사이를 흐릅니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-107">Traffic flows between the on-premises datacenter and the hub through an ExpressRoute or VPN gateway connection.</span></span>  <span data-ttu-id="efe44-108">[**이 솔루션을 배포합니다**](#deploy-the-solution).</span><span class="sxs-lookup"><span data-stu-id="efe44-108">[**Deploy this solution**](#deploy-the-solution).</span></span>
+<span data-ttu-id="c196f-104">이 참조 아키텍처는 Azure에서 허브-스포크 토폴로지를 구현하는 방법을 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-104">This reference architecture shows how to implement a hub-spoke topology in Azure.</span></span> <span data-ttu-id="c196f-105">*허브*는 Azure의 가상 네트워크(VNet)로서 사용자의 온-프레미스 네트워크에 대한 연결의 중심으로 기능합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-105">The *hub* is a virtual network (VNet) in Azure that acts as a central point of connectivity to your on-premises network.</span></span> <span data-ttu-id="c196f-106">*스포크*는 허브와 피어링하는 VNet으로서 워크로드를 격리하는 데 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-106">The *spokes* are VNets that peer with the hub, and can be used to isolate workloads.</span></span> <span data-ttu-id="c196f-107">트래픽은 ExpressRoute 또는 VPN 게이트웨이 연결을 통해 온-프레미스 데이터 센터와 허브 사이를 흐릅니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-107">Traffic flows between the on-premises datacenter and the hub through an ExpressRoute or VPN gateway connection.</span></span>  <span data-ttu-id="c196f-108">[**이 솔루션을 배포합니다**](#deploy-the-solution).</span><span class="sxs-lookup"><span data-stu-id="c196f-108">[**Deploy this solution**](#deploy-the-solution).</span></span>
 
-<span data-ttu-id="efe44-109">![[0]][0]</span><span class="sxs-lookup"><span data-stu-id="efe44-109">![[0]][0]</span></span>
+<span data-ttu-id="c196f-109">![[0]][0]</span><span class="sxs-lookup"><span data-stu-id="c196f-109">![[0]][0]</span></span>
 
-<span data-ttu-id="efe44-110">*이 아키텍처의 [Visio 파일][visio-download] 다운로드*</span><span class="sxs-lookup"><span data-stu-id="efe44-110">*Download a [Visio file][visio-download] of this architecture*</span></span>
+<span data-ttu-id="c196f-110">*이 아키텍처의 [Visio 파일][visio-download] 다운로드*</span><span class="sxs-lookup"><span data-stu-id="c196f-110">*Download a [Visio file][visio-download] of this architecture*</span></span>
 
 
-<span data-ttu-id="efe44-111">이 토폴로지의 이점은 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-111">The benefits of this toplogy include:</span></span>
+<span data-ttu-id="c196f-111">이 토폴로지의 이점은 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-111">The benefits of this toplogy include:</span></span>
 
-* <span data-ttu-id="efe44-112">**비용 절감** 네트워크 가상 어플라이언스(NVA), DNS 서버와 같이 여러 워크로드에서 공유할 수 있는 서비스를 하나의 위치로 일원화하여 비용을 절감합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-112">**Cost savings** by centralizing services that can be shared by multiple workloads, such as network virtual appliances (NVAs) and DNS servers, in a single location.</span></span>
-* <span data-ttu-id="efe44-113">**구독 제한 극복**: 여러 구독의 VNet을 중앙 허브로 피어링하여 구독의 제한을 극복합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-113">**Overcome subscriptions limits** by peering VNets from different subscriptions to the central hub.</span></span>
-* <span data-ttu-id="efe44-114">**문제 구분**: 중앙 IT(SecOps, InfraOps)와 워크로드(DevOps)를 문제를 분리합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-114">**Separation of concerns** between central IT (SecOps, InfraOps) and workloads (DevOps).</span></span>
+* <span data-ttu-id="c196f-112">**비용 절감** 네트워크 가상 어플라이언스(NVA), DNS 서버와 같이 여러 워크로드에서 공유할 수 있는 서비스를 하나의 위치로 일원화하여 비용을 절감합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-112">**Cost savings** by centralizing services that can be shared by multiple workloads, such as network virtual appliances (NVAs) and DNS servers, in a single location.</span></span>
+* <span data-ttu-id="c196f-113">**구독 제한 극복**: 여러 구독의 VNet을 중앙 허브로 피어링하여 구독의 제한을 극복합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-113">**Overcome subscriptions limits** by peering VNets from different subscriptions to the central hub.</span></span>
+* <span data-ttu-id="c196f-114">**문제 구분**: 중앙 IT(SecOps, InfraOps)와 워크로드(DevOps)를 문제를 분리합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-114">**Separation of concerns** between central IT (SecOps, InfraOps) and workloads (DevOps).</span></span>
 
-<span data-ttu-id="efe44-115">이 아키텍처의 일반적인 용도는 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-115">Typical uses for this architecture include:</span></span>
+<span data-ttu-id="c196f-115">이 아키텍처의 일반적인 용도는 다음과 같습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-115">Typical uses for this architecture include:</span></span>
 
-* <span data-ttu-id="efe44-116">개발, 테스트, 생산과 같이 서로 다른 환경에 배포되고 DNS, IDS, NTP 또는 AD DS와 같은 공유 서비스가 필요한 워크로드.</span><span class="sxs-lookup"><span data-stu-id="efe44-116">Workloads deployed in different environments, such as development, testing, and production, that require shared services such as DNS, IDS, NTP, or AD DS.</span></span> <span data-ttu-id="efe44-117">공유 서비스는 허브 VNet에 배치되고 각 환경은 스포크에 배포되어 격리 상태 유지.</span><span class="sxs-lookup"><span data-stu-id="efe44-117">Shared services are placed in the hub VNet, while each environment is deployed to a spoke to maintain isolation.</span></span>
-* <span data-ttu-id="efe44-118">서로 연결할 필요가 없으나 공유 서비스에 대한 액세스가 필요한 워크로드.</span><span class="sxs-lookup"><span data-stu-id="efe44-118">Workloads that do not require connectivity to each other, but require access to shared services.</span></span>
-* <span data-ttu-id="efe44-119">DMZ로 기능한 허브의 방화벽, 각 스포크에서 워크로드에 대한 별도의 관리 등 보안 측면에 대한 중앙 제어가 필요한 엔터프라이즈.</span><span class="sxs-lookup"><span data-stu-id="efe44-119">Enterprises that require central control over security aspects, such as a firewall in the hub as a DMZ, and segregated management for the workloads in each spoke.</span></span>
+* <span data-ttu-id="c196f-116">개발, 테스트, 생산과 같이 서로 다른 환경에 배포되고 DNS, IDS, NTP 또는 AD DS와 같은 공유 서비스가 필요한 워크로드.</span><span class="sxs-lookup"><span data-stu-id="c196f-116">Workloads deployed in different environments, such as development, testing, and production, that require shared services such as DNS, IDS, NTP, or AD DS.</span></span> <span data-ttu-id="c196f-117">공유 서비스는 허브 VNet에 배치되고 각 환경은 스포크에 배포되어 격리 상태 유지.</span><span class="sxs-lookup"><span data-stu-id="c196f-117">Shared services are placed in the hub VNet, while each environment is deployed to a spoke to maintain isolation.</span></span>
+* <span data-ttu-id="c196f-118">서로 연결할 필요가 없으나 공유 서비스에 대한 액세스가 필요한 워크로드.</span><span class="sxs-lookup"><span data-stu-id="c196f-118">Workloads that do not require connectivity to each other, but require access to shared services.</span></span>
+* <span data-ttu-id="c196f-119">DMZ로 기능한 허브의 방화벽, 각 스포크에서 워크로드에 대한 별도의 관리 등 보안 측면에 대한 중앙 제어가 필요한 엔터프라이즈.</span><span class="sxs-lookup"><span data-stu-id="c196f-119">Enterprises that require central control over security aspects, such as a firewall in the hub as a DMZ, and segregated management for the workloads in each spoke.</span></span>
 
-## <a name="architecture"></a><span data-ttu-id="efe44-120">건축</span><span class="sxs-lookup"><span data-stu-id="efe44-120">Architecture</span></span>
+## <a name="architecture"></a><span data-ttu-id="c196f-120">건축</span><span class="sxs-lookup"><span data-stu-id="c196f-120">Architecture</span></span>
 
-<span data-ttu-id="efe44-121">이 아키텍처는 다음 구성 요소로 구성됩니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-121">The architecture consists of the following components.</span></span>
+<span data-ttu-id="c196f-121">이 아키텍처는 다음 구성 요소로 구성됩니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-121">The architecture consists of the following components.</span></span>
 
-* <span data-ttu-id="efe44-122">**온-프레미스 네트워크**.</span><span class="sxs-lookup"><span data-stu-id="efe44-122">**On-premises network**.</span></span> <span data-ttu-id="efe44-123">조직 내에서 실행되는 개인 로컬 영역 네트워크입니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-123">A private local-area network running within an organization.</span></span>
+* <span data-ttu-id="c196f-122">**온-프레미스 네트워크**.</span><span class="sxs-lookup"><span data-stu-id="c196f-122">**On-premises network**.</span></span> <span data-ttu-id="c196f-123">조직 내에서 실행되는 개인 로컬 영역 네트워크입니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-123">A private local-area network running within an organization.</span></span>
 
-* <span data-ttu-id="efe44-124">**VPN 장치**.</span><span class="sxs-lookup"><span data-stu-id="efe44-124">**VPN device**.</span></span> <span data-ttu-id="efe44-125">온-프레미스 네트워크에 외부 연결을 제공하는 장치 또는 서비스입니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-125">A device or service that provides external connectivity to the on-premises network.</span></span> <span data-ttu-id="efe44-126">VPN 장치는 하드웨어 장치일 수도 있고 Windows Server 2012의 RRAS(라우팅 및 원격 액세스 서비스)와 같은 소프트웨어 솔루션일 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-126">The VPN device may be a hardware device, or a software solution such as the Routing and Remote Access Service (RRAS) in Windows Server 2012.</span></span> <span data-ttu-id="efe44-127">지원되는 VPN 어플라이언스 목록 및 선택한 VPN 어플라이언스를 Azure에 연결하도록 구성하는 방법에 대한 자세한 내용은 [사이트 간 VPN 게이트웨이 연결을 위한 VPN 장치 정보][vpn-appliance]를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="efe44-127">For a list of supported VPN appliances and information on configuring selected VPN appliances for connecting to Azure, see [About VPN devices for Site-to-Site VPN Gateway connections][vpn-appliance].</span></span>
+* <span data-ttu-id="c196f-124">**VPN 장치**.</span><span class="sxs-lookup"><span data-stu-id="c196f-124">**VPN device**.</span></span> <span data-ttu-id="c196f-125">온-프레미스 네트워크에 외부 연결을 제공하는 장치 또는 서비스입니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-125">A device or service that provides external connectivity to the on-premises network.</span></span> <span data-ttu-id="c196f-126">VPN 장치는 하드웨어 장치일 수도 있고 Windows Server 2012의 RRAS(라우팅 및 원격 액세스 서비스)와 같은 소프트웨어 솔루션일 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-126">The VPN device may be a hardware device, or a software solution such as the Routing and Remote Access Service (RRAS) in Windows Server 2012.</span></span> <span data-ttu-id="c196f-127">지원되는 VPN 어플라이언스 목록 및 선택한 VPN 어플라이언스를 Azure에 연결하도록 구성하는 방법에 대한 자세한 내용은 [사이트 간 VPN 게이트웨이 연결을 위한 VPN 장치 정보][vpn-appliance]를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="c196f-127">For a list of supported VPN appliances and information on configuring selected VPN appliances for connecting to Azure, see [About VPN devices for Site-to-Site VPN Gateway connections][vpn-appliance].</span></span>
 
-* <span data-ttu-id="efe44-128">**VPN 가상 네트워크 게이트웨이 또는 ExpressRoute 게이트웨이**.</span><span class="sxs-lookup"><span data-stu-id="efe44-128">**VPN virtual network gateway or ExpressRoute gateway**.</span></span> <span data-ttu-id="efe44-129">가상 네트워크 게이트웨이를 사용하면 VNet을 온-프레미스 네트워크에 연결하는 데 사용되는 VPN 장치 또는 ExpressRoute 회로에 연결할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-129">The virtual network gateway enables the VNet to connect to the VPN device, or ExpressRoute circuit, used for connectivity with your on-premises network.</span></span> <span data-ttu-id="efe44-130">자세한 내용은 [온-프레미스 네트워크를 Microsoft Azure virtual network에 연결][connect-to-an-Azure-vnet]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="efe44-130">For more information, see [Connect an on-premises network to a Microsoft Azure virtual network][connect-to-an-Azure-vnet].</span></span>
-
-> [!NOTE]
-> <span data-ttu-id="efe44-131">이 참조 아키텍처의 배포 스크립트는 연결을 위해 VPN 게이트웨이를 사용하고, 사용자의 온-프레미스 네트워크를 시뮬레이션하기 위해 Azure의 VNet을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-131">The deployment scripts for this reference architecture use a VPN gateway for connectivity, and a VNet in Azure to simulate your on-premises network.</span></span>
-
-* <span data-ttu-id="efe44-132">**허브 VNet**.</span><span class="sxs-lookup"><span data-stu-id="efe44-132">**Hub VNet**.</span></span> <span data-ttu-id="efe44-133">허브-스포크 토폴로지에서 허브로 사용되는 Azure VNet입니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-133">Azure VNet used as the hub in the hub-spoke topology.</span></span> <span data-ttu-id="efe44-134">허브는 사용자의 온-프레미스 네트워크에 대한 연결의 중앙 위치이자 스포크 VNet에 호스팅된 다양한 워크로드에 의해 사용되는 서비스가 호스팅되는 장소입니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-134">The hub is the central point of connectivity to your on-premises network, and a place to host services that can be consumed by the different workloads hosted in the spoke VNets.</span></span>
-
-* <span data-ttu-id="efe44-135">**게이트웨이 서브넷**.</span><span class="sxs-lookup"><span data-stu-id="efe44-135">**Gateway subnet**.</span></span> <span data-ttu-id="efe44-136">가상 네트워크 게이트웨이는 동일한 서브넷에 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-136">The virtual network gateways are held in the same subnet.</span></span>
-
-* <span data-ttu-id="efe44-137">**공유 서비스 서브넷**.</span><span class="sxs-lookup"><span data-stu-id="efe44-137">**Shared services subnet**.</span></span> <span data-ttu-id="efe44-138">DNS, AD DS를 비롯한 모든 스포크에서 공유될 수 있는 서비스를 호스팅하는 데 사용되는 허브 VNet의 서브넷입니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-138">A subnet in the hub VNet used to host services that can be shared among all spokes, such as DNS or AD DS.</span></span>
-
-* <span data-ttu-id="efe44-139">**스포크 VNet**.</span><span class="sxs-lookup"><span data-stu-id="efe44-139">**Spoke VNets**.</span></span> <span data-ttu-id="efe44-140">허브-스포크 토폴로지에서 스포크로 사용되는 하나 이상의 Azure VNet입니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-140">One or more Azure VNets that are used as spokes in the hub-spoke topology.</span></span> <span data-ttu-id="efe44-141">스포크는 다른 스포크와 별도로 관리되는 자체 VNet에서 워크로드를 격리하는 데 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-141">Spokes can be used to isolate workloads in their own VNets, managed separately from other spokes.</span></span> <span data-ttu-id="efe44-142">각 워크로드에는 Azure Load Balancer를 통해 여러 서브넷이 연결된 여러 계층이 포함될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-142">Each workload might include multiple tiers, with multiple subnets connected through Azure load balancers.</span></span> <span data-ttu-id="efe44-143">응용 프로그램 인프라에 대한 자세한 내용은 [Windows VM 워크로드 실행][windows-vm-ra] 및 [Linux VM 워크로드 실행][linux-vm-ra]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="efe44-143">For more information about the application infrastructure, see [Running Windows VM workloads][windows-vm-ra] and [Running Linux VM workloads][linux-vm-ra].</span></span>
-
-* <span data-ttu-id="efe44-144">**VNet 피어링**.</span><span class="sxs-lookup"><span data-stu-id="efe44-144">**VNet peering**.</span></span> <span data-ttu-id="efe44-145">동일한 Azure 지역에 있는 2개의 VNet을 [피어링 연결][vnet-peering]을 사용하여 연결할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-145">Two VNets in the same Azure region can be connected using a [peering connection][vnet-peering].</span></span> <span data-ttu-id="efe44-146">피어링 연결은 VNet 사이에 적용되는 비전이적이고 대기 시간이 낮은 연결입니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-146">Peering connections are non-transitive, low latency connections between VNets.</span></span> <span data-ttu-id="efe44-147">피어링이 적용되면 VNet은 라우터가 없어도 Azure 백본을 사용하여 트래픽을 교환합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-147">Once peered, the VNets exchange traffic by using the Azure backbone, without the need for a router.</span></span> <span data-ttu-id="efe44-148">허브-스포크 네트워크 토폴로지에서는 VNet 피어링을 사용하여 허브를 각 스포크에 연결합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-148">In a hub-spoke network topology, you use VNet peering to connect the hub to each spoke.</span></span>
+* <span data-ttu-id="c196f-128">**VPN 가상 네트워크 게이트웨이 또는 ExpressRoute 게이트웨이**.</span><span class="sxs-lookup"><span data-stu-id="c196f-128">**VPN virtual network gateway or ExpressRoute gateway**.</span></span> <span data-ttu-id="c196f-129">가상 네트워크 게이트웨이를 사용하면 VNet을 온-프레미스 네트워크에 연결하는 데 사용되는 VPN 장치 또는 ExpressRoute 회로에 연결할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-129">The virtual network gateway enables the VNet to connect to the VPN device, or ExpressRoute circuit, used for connectivity with your on-premises network.</span></span> <span data-ttu-id="c196f-130">자세한 내용은 [온-프레미스 네트워크를 Microsoft Azure virtual network에 연결][connect-to-an-Azure-vnet]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="c196f-130">For more information, see [Connect an on-premises network to a Microsoft Azure virtual network][connect-to-an-Azure-vnet].</span></span>
 
 > [!NOTE]
-> <span data-ttu-id="efe44-149">이 문서에서는 [리소스 관리자](/azure/azure-resource-manager/resource-group-overview) 배포만 다루고 있지만, 동일한 구독에서 클래식 VNet을 리소스 관리자에 연결할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-149">This article only covers [Resource Manager](/azure/azure-resource-manager/resource-group-overview) deployments, but you can also connect a classic VNet to a Resource Manager VNet in the same subscription.</span></span> <span data-ttu-id="efe44-150">이렇게 하면 스포크가 클래식 배포를 호스팅하면서도 허브에서 공유되는 서비스를 이용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-150">That way, your spokes can host classic deployments and still benefit from services shared in the hub.</span></span>
+> <span data-ttu-id="c196f-131">이 참조 아키텍처의 배포 스크립트는 연결을 위해 VPN 게이트웨이를 사용하고, 사용자의 온-프레미스 네트워크를 시뮬레이션하기 위해 Azure의 VNet을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-131">The deployment scripts for this reference architecture use a VPN gateway for connectivity, and a VNet in Azure to simulate your on-premises network.</span></span>
 
+* <span data-ttu-id="c196f-132">**허브 VNet**.</span><span class="sxs-lookup"><span data-stu-id="c196f-132">**Hub VNet**.</span></span> <span data-ttu-id="c196f-133">허브-스포크 토폴로지에서 허브로 사용되는 Azure VNet입니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-133">Azure VNet used as the hub in the hub-spoke topology.</span></span> <span data-ttu-id="c196f-134">허브는 사용자의 온-프레미스 네트워크에 대한 연결의 중앙 위치이자 스포크 VNet에 호스팅된 다양한 워크로드에 의해 사용되는 서비스가 호스팅되는 장소입니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-134">The hub is the central point of connectivity to your on-premises network, and a place to host services that can be consumed by the different workloads hosted in the spoke VNets.</span></span>
 
-## <a name="recommendations"></a><span data-ttu-id="efe44-151">권장 사항</span><span class="sxs-lookup"><span data-stu-id="efe44-151">Recommendations</span></span>
+* <span data-ttu-id="c196f-135">**게이트웨이 서브넷**.</span><span class="sxs-lookup"><span data-stu-id="c196f-135">**Gateway subnet**.</span></span> <span data-ttu-id="c196f-136">가상 네트워크 게이트웨이는 동일한 서브넷에 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-136">The virtual network gateways are held in the same subnet.</span></span>
 
-<span data-ttu-id="efe44-152">대부분의 시나리오의 경우 다음 권장 사항을 적용합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-152">The following recommendations apply for most scenarios.</span></span> <span data-ttu-id="efe44-153">이러한 권장 사항을 재정의하라는 특정 요구 사항이 있는 경우가 아니면 따릅니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-153">Follow these recommendations unless you have a specific requirement that overrides them.</span></span>
+* <span data-ttu-id="c196f-137">**스포크 VNet**.</span><span class="sxs-lookup"><span data-stu-id="c196f-137">**Spoke VNets**.</span></span> <span data-ttu-id="c196f-138">허브-스포크 토폴로지에서 스포크로 사용되는 하나 이상의 Azure VNet입니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-138">One or more Azure VNets that are used as spokes in the hub-spoke topology.</span></span> <span data-ttu-id="c196f-139">스포크는 다른 스포크와 별도로 관리되는 자체 VNet에서 워크로드를 격리하는 데 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-139">Spokes can be used to isolate workloads in their own VNets, managed separately from other spokes.</span></span> <span data-ttu-id="c196f-140">각 워크로드에는 Azure Load Balancer를 통해 여러 서브넷이 연결된 여러 계층이 포함될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-140">Each workload might include multiple tiers, with multiple subnets connected through Azure load balancers.</span></span> <span data-ttu-id="c196f-141">응용 프로그램 인프라에 대한 자세한 내용은 [Windows VM 워크로드 실행][windows-vm-ra] 및 [Linux VM 워크로드 실행][linux-vm-ra]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="c196f-141">For more information about the application infrastructure, see [Running Windows VM workloads][windows-vm-ra] and [Running Linux VM workloads][linux-vm-ra].</span></span>
 
-### <a name="resource-groups"></a><span data-ttu-id="efe44-154">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="efe44-154">Resource groups</span></span>
+* <span data-ttu-id="c196f-142">**VNet 피어링**.</span><span class="sxs-lookup"><span data-stu-id="c196f-142">**VNet peering**.</span></span> <span data-ttu-id="c196f-143">동일한 Azure 지역에 있는 2개의 VNet을 [피어링 연결][vnet-peering]을 사용하여 연결할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-143">Two VNets in the same Azure region can be connected using a [peering connection][vnet-peering].</span></span> <span data-ttu-id="c196f-144">피어링 연결은 VNet 사이에 적용되는 비전이적이고 대기 시간이 낮은 연결입니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-144">Peering connections are non-transitive, low latency connections between VNets.</span></span> <span data-ttu-id="c196f-145">피어링이 적용되면 VNet은 라우터가 없어도 Azure 백본을 사용하여 트래픽을 교환합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-145">Once peered, the VNets exchange traffic by using the Azure backbone, without the need for a router.</span></span> <span data-ttu-id="c196f-146">허브-스포크 네트워크 토폴로지에서는 VNet 피어링을 사용하여 허브를 각 스포크에 연결합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-146">In a hub-spoke network topology, you use VNet peering to connect the hub to each spoke.</span></span>
 
-<span data-ttu-id="efe44-155">허브 VNet과 각 스포크 VNet은 동일한 Azure 지역의 동일한 Azure AD(Active Directory) 테넌트에 속하는 한 서로 다른 리소스 그룹이나 서로 다른 구독에 구현될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-155">The hub VNet, and each spoke VNet, can be implemented in different resource groups, and even different subscriptions, as long as they belong to the same Azure Active Directory (Azure AD) tenant in the same Azure region.</span></span> <span data-ttu-id="efe44-156">따라서 허브 VNet에서 관리되는 서비스를 공유하면서도 각 워크로드를 분산 관리할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-156">This allows for a decentralized management of each workload, while sharing services maintained in the hub VNet.</span></span>
+> [!NOTE]
+> <span data-ttu-id="c196f-147">이 문서에서는 [리소스 관리자](/azure/azure-resource-manager/resource-group-overview) 배포만 다루고 있지만, 동일한 구독에서 클래식 VNet을 리소스 관리자에 연결할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-147">This article only covers [Resource Manager](/azure/azure-resource-manager/resource-group-overview) deployments, but you can also connect a classic VNet to a Resource Manager VNet in the same subscription.</span></span> <span data-ttu-id="c196f-148">이렇게 하면 스포크가 클래식 배포를 호스팅하면서도 허브에서 공유되는 서비스를 이용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-148">That way, your spokes can host classic deployments and still benefit from services shared in the hub.</span></span>
 
-### <a name="vnet-and-gatewaysubnet"></a><span data-ttu-id="efe44-157">VNet과 GatewaySubnet</span><span class="sxs-lookup"><span data-stu-id="efe44-157">VNet and GatewaySubnet</span></span>
+## <a name="recommendations"></a><span data-ttu-id="c196f-149">권장 사항</span><span class="sxs-lookup"><span data-stu-id="c196f-149">Recommendations</span></span>
 
-<span data-ttu-id="efe44-158">이름이 *GatewaySubnet*인 서브넷을 만듭니다. 주소 범위는 /27로 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-158">Create a subnet named *GatewaySubnet*, with an address range of /27.</span></span> <span data-ttu-id="efe44-159">이 서브넷은 가상 네트워크 게이트웨이에서 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-159">This subnet is required by the virtual network gateway.</span></span> <span data-ttu-id="efe44-160">이 서브넷에 주소 32개를 할당하면 추후 게이트웨이 크기 제한에 도달하지 않을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-160">Allocating 32 addresses to this subnet will help to prevent reaching gateway size limitations in the future.</span></span>
+<span data-ttu-id="c196f-150">대부분의 시나리오의 경우 다음 권장 사항을 적용합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-150">The following recommendations apply for most scenarios.</span></span> <span data-ttu-id="c196f-151">이러한 권장 사항을 재정의하라는 특정 요구 사항이 있는 경우가 아니면 따릅니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-151">Follow these recommendations unless you have a specific requirement that overrides them.</span></span>
 
-<span data-ttu-id="efe44-161">게이트웨이 설정에 대한 자세한 내용은 연결 유형에 따라 다음과 같은 참조 아키텍처를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="efe44-161">For more information about setting up the gateway, see the following reference architectures, depending on your connection type:</span></span>
+### <a name="resource-groups"></a><span data-ttu-id="c196f-152">리소스 그룹</span><span class="sxs-lookup"><span data-stu-id="c196f-152">Resource groups</span></span>
 
-- <span data-ttu-id="efe44-162">[ExpressRoute를 사용하는 하이브리드 네트워크][guidance-expressroute]</span><span class="sxs-lookup"><span data-stu-id="efe44-162">[Hybrid network using ExpressRoute][guidance-expressroute]</span></span>
-- <span data-ttu-id="efe44-163">[VPN 게이트웨이를 사용하는 하이브리드 네트워크][guidance-vpn]</span><span class="sxs-lookup"><span data-stu-id="efe44-163">[Hybrid network using a VPN gateway][guidance-vpn]</span></span>
+<span data-ttu-id="c196f-153">허브 VNet과 각 스포크 VNet은 동일한 Azure 지역의 동일한 Azure AD(Active Directory) 테넌트에 속하는 한 서로 다른 리소스 그룹이나 서로 다른 구독에 구현될 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-153">The hub VNet, and each spoke VNet, can be implemented in different resource groups, and even different subscriptions, as long as they belong to the same Azure Active Directory (Azure AD) tenant in the same Azure region.</span></span> <span data-ttu-id="c196f-154">따라서 허브 VNet에서 관리되는 서비스를 공유하면서도 각 워크로드를 분산 관리할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-154">This allows for a decentralized management of each workload, while sharing services maintained in the hub VNet.</span></span>
 
-<span data-ttu-id="efe44-164">고가용성이 필요한 경우 장애 조치(failover)를 위해 ExpressRoute와 VPN을 모두 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-164">For higher availability, you can use ExpressRoute plus a VPN for failover.</span></span> <span data-ttu-id="efe44-165">[VPN 장애 조치(failover)를 사용하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결][hybrid-ha]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="efe44-165">See [Connect an on-premises network to Azure using ExpressRoute with VPN failover][hybrid-ha].</span></span>
+### <a name="vnet-and-gatewaysubnet"></a><span data-ttu-id="c196f-155">VNet과 GatewaySubnet</span><span class="sxs-lookup"><span data-stu-id="c196f-155">VNet and GatewaySubnet</span></span>
 
-<span data-ttu-id="efe44-166">온-프레미스 네트워크에 연결하지 않아도 되는 경우에는 게이트웨이 없이 허브-스포크 토폴로지를 사용할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-166">A hub-spoke topology can also be used without a gateway, if you don't need connectivity with your on-premises network.</span></span> 
+<span data-ttu-id="c196f-156">이름이 *GatewaySubnet*인 서브넷을 만듭니다. 주소 범위는 /27로 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-156">Create a subnet named *GatewaySubnet*, with an address range of /27.</span></span> <span data-ttu-id="c196f-157">이 서브넷은 가상 네트워크 게이트웨이에서 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-157">This subnet is required by the virtual network gateway.</span></span> <span data-ttu-id="c196f-158">이 서브넷에 주소 32개를 할당하면 추후 게이트웨이 크기 제한에 도달하지 않을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-158">Allocating 32 addresses to this subnet will help to prevent reaching gateway size limitations in the future.</span></span>
 
-### <a name="vnet-peering"></a><span data-ttu-id="efe44-167">VNet 피어링</span><span class="sxs-lookup"><span data-stu-id="efe44-167">VNet peering</span></span>
+<span data-ttu-id="c196f-159">게이트웨이 설정에 대한 자세한 내용은 연결 유형에 따라 다음과 같은 참조 아키텍처를 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="c196f-159">For more information about setting up the gateway, see the following reference architectures, depending on your connection type:</span></span>
 
-<span data-ttu-id="efe44-168">VNet 피어링은 두 VNet 사이에 존재하는 비전이적 관계입니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-168">VNet peering is a non-transitive relationship between two VNets.</span></span> <span data-ttu-id="efe44-169">스포크를 서로 연결해야 한다면 스포크 사이에 별도의 피어링 연결을 추가하는 방법도 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-169">If you require spokes to connect to each other, consider adding a separate peering connection between those spokes.</span></span>
+- <span data-ttu-id="c196f-160">[ExpressRoute를 사용하는 하이브리드 네트워크][guidance-expressroute]</span><span class="sxs-lookup"><span data-stu-id="c196f-160">[Hybrid network using ExpressRoute][guidance-expressroute]</span></span>
+- <span data-ttu-id="c196f-161">[VPN 게이트웨이를 사용하는 하이브리드 네트워크][guidance-vpn]</span><span class="sxs-lookup"><span data-stu-id="c196f-161">[Hybrid network using a VPN gateway][guidance-vpn]</span></span>
 
-<span data-ttu-id="efe44-170">그러나 여러 개의 스포크를 서로 연결해야 하는 경우에는 [VNet 하나당 허용되는 VNet 피어링 개수 제한][vnet-peering-limit]으로 인해 사용 가능한 피어링 연결이 모자라게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-170">However, if you have several spokes that need to connect with each other, you will run out of possible peering connections very quickly due to the [limitation on number of VNets peerings per VNet][vnet-peering-limit].</span></span> <span data-ttu-id="efe44-171">이 경우에는 목적지가 스포크인 트래픽이 허브 VNet에서 라우터로 기능하는 NVA로 강제로 전달되도록 UDR(사용자 정의 경로)을 사용하는 방법을 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-171">In this scenario, consider using user defined routes (UDRs) to force traffic destined to a spoke to be sent to an NVA acting as a router at the hub VNet.</span></span> <span data-ttu-id="efe44-172">이렇게 하면 각 스포크가 다른 스포크와 연결할 수 있게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-172">This will allow the spokes to connect to each other.</span></span>
+<span data-ttu-id="c196f-162">고가용성이 필요한 경우 장애 조치(failover)를 위해 ExpressRoute와 VPN을 모두 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-162">For higher availability, you can use ExpressRoute plus a VPN for failover.</span></span> <span data-ttu-id="c196f-163">[VPN 장애 조치(failover)를 사용하는 ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결][hybrid-ha]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="c196f-163">See [Connect an on-premises network to Azure using ExpressRoute with VPN failover][hybrid-ha].</span></span>
 
-<span data-ttu-id="efe44-173">스포크가 허브 VNet 게이트웨이를 사용하여 원격 네트워크와 통신하도록 구성할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-173">You can also configure spokes to use the hub VNet gateway to communicate with remote networks.</span></span> <span data-ttu-id="efe44-174">게이트웨이 트래픽이 스포크에서 허브로 흐르고 원격 네트워크에 연결되도록 허용하려면:</span><span class="sxs-lookup"><span data-stu-id="efe44-174">To allow gateway traffic to flow from spoke to hub, and connect to remote networks, you must:</span></span>
+<span data-ttu-id="c196f-164">온-프레미스 네트워크에 연결하지 않아도 되는 경우에는 게이트웨이 없이 허브-스포크 토폴로지를 사용할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-164">A hub-spoke topology can also be used without a gateway, if you don't need connectivity with your on-premises network.</span></span> 
 
-  - <span data-ttu-id="efe44-175">허브의 VNet 피어링 연결이 **게이트웨이 전송을 허용**하도록 구성해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-175">Configure the VNet peering connection in the hub to **allow gateway transit**.</span></span>
-  - <span data-ttu-id="efe44-176">각 스포크의 VNet 피어링 연결이 **원격 게이트웨이를 사용**하도록 구성해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-176">Configure the VNet peering connection in each spoke to **use remote gateways**.</span></span>
-  - <span data-ttu-id="efe44-177">모든 VNet 피어링 연결이 **전달된 트래픽을 허용**하도록 구성해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-177">Configure all VNet peering connections to **allow forwarded traffic**.</span></span>
+### <a name="vnet-peering"></a><span data-ttu-id="c196f-165">VNet 피어링</span><span class="sxs-lookup"><span data-stu-id="c196f-165">VNet peering</span></span>
 
-## <a name="considerations"></a><span data-ttu-id="efe44-178">고려 사항</span><span class="sxs-lookup"><span data-stu-id="efe44-178">Considerations</span></span>
+<span data-ttu-id="c196f-166">VNet 피어링은 두 VNet 사이에 존재하는 비전이적 관계입니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-166">VNet peering is a non-transitive relationship between two VNets.</span></span> <span data-ttu-id="c196f-167">스포크를 서로 연결해야 한다면 스포크 사이에 별도의 피어링 연결을 추가하는 방법도 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-167">If you require spokes to connect to each other, consider adding a separate peering connection between those spokes.</span></span>
 
-### <a name="spoke-connectivity"></a><span data-ttu-id="efe44-179">스포크 연결</span><span class="sxs-lookup"><span data-stu-id="efe44-179">Spoke connectivity</span></span>
+<span data-ttu-id="c196f-168">그러나 여러 개의 스포크를 서로 연결해야 하는 경우에는 [VNet 하나당 허용되는 VNet 피어링 개수 제한][vnet-peering-limit]으로 인해 사용 가능한 피어링 연결이 모자라게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-168">However, if you have several spokes that need to connect with each other, you will run out of possible peering connections very quickly due to the [limitation on number of VNets peerings per VNet][vnet-peering-limit].</span></span> <span data-ttu-id="c196f-169">이 경우에는 목적지가 스포크인 트래픽이 허브 VNet에서 라우터로 기능하는 NVA로 강제로 전달되도록 UDR(사용자 정의 경로)을 사용하는 방법을 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-169">In this scenario, consider using user defined routes (UDRs) to force traffic destined to a spoke to be sent to an NVA acting as a router at the hub VNet.</span></span> <span data-ttu-id="c196f-170">이렇게 하면 각 스포크가 다른 스포크와 연결할 수 있게 됩니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-170">This will allow the spokes to connect to each other.</span></span>
 
-<span data-ttu-id="efe44-180">스포크 사이의 연결이 필요한 경우 허브에서의 라우팅을 위해 NVA를 구현하고 트래픽이 허브로 전달되도록 스포크에서 UDR을 사용하는 방법을 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-180">If you require connectivity between spokes, consider implementing an NVA for routing in the hub, and using UDRs in the spoke to forward traffic to the hub.</span></span>
+<span data-ttu-id="c196f-171">스포크가 허브 VNet 게이트웨이를 사용하여 원격 네트워크와 통신하도록 구성할 수도 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-171">You can also configure spokes to use the hub VNet gateway to communicate with remote networks.</span></span> <span data-ttu-id="c196f-172">게이트웨이 트래픽이 스포크에서 허브로 흐르고 원격 네트워크에 연결되도록 허용하려면:</span><span class="sxs-lookup"><span data-stu-id="c196f-172">To allow gateway traffic to flow from spoke to hub, and connect to remote networks, you must:</span></span>
 
-<span data-ttu-id="efe44-181">![[2]][2]</span><span class="sxs-lookup"><span data-stu-id="efe44-181">![[2]][2]</span></span>
+  - <span data-ttu-id="c196f-173">허브의 VNet 피어링 연결이 **게이트웨이 전송을 허용**하도록 구성해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-173">Configure the VNet peering connection in the hub to **allow gateway transit**.</span></span>
+  - <span data-ttu-id="c196f-174">각 스포크의 VNet 피어링 연결이 **원격 게이트웨이를 사용**하도록 구성해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-174">Configure the VNet peering connection in each spoke to **use remote gateways**.</span></span>
+  - <span data-ttu-id="c196f-175">모든 VNet 피어링 연결이 **전달된 트래픽을 허용**하도록 구성해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-175">Configure all VNet peering connections to **allow forwarded traffic**.</span></span>
 
-<span data-ttu-id="efe44-182">이 시나리오에서는 피어링 연결이 **전달된 트래픽을 허용**하도록 구성해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-182">In this scenario, you must configure the peering connections to **allow forwarded traffic**.</span></span>
+## <a name="considerations"></a><span data-ttu-id="c196f-176">고려 사항</span><span class="sxs-lookup"><span data-stu-id="c196f-176">Considerations</span></span>
 
-### <a name="overcoming-vnet-peering-limits"></a><span data-ttu-id="efe44-183">VNet 피어링 제한 문제 해결</span><span class="sxs-lookup"><span data-stu-id="efe44-183">Overcoming VNet peering limits</span></span>
+### <a name="spoke-connectivity"></a><span data-ttu-id="c196f-177">스포크 연결</span><span class="sxs-lookup"><span data-stu-id="c196f-177">Spoke connectivity</span></span>
 
-<span data-ttu-id="efe44-184">반드시 Azure의 [VNet 하나당 허용되는 VNet 피어링 개수 제한][vnet-peering-limit]을 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-184">Make sure you consider the [limitation on number of VNets peerings per VNet][vnet-peering-limit] in Azure.</span></span> <span data-ttu-id="efe44-185">허용되는 한도보다 많은 스포크가 필요한 경우 첫 번째 수준의 스포크가 허브로서 기능하는 허브-스포크-허브-스포크 토폴로지를 만드는 방법을 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-185">If you decide you need more spokes than the limit will allow, consider creating a hub-spoke-hub-spoke topology, where the first level of spokes also act as hubs.</span></span> <span data-ttu-id="efe44-186">다음 다이어그램은 이 토폴로지를 보여줍니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-186">The following diagram shows this approach.</span></span>
+<span data-ttu-id="c196f-178">스포크 사이의 연결이 필요한 경우 허브에서의 라우팅을 위해 NVA를 구현하고 트래픽이 허브로 전달되도록 스포크에서 UDR을 사용하는 방법을 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-178">If you require connectivity between spokes, consider implementing an NVA for routing in the hub, and using UDRs in the spoke to forward traffic to the hub.</span></span>
 
-<span data-ttu-id="efe44-187">![[3]][3]</span><span class="sxs-lookup"><span data-stu-id="efe44-187">![[3]][3]</span></span>
+<span data-ttu-id="c196f-179">![[2]][2]</span><span class="sxs-lookup"><span data-stu-id="c196f-179">![[2]][2]</span></span>
 
-<span data-ttu-id="efe44-188">또한, 허브가 다수의 스포크에 맞게 확장될 수 있도록 허브에서 어떤 서비스가 공유되는지도 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-188">Also consider what services are shared in the hub, to ensure the hub scales for a larger number of spokes.</span></span> <span data-ttu-id="efe44-189">예를 들어 허브에서 방화벽 서비스를 제공한다면 복수의 스포크를 추가할 때 방화벽 솔루션의 대역폭 제한을 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-189">For instance, if your hub provides firewall services, consider the bandwidth limits of your firewall solution when adding multiple spokes.</span></span> <span data-ttu-id="efe44-190">공유 서비스 중 일부를 두 번째 수준의 허브로 이동하는 것이 좋을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-190">You might want to move some of these shared services to a second level of hubs.</span></span>
+<span data-ttu-id="c196f-180">이 시나리오에서는 피어링 연결이 **전달된 트래픽을 허용**하도록 구성해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-180">In this scenario, you must configure the peering connections to **allow forwarded traffic**.</span></span>
 
-## <a name="deploy-the-solution"></a><span data-ttu-id="efe44-191">솔루션 배포</span><span class="sxs-lookup"><span data-stu-id="efe44-191">Deploy the solution</span></span>
+### <a name="overcoming-vnet-peering-limits"></a><span data-ttu-id="c196f-181">VNet 피어링 제한 문제 해결</span><span class="sxs-lookup"><span data-stu-id="c196f-181">Overcoming VNet peering limits</span></span>
 
-<span data-ttu-id="efe44-192">이 아키텍처에 대한 배포는 [GitHub][ref-arch-repo]에서 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-192">A deployment for this architecture is available on [GitHub][ref-arch-repo].</span></span> <span data-ttu-id="efe44-193">이 아키텍처에 대한 배포는 연결을 테스트하기 위해 각 VNet에서 Ubuntu VM을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-193">It uses Ubuntu VMs in each VNet to test connectivity.</span></span> <span data-ttu-id="efe44-194">**허브 VNet**의 **shared-services** 서브넷에 실제로 호스팅된 서비스는 없습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-194">There are no actual services hosted in the **shared-services** subnet in the **hub VNet**.</span></span>
+<span data-ttu-id="c196f-182">반드시 Azure의 [VNet 하나당 허용되는 VNet 피어링 개수 제한][vnet-peering-limit]을 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-182">Make sure you consider the [limitation on number of VNets peerings per VNet][vnet-peering-limit] in Azure.</span></span> <span data-ttu-id="c196f-183">허용되는 한도보다 많은 스포크가 필요한 경우 첫 번째 수준의 스포크가 허브로서 기능하는 허브-스포크-허브-스포크 토폴로지를 만드는 방법을 고려할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-183">If you decide you need more spokes than the limit will allow, consider creating a hub-spoke-hub-spoke topology, where the first level of spokes also act as hubs.</span></span> <span data-ttu-id="c196f-184">다음 다이어그램은 이 토폴로지를 보여줍니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-184">The following diagram shows this approach.</span></span>
 
-### <a name="prerequisites"></a><span data-ttu-id="efe44-195">필수 조건</span><span class="sxs-lookup"><span data-stu-id="efe44-195">Prerequisites</span></span>
+<span data-ttu-id="c196f-185">![[3]][3]</span><span class="sxs-lookup"><span data-stu-id="c196f-185">![[3]][3]</span></span>
 
-<span data-ttu-id="efe44-196">사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-196">Before you can deploy the reference architecture to your own subscription, you must perform the following steps.</span></span>
+<span data-ttu-id="c196f-186">또한, 허브가 다수의 스포크에 맞게 확장될 수 있도록 허브에서 어떤 서비스가 공유되는지도 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-186">Also consider what services are shared in the hub, to ensure the hub scales for a larger number of spokes.</span></span> <span data-ttu-id="c196f-187">예를 들어 허브에서 방화벽 서비스를 제공한다면 복수의 스포크를 추가할 때 방화벽 솔루션의 대역폭 제한을 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-187">For instance, if your hub provides firewall services, consider the bandwidth limits of your firewall solution when adding multiple spokes.</span></span> <span data-ttu-id="c196f-188">공유 서비스 중 일부를 두 번째 수준의 허브로 이동하는 것이 좋을 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-188">You might want to move some of these shared services to a second level of hubs.</span></span>
 
-1. <span data-ttu-id="efe44-197">[AzureCAT 참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-197">Clone, fork, or download the zip file for the [AzureCAT reference architectures][ref-arch-repo] GitHub repository.</span></span>
+## <a name="deploy-the-solution"></a><span data-ttu-id="c196f-189">솔루션 배포</span><span class="sxs-lookup"><span data-stu-id="c196f-189">Deploy the solution</span></span>
 
-2. <span data-ttu-id="efe44-198">Azure CLI를 사용하려면 컴퓨터에 Azure CLI 2.0이 설치되어 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-198">If you prefer to use the Azure CLI, make sure you have the Azure CLI 2.0 installed on your computer.</span></span> <span data-ttu-id="efe44-199">CLI를 설치하려면 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)에 제시된 지침을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="efe44-199">To install the CLI, follow the instructions in [Install Azure CLI 2.0][azure-cli-2].</span></span>
+<span data-ttu-id="c196f-190">이 아키텍처에 대한 배포는 [GitHub][ref-arch-repo]에서 사용할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-190">A deployment for this architecture is available on [GitHub][ref-arch-repo].</span></span> <span data-ttu-id="c196f-191">이 아키텍처에 대한 배포는 연결을 테스트하기 위해 각 VNet에서 Ubuntu VM을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-191">It uses Ubuntu VMs in each VNet to test connectivity.</span></span> <span data-ttu-id="c196f-192">**허브 VNet**의 **shared-services** 서브넷에 실제로 호스팅된 서비스는 없습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-192">There are no actual services hosted in the **shared-services** subnet in the **hub VNet**.</span></span>
 
-3. <span data-ttu-id="efe44-200">PowerShell을 사용하려면 컴퓨터에 Azure용 최신 PowerShell 모듈이 설치되어 있어야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-200">If you prefer to use PowerShell, make sure you have the latest PowerShell module for Azure installed on you computer.</span></span> <span data-ttu-id="efe44-201">최신 Azure PowerShell 모듈을 설치하려면 [Azure용 PowerShell 설치][azure-powershell]에 제시된 지침을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="efe44-201">To install the latest Azure PowerShell module, follow the instructions in [Install PowerShell for Azure][azure-powershell].</span></span>
+### <a name="prerequisites"></a><span data-ttu-id="c196f-193">필수 조건</span><span class="sxs-lookup"><span data-stu-id="c196f-193">Prerequisites</span></span>
 
-4. <span data-ttu-id="efe44-202">명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령 중 하나를 사용하여 Azure 계정에 로그인한 다음 프롬프트에 따릅니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-202">From a command prompt, bash prompt, or PowerShell prompt, login to your Azure account by using one of the commands below, and follow the prompts.</span></span>
+<span data-ttu-id="c196f-194">사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-194">Before you can deploy the reference architecture to your own subscription, you must perform the following steps.</span></span>
+
+1. <span data-ttu-id="c196f-195">[AzureCAT 참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-195">Clone, fork, or download the zip file for the [AzureCAT reference architectures][ref-arch-repo] GitHub repository.</span></span>
+
+2. <span data-ttu-id="c196f-196">Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-196">Make sure you have the Azure CLI 2.0 installed on your computer.</span></span> <span data-ttu-id="c196f-197">CLI 설치 지침은 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="c196f-197">For CLI installation instructions, see [Install Azure CLI 2.0][azure-cli-2].</span></span>
+
+3. <span data-ttu-id="c196f-198">[Azure 기본 구성 요소][azbb] npm 패키지를 설치합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-198">Install the [Azure buulding blocks][azbb] npm package.</span></span>
+
+4. <span data-ttu-id="c196f-199">명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 아래 명령을 사용하여 Azure 계정에 로그인하고, 프롬프트에 따릅니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-199">From a command prompt, bash prompt, or PowerShell prompt, login to your Azure account by using the command below, and follow the prompts.</span></span>
 
   ```bash
   az login
   ```
 
-  ```powershell
-  Login-AzureRmAccount
-  ```
+### <a name="deploy-the-simulated-on-premises-datacenter-using-azbb"></a><span data-ttu-id="c196f-200">azbb를 사용하여 시뮬레이션된 온-프레미스 데이터 센터 배포</span><span class="sxs-lookup"><span data-stu-id="c196f-200">Deploy the simulated on-premises datacenter using azbb</span></span>
 
-### <a name="deploy-the-simulated-on-premises-datacenter"></a><span data-ttu-id="efe44-203">시뮬레이션된 온-프레미스 데이터 센터 배포</span><span class="sxs-lookup"><span data-stu-id="efe44-203">Deploy the simulated on-premises datacenter</span></span>
+<span data-ttu-id="c196f-201">시뮬레이션된 온-프레미스 데이터 센터를 Azure VNet으로서 배포하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-201">To deploy the simulated on-premises datacenter as an Azure VNet, follow these steps:</span></span>
 
-<span data-ttu-id="efe44-204">시뮬레이션된 온-프레미스 데이터 센터를 Azure VNet으로서 배포하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-204">To deploy the simulated on-premises datacenter as an Azure VNet, perform the following steps.</span></span>
+1. <span data-ttu-id="c196f-202">위의 필수 조건 단계에서 다운로드한 리포지토리가 있는 `hybrid-networking\hub-spoke\` 폴더로 이동합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-202">Navigate to the `hybrid-networking\hub-spoke\` folder for the repository you downloaded in the pre-requisites step above.</span></span>
 
-1. <span data-ttu-id="efe44-205">위의 필수 조건 단계에서 다운로드한 리포지토리가 있는 `hybrid-networking\hub-spoke\onprem` 폴더로 이동합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-205">Navigate to the `hybrid-networking\hub-spoke\onprem` folder for the repository you downloaded in the pre-requisites step above.</span></span>
-
-2. <span data-ttu-id="efe44-206">`onprem.vm.parameters.json` 파일을 열고 아래에 나와 있는 대로 11열과 12열에 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-206">Open the `onprem.vm.parameters.json` file and enter a username and password between the quotes in line 11 and 12, as shown below, then save the file.</span></span>
+2. <span data-ttu-id="c196f-203">`onprem.json` 파일을 열고 아래에 나와 있는 대로 36열과 37열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-203">Open the `onprem.json` file and enter a username and password between the quotes in line 36 and 37, as shown below, then save the file.</span></span>
 
   ```bash
   "adminUsername": "XXX",
   "adminPassword": "YYY",
   ```
 
-3. <span data-ttu-id="efe44-207">아래의 bash 또는 PowerShell 명령을 실행하여 시뮬레이션된 온-프레미스 환경을 Azure의 VNet으로서 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-207">Run the bash or PowerShell command below to deploy the simulated on-premises environment as a VNet in Azure.</span></span> <span data-ttu-id="efe44-208">값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-208">Substitute the values with your subscription, resource group name, and Azure region.</span></span>
+3. <span data-ttu-id="c196f-204">`osType`의 38열에서 `Windows` 또는 `Linux`를 입력하여 jumpbox의 운영 체제로 Windows Server 2016 데이터 센터 또는 Ubuntu 16.04를 설치합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-204">On line 38, for `osType`, type `Windows` or `Linux` to install either Windows Server 2016 Datacenter, or Ubuntu 16.04 as the operating system for the jumpbox.</span></span>
+
+4. <span data-ttu-id="c196f-205">`azbb`를 실행하여 아래와 같이 시뮬레이션된 온-프레미스 환경을 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-205">Run `azbb` to deploy the simulated onprem environment as shown below.</span></span>
 
   ```bash
-  sh ./onprem.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-onprem-rg \
-    --location westus
-  ```
-
-  ```powershell
-  ./onprem.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-onprem-rg `
-    -Location westus
+  azbb -s <subscription_id> -g onprem-vnet-rg - l <location> -p onoprem.json --deploy
   ```
   > [!NOTE]
-  > <span data-ttu-id="efe44-209">`ra-onprem-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-209">If you decide to use a different resource group name (other than `ra-onprem-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
+  > <span data-ttu-id="c196f-206">`onprem-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-206">If you decide to use a different resource group name (other than `onprem-vnet-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
 
-4. <span data-ttu-id="efe44-210">배포가 완료될 때까지 기다립니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-210">Wait for the deployment to finish.</span></span> <span data-ttu-id="efe44-211">이 배포는 가상 네트워크, Ubuntu를 실행하는 가상 머신 및 VPN 게이트웨이를 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-211">This deployment creates a virtual network, a virtual machine running Ubuntu, and a VPN gateway.</span></span> <span data-ttu-id="efe44-212">VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-212">The VPN gateway creation can take more than 40 minutes to complete.</span></span>
+5. <span data-ttu-id="c196f-207">배포가 완료될 때까지 기다립니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-207">Wait for the deployment to finish.</span></span> <span data-ttu-id="c196f-208">이 배포는 가상 네트워크, 가상 머신 및 VPN 게이트웨이를 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-208">This deployment creates a virtual network, a virtual machine, and a VPN gateway.</span></span> <span data-ttu-id="c196f-209">VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-209">The VPN gateway creation can take more than 40 minutes to complete.</span></span>
 
-### <a name="azure-hub-vnet"></a><span data-ttu-id="efe44-213">Azure 허브 VNet</span><span class="sxs-lookup"><span data-stu-id="efe44-213">Azure hub VNet</span></span>
+### <a name="azure-hub-vnet"></a><span data-ttu-id="c196f-210">Azure 허브 VNet</span><span class="sxs-lookup"><span data-stu-id="c196f-210">Azure hub VNet</span></span>
 
-<span data-ttu-id="efe44-214">허브 VNet을 배포하고 위에서 만든 시뮬레이션된 온-프레미스 VNet에 연결하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-214">To deploy the hub VNet, and connect to the simulated on-premises VNet created above, perform the following steps.</span></span>
+<span data-ttu-id="c196f-211">허브 VNet을 배포하고 위에서 만든 시뮬레이션된 온-프레미스 VNet에 연결하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-211">To deploy the hub VNet, and connect to the simulated on-premises VNet created above, perform the following steps.</span></span>
 
-1. <span data-ttu-id="efe44-215">위의 필수 조건 단계에서 다운로드한 리포지토리가 있는 `hybrid-networking\hub-spoke\hub` 폴더로 이동합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-215">Navigate to the `hybrid-networking\hub-spoke\hub` folder for the repository you downloaded in the pre-requisites step above.</span></span>
-
-2. <span data-ttu-id="efe44-216">`hub.vm.parameters.json` 파일을 열고 아래에 나와 있는 대로 11열과 12열에 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-216">Open the `hub.vm.parameters.json` file and enter a username and password between the quotes in line 11 and 12, as shown below, then save the file.</span></span>
+1. <span data-ttu-id="c196f-212">`hub-vnet.json` 파일을 열고 아래에 나와 있는 대로 39열과 40열의 큰따옴표 사이에 사용자 이름과 암호를 입력합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-212">Open the `hub-vnet.json` file and enter a username and password between the quotes in line 39 and 40, as shown below.</span></span>
 
   ```bash
   "adminUsername": "XXX",
   "adminPassword": "YYY",
   ```
 
-3. <span data-ttu-id="efe44-217">`hub.gateway.parameters.json` 파일을 열고 아래에 나와 있는 대로 23열에 큰따옴표 사이에 공유 키를 입력한 다음 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-217">Open the `hub.gateway.parameters.json` file and enter a shared key between the quotes in line 23, as shown below, then save the file.</span></span> <span data-ttu-id="efe44-218">이 값은 나중에 배포에서 필요하므로 따로 기록해 둡니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-218">Keep a note of this value, you will need to use it later in the deployment.</span></span>
+2. <span data-ttu-id="c196f-213">`osType`의 41열에서 `Windows` 또는 `Linux`를 입력하여 jumpbox의 운영 체제로 Windows Server 2016 데이터 센터 또는 Ubuntu 16.04를 설치합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-213">On line 41, for `osType`, type `Windows` or `Linux` to install either Windows Server 2016 Datacenter, or Ubuntu 16.04 as the operating system for the jumpbox.</span></span>
+
+3. <span data-ttu-id="c196f-214">아래에 나와 있는 대로 72열의 큰따옴표 사이에 공유 키를 입력한 다음, 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-214">Enter a shared key between the quotes in line 72, as shown below, then save the file.</span></span>
 
   ```bash
   "sharedKey": "",
   ```
 
-4. <span data-ttu-id="efe44-219">아래의 bash 또는 PowerShell 명령을 실행하여 시뮬레이션된 온-프레미스 환경을 Azure의 VNet으로서 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-219">Run the bash or PowerShell command below to deploy the simulated on-premises environment as a VNet in Azure.</span></span> <span data-ttu-id="efe44-220">값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-220">Substitute the values with your subscription, resource group name, and Azure region.</span></span>
+4. <span data-ttu-id="c196f-215">`azbb`를 실행하여 아래와 같이 시뮬레이션된 온-프레미스 환경을 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-215">Run `azbb` to deploy the simulated onprem environment as shown below.</span></span>
 
   ```bash
-  sh ./hub.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-hub-rg \
-    --location westus
-  ```
-
-  ```powershell
-  ./hub.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-hub-rg `
-    -Location westus
+  azbb -s <subscription_id> -g hub-vnet-rg - l <location> -p hub-vnet.json --deploy
   ```
   > [!NOTE]
-  > <span data-ttu-id="efe44-221">`ra-hub-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-221">If you decide to use a different resource group name (other than `ra-hub-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
+  > <span data-ttu-id="c196f-216">`hub-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-216">If you decide to use a different resource group name (other than `hub-vnet-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
 
-5. <span data-ttu-id="efe44-222">배포가 완료될 때까지 기다립니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-222">Wait for the deployment to finish.</span></span> <span data-ttu-id="efe44-223">이 배포는 가상 네트워크, Ubuntu를 실행하는 가상 머신, VPN 게이트웨이 및 이전 섹션에서 생성한 게이트웨이에 대한 연결을 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-223">This deployment creates a virtual network, a virtual machine running Ubuntu, a VPN gateway, and a connection to the gateway created in the previous section.</span></span> <span data-ttu-id="efe44-224">VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-224">The VPN gateway creation can take more than 40 minutes to complete.</span></span>
+5. <span data-ttu-id="c196f-217">배포가 완료될 때까지 기다립니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-217">Wait for the deployment to finish.</span></span> <span data-ttu-id="c196f-218">이 배포는 가상 네트워크, 가상 머신, VPN 게이트웨이 및 이전 섹션에서 생성한 게이트웨이에 대한 연결을 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-218">This deployment creates a virtual network, a virtual machine, a VPN gateway, and a connection to the gateway created in the previous section.</span></span> <span data-ttu-id="c196f-219">VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-219">The VPN gateway creation can take more than 40 minutes to complete.</span></span>
 
-### <a name="connection-from-on-premises-to-the-hub"></a><span data-ttu-id="efe44-225">온-프레미스에서 허브로의 연결</span><span class="sxs-lookup"><span data-stu-id="efe44-225">Connection from on-premises to the hub</span></span>
+### <a name="optional-test-connectivity-from-onprem-to-hub"></a><span data-ttu-id="c196f-220">(선택 사항) 온-프레미스에서 허브로의 연결 테스트</span><span class="sxs-lookup"><span data-stu-id="c196f-220">(Optional) Test connectivity from onprem to hub</span></span>
 
-<span data-ttu-id="efe44-226">시뮬레이션된 온-프레미스 데이터 센터를 허브 VNet에 연결하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-226">To connect from the simulated on-premises datacenter to the hub VNet, perform the following steps.</span></span>
+<span data-ttu-id="c196f-221">Windows VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 허브 VNet으로의 연결을 테스트하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-221">To test conectivity from the simulated on-premises environment to the hub VNet using Windows VMs, perform the following steps.</span></span>
 
-1. <span data-ttu-id="efe44-227">위의 필수 조건 단계에서 다운로드한 리포지토리가 있는 `hybrid-networking\hub-spoke\onprem` 폴더로 이동합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-227">Navigate to the `hybrid-networking\hub-spoke\onprem` folder for the repository you downloaded in the pre-requisites step above.</span></span>
+1. <span data-ttu-id="c196f-222">Azure Portal에서 `onprem-jb-rg` 리소스 그룹으로 이동한 다음, `jb-vm1` 가상 머신 리소스를 클릭합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-222">From the Azure portal, navigate to the `onprem-jb-rg` resource group, then click on the `jb-vm1` virtual machine resource.</span></span>
 
-2. <span data-ttu-id="efe44-228">`onprem.connection.parameters.json` 파일을 열고 아래에 나와 있는 대로 9열에 큰따옴표 사이에 공유 키를 입력한 다음 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-228">Open the `onprem.connection.parameters.json` file and enter a shared key between the quotes in line 9, as shown below, then save the file.</span></span> <span data-ttu-id="efe44-229">이 공유 키 값은 앞에서 배포한 온-프레미스 게이트웨이에서 사용하는 값과 동일해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-229">This shared key value must be the same used in the on-premises gateway you deployed previously.</span></span>
+2.  <span data-ttu-id="c196f-223">포털에 있는 VM 블레이드의 왼쪽 위 모서리에서 `Connect`를 클릭하고, VM에 연결하기 위해 프롬프트를 따라 원격 데스크톱을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-223">On the top left hand corner of your VM blade in the portal, click `Connect`, and follow the prompts to use remote desktop to connect to the VM.</span></span> <span data-ttu-id="c196f-224">`onprem.json` 파일에서 36열과 37열에 지정된 사용자 이름 및 암호를 사용하도록 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-224">Make sure to use the username and password you specified in lines 36 and 37 in the `onprem.json` file.</span></span>
 
-  ```bash
-  "sharedKey": "",
-  ```
-
-3. <span data-ttu-id="efe44-230">아래의 bash 또는 PowerShell 명령을 실행하여 시뮬레이션된 온-프레미스 환경을 Azure의 VNet으로서 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-230">Run the bash or PowerShell command below to deploy the simulated on-premises environment as a VNet in Azure.</span></span> <span data-ttu-id="efe44-231">값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-231">Substitute the values with your subscription, resource group name, and Azure region.</span></span>
-
-  ```bash
-  sh ./onprem.connection.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-onprem-rg \
-    --location westus
-  ```
+3. <span data-ttu-id="c196f-225">VM에서 PowerShell 콘솔을 열고 `Test-NetConnection` cmdlet을 사용하여 아래와 같이 허브 jumpbox VM에 연결할 수 있는지 확인합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-225">Open a PowerShell console in the VM, and use the `Test-NetConnection` cmdlet to verify that you can connect to the hub jumpbox VM as shown below.</span></span>
 
   ```powershell
-  ./onprem.connection.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-onprem-rg `
-    -Location westus
+  Test-NetConnection 10.0.0.68 -CommonTCPPort RDP
   ```
   > [!NOTE]
-  > <span data-ttu-id="efe44-232">`ra-onprem-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-232">If you decide to use a different resource group name (other than `ra-onprem-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
+  > <span data-ttu-id="c196f-226">기본적으로 Windows Server VM을 사용하면 Azure에서 ICMP 응답을 허용하지 않습니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-226">By default, Windows Server VMs do not allow ICMP responses in Azure.</span></span> <span data-ttu-id="c196f-227">`ping`을 사용하여 연결을 테스트하려는 경우 각 VM에 대한 Windows 고급 방화벽에서 ICMP 트래픽을 사용하도록 설정해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-227">If you want to use `ping` to test connectivity, you need to enable ICMP traffic in the Windows Advanced Firewall for each VM.</span></span>
 
-4. <span data-ttu-id="efe44-233">배포가 완료될 때까지 기다립니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-233">Wait for the deployment to finish.</span></span> <span data-ttu-id="efe44-234">이 배포는 온-프레미스 데이터 센터를 시뮬레이션하는 데 사용되는 VNet과 허브 VNet 사이의 연결을 만듭니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-234">This deployment creates a connection between the VNet used to simulate an on-premises datacenter, and the hub VNet.</span></span>
+<span data-ttu-id="c196f-228">Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 허브 VNet으로의 연결을 테스트하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-228">To test conectivity from the simulated on-premises environment to the hub VNet using Linux VMs, perform the following steps:</span></span>
 
-### <a name="azure-spoke-vnets"></a><span data-ttu-id="efe44-235">Azure 스포크 VNet</span><span class="sxs-lookup"><span data-stu-id="efe44-235">Azure spoke VNets</span></span>
+1. <span data-ttu-id="c196f-229">Azure Portal에서 `onprem-jb-rg` 리소스 그룹으로 이동한 다음, `jb-vm1` 가상 머신 리소스를 클릭합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-229">From the Azure portal, navigate to the `onprem-jb-rg` resource group, then click on the `jb-vm1` virtual machine resource.</span></span>
 
-<span data-ttu-id="efe44-236">스포크 VNet을 배포하고 위에서 만든 허브 VNet에 연결하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-236">To deploy the spoke VNets, and connect to the hub VNet created above, perform the following steps.</span></span>
+2. <span data-ttu-id="c196f-230">포털에 있는 VM 블레이드의 왼쪽 위 모서리에서 `Connect`을 클릭한 다음, 포털에 표시된 대로 `ssh` 명령을 복사합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-230">On the top left hand corner of your VM blade in the portal, click `Connect`, and then copy the `ssh` command shown on the portal.</span></span> 
 
-1. <span data-ttu-id="efe44-237">위의 필수 조건 단계에서 다운로드한 리포지토리가 있는 `hybrid-networking\hub-spoke\spokes` 폴더로 이동합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-237">Switch to the `hybrid-networking\hub-spoke\spokes` folder for the repository you download in the pre-requisites step above.</span></span>
+3. <span data-ttu-id="c196f-231">Linux 프롬프트에서 아래와 같이 위의 2 단계에서 복사한 정보를 사용하여 시뮬레이션된 온-프레미스 환경 jumpbox를 연결하기 위해 `ssh`를 실행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-231">From a Linux prompt, run `ssh` to connect to the simulated on-premises environment jumpbox witht the information you copied in step 2 above, as shown below.</span></span>
 
-2. <span data-ttu-id="efe44-238">`spoke1.web.parameters.json` 파일을 열고 아래에 나와 있는 대로 53열과 54열에 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-238">Open the `spoke1.web.parameters.json` file and enter a username and password between the quotes in line 53 and 54, as shown below, then save the file.</span></span>
+  ```bash
+  ssh <your_user>@<public_ip_address>
+  ```
+
+4. <span data-ttu-id="c196f-232">`onprem.json` 파일의 37열에 지정된 암호를 사용하여 VM에 연결합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-232">Use the password you specified in line 37 in the `onprem.json` file to the connect to the VM.</span></span>
+
+5. <span data-ttu-id="c196f-233">다음과 같이 `ping` 명령을 사용하여 허브 jumpbox에 대한 연결을 테스트합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-233">Use the `ping` command to test connectivity to the hub jumpbox, as shown below.</span></span>
+
+  ```bash
+  ping 10.0.0.68
+  ```
+
+### <a name="azure-spoke-vnets"></a><span data-ttu-id="c196f-234">Azure 스포크 VNet</span><span class="sxs-lookup"><span data-stu-id="c196f-234">Azure spoke VNets</span></span>
+
+<span data-ttu-id="c196f-235">스포크 VNet을 배포하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-235">To deploy the spoke VNets, perform the following steps.</span></span>
+
+1. <span data-ttu-id="c196f-236">`spoke1.json` 파일을 열고 아래에 나와 있는 대로 47열과 48열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-236">Open the `spoke1.json` file and enter a username and password between the quotes in lines 47 and 48, as shown below, then save the file.</span></span>
 
   ```bash
   "adminUsername": "XXX",
   "adminPassword": "YYY",
   ```
 
-3. <span data-ttu-id="efe44-239">파일 `spoke2.web.parameters.json`에 대해 직전 단계를 반복합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-239">Repeat the previous step for file `spoke2.web.parameters.json`.</span></span>
+2. <span data-ttu-id="c196f-237">`osType`의 49열에서 `Windows` 또는 `Linux`를 입력하여 jumpbox의 운영 체제로 Windows Server 2016 데이터 센터 또는 Ubuntu 16.04를 설치합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-237">On line 49, for `osType`, type `Windows` or `Linux` to install either Windows Server 2016 Datacenter, or Ubuntu 16.04 as the operating system for the jumpbox.</span></span>
 
-4. <span data-ttu-id="efe44-240">아래의 bash 또는 PowerShell 명령을 실행하여 첫 번째 스포크를 배포하고 허브에 연결합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-240">Run the bash or PowerShell command below to deploy the first spoke and connect it to the hub.</span></span> <span data-ttu-id="efe44-241">값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-241">Substitute the values with your subscription, resource group name, and Azure region.</span></span>
+3. <span data-ttu-id="c196f-238">`azbb`를 실행하여 아래와 같이 첫 번째 스포크 VNet 환경을 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-238">Run `azbb` to deploy the first spoke VNet environment as shown below.</span></span>
 
   ```bash
-  sh ./spoke.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-spoke1-rg \
-    --location westus \
-    --spoke 1
+  azbb -s <subscription_id> -g spoke1-vnet-rg - l <location> -p spoke1.json --deploy
   ```
+  
+  > [!NOTE]
+  > <span data-ttu-id="c196f-239">`spoke1-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-239">If you decide to use a different resource group name (other than `spoke1-vnet-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
 
-  ```powershell
-  ./spoke.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-spoke1-rg `
-    -Location westus `
-    -Spoke 1
+3. <span data-ttu-id="c196f-240">`spoke2.json` 파일에서 위의 1단계를 반복합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-240">Repeat step 1 above for file `spoke2.json`.</span></span>
+
+4. <span data-ttu-id="c196f-241">`azbb`를 실행하여 아래와 같이 두 번째 스포크 VNet 환경을 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-241">Run `azbb` to deploy the second spoke VNet environment as shown below.</span></span>
+
+  ```bash
+  azbb -s <subscription_id> -g spoke2-vnet-rg - l <location> -p spoke2.json --deploy
   ```
   > [!NOTE]
-  > <span data-ttu-id="efe44-242">`ra-spoke1-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-242">If you decide to use a different resource group name (other than `ra-spoke1-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
+  > <span data-ttu-id="c196f-242">`spoke2-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-242">If you decide to use a different resource group name (other than `spoke2-vnet-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
 
-5. <span data-ttu-id="efe44-243">배포가 완료될 때까지 기다립니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-243">Wait for the deployment to finish.</span></span> <span data-ttu-id="efe44-244">이 배포는 가상 네트워크, Ubuntu와 Apache를 실행하는 3개의 가상 머신 및 이전 섹션에서 생성한 허브 VNet에 대한 VNet 피어링 연결을 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-244">This deployment creates a virtual network, a load balancer with three virtual machine running Ubuntu and Apache, and a VNet peering connection to the hub VNet created in the previous section.</span></span> <span data-ttu-id="efe44-245">이 배포가 완료되기까지 20분이 넘게 걸릴 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-245">This deployment may take over 20 minutes.</span></span>
+### <a name="azure-hub-vnet-peering-to-spoke-vnets"></a><span data-ttu-id="c196f-243">스포크 VNet에 대한 Azure 허브 VNet 피어링</span><span class="sxs-lookup"><span data-stu-id="c196f-243">Azure hub VNet peering to spoke VNets</span></span>
 
-6. <span data-ttu-id="efe44-246">아래의 bash 또는 PowerShell 명령을 실행하여 첫 번째 스포크를 배포하고 허브에 연결합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-246">Run the bash or PowerShell command below to deploy the first spoke and connect it to the hub.</span></span> <span data-ttu-id="efe44-247">값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-247">Substitute the values with your subscription, resource group name, and Azure region.</span></span>
+<span data-ttu-id="c196f-244">허브 VNet에서 스포크 VNet으로의 피어링을 연결하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-244">To create a peering connection from the hub VNet to the spoke VNets, perform the following steps.</span></span>
+
+1. <span data-ttu-id="c196f-245">`hub-vnet-peering.json` 파일을 열고, 29열에서 리소스 그룹 이름 및 각 가상 네트워크 피어링의 가상 네트워크 이름이 올바른지 확인합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-245">Open the `hub-vnet-peering.json` file and verify that the resource group name, and virtual network name for each of the virtual network peerings starting in line 29 are correct.</span></span>
+
+2. <span data-ttu-id="c196f-246">`azbb`를 실행하여 아래와 같이 첫 번째 스포크 VNet 환경을 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-246">Run `azbb` to deploy the first spoke VNet environment as shown below.</span></span>
 
   ```bash
-  sh ./spoke.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-spoke2-rg \
-    --location westus \
-    --spoke 2
+  azbb -s <subscription_id> -g hub-vnet-rg - l <location> -p hub-vnet-peering.json --deploy
   ```
 
+  > [!NOTE]
+  > <span data-ttu-id="c196f-247">`hub-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-247">If you decide to use a different resource group name (other than `hub-vnet-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
+
+### <a name="test-connectivity"></a><span data-ttu-id="c196f-248">연결 테스트</span><span class="sxs-lookup"><span data-stu-id="c196f-248">Test connectivity</span></span>
+
+<span data-ttu-id="c196f-249">Windows VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 스포크 VNet으로의 연결을 테스트하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-249">To test conectivity from the simulated on-premises environment to the spoke VNets using Windows VMs, perform the following steps.</span></span>
+
+1. <span data-ttu-id="c196f-250">Azure Portal에서 `onprem-jb-rg` 리소스 그룹으로 이동한 다음, `jb-vm1` 가상 머신 리소스를 클릭합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-250">From the Azure portal, navigate to the `onprem-jb-rg` resource group, then click on the `jb-vm1` virtual machine resource.</span></span>
+
+2.  <span data-ttu-id="c196f-251">포털에 있는 VM 블레이드의 왼쪽 위 모서리에서 `Connect`를 클릭하고, VM에 연결하기 위해 프롬프트를 따라 원격 데스크톱을 사용합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-251">On the top left hand corner of your VM blade in the portal, click `Connect`, and follow the prompts to use remote desktop to connect to the VM.</span></span> <span data-ttu-id="c196f-252">`onprem.json` 파일에서 36열과 37열에 지정된 사용자 이름 및 암호를 사용하도록 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-252">Make sure to use the username and password you specified in lines 36 and 37 in the `onprem.json` file.</span></span>
+
+3. <span data-ttu-id="c196f-253">VM에서 PowerShell 콘솔을 열고 `Test-NetConnection` cmdlet을 사용하여 아래와 같이 허브 jumpbox VM에 연결할 수 있는지 확인합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-253">Open a PowerShell console in the VM, and use the `Test-NetConnection` cmdlet to verify that you can connect to the hub jumpbox VM as shown below.</span></span>
+
   ```powershell
-  ./spoke.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-spoke2-rg `
-    -Location westus `
-    -Spoke 2
+  Test-NetConnection 10.1.0.68 -CommonTCPPort RDP
+  Test-NetConnection 10.2.0.68 -CommonTCPPort RDP
+  ```
+
+<span data-ttu-id="c196f-254">Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 스포크 VNet으로의 연결을 테스트하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-254">To test conectivity from the simulated on-premises environment to the spoke VNets using Linux VMs, perform the following steps:</span></span>
+
+1. <span data-ttu-id="c196f-255">Azure Portal에서 `onprem-jb-rg` 리소스 그룹으로 이동한 다음, `jb-vm1` 가상 머신 리소스를 클릭합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-255">From the Azure portal, navigate to the `onprem-jb-rg` resource group, then click on the `jb-vm1` virtual machine resource.</span></span>
+
+2. <span data-ttu-id="c196f-256">포털에 있는 VM 블레이드의 왼쪽 위 모서리에서 `Connect`을 클릭한 다음, 포털에 표시된 대로 `ssh` 명령을 복사합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-256">On the top left hand corner of your VM blade in the portal, click `Connect`, and then copy the `ssh` command shown on the portal.</span></span> 
+
+3. <span data-ttu-id="c196f-257">Linux 프롬프트에서 아래와 같이 위의 2 단계에서 복사한 정보를 사용하여 시뮬레이션된 온-프레미스 환경 jumpbox를 연결하기 위해 `ssh`를 실행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-257">From a Linux prompt, run `ssh` to connect to the simulated on-premises environment jumpbox witht the information you copied in step 2 above, as shown below.</span></span>
+
+  ```bash
+  ssh <your_user>@<public_ip_address>
+  ```
+
+5. <span data-ttu-id="c196f-258">`onprem.json` 파일의 37열에 지정된 암호를 사용하여 VM에 연결합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-258">Use the password you specified in line 37 in the `onprem.json` file to the connect to the VM.</span></span>
+
+6. <span data-ttu-id="c196f-259">다음과 같이 `ping` 명령을 사용하여 각 스포크에서 jumpbox에 대한 연결을 테스트합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-259">Use the `ping` command to test connectivity to the jumpbox VMs in each spoke, as shown below.</span></span>
+
+  ```bash
+  ping 10.1.0.68
+  ping 10.2.0.68
+  ```
+
+### <a name="add-connectivity-between-spokes"></a><span data-ttu-id="c196f-260">스포크 사이의 연결 추가</span><span class="sxs-lookup"><span data-stu-id="c196f-260">Add connectivity between spokes</span></span>
+
+<span data-ttu-id="c196f-261">스포크를 서로 연결할 수 있도록 하려면 NVA(네트워크 가상 어플라이언스)를 허브 가상 네트워크의 라우터로 사용하고 다른 스포크에 연결하려고 할 때 스포크에서 라우터로 트래픽을 강제로 적용해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-261">If you want to allow spokes to connect to each other, you need to use a newtwork virtual appliance (NVA) as a router in the hub virtual netowrk, and force traffic from spokes to the router when trying to connect to another spoke.</span></span> <span data-ttu-id="c196f-262">기본 샘플 NVA를 단일 VM으로 배포하고 두 개의 스포크 VNet을 연결할 수 있는 사용자 정의 경로를 배포하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-262">To deploy a basic sample NVA as a single VM, and the necessary uder defined routes to allow the two spoke VNets to connect, perform the following steps:</span></span>
+
+1. <span data-ttu-id="c196f-263">`hub-nva.json` 파일을 열고 아래에 나와 있는 대로 13열과 14열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-263">Open the `hub-nva.json` file and enter a username and password between the quotes in lines 13 and 14, as shown below, then save the file.</span></span>
+
+  ```bash
+  "adminUsername": "XXX",
+  "adminPassword": "YYY",
+  ```
+2. <span data-ttu-id="c196f-264">`azbb`를 실행하여 NVA VM 및 사용자 정의 경로를 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-264">Run `azbb` to deploy the NVA VM and user defined routes.</span></span>
+
+  ```bash
+  azbb -s <subscription_id> -g hub-nva-rg - l <location> -p hub-nva.json --deploy
   ```
   > [!NOTE]
-  > <span data-ttu-id="efe44-248">`ra-spoke2-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-248">If you decide to use a different resource group name (other than `ra-spoke2-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
-
-5. <span data-ttu-id="efe44-249">배포가 완료될 때까지 기다립니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-249">Wait for the deployment to finish.</span></span> <span data-ttu-id="efe44-250">이 배포는 가상 네트워크, Ubuntu와 Apache를 실행하는 3개의 가상 머신 및 이전 섹션에서 생성한 허브 VNet에 대한 VNet 피어링 연결을 생성합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-250">This deployment creates a virtual network, a load balancer with three virtual machine running Ubuntu and Apache, and a VNet peering connection to the hub VNet created in the previous section.</span></span> <span data-ttu-id="efe44-251">이 배포가 완료되기까지 20분이 넘게 걸릴 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-251">This deployment may take over 20 minutes.</span></span>
-
-### <a name="azure-hub-vnet-peering-to-spoke-vnets"></a><span data-ttu-id="efe44-252">스포크 VNet에 대한 Azure 허브 VNet 피어링</span><span class="sxs-lookup"><span data-stu-id="efe44-252">Azure hub VNet peering to spoke VNets</span></span>
-
-<span data-ttu-id="efe44-253">허브 VNet에 대한 VNet 피어링 연결을 배포하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-253">To deploy the VNet peering connections for the hub VNet, perform the following steps.</span></span>
-
-1. <span data-ttu-id="efe44-254">위의 필수 조건 단계에서 다운로드한 리포지토리가 있는 `hybrid-networking\hub-spoke\hub` 폴더로 이동합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-254">Switch to the `hybrid-networking\hub-spoke\hub` folder for the repository you download in the pre-requisites step above.</span></span>
-
-2. <span data-ttu-id="efe44-255">아래의 bash 또는 PowerShell 명령을 실행하여 첫 번째 스포크로의 피어링 연결을 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-255">Run the bash or PowerShell command below to deploy the peering connection to the first spoke.</span></span> <span data-ttu-id="efe44-256">값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-256">Substitute the values with your subscription, resource group name, and Azure region.</span></span>
-
-  ```bash
-  sh ./hub.peering.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-hub-rg \
-    --location westus \
-    --spoke 1
-  ```
-
-  ```powershell
-  ./hub.peering.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-hub-rg `
-    -Location westus `
-    -Spoke 1
-  ```
-
-2. <span data-ttu-id="efe44-257">아래의 bash 또는 PowerShell 명령을 실행하여 두 번째 스포크로의 피어링 연결을 배포합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-257">Run the bash or PowerShell command below to deploy the peering connection to the second spoke.</span></span> <span data-ttu-id="efe44-258">값을 사용자의 구독, 리소스 그룹 이름 및 Azure 지역으로 변경합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-258">Substitute the values with your subscription, resource group name, and Azure region.</span></span>
-
-  ```bash
-  sh ./hub.peering.deploy.sh --subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx \
-    --resourcegroup ra-hub-rg \
-    --location westus \
-    --spoke 2
-  ```
-
-  ```powershell
-  ./hub.peering.deploy.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx `
-    -ResourceGroup ra-hub-rg `
-    -Location westus `
-    -Spoke 2
-  ```
-
-### <a name="test-connectivity"></a><span data-ttu-id="efe44-259">연결 테스트</span><span class="sxs-lookup"><span data-stu-id="efe44-259">Test connectivity</span></span>
-
-<span data-ttu-id="efe44-260">온-프레미스 데이터 센터 배포에 연결된 허브-스포크 토폴로지가 올바르게 작동하는지 확인하려면 다음 단계를 수행합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-260">To verify that the hub-spoke topology connected to an on-premises datacenter deployment worked, follow these steps.</span></span>
-
-1. <span data-ttu-id="efe44-261">[Azure Portal][포털]에서 사용자의 구독에 연결한 다음 `ra-onprem-rg` 리소스 그룹에 있는 `ra-onprem-vm1` 가상 머신으로 이동합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-261">From the [Azure portal][portal], connect to your subscription, and navigate to the `ra-onprem-vm1` virtual machine in the `ra-onprem-rg` resource group.</span></span>
-
-2. <span data-ttu-id="efe44-262">`Overview` 블레이드에서 VM의 `Public IP address`를 확인합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-262">In the `Overview` blade, note the `Public IP address` for the VM.</span></span>
-
-3. <span data-ttu-id="efe44-263">SSH 클라이언트에서 배포 중에 지정한 사용자 이름과 암호를 사용하여 위에서 확인한 IP 주소에 연결합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-263">Use an SSH client to connect to the IP address you noted above using the user name and password you specified during deployment.</span></span>
-
-4. <span data-ttu-id="efe44-264">접속한 VM의 명령 프롬프트에서 아래의 명령을 실행하여 온-프레미스 VNet과 Spoke1 VNet 사이의 연결을 테스트합니다.</span><span class="sxs-lookup"><span data-stu-id="efe44-264">From the command prompt on the VM you connected to, run the command below to test connectivity from the on-premises VNet to the Spoke1 VNet.</span></span>
-
-  ```bash
-  ping 10.1.1.37
-  ```
+  > <span data-ttu-id="c196f-265">`hub-nva-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="c196f-265">If you decide to use a different resource group name (other than `hub-nva-rg`), make sure to search for all parameter files that use that name and edit them to use your own resource group name.</span></span>
 
 <!-- links -->
 
 [azure-cli-2]: /azure/install-azure-cli
-[azure-powershell]: /powershell/azure/install-azure-ps?view=azuresmps-3.7.0
+[azbb]: https://github.com/mspnp/template-building-blocks/wiki/Install-Azure-Building-Blocks
 [azure-vpn-gateway]: /azure/vpn-gateway/vpn-gateway-about-vpngateways
 [best-practices-security]: /azure/best-practices-network-securit
 [connect-to-an-Azure-vnet]: https://technet.microsoft.com/library/dn786406.aspx

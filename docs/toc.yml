@@ -110,8 +110,10 @@
       href: checklist/availability.md
     - name: DevOps
       href: checklist/dev-ops.md
-    - name: 복원력
+    - name: 복원력(일반)
       href: checklist/resiliency.md
+    - name: 복원력(Azure 서비스)
+      href: checklist/resiliency-per-service.md
     - name: 확장성
       href: checklist/scalability.md
 - name: 복원력을 위한 디자인
@@ -132,8 +134,6 @@
       href: service-fabric/migrate-from-cloud-services.md
     - name: Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램 리팩터링
       href: service-fabric/refactor-migrated-app.md
-    - name: Azure에서 Elasticsearch 실행
-      href: elasticsearch/index.md
     - name: Azure Resource Manager 템플릿 기능 확장
       href: building-blocks/extending-templates/index.md
 - name: 리소스
