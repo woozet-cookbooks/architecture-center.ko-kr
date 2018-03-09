@@ -4,8 +4,10 @@
   items:
     - name: 복원력 있는 응용 프로그램 디자인
       href: index.md
-    - name: 복원력 검사 목록
+    - name: 복원력 검사 목록(일반)
       href: ../checklist/resiliency.md?toc=/azure/architecture/resiliency/toc.json
+    - name: 복원력 검사 목록(Azure 서비스)
+      href: ../checklist/resiliency-per-service.md?toc=/azure/architecture/resiliency/toc.json
     - name: 실패 모드 분석
       href: failure-mode-analysis.md
     - name: 추가 지침

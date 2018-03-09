@@ -3,11 +3,11 @@ title: "스트림 처리 기술 선택"
 description: 
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: e06f46e2951159219bd8cc430102e2ec0c5d6d4d
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: 23d9849c14964b0905300f191a41084b589fd127
+ms.sourcegitcommit: 943e671a8d522cef5ddc8c6e04848134b03c2de4
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 03/05/2018
 ---
 # <a name="choosing-a-stream-processing-technology-in-azure"></a>Azure에서 스트림 처리 기술 선택
 
@@ -19,6 +19,7 @@ ms.lasthandoff: 02/14/2018
 Azure에서 다음의 모든 데이터 저장소는 핵심 요구 사항을 충족하여 실시간 처리를 지원합니다.
 - [Azure Stream Analytics](/azure/stream-analytics/)
 - [HDInsight(Spark Streaming 포함)](/azure/hdinsight/spark/apache-spark-streaming-overview)
+- [Azure Databricks의 Apache Spark](/azure/azure-databricks/)
 - [HDInsight(Storm 포함)](/azure/hdinsight/storm/apache-storm-overview)
 - [Azure 기능](/azure/azure-functions/functions-overview)
 - [Azure App Service WebJobs](/azure/app-service/web-sites-create-web-jobs)
@@ -37,28 +38,28 @@ Azure에서 다음의 모든 데이터 저장소는 핵심 요구 사항을 충�
 
 ## <a name="capability-matrix"></a>기능 매트릭스
 
-다음 표에서 주요 기능 차이점을 요약해서 보여 줍니다. 
+다음 표에서는 주요 기능 차이점을 요약해서 보여 줍니다. 
 
 ### <a name="general-capabilities"></a>일반 기능
-| | Azure Stream Analytics | HDInsight(Spark Streaming 포함) | HDInsight(Storm 포함) | Azure 기능 | Azure App Service WebJobs |
-| --- | --- | --- | --- | --- | --- | 
-| 프로그래밍 기능 | Stream Analytics 쿼리 언어, JavaScript | Scala, Python, Java | Java, C# | C#, F#, Node.js | C#, Node.js, PHP, Java, Python |
-| 프로그래밍 패러다임 | 선언적 | 선언적 및 명령적 방식 혼합 | 명령적 | 명령적 | 명령적 |    
-| 가격 책정 모델 | 스트리밍 단위 기준 | 클러스터 시간 기준 | 클러스터 시간 기준 | 함수 실행 및 리소스 사용량 기준 | App Service 계획 시간 기준 |  
+| | Azure Stream Analytics | HDInsight(Spark Streaming 포함) | Azure Databricks의 Apache Spark | HDInsight(Storm 포함) | Azure 기능 | Azure App Service WebJobs |
+| --- | --- | --- | --- | --- | --- | --- | 
+| 프로그래밍 기능 | Stream Analytics 쿼리 언어, JavaScript | Scala, Python, Java | Scala, Python, Java, R | Java, C# | C#, F#, Node.js | C#, Node.js, PHP, Java, Python |
+| 프로그래밍 패러다임 | 선언적 | 선언적 및 명령적 방식 혼합 | 선언적 및 명령적 방식 혼합 | 명령적 | 명령적 | 명령적 |    
+| 가격 책정 모델 | [스트리밍 단위](https://azure.microsoft.com/pricing/details/stream-analytics/) | 클러스터 시간당 | [Databricks 단위](https://azure.microsoft.com/pricing/details/databricks/) | 클러스터 시간당 | 함수 실행 및 리소스 사용량 기준 | App Service 계획 시간 기준 |  
 
 ### <a name="integration-capabilities"></a>통합 기능
-| | Azure Stream Analytics | HDInsight(Spark Streaming 포함) | HDInsight(Storm 포함) | Azure 기능 | Azure App Service WebJobs |
-| --- | --- | --- | --- | --- | --- | 
-| 입력 | [Stream Analytics 입력](/azure/stream-analytics/stream-analytics-define-inputs)  | Event Hubs, IoT Hub, Kafka, HDFS  | Event Hubs, IoT Hub, Storage Blob, Azure Data Lake Store  | [지원되는 바인딩](/azure/azure-functions/functions-triggers-bindings#supported-bindings) | Service Bus, Storage Queues, Storage Blob, Event Hubs, WebHooks, Cosmos DB, Files |
-| Sinks |  [Stream Analytics 출력](/azure/stream-analytics/stream-analytics-define-outputs) | HDFS | Event Hubs, Service Bus, Kafka | [지원되는 바인딩](/azure/azure-functions/functions-triggers-bindings#supported-bindings) | Service Bus, Storage Queues, Storage Blob, Event Hubs, WebHooks, Cosmos DB, Files | 
+| | Azure Stream Analytics | HDInsight(Spark Streaming 포함) | Azure Databricks의 Apache Spark | HDInsight(Storm 포함) | Azure 기능 | Azure App Service WebJobs |
+| --- | --- | --- | --- | --- | --- | --- | 
+| 입력 | [Stream Analytics 입력](/azure/stream-analytics/stream-analytics-define-inputs)  | Event Hubs, IoT Hub, Kafka, HDFS, Storage Blobs, Azure Data Lake Store  | Event Hubs, IoT Hub, Kafka, HDFS, Storage Blobs, Azure Data Lake Store  | Event Hubs, IoT Hub, Storage Blob, Azure Data Lake Store  | [지원되는 바인딩](/azure/azure-functions/functions-triggers-bindings#supported-bindings) | Service Bus, Storage Queues, Storage Blob, Event Hubs, WebHooks, Cosmos DB, Files |
+| Sinks |  [Stream Analytics 출력](/azure/stream-analytics/stream-analytics-define-outputs) | HDFS, Kafka, Storage Blobs, Azure Data Lake Store, Cosmos DB | HDFS, Kafka, Storage Blobs, Azure Data Lake Store, Cosmos DB | Event Hubs, Service Bus, Kafka | [지원되는 바인딩](/azure/azure-functions/functions-triggers-bindings#supported-bindings) | Service Bus, Storage Queues, Storage Blob, Event Hubs, WebHooks, Cosmos DB, Files | 
 
 ### <a name="processing-capabilities"></a>처리 기능
-| | Azure Stream Analytics | HDInsight(Spark Streaming 포함) | HDInsight(Storm 포함) | Azure 기능 | Azure App Service WebJobs |
-| --- | --- | --- | --- | --- | --- | 
-| 기본 제공 임시/창 지원 | 예 | 예 | 예 | 아니오 | 아니요 |
-| 입력 데이터 형식 | Avro, JSON 또는 CSV, UTF-8로 인코딩 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 |
-| 확장성 | [쿼리 파티션](/azure/stream-analytics/stream-analytics-parallelization) | 클러스터 크기에 따라 제한 | 클러스터 크기에 따라 제한 | 최대 200개의 함수 앱 인스턴스를 병렬로 처리 | App Service 계획 용량에 따라 제한 | 
-| 지연 도착 및 순서가 벗어난 이벤트 처리 지원 | 예 | 예 | 예 | 아니요 | 아니요 |
+| | Azure Stream Analytics | HDInsight(Spark Streaming 포함) | Azure Databricks의 Apache Spark | HDInsight(Storm 포함) | Azure 기능 | Azure App Service WebJobs |
+| --- | --- | --- | --- | --- | --- | --- | 
+| 기본 제공 임시/창 지원 | 예 | 예 | 예 | 예 | 아니요 | 아니요 |
+| 입력 데이터 형식 | Avro, JSON 또는 CSV, UTF-8로 인코딩 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 |
+| 확장성 | [쿼리 파티션](/azure/stream-analytics/stream-analytics-parallelization) | 클러스터 크기에 따라 제한 | Databricks 클러스터 크기 조정 구성에 따라 제한 | 클러스터 크기에 따라 제한 | 최대 200개의 함수 앱 인스턴스를 병렬로 처리 | App Service 계획 용량에 따라 제한 | 
+| 지연 도착 및 순서가 벗어난 이벤트 처리 지원 | 예 | 예 | 예 | 예 | 아니오 | 아니요 |
 
 참고 항목:
 

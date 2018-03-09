@@ -3,11 +3,11 @@ title: "Azure Cloud Services에서 마이그레이션된 Azure Service Fabric �
 description: "Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램을 리팩터링하는 방법입니다."
 author: petertay
 ms.date: 01/30/2018
-ms.openlocfilehash: 450648fbd0b19cdc7585738701914a1ebc1ed779
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: 08ef3af68b8eaba36a5b871449f0aba764fe5a04
+ms.sourcegitcommit: 2123c25b1a0b5501ff1887f98030787191cf6994
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 03/08/2018
 ---
 # <a name="refactor-an-azure-service-fabric-application-migrated-from-azure-cloud-services"></a>Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램 리팩터링
 

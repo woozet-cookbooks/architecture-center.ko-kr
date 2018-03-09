@@ -25,6 +25,8 @@
           href: hybrid-networking/expressroute-vpn-failover.md
         - name: 허브-스포크 토폴로지
           href: hybrid-networking/hub-spoke.md
+        - name: 공유 서비스를 사용하는 허브-스포크 토폴로지
+          href: hybrid-networking/shared-services.md
     - name: ID 관리
       href: identity/index.md
       items:

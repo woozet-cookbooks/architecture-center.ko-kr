@@ -4,11 +4,11 @@ description: "Microsoft Azure에서 실행되는 기본 웹 응용 프로그램�
 author: MikeWasson
 ms.date: 12/12/2017
 cardTitle: Basic web application
-ms.openlocfilehash: 598eb547f0e96ae334af391183a792637caa8631
-ms.sourcegitcommit: 1c0465cea4ceb9ba9bb5e8f1a8a04d3ba2fa5acd
+ms.openlocfilehash: 38b0739cc61d679742b610b99e92aaad8d3b394d
+ms.sourcegitcommit: 2123c25b1a0b5501ff1887f98030787191cf6994
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/02/2018
+ms.lasthandoff: 03/08/2018
 ---
 # <a name="basic-web-application"></a>기본 웹앱 응용 프로그램
 [!INCLUDE [header](../../_includes/header.md)]
@@ -19,7 +19,7 @@ ms.lasthandoff: 01/02/2018
 
 *이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
 
-## <a name="architecture"></a>아키텍처 
+## <a name="architecture"></a>건축 
 
 > [!NOTE]
 > 이 아키텍처는 응용 프로그램 개발에 초점을 두지 않으며 특정 응용 프로그램 프레임워크를 가정하지 않습니다. 다양한 Azure 서비스가 어떻게 연결되는지 이해하는 것이 목표입니다.
@@ -40,7 +40,7 @@ ms.lasthandoff: 01/02/2018
 
 * **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다. 사용자 지정 도메인 이름(예: `contoso.com`)을 사용하려면 사용자 지정 도메인 이름을 IP 주소에 매핑하는 DNS 레코드를 작성합니다. 자세한 내용은 [Azure App Service에서 사용자 지정 도메인 이름 구성][custom-domain-name]을 참조하세요.  
 
-* **Azure SQL Database**. [SQL Database][sql-db]는 클라우드에서 실행되는 관계형 DaaS(Database-as-a-Service)입니다.
+* **Azure SQL Database**. [SQL Database][sql-db]는 클라우드에서 실행되는 관계형 DaaS(Database-as-a-Service)입니다. SQL Database는 해당 코드 베이스를 Microsoft SQL Server 데이터베이스 엔진과 공유합니다. 응용 프로그램 요구 사항에 따라 [Azure Database for MySQL](/azure/mysql) 또는 [Azure Database for PostgreSQL](/azure/postgresql)을 사용할 수도 있습니다. 이 기능은 각각 오픈 소스 MySQL Server 및 Postgres 데이터베이스 엔진에 기반하여 완전히 관리되는 데이터베이스 서비스입니다.
 
 * **논리 서버**. Azure SQL Database에서 논리 서버는 데이터베이스를 호스트합니다. 논리 서버당 데이터베이스를 여럿 만들 수 있습니다.
 
