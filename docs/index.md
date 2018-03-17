@@ -2,11 +2,12 @@
 title: "Azure 아키텍처 센터"
 description: "Azure 아키텍처 센터는 Microsoft Azure를 사용하여 솔루션을 구축하기 위한 지침, 청사진, 패턴 및 모범 사례를 위한 공식 센터입니다. Microsoft 패턴 및 작업 방식 팀에 의해 엄선됩니다."
 layout: LandingPage
-ms.openlocfilehash: eb069ae80ce70eb66ef57b1e0e21f7181d17d21f
-ms.sourcegitcommit: 475064f0a3c2fac23e1286ba159aaded287eec86
+ms.topic: landing-page
+ms.openlocfilehash: 31177903bea137b40a457fe9360596e8096d6ab2
+ms.sourcegitcommit: ea7108f71dab09175ff69322874d1bcba800a37a
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/19/2018
+ms.lasthandoff: 03/17/2018
 ---
 # <a name="azure-architecture-center"></a>Azure 아키텍처 센터
 
