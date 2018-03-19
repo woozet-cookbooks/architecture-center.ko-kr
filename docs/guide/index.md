@@ -1,10 +1,10 @@
 ---
 layout: LandingPage
-ms.openlocfilehash: 00abbfdeac89a9006517195bd4bbc514d587fe74
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 9bd86f1b3527f1116d4f5169baf76f8a5b9a385b
+ms.sourcegitcommit: ea7108f71dab09175ff69322874d1bcba800a37a
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 03/17/2018
 ---
 # <a name="azure-application-architecture-guide"></a>Azure 응용 프로그램 아키텍처 가이드
 
@@ -46,7 +46,7 @@ Snowflake 서버</td>
 </tbody>
 </table>
 
-이 가이드는 응용 프로그램 설계자, 개발자 및 운영 팀을 대상으로 합니다. 개별 Azure 서비스 사용 방법을 안내하는 가이드가 아닙니다. 이 가이드를 읽으면 Azure 클라우드 플랫폼을 구축할 때 적용할 아키텍처 패턴과 모범 사례를 이해할 수 있습니다.
+이 가이드는 응용 프로그램 설계자, 개발자 및 운영 팀을 대상으로 합니다. 개별 Azure 서비스 사용 방법을 안내하는 가이드가 아닙니다. 이 가이드를 읽으면 Azure 클라우드 플랫폼을 구축할 때 적용할 아키텍처 패턴과 모범 사례를 이해할 수 있습니다. [가이드의 전자책 버전][ebook]을 다운로드할 수도 있습니다.
 
 ## <a name="how-this-guide-is-structured"></a>이 가이드의 구조
 
@@ -78,6 +78,7 @@ Azure 응용 프로그램 아키텍처 가이드는 아키텍처와 디자인에
 [checklists]: ../checklist/index.md
 [compute-options]: ./technology-choices/compute-comparison.md
 [design-principles]: ./design-principles/index.md
+[ebook]: https://azure.microsoft.com/campaigns/cloud-application-architecture-guide/
 [patterns]: ../patterns/index.md?toc=/azure/architecture/guide/toc.json
 [pillars]: ./pillars.md
 [ref-archs]: ../reference-architectures/index.md
