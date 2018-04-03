@@ -4,7 +4,7 @@
   href: index.md
 - name: 범주
   items:
-    - name: Availability
+    - name: 가용성
       href: category/availability.md
     - name: 데이터 관리
       href: category/data-management.md
