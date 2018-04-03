@@ -68,7 +68,7 @@
   href: priority-queue.md
 - name: 큐 기반 부하 평준화
   href: queue-based-load-leveling.md
-- name: Retry
+- name: 다시 시도
   href: retry.md
 - name: Scheduler 에이전트 감독자
   href: scheduler-agent-supervisor.md
