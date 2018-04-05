@@ -2,7 +2,7 @@
   href: /azure/architecture
 - name: 디자인 검토 검사 목록
   items:
-    - name: Availability
+    - name: 가용성
       href: availability.md
     - name: DevOps
       href: dev-ops.md
