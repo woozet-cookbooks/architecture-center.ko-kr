@@ -1,6 +1,6 @@
 ---
-title: "Azure 리소스에 대한 명명 규칙"
-description: "Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 계정, 네트워크, 가상 네트워크, 서브넷 및 기타 Azure 엔터티의 이름을 지정하는 방법"
+title: Azure 리소스에 대한 명명 규칙
+description: Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 계정, 네트워크, 가상 네트워크, 서브넷 및 기타 Azure 엔터티의 이름을 지정하는 방법
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
@@ -168,7 +168,7 @@ Azure Resource Manager는 임의적인 텍스트 문자열로 태그 지정 엔�
 
 Azure Storage 계정에서 Blob 데이터에 액세스할 수 있도록 사용자 지정 도메인 이름을 구성할 수 있습니다. Blob Service의 기본 끝점은 https://<name>.blob.core.windows.net`입니다.
 
-그러나 사용자 지정 도메인(예: www.contoso.com)을 저장소 계정의 Blob 끝점에 매핑하는 경우 해당 도메인을 사용하여 저장소 계정의 Blob 데이터에 액세스할 수 있습니다. 예를 들어 사용자 지정 도메인 이름을 통해 `http://mystorage.blob.core.windows.net/mycontainer/myblob`에 `http://www.contoso.com/mycontainer/myblob`로 액세스할 수 있습니다.
+그러나 사용자 지정 도메인(예: www.contoso.com )을 저장소 계정의 Blob 끝점에 매핑하는 경우 해당 도메인을 사용하여 저장소 계정의 Blob 데이터에 액세스할 수 있습니다. 예를 들어 사용자 지정 도메인 이름을 통해 `http://mystorage.blob.core.windows.net/mycontainer/myblob`에 `http://www.contoso.com/mycontainer/myblob`로 액세스할 수 있습니다.
 
 이 기능 구성에 대한 자세한 내용은 [Blob 저장소 끝점에 대한 사용자 지정 도메인 이름 구성](/azure/storage/storage-custom-domain-name/)을 참조하세요.
 
