@@ -1,6 +1,6 @@
 ---
-title: "Azure Resource Manager 템플릿 기능 확장"
-description: "Azure Resource Manager 템플릿 기능을 확장하는 방법에 대한 팁 및 트릭 설명"
+title: Azure Resource Manager 템플릿 기능 확장
+description: Azure Resource Manager 템플릿 기능을 확장하는 방법에 대한 팁 및 트릭 설명
 author: petertay
 ms.date: 06/09/2017
 ms.openlocfilehash: 33ae6850ffa5b28108f30475804be5347859f0c3

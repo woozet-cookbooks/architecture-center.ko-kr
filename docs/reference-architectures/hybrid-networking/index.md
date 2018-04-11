@@ -1,6 +1,6 @@
 ---
-title: "Azure에 온-프레미스 네트워크 연결"
-description: "온-프레미스 네트워크와 Azure 간에 안전하고 강력한 네트워크 연결을 만들려는 경우에 권장하는 아키텍처입니다."
+title: Azure에 온-프레미스 네트워크 연결
+description: 온-프레미스 네트워크와 Azure 간에 안전하고 강력한 네트워크 연결을 만들려는 경우에 권장하는 아키텍처입니다.
 layout: LandingPage
 ms.openlocfilehash: 372efb8ecf69245a5895c51e3da156a348bd665e
 ms.sourcegitcommit: 2123c25b1a0b5501ff1887f98030787191cf6994

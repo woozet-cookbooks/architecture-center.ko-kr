@@ -1,6 +1,6 @@
 ---
-title: "복원력 검사 목록"
-description: "설계하는 동안 복원력 문제에 대한 지침을 제공하는 검사 목록입니다."
+title: 복원력 검사 목록
+description: 설계하는 동안 복원력 문제에 대한 지침을 제공하는 검사 목록입니다.
 author: petertaylor9999
 ms.date: 01/10/2018
 ms.custom: resiliency, checklist

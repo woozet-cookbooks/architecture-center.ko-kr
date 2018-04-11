@@ -1,6 +1,6 @@
 ---
-title: "콘텐츠 배달 네트워크 지침"
-description: "Azure에서 호스팅되는 고대역폭 콘텐츠를 제공하는 Content Delivery Network(CDN)에 대한 지침을 제공합니다."
+title: 콘텐츠 배달 네트워크 지침
+description: Azure에서 호스팅되는 고대역폭 콘텐츠를 제공하는 Content Delivery Network(CDN)에 대한 지침을 제공합니다.
 author: dragon119
 ms.date: 02/02/2018
 pnp.series.title: Best Practices
