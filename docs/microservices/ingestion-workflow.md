@@ -1,6 +1,6 @@
 ---
-title: "마이크로 서비스의 수집 및 워크플로"
-description: "마이크로 서비스의 수집 및 워크플로"
+title: 마이크로 서비스의 수집 및 워크플로
+description: 마이크로 서비스의 수집 및 워크플로
 author: MikeWasson
 ms.date: 12/08/2017
 ms.openlocfilehash: 6477c3f2b0cc6d37dcd4637dc0dde4f7a6e3cc74

@@ -1,6 +1,6 @@
 ---
-title: "지침: Azure AD 테넌트 디자인"
-description: "기본 클라우드 채택 전략의 일환으로 고려되는 Azure 테넌트 디자인 지침"
+title: '지침: Azure AD 테넌트 디자인'
+description: 기본 클라우드 채택 전략의 일환으로 고려되는 Azure 테넌트 디자인 지침
 author: telmosampaio
 ms.openlocfilehash: 9ac52e9fd44bd8b9c777625002d5960f4f269be2
 ms.sourcegitcommit: 29fbcb1eec44802d2c01b6d3bcf7d7bd0bae65fc

@@ -1,6 +1,6 @@
 ---
-title: "조정 최소화"
-description: "확장성을 위해 응용 프로그램 서비스 간의 조정 최소화"
+title: 조정 최소화
+description: 확장성을 위해 응용 프로그램 서비스 간의 조정 최소화
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 3cab05b539612234fd8e66517b140ac5257c3e70

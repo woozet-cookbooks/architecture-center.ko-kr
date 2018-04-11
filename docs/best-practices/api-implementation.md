@@ -1,6 +1,6 @@
 ---
-title: "API 구현 지침"
-description: "API를 구현하는 방법에 대한 지침입니다."
+title: API 구현 지침
+description: API를 구현하는 방법에 대한 지침입니다.
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices

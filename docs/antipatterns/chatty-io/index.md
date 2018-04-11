@@ -1,6 +1,6 @@
 ---
-title: "번잡한 I/O 안티패턴"
-description: "다수의 I/O 요청으로 인해 성능과 응답성이 저하될 수 있습니다."
+title: 번잡한 I/O 안티패턴
+description: 다수의 I/O 요청으로 인해 성능과 응답성이 저하될 수 있습니다.
 author: dragon119
 ms.openlocfilehash: 4f0e0e455ceb58317d3029d8ab4631d476802499
 ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb

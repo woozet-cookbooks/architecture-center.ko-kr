@@ -1,6 +1,6 @@
 ---
-title: "게이트웨이 라우팅 패턴"
-description: "단일 엔드포인트를 사용하여 요청을 여러 서비스에 라우팅합니다."
+title: 게이트웨이 라우팅 패턴
+description: 단일 엔드포인트를 사용하여 요청을 여러 서비스에 라우팅합니다.
 author: dragon119
 ms.date: 06/23/2017
 ms.openlocfilehash: 53239b23cfd98fad1edc38ca37c2274d5a9d7a0f

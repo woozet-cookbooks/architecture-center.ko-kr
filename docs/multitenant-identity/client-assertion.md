@@ -1,6 +1,6 @@
 ---
-title: "Azure AD에서 액세스 토큰을 가져오는 데 클라이언트 어설션 사용"
-description: "클라이언트 어설션을 사용하여 Azure AD에서 액세스 토큰을 가져오는 방법을 알아봅니다."
+title: Azure AD에서 액세스 토큰을 가져오는 데 클라이언트 어설션 사용
+description: 클라이언트 어설션을 사용하여 Azure AD에서 액세스 토큰을 가져오는 방법을 알아봅니다.
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications

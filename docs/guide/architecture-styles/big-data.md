@@ -1,6 +1,6 @@
 ---
-title: "빅 데이터 아키텍처 스타일"
-description: "Azure에서 빅 데이터 아키텍처의 이점, 과제 및 모범 사례를 설명합니다."
+title: 빅 데이터 아키텍처 스타일
+description: Azure에서 빅 데이터 아키텍처의 이점, 과제 및 모범 사례를 설명합니다.
 author: MikeWasson
 ms.openlocfilehash: 4e8b58d5fa0f6a441d70e05ec7d6a0e668712563
 ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60

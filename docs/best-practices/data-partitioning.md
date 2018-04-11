@@ -1,6 +1,6 @@
 ---
-title: "데이터 분할 지침"
-description: "별도로 관리하고 액세스할 수 있도록 파티션을 구분하는 방법에 대한 참고 자료입니다."
+title: 데이터 분할 지침
+description: 별도로 관리하고 액세스할 수 있도록 파티션을 구분하는 방법에 대한 참고 자료입니다.
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices

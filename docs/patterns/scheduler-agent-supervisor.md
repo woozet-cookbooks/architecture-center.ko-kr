@@ -1,7 +1,7 @@
 ---
-title: "Scheduler 에이전트 감독자"
-description: "서비스 및 기타 원격 리소스의 분산된 집합에서 일련의 작업을 조정합니다."
-keywords: "디자인 패턴"
+title: Scheduler 에이전트 감독자
+description: 서비스 및 기타 원격 리소스의 분산된 집합에서 일련의 작업을 조정합니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns

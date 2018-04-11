@@ -1,6 +1,6 @@
 ---
-title: "Azure 채택: 기본"
-description: "엔터프라이즈가 Azure를 채택하기 위해 필요한 기본적인 지식 수준 설명"
+title: 'Azure 채택: 기본'
+description: 엔터프라이즈가 Azure를 채택하기 위해 필요한 기본적인 지식 수준 설명
 author: petertay
 ms.openlocfilehash: e9421b610e4eb07a3ed37bca56e513b0689484ef
 ms.sourcegitcommit: 9ba82cf84cee06ccba398ec04c51dab0e1ca8974

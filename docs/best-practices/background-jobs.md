@@ -1,6 +1,6 @@
 ---
-title: "백그라운드 작업 지침"
-description: "사용자 인터페이스와 독립적으로 실행되는 백그라운드 작업에 대한 지침."
+title: 백그라운드 작업 지침
+description: 사용자 인터페이스와 독립적으로 실행되는 백그라운드 작업에 대한 지침.
 author: dragon119
 ms.date: 05/24/2017
 pnp.series.title: Best Practices

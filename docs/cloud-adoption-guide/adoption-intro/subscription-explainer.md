@@ -1,6 +1,6 @@
 ---
-title: "설명: Azure 구독이란?"
-description: "Azure 구독, 계정 및 제공 서비스 설명"
+title: '설명: Azure 구독이란?'
+description: Azure 구독, 계정 및 제공 서비스 설명
 author: alexbuckgit
 ms.openlocfilehash: 1650d90d6f78b46b7fe4128d2dab6a80bd6cca78
 ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb

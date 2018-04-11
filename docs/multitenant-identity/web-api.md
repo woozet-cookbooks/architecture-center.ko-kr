@@ -1,6 +1,6 @@
 ---
-title: "다중 테넌트 응용 프로그램에서 백 엔드 웹 API 보안 유지"
-description: "백 엔드 웹 API의 보안을 유지하는 방법"
+title: 다중 테넌트 응용 프로그램에서 백 엔드 웹 API 보안 유지
+description: 백 엔드 웹 API의 보안을 유지하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications

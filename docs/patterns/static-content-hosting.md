@@ -1,7 +1,7 @@
 ---
-title: "정적 콘텐츠 호스팅"
-description: "정적 콘텐츠를 클라이언트에 직접 제공할 수 있는 클라우드 기반 저장소 서비스에 배포합니다."
-keywords: "디자인 패턴"
+title: 정적 콘텐츠 호스팅
+description: 정적 콘텐츠를 클라이언트에 직접 제공할 수 있는 클라우드 기반 저장소 서비스에 배포합니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns

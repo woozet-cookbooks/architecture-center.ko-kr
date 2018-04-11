@@ -1,6 +1,6 @@
 ---
-title: "캐싱 지침"
-description: "성능 및 확장성을 향상하기 위한 캐시에 대한 지침입니다."
+title: 캐싱 지침
+description: 성능 및 확장성을 향상하기 위한 캐시에 대한 지침입니다.
 author: dragon119
 ms.date: 05/24/2017
 pnp.series.title: Best Practices

@@ -1,6 +1,6 @@
 ---
-title: "Tailspin 설문 조사 응용 프로그램 정보"
-description: "Tailspin 설문 조사 응용 프로그램 개요"
+title: Tailspin 설문 조사 응용 프로그램 정보
+description: Tailspin 설문 조사 응용 프로그램 개요
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications

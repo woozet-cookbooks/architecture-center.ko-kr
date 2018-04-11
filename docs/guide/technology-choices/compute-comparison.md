@@ -1,6 +1,6 @@
 ---
-title: "Azure 계산 옵션을 선택하기 위한 조건"
-description: "여러 축에서 Azure 계산 서비스를 비교합니다."
+title: Azure 계산 옵션을 선택하기 위한 조건
+description: 여러 축에서 Azure 계산 서비스를 비교합니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 36b57d1fb674b5a1452a0e8208de836963b2b01b

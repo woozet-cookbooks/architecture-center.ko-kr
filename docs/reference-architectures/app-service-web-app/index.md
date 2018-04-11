@@ -1,6 +1,6 @@
 ---
-title: "App Service 웹 응용 프로그램"
-description: "Microsoft Azure에서 실행되는 웹 응용 프로그램에 권장하는 아키텍처입니다."
+title: App Service 웹 응용 프로그램
+description: Microsoft Azure에서 실행되는 웹 응용 프로그램에 권장하는 아키텍처입니다.
 layout: LandingPage
 ms.openlocfilehash: ea5ca6f0a1e2995ab35333095260d8f2c3db2600
 ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb

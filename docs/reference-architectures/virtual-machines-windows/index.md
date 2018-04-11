@@ -1,6 +1,6 @@
 ---
-title: "Windows VM 워크로드"
-description: "Azure에 엔터프라이즈 규모 응용 프로그램을 호스트하는 VM을 배포하기 위한 몇 가지 일반적인 아키텍처를 설명합니다."
+title: Windows VM 워크로드
+description: Azure에 엔터프라이즈 규모 응용 프로그램을 호스트하는 VM을 배포하기 위한 몇 가지 일반적인 아키텍처를 설명합니다.
 layout: LandingPage
 ms.openlocfilehash: 972a307c129598ecfab161d5246d0eb2abf7c7e5
 ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb

@@ -1,7 +1,7 @@
 ---
-title: "분할"
-description: "데이터 저장소를 수평 파티션 또는 분할 집합으로 나눕니다."
-keywords: "디자인 패턴"
+title: 분할
+description: 데이터 저장소를 수평 파티션 또는 분할 집합으로 나눕니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns

@@ -1,6 +1,6 @@
 ---
-title: "마이크로 서비스 아키텍처 스타일"
-description: "Azure에서 마이크로 서비스 아키텍처의 혜택, 과제 및 모범 사례를 설명합니다."
+title: 마이크로 서비스 아키텍처 스타일
+description: Azure에서 마이크로 서비스 아키텍처의 혜택, 과제 및 모범 사례를 설명합니다.
 author: MikeWasson
 ms.openlocfilehash: 08fd39b6cf0b3c88af654b27e21b2d7dd9fb19b1
 ms.sourcegitcommit: 7764a804f000180c37a4f8dbab946b525f784f58

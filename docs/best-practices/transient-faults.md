@@ -1,6 +1,6 @@
 ---
-title: "재시도 일반 지침"
-description: "일시적인 오류 처리를 위한 재시도 관련 지침입니다."
+title: 재시도 일반 지침
+description: 일시적인 오류 처리를 위한 재시도 관련 지침입니다.
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices

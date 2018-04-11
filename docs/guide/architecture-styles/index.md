@@ -1,6 +1,6 @@
 ---
-title: "아키텍처 스타일"
-description: "클라우드 응용 프로그램에 대한 공통 아키텍처 스타일"
+title: 아키텍처 스타일
+description: 클라우드 응용 프로그램에 대한 공통 아키텍처 스타일
 layout: LandingPage
 ms.openlocfilehash: 15a316f9ebf7cfe4e72a6992f264a68abb904819
 ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60

@@ -1,6 +1,6 @@
 ---
-title: "스트랭글러 패턴"
-description: "특정 기능을 새로운 응용 프로그램 및 서비스로 점진적으로 교체하여 레거시 시스템을 단계적으로 마이그레이션합니다."
+title: 스트랭글러 패턴
+description: 특정 기능을 새로운 응용 프로그램 및 서비스로 점진적으로 교체하여 레거시 시스템을 단계적으로 마이그레이션합니다.
 author: dragon119
 ms.date: 06/23/2017
 ms.openlocfilehash: d03e8a1ef9077b6e00ea5a17423bf7e09b68111a

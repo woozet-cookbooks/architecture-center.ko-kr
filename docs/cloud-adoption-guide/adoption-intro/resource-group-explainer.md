@@ -1,6 +1,6 @@
 ---
-title: "설명 - Azure 리소스 그룹이란?"
-description: "리소스 그룹의 내부 Azure 함수 설명"
+title: 설명 - Azure 리소스 그룹이란?
+description: 리소스 그룹의 내부 Azure 함수 설명
 author: petertay
 ms.openlocfilehash: e7c7334bd88c28f57498486bd2bed3c349565222
 ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242

@@ -1,6 +1,6 @@
 ---
-title: "모놀리식 지속성 안티패턴"
-description: "응용 프로그램의 모든 데이터를 단일 데이터 저장소에 저장하면 성능이 저하될 수 있습니다."
+title: 모놀리식 지속성 안티패턴
+description: 응용 프로그램의 모든 데이터를 단일 데이터 저장소에 저장하면 성능이 저하될 수 있습니다.
 author: dragon119
 ms.date: 06/05/2017
 ms.openlocfilehash: 7f04b9f0805c281068b6b2edaf040683773e6f6e

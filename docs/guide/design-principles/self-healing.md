@@ -1,6 +1,6 @@
 ---
-title: "자체 복구를 위한 디자인"
-description: "복원 응용 프로그램은 수동 개입 없이 오류를 복구할 수 있습니다."
+title: 자체 복구를 위한 디자인
+description: 복원 응용 프로그램은 수동 개입 없이 오류를 복구할 수 있습니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 0782b65b77615f7c006724264ab0ca2d2c7c04e2

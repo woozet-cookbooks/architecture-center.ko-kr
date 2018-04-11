@@ -1,6 +1,6 @@
 ---
-title: "Kubernetes로 Azure에서 마이크로 서비스 설계, 구축 및 운영"
-description: "Azure에서 마이크로 서비스 설계, 구축 및 운영"
+title: Kubernetes로 Azure에서 마이크로 서비스 설계, 구축 및 운영
+description: Azure에서 마이크로 서비스 설계, 구축 및 운영
 author: MikeWasson
 ms.date: 12/08/2017
 ms.openlocfilehash: 857e91a8eeefec18b459f2e66fde9a4f8bbe7b21

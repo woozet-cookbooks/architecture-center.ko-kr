@@ -1,6 +1,6 @@
 ---
-title: "비즈니스 요구 사항에 맞게 구축"
-description: "모든 디자인 결정은 비즈니스 요구 사항에 맞춰 정당화되어야 합니다."
+title: 비즈니스 요구 사항에 맞게 구축
+description: 모든 디자인 결정은 비즈니스 요구 사항에 맞춰 정당화되어야 합니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 110a441ae74334d212a717da2cb038d60b24bb1f

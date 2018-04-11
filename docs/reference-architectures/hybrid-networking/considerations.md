@@ -1,6 +1,6 @@
 ---
-title: "온-프레미스 네트워크를 Azure에 연결하기 위한 솔루션 선택"
-description: "온-프레미스 네트워크를 Azure에 연결하기 위한 참조 아키텍처를 비교합니다."
+title: 온-프레미스 네트워크를 Azure에 연결하기 위한 솔루션 선택
+description: 온-프레미스 네트워크를 Azure에 연결하기 위한 참조 아키텍처를 비교합니다.
 author: telmosampaio
 ms.date: 04/06/2017
 ms.openlocfilehash: 274b9df1817632a7f3eaafa8bf02e965fdc3feea

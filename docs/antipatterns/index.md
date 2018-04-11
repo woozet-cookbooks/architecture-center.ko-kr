@@ -1,6 +1,6 @@
 ---
-title: "클라우드 응용 프로그램에 대한 성능 안티패턴"
-description: "확장성 문제를 일으킬 가능성이 있는 일반적인 사례입니다."
+title: 클라우드 응용 프로그램에 대한 성능 안티패턴
+description: 확장성 문제를 일으킬 가능성이 있는 일반적인 사례입니다.
 author: dragon119
 ms.date: 06/05/2017
 ms.openlocfilehash: 423fe6533e57268610f625f523714cd1bce89546

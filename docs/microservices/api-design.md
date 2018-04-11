@@ -1,6 +1,6 @@
 ---
-title: "API 디자인"
-description: "마이크로 서비스에 대한 API 디자인"
+title: API 디자인
+description: 마이크로 서비스에 대한 API 디자인
 author: MikeWasson
 ms.date: 12/08/2017
 ms.openlocfilehash: d85407f3092ddb5f77aacfea8def2784c4741eb9

@@ -1,6 +1,6 @@
 ---
-title: "네트워크 DMZ"
-description: "하이브리드 시스템의 일부로 Azure에서 실행되는 응용 프로그램 및 구성 요소를 무단 침입으로부터 보호하는 데 사용할 수 있는 여러 가지 방법을 설명 및 비교합니다."
+title: 네트워크 DMZ
+description: 하이브리드 시스템의 일부로 Azure에서 실행되는 응용 프로그램 및 구성 요소를 무단 침입으로부터 보호하는 데 사용할 수 있는 여러 가지 방법을 설명 및 비교합니다.
 layout: LandingPage
 ms.openlocfilehash: 98df0a25767c7a7282e67381c6465fe3263ce1fa
 ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb

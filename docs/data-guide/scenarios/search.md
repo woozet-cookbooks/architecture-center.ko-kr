@@ -1,6 +1,6 @@
 ---
-title: "검색을 위해 자유 형식 텍스트 처리"
-description: 
+title: 검색을 위해 자유 형식 텍스트 처리
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: e53730bd2e179c82399e0f92b6c5ce7f451a2f46

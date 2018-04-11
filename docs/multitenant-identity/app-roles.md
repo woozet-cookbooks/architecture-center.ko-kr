@@ -1,6 +1,6 @@
 ---
-title: "응용 프로그램 역할"
-description: "응용 프로그램 역할을 사용하여 권한 부여를 수행하는 방법"
+title: 응용 프로그램 역할
+description: 응용 프로그램 역할을 사용하여 권한 부여를 수행하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications

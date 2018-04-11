@@ -1,6 +1,6 @@
 ---
-title: "Azure Resource Manager 템플릿의 리소스 업데이트"
-description: "Azure Resource Manager 템플릿의 기능을 확장하여 리소스를 업데이트하는 방법을 설명합니다."
+title: Azure Resource Manager 템플릿의 리소스 업데이트
+description: Azure Resource Manager 템플릿의 기능을 확장하여 리소스를 업데이트하는 방법을 설명합니다.
 author: petertay
 ms.date: 06/09/2017
 ms.openlocfilehash: fc2565819c66ee7695224ef5793e7276e6e552e0

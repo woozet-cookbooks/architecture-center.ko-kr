@@ -1,6 +1,6 @@
 ---
-title: "Azure용 복원 응용 프로그램 디자인"
-description: "Azure에서 고가용성 및 재해 복구를 제공하는 복원 응용 프로그램을 빌드하는 방법을 설명합니다."
+title: Azure용 복원 응용 프로그램 디자인
+description: Azure에서 고가용성 및 재해 복구를 제공하는 복원 응용 프로그램을 빌드하는 방법을 설명합니다.
 author: MikeWasson
 ms.date: 05/26/2017
 ms.custom: resiliency

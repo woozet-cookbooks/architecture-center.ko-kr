@@ -1,6 +1,6 @@
 ---
-title: "고객의 AD FS로 페더레이션"
-description: "다중 테넌트 응용 프로그램에서 고객의 AD FS로 페더레이션하는 방법"
+title: 고객의 AD FS로 페더레이션
+description: 다중 테넌트 응용 프로그램에서 고객의 AD FS로 페더레이션하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications

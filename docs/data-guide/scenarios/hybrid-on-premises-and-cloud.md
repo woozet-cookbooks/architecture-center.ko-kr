@@ -1,6 +1,6 @@
 ---
-title: "클라우드로 온-프레미스 데이터 솔루션 확장"
-description: 
+title: 클라우드로 온-프레미스 데이터 솔루션 확장
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: 66fc225dc123202ba587d82f15ea0883e1bbf3b5

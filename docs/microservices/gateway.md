@@ -1,6 +1,6 @@
 ---
-title: "API 게이트웨이"
-description: "마이크로 서비스의 API 게이트웨이"
+title: API 게이트웨이
+description: 마이크로 서비스의 API 게이트웨이
 author: MikeWasson
 ms.date: 12/08/2017
 ms.openlocfilehash: 6483d416363e24f4084d6b856847a740bf4054d9

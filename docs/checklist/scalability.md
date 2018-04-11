@@ -1,6 +1,6 @@
 ---
-title: "확장성 검사 목록"
-description: "Azure 자동 크기 조정에 대한 디자인 고려 사항을 제공하는 확장성 검사 목록 지침"
+title: 확장성 검사 목록
+description: Azure 자동 크기 조정에 대한 디자인 고려 사항을 제공하는 확장성 검사 목록 지침
 author: dragon119
 ms.date: 01/10/2018
 ms.custom: checklist

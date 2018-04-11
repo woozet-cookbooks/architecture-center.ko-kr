@@ -1,6 +1,6 @@
 ---
-title: "격벽 패턴"
-description: "하나가 고장 나더라도 나머지는 정상적으로 작동하도록 응용 프로그램의 요소를 여러 풀에 격리합니다."
+title: 격벽 패턴
+description: 하나가 고장 나더라도 나머지는 정상적으로 작동하도록 응용 프로그램의 요소를 여러 풀에 격리합니다.
 author: dragon119
 ms.date: 06/23/2017
 ms.openlocfilehash: a2c499d77fafc4bee6b74ee0e0d84e6c23b47851

@@ -1,6 +1,6 @@
 ---
-title: "붐비는 프런트 엔드 안태패턴"
-description: "다수의 백그라운드 스레드에서 비동기 작업을 수행하면 다른 포그라운드 작업에 결핍이 발생할 수 있습니다."
+title: 붐비는 프런트 엔드 안태패턴
+description: 다수의 백그라운드 스레드에서 비동기 작업을 수행하면 다른 포그라운드 작업에 결핍이 발생할 수 있습니다.
 author: dragon119
 ms.date: 06/05/2017
 ms.openlocfilehash: cedb80ddac5ceb1eb901455df3165993fd28a138
