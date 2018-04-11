@@ -1,6 +1,6 @@
 ---
-title: "Azure 서비스에 대한 복원력 검사 목록"
-description: "다양한 Azure 서비스에 대한 복원력 지침을 제공하는 검사 목록입니다."
+title: Azure 서비스에 대한 복원력 검사 목록
+description: 다양한 Azure 서비스에 대한 복원력 지침을 제공하는 검사 목록입니다.
 author: petertaylor9999
 ms.date: 03/02/2018
 ms.custom: resiliency, checklist

@@ -1,6 +1,6 @@
 ---
-title: "Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램 리팩터링"
-description: "Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램을 리팩터링하는 방법입니다."
+title: Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램 리팩터링
+description: Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램을 리팩터링하는 방법입니다.
 author: petertay
 ms.date: 01/30/2018
 ms.openlocfilehash: 08ef3af68b8eaba36a5b871449f0aba764fe5a04
