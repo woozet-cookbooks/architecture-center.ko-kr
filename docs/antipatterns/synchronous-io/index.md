@@ -1,6 +1,6 @@
 ---
-title: "동기 I/O 안티패턴"
-description: "I/O가 완료하는 동안 호출 스레드를 차단하면 성능이 감소하고 수직 확장성에 영향을 미칠 수 있습니다."
+title: 동기 I/O 안티패턴
+description: I/O가 완료하는 동안 호출 스레드를 차단하면 성능이 감소하고 수직 확장성에 영향을 미칠 수 있습니다.
 author: dragon119
 ms.date: 06/05/2017
 ms.openlocfilehash: d5b3635565c6b71ef7716f54ee8cccc76093c3a3

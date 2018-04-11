@@ -1,6 +1,6 @@
 ---
-title: "다중 테넌트 응용 프로그램에서 백 엔드 웹 API 보안 유지"
-description: "백 엔드 웹 API의 보안을 유지하는 방법"
+title: 다중 테넌트 응용 프로그램에서 백 엔드 웹 API 보안 유지
+description: 백 엔드 웹 API의 보안을 유지하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
@@ -270,10 +270,14 @@ public void ConfigureServices(IServiceCollection services)
 [JwtBearer]: https://www.nuget.org/packages/Microsoft.AspNet.Authentication.JwtBearer
 
 [Tailspin 설문 조사]: tailspin.md
+[Tailspin Surveys]: tailspin.md
 [IdentityServer3]: https://github.com/IdentityServer/IdentityServer3
 [응용 프로그램 매니페스트 업데이트]: ./run-the-app.md#update-the-application-manifests
+[Update the application manifests]: ./run-the-app.md#update-the-application-manifests
 [토큰 캐싱]: token-cache.md
+[Token caching]: token-cache.md
 [테넌트 등록]: signup.md
+[tenant sign-up]: signup.md
 [claims-transformation]: claims.md#claims-transformations
 [Authorization]: authorize.md
 [sample application]: https://github.com/mspnp/multitenant-saas-guidance

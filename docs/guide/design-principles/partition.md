@@ -1,6 +1,6 @@
 ---
-title: "한도에 맞춘 분할"
-description: "분할을 사용하여 데이터베이스, 네트워크 및 계산 한도를 해결합니다."
+title: 한도에 맞춘 분할
+description: 분할을 사용하여 데이터베이스, 네트워크 및 계산 한도를 해결합니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 4371490385b24230551bf17db0075052f320b574

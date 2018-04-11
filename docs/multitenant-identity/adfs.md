@@ -1,6 +1,6 @@
 ---
-title: "고객의 AD FS로 페더레이션"
-description: "다중 테넌트 응용 프로그램에서 고객의 AD FS로 페더레이션하는 방법"
+title: 고객의 AD FS로 페더레이션
+description: 다중 테넌트 응용 프로그램에서 고객의 AD FS로 페더레이션하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
@@ -181,14 +181,22 @@ Set-ADFSClaimsProviderTrust -TargetName "name" -OrganizationalAccountSuffix @("s
 <!-- Links -->
 [Azure AD Connect]: /azure/active-directory/active-directory-aadconnect/
 [페더레이션 트러스트]: https://technet.microsoft.com/library/cc770993(v=ws.11).aspx
+[federation trust]: https://technet.microsoft.com/library/cc770993(v=ws.11).aspx
 [계정 파트너]: https://technet.microsoft.com/library/cc731141(v=ws.11).aspx
+[account partner]: https://technet.microsoft.com/library/cc731141(v=ws.11).aspx
 [리소스 파트너]: https://technet.microsoft.com/library/cc731141(v=ws.11).aspx
+[resource partner]: https://technet.microsoft.com/library/cc731141(v=ws.11).aspx
 [인증 인스턴트]: https://msdn.microsoft.com/library/system.security.claims.claimtypes.authenticationinstant%28v=vs.110%29.aspx
+[Authentication instant]: https://msdn.microsoft.com/library/system.security.claims.claimtypes.authenticationinstant%28v=vs.110%29.aspx
 [만료 시간]: http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-4.1.
+[Expiration time]: http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-4.1.
 [이름 식별자]: https://msdn.microsoft.com/library/system.security.claims.claimtypes.nameidentifier(v=vs.110).aspx
+[Name identifier]: https://msdn.microsoft.com/library/system.security.claims.claimtypes.nameidentifier(v=vs.110).aspx
 [active-directory-on-azure]: https://msdn.microsoft.com/library/azure/jj156090.aspx
 [블로그 게시물]: http://www.cloudidentity.com/blog/2015/08/21/OPENID-CONNECT-WEB-SIGN-ON-WITH-ADFS-IN-WINDOWS-SERVER-2016-TP3/
+[blog post]: http://www.cloudidentity.com/blog/2015/08/21/OPENID-CONNECT-WEB-SIGN-ON-WITH-ADFS-IN-WINDOWS-SERVER-2016-TP3/
 [AD FS 로그인 페이지 사용자 지정]: https://technet.microsoft.com/library/dn280950.aspx
+[Customizing the AD FS Sign-in Pages]: https://technet.microsoft.com/library/dn280950.aspx
 [sample application]: https://github.com/mspnp/multitenant-saas-guidance
 [client assertion]: client-assertion.md
 [active-directory-dotnet-webapp-wsfederation]: https://github.com/Azure-Samples/active-directory-dotnet-webapp-wsfederation

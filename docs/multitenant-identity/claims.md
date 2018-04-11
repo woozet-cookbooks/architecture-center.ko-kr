@@ -1,6 +1,6 @@
 ---
-title: "다중 테넌트 응용 프로그램에서 클레임 기반 ID 작업"
-description: "발급자 유효성 검사 및 권한 부여에 클레임을 사용하는 방법"
+title: 다중 테넌트 응용 프로그램에서 클레임 기반 ID 작업
+description: 발급자 유효성 검사 및 권한 부여에 클레임을 사용하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
@@ -117,9 +117,13 @@ ms.lasthandoff: 11/14/2017
 <!-- Links -->
 
 [범위 매개 변수]: http://nat.sakimura.org/2012/01/26/scopes-and-claims-in-openid-connect/
+[scope parameter]: http://nat.sakimura.org/2012/01/26/scopes-and-claims-in-openid-connect/
 [지원되는 토큰 및 클레임 유형]: /azure/active-directory/active-directory-token-and-claims/
+[Supported Token and Claim Types]: /azure/active-directory/active-directory-token-and-claims/
 [발급자]: http://openid.net/specs/openid-connect-core-1_0.html#IDToken
+[issuer]: http://openid.net/specs/openid-connect-core-1_0.html#IDToken
 [인증 이벤트]: authenticate.md#authentication-events
+[Authentication events]: authenticate.md#authentication-events
 [signup]: signup.md
 [Claims-Based Authorization]: /aspnet/core/security/authorization/claims
 [sample application]: https://github.com/mspnp/multitenant-saas-guidance

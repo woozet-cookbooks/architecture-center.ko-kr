@@ -1,6 +1,6 @@
 ---
-title: "운영을 위한 디자인"
-description: "운영 팀에 필요한 도구가 포함되도록 응용 프로그램을 디자인합니다."
+title: 운영을 위한 디자인
+description: 운영 팀에 필요한 도구가 포함되도록 응용 프로그램을 디자인합니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 76338cc27daf82ccb99df4e4c51c7a5ac6f26065

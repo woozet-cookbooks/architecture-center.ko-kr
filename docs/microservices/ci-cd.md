@@ -1,6 +1,6 @@
 ---
-title: "마이크로 서비스에 대한 CI/CD"
-description: "마이크로 서비스에 대한 지속적인 통합 및 지속적인 업데이트"
+title: 마이크로 서비스에 대한 CI/CD
+description: 마이크로 서비스에 대한 지속적인 통합 및 지속적인 업데이트
 author: MikeWasson
 ms.date: 12/08/2017
 ms.openlocfilehash: 7d8a81b7bc236e50d722a68a0115b9220d4e094f

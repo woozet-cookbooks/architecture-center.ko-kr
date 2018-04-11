@@ -1,6 +1,6 @@
 ---
-title: "큰 계산 아키텍처 스타일"
-description: "Azure에서 큰 계산 아키텍처의 이점, 과제 및 모범 사례를 설명합니다."
+title: 큰 계산 아키텍처 스타일
+description: Azure에서 큰 계산 아키텍처의 이점, 과제 및 모범 사례를 설명합니다.
 author: MikeWasson
 ms.openlocfilehash: b16be4133143d7d73062eeb280b44779c390f387
 ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60

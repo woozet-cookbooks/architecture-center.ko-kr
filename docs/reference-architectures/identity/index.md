@@ -1,6 +1,6 @@
 ---
-title: "ID 관리"
-description: "Azure를 사용하여 온-프레미스/클라우드 경계에 걸쳐 있는 하이브리드 시스템의 ID 관리에 사용 가능한 여러 방법을 비교 및 설명합니다."
+title: ID 관리
+description: Azure를 사용하여 온-프레미스/클라우드 경계에 걸쳐 있는 하이브리드 시스템의 ID 관리에 사용 가능한 여러 방법을 비교 및 설명합니다.
 layout: LandingPage
 ms.openlocfilehash: de98ee30306f5e712759ab7140bd430cb6d4cd75
 ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb

@@ -1,6 +1,6 @@
 ---
-title: "게이트웨이 오프로딩 패턴"
-description: "공유 또는 특수 서비스 기능을 게이트웨이 프록시에 오프로드합니다."
+title: 게이트웨이 오프로딩 패턴
+description: 공유 또는 특수 서비스 기능을 게이트웨이 프록시에 오프로드합니다.
 author: dragon119
 ms.date: 06/23/2017
 ms.openlocfilehash: 6b3e4541aae77349ca91c18c788ddb508912361d

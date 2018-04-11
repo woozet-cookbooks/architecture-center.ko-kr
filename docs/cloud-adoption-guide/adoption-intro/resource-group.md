@@ -1,6 +1,6 @@
 ---
-title: "지침: Azure 리소스 그룹 디자인"
-description: "기본 클라우드 채택 전략의 일환으로 고려되는 Azure 리소스 그룹 디자인 지침"
+title: '지침: Azure 리소스 그룹 디자인'
+description: 기본 클라우드 채택 전략의 일환으로 고려되는 Azure 리소스 그룹 디자인 지침
 author: petertay
 ms.openlocfilehash: ac6cbb03be8cdba020641d3b9034ad9d20101acf
 ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242

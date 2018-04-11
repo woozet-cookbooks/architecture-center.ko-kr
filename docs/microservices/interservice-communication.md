@@ -1,6 +1,6 @@
 ---
-title: "마이크로 서비스의 서비스 간 통신"
-description: "마이크로 서비스의 서비스 간 통신"
+title: 마이크로 서비스의 서비스 간 통신
+description: 마이크로 서비스의 서비스 간 통신
 author: MikeWasson
 ms.date: 12/08/2017
 ms.openlocfilehash: aff2fb7b2be25ca32d6224cee15363880cfb1488

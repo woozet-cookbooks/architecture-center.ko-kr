@@ -1,6 +1,6 @@
 ---
-title: "Azure 응용 프로그램에 적합한 기술 선택"
-description: "Azure 응용 프로그램에 적합한 기술 선택"
+title: Azure 응용 프로그램에 적합한 기술 선택
+description: Azure 응용 프로그램에 적합한 기술 선택
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 7681aeb7a6064d06674e781292c444dba9d410f2

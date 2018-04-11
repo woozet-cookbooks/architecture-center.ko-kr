@@ -1,6 +1,6 @@
 ---
-title: "CQRS 아키텍처 스타일"
-description: "CQRS 아키텍처의 이점, 과제 및 모범 사례를 설명합니다."
+title: CQRS 아키텍처 스타일
+description: CQRS 아키텍처의 이점, 과제 및 모범 사례를 설명합니다.
 author: MikeWasson
 ms.openlocfilehash: dd3da5886587159f57646ff1bfffa2094725f798
 ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60

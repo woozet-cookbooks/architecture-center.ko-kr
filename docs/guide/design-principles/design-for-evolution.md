@@ -1,6 +1,6 @@
 ---
-title: "변화를 위한 디자인"
-description: "혁신적인 디자인은 지속적인 혁신의 핵심입니다."
+title: 변화를 위한 디자인
+description: 혁신적인 디자인은 지속적인 혁신의 핵심입니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 35e91228f3fb0a303594ec06f05b6865008e3a4f

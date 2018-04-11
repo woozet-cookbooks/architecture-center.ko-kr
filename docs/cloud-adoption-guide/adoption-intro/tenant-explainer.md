@@ -1,6 +1,6 @@
 ---
-title: "설명: Azure Active Directory 테넌트란?"
-description: "Azure에서 IDaaS(Identity as a Service)를 제공하는 Azure Active Directory의 내부 기능 설명"
+title: '설명: Azure Active Directory 테넌트란?'
+description: Azure에서 IDaaS(Identity as a Service)를 제공하는 Azure Active Directory의 내부 기능 설명
 author: petertay
 ms.openlocfilehash: ce5a33b92047e1f360eee8fcbc7a726bcf8cd19f
 ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242

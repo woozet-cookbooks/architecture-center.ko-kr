@@ -1,6 +1,6 @@
 ---
-title: "모두 중복으로 구성"
-description: "응용 프로그램에 중복성을 구축하여 단일 실패 지점을 피합니다."
+title: 모두 중복으로 구성
+description: 응용 프로그램에 중복성을 구축하여 단일 실패 지점을 피합니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 05ccf78c2cfbcd4e2d26200e70463d388d54f671

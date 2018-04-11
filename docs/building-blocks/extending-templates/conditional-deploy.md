@@ -1,6 +1,6 @@
 ---
-title: "조건부로 Azure Resource Manager 템플릿의 리소스 배포"
-description: "조건부로 매개 변수의 값에 종속되는 리소스를 배포하도록 Azure Resource Manager 템플릿의 기능을 확장하는 방법을 설명합니다."
+title: 조건부로 Azure Resource Manager 템플릿의 리소스 배포
+description: 조건부로 매개 변수의 값에 종속되는 리소스를 배포하도록 Azure Resource Manager 템플릿의 기능을 확장하는 방법을 설명합니다.
 author: petertay
 ms.date: 06/09/2017
 ms.openlocfilehash: e911e7dc41b4f71ebfaf13a00f8cdbb5b4e2578b

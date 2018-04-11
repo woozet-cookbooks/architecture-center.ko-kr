@@ -1,11 +1,12 @@
 ---
-title: "보정 트랜잭션"
-description: "여러 단계로 나뉘어 있지만 결국에는 일관적인 작업을 정의하는 일련의 단계에서 수행한 작업을 실행 취소합니다."
-keywords: "디자인 패턴"
+title: 보정 트랜잭션
+description: 여러 단계로 나뉘어 있지만 결국에는 일관적인 작업을 정의하는 일련의 단계에서 수행한 작업을 실행 취소합니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
-pnp.pattern.categories: resiliency
+pnp.pattern.categories:
+- resiliency
 ms.openlocfilehash: a822de990d6ce933024207073b110e98f8da40bf
 ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
 ms.translationtype: HT

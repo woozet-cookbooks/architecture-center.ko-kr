@@ -1,6 +1,6 @@
 ---
-title: "사용량이 많은 데이터베이스 안티패턴"
-description: "처리를 데이터베이스 서버로 오프로드하면 성능 및 확장성 문제가 발생할 수 있습니다."
+title: 사용량이 많은 데이터베이스 안티패턴
+description: 처리를 데이터베이스 서버로 오프로드하면 성능 및 확장성 문제가 발생할 수 있습니다.
 author: dragon119
 ms.date: 06/05/2017
 ms.openlocfilehash: 9fdbde0731a1be570ef611894a9d23a1be87f4e7

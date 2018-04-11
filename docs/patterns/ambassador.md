@@ -1,6 +1,6 @@
 ---
-title: "특사 패턴"
-description: "소비자 서비스 또는 응용 프로그램을 대신하여 네트워크 요청을 전송하는 도우미 서비스를 만듭니다."
+title: 특사 패턴
+description: 소비자 서비스 또는 응용 프로그램을 대신하여 네트워크 요청을 전송하는 도우미 서비스를 만듭니다.
 author: dragon119
 ms.date: 06/23/2017
 ms.openlocfilehash: 6c545619aab6a5817e55854350e3769834df27cd

@@ -1,6 +1,6 @@
 ---
-title: "부적절한 인스턴스화 안티패턴"
-description: "한 번 만든 다음 공유하는 개체의 새 인스턴스를 계속 만들지 마십시오."
+title: 부적절한 인스턴스화 안티패턴
+description: 한 번 만든 다음 공유하는 개체의 새 인스턴스를 계속 만들지 마십시오.
 author: dragon119
 ms.date: 06/05/2017
 ms.openlocfilehash: 4d5ef9ad9e675b46df94b51e81d7a4bd4c1b25e9

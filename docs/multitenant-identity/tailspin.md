@@ -1,6 +1,6 @@
 ---
-title: "Tailspin 설문 조사 응용 프로그램 정보"
-description: "Tailspin 설문 조사 응용 프로그램 개요"
+title: Tailspin 설문 조사 응용 프로그램 정보
+description: Tailspin 설문 조사 응용 프로그램 개요
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
@@ -67,5 +67,6 @@ ms.lasthandoff: 11/14/2017
 [authentication]: authenticate.md
 
 [설문 조사 응용 프로그램 실행]: ./run-the-app.md
+[Run the Surveys application]: ./run-the-app.md
 [ASP.NET Core]: /aspnet/core
 [sample application]: https://github.com/mspnp/multitenant-saas-guidance

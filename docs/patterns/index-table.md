@@ -1,7 +1,7 @@
 ---
-title: "인덱스 테이블"
-description: "쿼리에서 자주 참조하는 데이터 저장소의 필드에 대한 인덱스를 만듭니다."
-keywords: "디자인 패턴"
+title: 인덱스 테이블
+description: 쿼리에서 자주 참조하는 데이터 저장소의 필드에 대한 인덱스를 만듭니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns

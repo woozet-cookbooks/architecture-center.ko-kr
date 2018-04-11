@@ -1,7 +1,7 @@
 ---
-title: "우선 순위 큐"
-description: "우선 순위가 높은 요청을 우선 순위가 낮은 요청보다 먼저 받아서 처리하도록 서비스로 전송된 요청의 우선 순위를 지정합니다."
-keywords: "디자인 패턴"
+title: 우선 순위 큐
+description: 우선 순위가 높은 요청을 우선 순위가 낮은 요청보다 먼저 받아서 처리하도록 서비스로 전송된 요청의 우선 순위를 지정합니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns

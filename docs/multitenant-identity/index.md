@@ -1,6 +1,6 @@
 ---
-title: "다중 테넌트 응용 프로그램에 대한 ID 관리"
-description: "다중 테넌트 앱에서 인증, 권한 부여 및 ID 관리에 대한 모범 사례입니다."
+title: 다중 테넌트 응용 프로그램에 대한 ID 관리
+description: 다중 테넌트 앱에서 인증, 권한 부여 및 ID 관리에 대한 모범 사례입니다.
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
@@ -96,6 +96,7 @@ ms.lasthandoff: 11/14/2017
 [AzureAD]: /azure/active-directory
 
 [고객의 AD FS와 페더레이션]: adfs.md
+[Federating with a customer's AD FS]: adfs.md
 [tailpin]: tailspin.md
 
 [running-the-app]: ./run-the-app.md

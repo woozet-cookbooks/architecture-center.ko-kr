@@ -1,6 +1,6 @@
 ---
-title: "Key Vault를 사용하여 응용 프로그램 암호 보호"
-description: "Key Vault 서비스를 사용하여 응용 프로그램 암호를 저장하는 방법"
+title: Key Vault를 사용하여 응용 프로그램 암호 보호
+description: Key Vault 서비스를 사용하여 응용 프로그램 암호를 저장하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications

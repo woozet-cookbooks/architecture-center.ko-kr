@@ -1,6 +1,6 @@
 ---
-title: "게이트웨이 집계 패턴"
-description: "게이트웨이를 사용하여 여러 개별 요청을 단일 요청으로 집계합니다."
+title: 게이트웨이 집계 패턴
+description: 게이트웨이를 사용하여 여러 개별 요청을 단일 요청으로 집계합니다.
 author: dragon119
 ms.date: 06/23/2017
 ms.openlocfilehash: f59c8b8b02c6db28024d13621b782997e63a4e9e

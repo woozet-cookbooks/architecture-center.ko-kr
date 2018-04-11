@@ -1,6 +1,6 @@
 ---
-title: "다중 테넌트 응용 프로그램에서 등록 및 테넌트 온보딩"
-description: "다중 테넌트 응용 프로그램에서 테넌트를 등록하는 방법"
+title: 다중 테넌트 응용 프로그램에서 등록 및 테넌트 온보딩
+description: 다중 테넌트 응용 프로그램에서 테넌트를 등록하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
@@ -259,5 +259,7 @@ private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantM
 [Tailspin]: tailspin.md
 
 [상태]: http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
+[state]: http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
 [인증]: authenticate.md
+[Authentication]: authenticate.md
 [sample application]: https://github.com/mspnp/multitenant-saas-guidance

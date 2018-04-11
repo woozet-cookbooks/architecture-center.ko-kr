@@ -1,6 +1,6 @@
 ---
-title: "사이드카 패턴"
-description: "격리 및 캡슐화를 제공하는 별도의 프로세스 또는 컨테이너에 응용 프로그램 구성 요소를 배포합니다."
+title: 사이드카 패턴
+description: 격리 및 캡슐화를 제공하는 별도의 프로세스 또는 컨테이너에 응용 프로그램 구성 요소를 배포합니다.
 author: dragon119
 ms.date: 06/23/2017
 ms.openlocfilehash: ec168009aa99f412c3f1222a1c404ea4ea5cb669

@@ -1,6 +1,6 @@
 ---
-title: "Azure Service Fabric으로 Azure Cloud Services 응용 프로그램 마이그레이션"
-description: "Azure Cloud Services에서 Azure Service Fabric으로 응용 프로그램을 마이그레이션하는 방법입니다."
+title: Azure Service Fabric으로 Azure Cloud Services 응용 프로그램 마이그레이션
+description: Azure Cloud Services에서 Azure Service Fabric으로 응용 프로그램을 마이그레이션하는 방법입니다.
 author: MikeWasson
 ms.date: 04/27/2017
 ms.openlocfilehash: ce9c138a6b093fb7f0329c619c75bd4f4aacc2e7

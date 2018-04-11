@@ -1,6 +1,6 @@
 ---
-title: "자동 크기 조정 지침"
-description: "자동 크기 조정이 응용 프로그램에 필요한 리소스를 동적으로 할당하는 방법에 대한 지침입니다."
+title: 자동 크기 조정 지침
+description: 자동 크기 조정이 응용 프로그램에 필요한 리소스를 동적으로 할당하는 방법에 대한 지침입니다.
 author: dragon119
 ms.date: 05/17/2017
 pnp.series.title: Best Practices

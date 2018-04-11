@@ -1,6 +1,6 @@
 ---
-title: "모니터링 및 진단 지침"
-description: "클라우드의 분산 응용 프로그램을 모니터링 하기 위한 모범 사례입니다."
+title: 모니터링 및 진단 지침
+description: 클라우드의 분산 응용 프로그램을 모니터링 하기 위한 모범 사례입니다.
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices

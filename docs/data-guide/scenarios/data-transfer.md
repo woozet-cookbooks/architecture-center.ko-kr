@@ -1,6 +1,6 @@
 ---
-title: "데이터 전송 기술 선택"
-description: 
+title: 데이터 전송 기술 선택
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: bb0732b0f771a4c9e1a4e565875576c08484490a

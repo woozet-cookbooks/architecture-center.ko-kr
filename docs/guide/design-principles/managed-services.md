@@ -1,6 +1,6 @@
 ---
-title: "관리되는 서비스 사용"
-description: "가능하면 IaaS(Infrastructure as a Service)보다 PaaS(Platform as a Service)를 사용합니다."
+title: 관리되는 서비스 사용
+description: 가능하면 IaaS(Infrastructure as a Service)보다 PaaS(Platform as a Service)를 사용합니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: 7156c073db3e047fb38e031309ddb637a9e44c02

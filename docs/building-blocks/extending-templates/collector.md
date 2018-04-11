@@ -1,6 +1,6 @@
 ---
-title: "Azure Resource Manager 템플릿에서 속성 변환기 및 수집기 구현"
-description: "Azure Resource Manager 템플릿에서 속성 변환기 및 수집기를 구현하는 방법을 설명합니다."
+title: Azure Resource Manager 템플릿에서 속성 변환기 및 수집기 구현
+description: Azure Resource Manager 템플릿에서 속성 변환기 및 수집기를 구현하는 방법을 설명합니다.
 author: petertay
 ms.date: 06/09/2017
 ms.openlocfilehash: 893779e652b845b3d936d11936dc767ef632fa43

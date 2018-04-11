@@ -1,6 +1,6 @@
 ---
-title: "응용 프로그램 역할"
-description: "응용 프로그램 역할을 사용하여 권한 부여를 수행하는 방법"
+title: 응용 프로그램 역할
+description: 응용 프로그램 역할을 사용하여 권한 부여를 수행하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
@@ -166,6 +166,9 @@ if (context.User.HasClaim(ClaimTypes.Role, "Admin")) { ... }
 [Tailspin]: tailspin.md
 
 [권한 부여]: authorize.md
+[authorization]: authorize.md
 [백 엔드 Web API 보안]: web-api.md
+[Securing a backend web API]: web-api.md
 [응용 프로그램 매니페스트]: /azure/active-directory/active-directory-application-manifest/
+[application manifest]: /azure/active-directory/active-directory-application-manifest/
 [sample application]: https://github.com/mspnp/multitenant-saas-guidance

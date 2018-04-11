@@ -1,6 +1,6 @@
 ---
-title: "데이터 분할 지침"
-description: "별도로 관리하고 액세스할 수 있도록 파티션을 구분하는 방법에 대한 참고 자료입니다."
+title: 데이터 분할 지침
+description: 별도로 관리하고 액세스할 수 있도록 파티션을 구분하는 방법에 대한 참고 자료입니다.
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices
@@ -548,39 +548,62 @@ ms.lasthandoff: 02/09/2018
 * <span data-ttu-id="bc767-874">Redis 웹 사이트의 [데이터 형식] 페이지에서는 Redis 및 Azure Redis Cache에 사용할 수 있는 데이터 형식을 설명합니다.</span><span class="sxs-lookup"><span data-stu-id="bc767-874">The [Data types] page on the Redis website describes the data types that are available with Redis and Azure Redis Cache.</span></span>
 
 [Event Hubs의 가용성 및 일관성]: /azure/event-hubs/event-hubs-availability-and-consistency
+[Availability and consistency in Event Hubs]: /azure/event-hubs/event-hubs-availability-and-consistency
 [azure-limits]: /azure/azure-subscription-service-limits
 [Azure에 콘텐츠 배달 네트워크]: /azure/cdn/cdn-overview
+[Azure Content Delivery Network]: /azure/cdn/cdn-overview
 [Azure Redis Cache]: http://azure.microsoft.com/services/cache/
 [Azure Storage Scalability and Performance Targets]: /azure/storage/storage-scalability-targets
 [Azure Storage Table Design Guide]: /azure/storage/storage-table-design-guide
 [Polyglot 솔루션 빌드]: https://msdn.microsoft.com/library/dn313279.aspx
+[Building a Polyglot Solution]: https://msdn.microsoft.com/library/dn313279.aspx
 [cosmos-db-ru]: /azure/cosmos-db/request-units
 [확장성이 뛰어난 솔루션에 대한 데이터 액세스: SQL, NoSQL 및 Polyglot 지속성 사용]: https://msdn.microsoft.com/library/dn271399.aspx
+[Data Access for Highly-Scalable Solutions: Using SQL, NoSQL, and Polyglot Persistence]: https://msdn.microsoft.com/library/dn271399.aspx
 [데이터 일관성 입문서]: http://aka.ms/Data-Consistency-Primer
+[Data consistency primer]: http://aka.ms/Data-Consistency-Primer
 [Data Partitioning Guidance]: https://msdn.microsoft.com/library/dn589795.aspx
 [Data Types]: http://redis.io/topics/data-types
 [cosmosdb-sql-api]: /azure/cosmos-db/sql-api-introduction
 [ 기능 개요]: /azure/sql-database/sql-database-elastic-scale-introduction
+[Elastic Database features overview]: /azure/sql-database/sql-database-elastic-scale-introduction
 [event-hubs]: /azure/event-hubs
 [Federations Migration Utility]: https://code.msdn.microsoft.com/vstudio/Federations-Migration-ce61e9c1
 [Azure Service Fabric에서 신뢰할 수 있는 컬렉션에 대한 지침 및 권장 사항]: /azure/service-fabric/service-fabric-reliable-services-reliable-collections-guidelines
+[guidelines and recommendations for reliable collections in Azure Service Fabric]: /azure/service-fabric/service-fabric-reliable-services-reliable-collections-guidelines
 [Index Table Pattern]: http://aka.ms/Index-Table-Pattern
 [Materialized View Pattern]: http://aka.ms/Materialized-View-Pattern
 [다중 분할된 데이터베이스 쿼리]: /azure/sql-database/sql-database-elastic-scale-multishard-querying
+[Multi-shard querying]: /azure/sql-database/sql-database-elastic-scale-multishard-querying
 [Azure Service Fabric 개요]: /azure/service-fabric/service-fabric-overview
+[Overview of Azure Service Fabric]: /azure/service-fabric/service-fabric-overview
 [Service Fabric Reliable Services 분할]: /azure/service-fabric/service-fabric-concepts-partitioning
+[Partition Service Fabric reliable services]: /azure/service-fabric/service-fabric-concepts-partitioning
 [분할: 여러 Redis 인스턴스 간에 데이터를 분할하는 방법]: http://redis.io/topics/partitioning
+[Partitioning: how to split data among multiple Redis instances]: http://redis.io/topics/partitioning
 [Performing Entity Group Transactions]: https://msdn.microsoft.com/library/azure/dd894038.aspx
 [Redis 클러스터 자습서]: http://redis.io/topics/cluster-tutorial
+[Redis cluster tutorial]: http://redis.io/topics/cluster-tutorial
 [Azure의 CentOS Linux VM에서 Redis 실행]: http://blogs.msdn.com/b/tconte/archive/2012/06/08/running-redis-on-a-centos-linux-vm-in-windows-azure.aspx
+[Running Redis on a CentOS Linux VM in Azure]: http://blogs.msdn.com/b/tconte/archive/2012/06/08/running-redis-on-a-centos-linux-vm-in-windows-azure.aspx
 [Elastic Database 분할/병합 도구를 사용하여 확장하기]: /azure/sql-database/sql-database-elastic-scale-overview-split-and-merge
+[Scaling using the Elastic Database split-merge tool]: /azure/sql-database/sql-database-elastic-scale-overview-split-and-merge
 [Azure 콘텐츠 배달 네트워크 사용]: /azure/cdn/cdn-create-new-endpoint
+[Using Azure Content Delivery Network]: /azure/cdn/cdn-create-new-endpoint
 [Service Bus 할당량]: /azure/service-bus-messaging/service-bus-quotas
+[Service Bus quotas]: /azure/service-bus-messaging/service-bus-quotas
 [service-fabric-reliable-collections]: /azure/service-fabric/service-fabric-reliable-services-reliable-collections
 [Azure Search의 서비스 제한 사항]:  /azure/search/search-limits-quotas-capacity
+[Service limits in Azure Search]:  /azure/search/search-limits-quotas-capacity
 [분할 패턴]: http://aka.ms/Sharding-Pattern
+[Sharding pattern]: http://aka.ms/Sharding-Pattern
 [지원되는 데이터 형식(Azure Search)]:  https://msdn.microsoft.com/library/azure/dn798938.aspx
+[Supported Data Types (Azure Search)]:  https://msdn.microsoft.com/library/azure/dn798938.aspx
 [트랜잭션]: http://redis.io/topics/transactions
+[Transactions]: http://redis.io/topics/transactions
 [Event Hubs란?]: /azure/event-hubs/event-hubs-what-is-event-hubs
+[What is Event Hubs?]: /azure/event-hubs/event-hubs-what-is-event-hubs
 [Azure Search란?]: /azure/search/search-what-is-azure-search
+[What is Azure Search?]: /azure/search/search-what-is-azure-search
 [Azure SQL Database 정의]: /azure/sql-database/sql-database-technical-overview
+[What is Azure SQL Database?]: /azure/sql-database/sql-database-technical-overview

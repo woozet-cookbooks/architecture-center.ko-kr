@@ -1,7 +1,7 @@
 ---
-title: "외부 구성 저장소"
-description: "구성 정보를 응용 프로그램 배포 패키지에서 중앙 위치로 이동합니다."
-keywords: "디자인 패턴"
+title: 외부 구성 저장소
+description: 구성 정보를 응용 프로그램 배포 패키지에서 중앙 위치로 이동합니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns

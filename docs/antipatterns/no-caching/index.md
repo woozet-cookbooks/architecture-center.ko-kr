@@ -1,6 +1,6 @@
 ---
-title: "캐싱 없음 안티패턴"
-description: "동일한 데이터를 반복적으로 가져오면 성능과 확장성을 감소시킬 수 있습니다."
+title: 캐싱 없음 안티패턴
+description: 동일한 데이터를 반복적으로 가져오면 성능과 확장성을 감소시킬 수 있습니다.
 author: dragon119
 ms.date: 06/05/2017
 ms.openlocfilehash: 8a2bc3b473a30536cc1bef9e1dcad87acb46c4a9

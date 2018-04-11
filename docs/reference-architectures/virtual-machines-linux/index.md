@@ -1,6 +1,6 @@
 ---
-title: "Linux VM 워크로드"
-description: "Azure에 엔터프라이즈 규모 응용 프로그램을 호스트하는 VM을 배포하기 위한 몇 가지 일반적인 아키텍처를 설명합니다."
+title: Linux VM 워크로드
+description: Azure에 엔터프라이즈 규모 응용 프로그램을 호스트하는 VM을 배포하기 위한 몇 가지 일반적인 아키텍처를 설명합니다.
 layout: LandingPage
 ms.openlocfilehash: ef06fb93355f4676f44954930bcfeb2c2d012d43
 ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb

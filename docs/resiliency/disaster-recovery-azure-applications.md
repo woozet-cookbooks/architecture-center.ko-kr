@@ -1,6 +1,6 @@
 ---
-title: "Azure 응용 프로그램에 대한 재해 복구"
-description: "Microsoft Azure에서 재해 복구를 위한 응용 프로그램 설계에 대한 기술 개요와 자세한 정보입니다."
+title: Azure 응용 프로그램에 대한 재해 복구
+description: Microsoft Azure에서 재해 복구를 위한 응용 프로그램 설계에 대한 기술 개요와 자세한 정보입니다.
 author: adamglick
 ms.date: 05/26/2017
 ms.openlocfilehash: 7235e752cf1b96e392a700b223d63b07c0f85b66

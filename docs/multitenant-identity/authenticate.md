@@ -1,6 +1,6 @@
 ---
-title: "다중 테넌트 응용 프로그램의 인증"
-description: "다중 테넌트 응용 프로그램이 Azure AD에서 사용자를 인증하는 방법"
+title: 다중 테넌트 응용 프로그램의 인증
+description: 다중 테넌트 응용 프로그램이 Azure AD에서 사용자를 인증하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications

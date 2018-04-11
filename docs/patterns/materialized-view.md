@@ -1,7 +1,7 @@
 ---
-title: "구체화된 뷰"
-description: "데이터가 필요한 쿼리 작업에 대해 이상적으로 포맷되지 않은 경우 하나 이상의 데이터 저장소에 있는 데이터에 대한 미리 채워진 뷰를 생성합니다."
-keywords: "디자인 패턴"
+title: 구체화된 뷰
+description: 데이터가 필요한 쿼리 작업에 대해 이상적으로 포맷되지 않은 경우 하나 이상의 데이터 저장소에 있는 데이터에 대한 미리 채워진 뷰를 생성합니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns

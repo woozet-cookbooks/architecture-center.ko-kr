@@ -1,6 +1,6 @@
 ---
-title: "작업에 가장 적합한 데이터 저장소 사용"
-description: "데이터에 가장 적합한 저장소 기술과 사용 방법을 선택합니다."
+title: 작업에 가장 적합한 데이터 저장소 사용
+description: 데이터에 가장 적합한 저장소 기술과 사용 방법을 선택합니다.
 author: MikeWasson
 layout: LandingPage
 ms.openlocfilehash: ef9439f7a3766d13b498eac915e0f5afd23de4e2

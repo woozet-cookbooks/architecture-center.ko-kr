@@ -1,6 +1,6 @@
 ---
-title: "지침: Azure 구독 디자인"
-description: "기본 클라우드 채택 전략의 일환으로 고려되는 Azure 구독 디자인 지침"
+title: '지침: Azure 구독 디자인'
+description: 기본 클라우드 채택 전략의 일환으로 고려되는 Azure 구독 디자인 지침
 author: alexbuckgit
 ms.openlocfilehash: 7134a0000ce33a786166d759cb390023a062dfda
 ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242

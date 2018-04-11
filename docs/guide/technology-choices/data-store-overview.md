@@ -1,6 +1,6 @@
 ---
-title: "적절한 데이터 저장소 선택"
-description: "Azure의 데이터 저장소 선택 개요"
+title: 적절한 데이터 저장소 선택
+description: Azure의 데이터 저장소 선택 개요
 author: MikeWasson
 ms.openlocfilehash: 3a5780c4a2dbd8a41e9c7bfa7f68d8a7916a7374
 ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
