@@ -1,17 +1,17 @@
 ---
-title: "Azure에서 보안 하이브리드 네트워크 아키텍처 구현"
-description: "Azure에서 보안 하이브리드 네트워크 아키텍처를 구현하는 방법입니다."
+title: Azure에서 보안 하이브리드 네트워크 아키텍처 구현
+description: Azure에서 보안 하이브리드 네트워크 아키텍처를 구현하는 방법입니다.
 author: telmosampaio
 ms.date: 11/23/2016
 pnp.series.title: Network DMZ
 pnp.series.prev: ./index
 pnp.series.next: secure-vnet-dmz
 cardTitle: DMZ between Azure and on-premises
-ms.openlocfilehash: 778d5ef6967a09b03bb6b5aca67e3e0c170ad016
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 81dea2e4439d5a01ebb88ab86dc0a59609bb7bc3
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="dmz-between-azure-and-your-on-premises-datacenter"></a>Azure와 온-프레미스 데이터 센터 간의 DMZ
 
@@ -31,7 +31,7 @@ ms.lasthandoff: 11/14/2017
 
 이 아키텍처는 다음 구성 요소로 구성됩니다.
 
-* **온-프레미스 네트워크** 조직에서 구현되는 개인 로컬 영역 네트워크입니다.
+* **온-프레미스 네트워크**. 조직에서 구현되는 개인 로컬 영역 네트워크입니다.
 * **Azure VNet(Virtual Network)** VNet은 응용 프로그램 및 Azure에서 실행되는 다른 리소스를 호스트합니다.
 * **게이트웨이**. 게이트웨이는 온-프레미스 네트워크와 VNet의 라우터 간에 연결을 제공합니다.
 * **NVA(네트워크 가상 어플라이언스)** NVA는 방화벽, 최적화 WAN(광역 네트워크) 작업(네트워크 압축 포함), 사용자 지정 라우팅 또는 기타 네트워크 기능으로 액세스를 허용하거나 거부하는 등의 작업을 수행하는 VM에 대해 설명하는 일반 용어입니다.
@@ -179,7 +179,7 @@ NSG를 사용하여 계층 간 트래픽을 제한합니다. 비즈니스 계층
 * Azure에서 네트워크 보안을 관리하는 방법에 대한 자세한 내용은 [Microsoft Cloud Services 및 네트워크 보안][cloud-services-network-security]을 참조하세요.
 * Azure에서 리소스를 보호하는 방법에 대한 자세한 내용은 [Microsoft Azure 보안 시작][getting-started-with-azure-security]을 참조하세요. 
 * Azure 게이트웨이 연결에서 보안 문제를 해결하는 방법에 대한 자세한 내용은 [Azure 및 온-프레미스 VPN을 사용하여 하이브리드 네트워크 아키텍처 구현][guidance-vpn-gateway-security] 및 [Azure ExpressRoute를 사용하여 하이브리드 네트워크 아키텍처 구현][guidance-expressroute-security]을 참조하세요.
-> 
+  > 
 
 <!-- links -->
 
@@ -210,6 +210,6 @@ NSG를 사용하여 계층 간 트래픽을 제한합니다. 비즈니스 계층
 [routing-and-remote-access-service]: https://technet.microsoft.com/library/dd469790(v=ws.11).aspx
 [security-principle-of-least-privilege]: https://msdn.microsoft.com/library/hdb58b2f(v=vs.110).aspx#Anchor_1
 [udr-overview]: /azure/virtual-network/virtual-networks-udr-overview
-[visio-download]: https://archcenter.azureedge.net/cdn/dmz-reference-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/dmz-reference-architectures.vsdx
 [wireshark]: https://www.wireshark.org/
 [0]: ./images/dmz-private.png "하이브리드 네트워크 아키텍처 보안"

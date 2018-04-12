@@ -1,15 +1,16 @@
 ---
-title: "기술 지침: Azure에서 로컬 오류 복구"
-description: "Azure 내에서 로컬 오류에 중점을 둔 재해 복구에 대한 계획 뿐만 아니라 복원력 있고 항상 사용 가능한 내결함성 응용 프로그램을 이해하고 설계하는 방법에 대한 문서입니다."
+title: '기술 지침: Azure에서 로컬 오류 복구'
+description: Azure 내에서 로컬 오류에 중점을 둔 재해 복구에 대한 계획 뿐만 아니라 복원력 있고 항상 사용 가능한 내결함성 응용 프로그램을 이해하고 설계하는 방법에 대한 문서입니다.
 author: adamglick
 ms.date: 08/18/2016
-ms.openlocfilehash: 180eb465e5f82406bb03924a29d5b06d43bbaa24
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 5fc929bd1affe3dd6616f908bae0e7d2fefb89d5
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 [!INCLUDE [header](../_includes/header.md)]
+
 # <a name="azure-resiliency-technical-guidance-recovery-from-local-failures-in-azure"></a>Azure 복원력 기술 지침 - Azure의 로컬 오류로부터 복구
 
 응용 프로그램에 대한 다음과 같은 두 가지 주요 위협 요인이 있습니다.

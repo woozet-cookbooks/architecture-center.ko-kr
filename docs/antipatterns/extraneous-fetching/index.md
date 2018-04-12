@@ -1,13 +1,13 @@
 ---
-title: "불필요한 가져오기 안티패턴"
-description: "비즈니스 작업에 필요한 것보다 더 많은 데이터를 검색하면 불필요한 I/O 오버헤드가 발생하고 응답성이 감소할 수 있습니다."
+title: 불필요한 가져오기 안티패턴
+description: 비즈니스 작업에 필요한 것보다 더 많은 데이터를 검색하면 불필요한 I/O 오버헤드가 발생하고 응답성이 감소할 수 있습니다.
 author: dragon119
 ms.date: 06/05/2017
-ms.openlocfilehash: 8a808dce62a1c80c126b7b1df536f74c46726ea1
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 7a72bfd3e4b2e206f3266a046fac2083224ecb4f
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="extraneous-fetching-antipattern"></a>불필요한 가져오기 안티패턴
 
@@ -232,7 +232,6 @@ List<Product> products = query.ToList();
 
 
 [BusyDatabase]: ../busy-database/index.md
-[chatty-io]: ../chatty-io.md
 [data-partitioning]: ../../best-practices/data-partitioning.md
 [new-relic]: https://newrelic.com/application-monitoring
 

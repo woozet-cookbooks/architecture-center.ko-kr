@@ -1,15 +1,16 @@
 ---
-title: "Azure 응용 프로그램의 고가용성"
-description: "Microsoft Azure에서 고가용성을 위한 응용 프로그램 설계 및 빌드에 대한 기술 개요와 심층 정보입니다."
+title: Azure 응용 프로그램의 고가용성
+description: Microsoft Azure에서 고가용성을 위한 응용 프로그램 설계 및 빌드에 대한 기술 개요와 심층 정보입니다.
 author: adamglick
 ms.date: 05/31/2017
-ms.openlocfilehash: 46b7b802326a8de03546528aaeb1a1c6419d41db
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: f116b9e64f1722b5141ae90239d5c8a8b4a89487
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 [!INCLUDE [header](../_includes/header.md)]
+
 # <a name="high-availability-for-applications-built-on-microsoft-azure"></a>Microsoft Azure에 빌드된 응용 프로그램에 대한 고가용성
 가용성이 높은 응용 프로그램은 종속 서비스 및 하드웨어의 가용성, 부하 및 임시 오류의 변동 폭을 완화합니다. 응용 프로그램은 비즈니스 요구 사항 또는 응용 프로그램 SLA(서비스 수준 계약)에 정의된 바와 같이 계속해서 적절한 수준으로 작동합니다.
 

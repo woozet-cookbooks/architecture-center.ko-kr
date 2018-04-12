@@ -1,13 +1,13 @@
 ---
-title: "Azure Resource Manager 템플릿에서 개체를 매개 변수로 사용"
-description: "Azure Resource Manager 템플릿의 기능을 확장하여 개체를 매개 변수로 사용하는 방법을 설명합니다."
+title: Azure Resource Manager 템플릿에서 개체를 매개 변수로 사용
+description: Azure Resource Manager 템플릿의 기능을 확장하여 개체를 매개 변수로 사용하는 방법을 설명합니다.
 author: petertay
 ms.date: 06/09/2017
-ms.openlocfilehash: 08ee1cf2924f78ce366c58e20e84a512785f85cc
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 76f8b9d459f4ab3147b52762b7c26552ec92c7a3
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="use-an-object-as-a-parameter-in-an-azure-resource-manager-template"></a>Azure Resource Manager 템플릿에서 개체를 매개 변수로 사용
 
@@ -294,7 +294,6 @@ ms.lasthandoff: 11/14/2017
   ],          
   "outputs": {}
 }
-
 ```
 
 `securityRules` 자식 리소스에서 속성 값을 지정하는 방법을 좀 더 자세히 살펴보겠습니다. 모든 속성이 `parameter()` 기능을 사용해서 참조됩니다. 그러면 점 연산자를 사용하여 반복의 현재 값으로 인덱싱된 `securityRules` 배열을 참조합니다. 마지막으로 다른 점 연산자를 사용하여 개체의 이름을 참조합니다. 

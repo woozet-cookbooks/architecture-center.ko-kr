@@ -1,17 +1,17 @@
 ---
-title: "확장 가능한 웹 응용 프로그램"
-description: "Microsoft Azure에서 실행되는 웹 응용 프로그램의 확장성을 향상합니다."
+title: 확장 가능한 웹 응용 프로그램
+description: Microsoft Azure에서 실행되는 웹 응용 프로그램의 확장성을 향상합니다.
 author: MikeWasson
 pnp.series.title: Azure App Service
 pnp.series.prev: basic-web-app
 pnp.series.next: multi-region-web-app
 ms.date: 11/23/2016
 cardTitle: Improve scalability
-ms.openlocfilehash: 4ad12fb041a79fcb706530c9968fd0f96211d7f9
-ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
+ms.openlocfilehash: 6459acebfa25491332e2118b9e8fe51d5fc79ff3
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/30/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="improve-scalability-in-a-web-application"></a>웹 응용 프로그램의 확장성 향상
 
@@ -30,7 +30,7 @@ ms.lasthandoff: 01/30/2018
 * **WebJob**. 백그라운드에서 장기 실행 작업을 실행하려면 [Azure WebJobs][webjobs]를 사용합니다. WebJob은 예약에 따라, 연속적으로 또는 큐에 메시지를 넣는 등 트리거에 대한 응답으로 실행될 수 있습니다. WebJob은 App Service 앱의 컨텍스트에서 백그라운드 프로세스로 실행됩니다.
 * **큐**. 여기에 표시된 아키텍처에서는 응용 프로그램이 [Azure Queue Storage][queue-storage] 큐에 메시지를 넣어 백그라운드 작업을 큐에 넣습니다. 메시지가 WebJob의 함수를 트리거합니다. 또는 Service Bus 큐를 사용할 수 있습니다. 비교하려면 [Azure 큐 및 Service Bus 큐 - 비교 및 대조][queues-compared]를 참조하세요.
 * **캐시**. [Azure Redis Cache][azure-redis]의 반정적 데이터를 저장합니다.  
-* **CDN**. [Azure CDN(Content Delivery Network)][azure-cdn]을 사용하여 지연 시간을 단축하고 더 신속한 콘텐츠 배달을 위해 공개적으로 사용 가능한 콘텐츠를 캐시합니다.
+* <strong>CDN</strong>. [Azure CDN(Content Delivery Network)][azure-cdn]을 사용하여 지연 시간을 단축하고 더 신속한 콘텐츠 배달을 위해 공개적으로 사용 가능한 콘텐츠를 캐시합니다.
 * **데이터 저장소**. 관계형 데이터의 경우 [Azure SQL Database][sql-db]를 사용합니다. 비관계형 데이터의 경우 [Cosmos DB][cosmosdb] 같은 NoSQL 저장소를 고려합니다.
 * **Azure Search**. [Azure Search][azure-search]를 사용하여 검색 제안, 유사 항목 검색 및 언어별 검색과 같은 검색 기능을 추가합니다. Azure Search는 일반적으로 다른 데이터 저장소와 함께 사용되는데, 특히 기본 데이터 저장소에 엄격한 일관성이 필요한 경우 그렇습니다. 이러한 접근 방식에서는 신뢰할 수 있는 데이터를 다른 데이터 저장소에 저장하고 검색 인덱스를 Azure Search에 저장합니다. 또한 Azure Search는 여러 데이터 저장소의 단일 검색 인덱스를 통합하는 데 사용할 수 있습니다.  
 * **메일/SMS**. SendGrid 또는 Twilio와 같은 타사 서비스를 사용하여 응용 프로그램에 직접 이 기능을 빌드하는 대신 메일이나 SMS 메시지를 전송합니다.
@@ -148,7 +148,7 @@ App Services에서는 응용 프로그램 코드를 작성할 필요 없이 기�
 [sql-elastic]: /azure/sql-database/sql-database-elastic-scale-introduction
 [sql-encryption]: https://msdn.microsoft.com/library/dn948096.aspx
 [tm]: https://azure.microsoft.com/services/traffic-manager/
-[visio-download]: https://archcenter.azureedge.net/cdn/app-service-reference-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/app-service-reference-architectures.vsdx
 [web-app-multi-region]: ./multi-region.md
 [webjobs-guidance]: ../../best-practices/background-jobs.md
 [webjobs]: /azure/app-service/app-service-webjobs-readme

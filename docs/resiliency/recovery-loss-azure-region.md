@@ -1,15 +1,16 @@
 ---
-title: "Azure 지역의 손실로부터 복구"
-description: "재해 복구에 대한 계획 뿐만 아니라 복원력 있고 항상 사용 가능한 내결함성 응용 프로그램을 이해하고 설계하는 방법에 대한 문서입니다."
+title: Azure 지역의 손실로부터 복구
+description: 재해 복구에 대한 계획 뿐만 아니라 복원력 있고 항상 사용 가능한 내결함성 응용 프로그램을 이해하고 설계하는 방법에 대한 문서입니다.
 author: adamglick
 ms.date: 08/18/2016
-ms.openlocfilehash: 42a7d865e101b43279f3198f3dd75df1b15a8565
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: f551e8af8aece8aa30abfba2438c41c3944209bd
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 [!INCLUDE [header](../_includes/header.md)]
+
 # <a name="azure-resiliency-technical-guidance-recovery-from-a-region-wide-service-disruption"></a>Azure 복원력 기술 지침: 지역 전체의 서비스 중단으로부터 복구
 Azure는 물리적 및 논리적으로 지역이라는 단위로 구분됩니다. 지역은 가까운 위치에 있는 하나 이상의 데이터로 구성됩니다. 
 
@@ -48,7 +49,7 @@ IaaS(infrastructure as a service) VM(가상 머신)의 복구는 여러 가지 �
 
 ## <a name="storage"></a>Storage
 ### <a name="recovery-by-using-geo-redundant-storage-of-blob-table-queue-and-vm-disk-storage"></a>Blob, 테이블, 큐 및 VM 디스크 저장소의 지역 중복 저장소를 사용하여 복구
-Azure에서 Blob, 테이블, 큐 및 VM 디스크는 기본적으로 모든 지역에서 복제됩니다. 지역 중복 저장소(GRS)라고 합니다. GRS는 특정 지역 내에서 수백 킬로미터 떨어져 있는 쌍을 이루는 데이터 센터에 저장소 데이터를 복제합니다. GRS는 주요 데이터 센터에 재해가 발생한 경우 추가 내구성을 제공하도록 설계되었습니다. Microsoft는 장애 조치가 발생하는 시점을 제어하고 장애 조치는 원래 주 위치가 적절한 시간에 복구할 수 없다고 여겨지는 경우 주요 재해로 제한됩니다. 일부 시나리오에서 몇 일이 걸릴 수 있습니다. 동기화 간격이 Service Level Agreement(서비스 수준 계약)에 아직 포함되지 않지만 데이터는 일반적으로 몇 분 안에 복제됩니다.
+Azure에서 Blob, 테이블, 큐 및 VM 디스크는 기본적으로 모든 지역에서 복제됩니다. 지역 중복 저장소(GRS)라고 합니다. GRS는 특정 지역 내에서 수백 킬로미터 떨어져 있는 쌍을 이루는 데이터 센터에 저장소 데이터를 복제합니다. GRS는 주요 데이터 센터에 재해가 발생한 경우 추가 내구성을 제공하도록 설계되었습니다. Microsoft는 장애 조치가 발생하는 시점을 제어하고 장애 조치는 원래 주 위치가 적절한 시간에 복구할 수 없다고 여겨지는 경우 주요 재해로 제한됩니다. 일부 시나리오에서 몇 일이 걸릴 수 있습니다. 동기화 간격이 Service Level Agreement(서비스 수준 약정)에 아직 포함되지 않지만 데이터는 일반적으로 몇 분 안에 복제됩니다.
 
 지역 장애 조치의 경우 계정이 액세스하는 방법은 변경되지 않습니다(URL 및 계정 키 변경되지 않음). 그러나 저장소 계정이 장애 조치 후에 다른 지역에 위치할 수 있습니다 해당 저장소 계정을 사용하여 지역 선호도를 필요로 하는 응용 프로그램에 영향을 줄 수 있습니다. 동일한 데이터 센터에 있는 저장소 계정이 필요하지 않은 서비스 및 응용 프로그램의 경우에도 데이터 센터 간 지연과 대역폭 요금은 트래픽을 장애 조치 지역에 일시적으로 이동하는 특별한 이유가 될 수 있습니다. 전체 재해 복구 전략에 요인이 될 수 있습니다.
 

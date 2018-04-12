@@ -1,17 +1,17 @@
 ---
-title: "Azure Active Directory와 온-프레미스 AD 도메인 통합"
-description: "Azure Active Directory를 사용하여 안전한 하이브리드 네트워크 아키텍처를 구현하는 방법입니다."
+title: Azure Active Directory와 온-프레미스 AD 도메인 통합
+description: Azure Active Directory를 사용하여 안전한 하이브리드 네트워크 아키텍처를 구현하는 방법입니다.
 author: telmosampaio
 pnp.series.title: Identity management
 ms.date: 11/28/2016
 pnp.series.next: adds-extend-domain
 pnp.series.prev: ./index
 cardTitle: Integrate on-premises AD with Azure AD
-ms.openlocfilehash: dd4cf0369974ea68d240ed294b1c50972d361d74
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 431de4b2e08c79f70cc9830fda8315e07bf22c64
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 03/30/2018
 ---
 # <a name="integrate-on-premises-active-directory-domains-with-azure-active-directory"></a>Azure Active Directory와 온-프레미스 Active Directory 도메인 통합
 
@@ -226,7 +226,7 @@ Azure AD Connect 관리에 대한 자세한 내용과 팁은 [Azure AD Connect �
    * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
    * **구매** 단추를 클릭합니다.
 3. 배포가 완료될 때가지 기다립니다.
-4. 매개 변수 파일에는 하드 코딩된 관리자 사용자 이름과 암호가 포함되며, 모든 VM에서 둘 다 즉시 변경하는 것이 좋습니다. Azure Portal에서 각 VM을 클릭한 다음, **지원 + 문제 해결** 블레이드에서 **암호 재설정**을 클릭합니다. **모드** 드롭다운 상자에서 **암호 재설정**을 선택한 다음, 새 **사용자 이름** 및 **암호**를 선택합니다. **업데이트** 단추를 클릭하여 새 사용자 이름 및 암호를 보존합니다.
+4. 매개 변수 파일에는 하드 코딩된 관리자 사용자 이름과 암호가 포함되며, 모든 VM에서 둘 다 즉시 변경하는 것이 좋습니다. Azure Portal에서 각 VM을 클릭한 다음, **지원 + 문제 해결** 블레이드에서 **암호 재설정**을 클릭합니다. **모드** 드롭다운 상자에서 **암호 재설정**을 선택한 후 새 **사용자 이름** 및 **암호**를 선택합니다. **업데이트** 단추를 클릭하여 새 사용자 이름 및 암호를 보존합니다.
 
 <!-- links -->
 
@@ -260,7 +260,7 @@ Azure AD Connect 관리에 대한 자세한 내용과 팁은 [Azure AD Connect �
 [considerations]: ./considerations.md
 [resource-manager-overview]: /azure/azure-resource-manager/resource-group-overview
 [sla-aad]: https://azure.microsoft.com/support/legal/sla/active-directory/v1_0/
-[visio-download]: https://archcenter.azureedge.net/cdn/identity-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/identity-architectures.vsdx
 
 
 [0]: ./images/azure-ad.png "Azure Active Directory를 사용하는 클라우드 ID 아키텍처"

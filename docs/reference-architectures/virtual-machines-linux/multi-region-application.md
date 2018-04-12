@@ -1,15 +1,15 @@
 ---
-title: "고가용성을 위해 여러 Azure 지역에서 Linux VM 실행"
-description: "고가용성과 복원력을 위해 Azure의 여러 지역에 VM을 배포하는 방법"
+title: 고가용성을 위해 여러 Azure 지역에서 Linux VM 실행
+description: 고가용성과 복원력을 위해 Azure의 여러 지역에 VM을 배포하는 방법
 author: MikeWasson
 ms.date: 11/22/2016
 pnp.series.title: Linux VM workloads
 pnp.series.prev: n-tier
-ms.openlocfilehash: 7d720a004d21edbffc0ddeba54e291aa817550e0
-ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
+ms.openlocfilehash: 07ccf44f28203e6d5001475b47adce01437e9600
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/08/2018
+ms.lasthandoff: 03/30/2018
 ---
 # <a name="run-linux-vms-in-multiple-regions-for-high-availability"></a>고가용성을 위해 여러 지역에서 Linux VM 실행
 
@@ -150,6 +150,6 @@ Cassandra 클러스터의 경우 고려할 장애 조치(failover) 시나리오�
 [tm-routing]: /azure/traffic-manager/traffic-manager-routing-methods
 [tm-sla]: https://azure.microsoft.com/support/legal/sla/traffic-manager/v1_0/
 [traffic-manager]: https://azure.microsoft.com/services/traffic-manager/
-[visio-download]: https://archcenter.azureedge.net/cdn/vm-reference-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/vm-reference-architectures.vsdx
 [wsfc]: https://msdn.microsoft.com/library/hh270278.aspx
 [0]: ./images/multi-region-application-diagram.png "Azure N 계층 응용 프로그램에 대해 고가용성 네트워크 아키텍처"

@@ -1,13 +1,13 @@
 ---
-title: "고급 분석"
-description: 
+title: 고급 분석
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: 31ba357fe37b1de35a6eea324d2d1d6766e172e5
-ms.sourcegitcommit: 29fbcb1eec44802d2c01b6d3bcf7d7bd0bae65fc
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/27/2018
+ms.lasthandoff: 03/31/2018
 ---
 # <a name="advanced-analytics"></a>고급 분석
 
@@ -50,8 +50,7 @@ Machine Learning은 다음 두 가지 범주로 구분됩니다.
 
 관련 Azure 서비스:
 
-- 
-            [Azure Machine Learning](/azure/machine-learning/)
+- [Azure Machine Learning](/azure/machine-learning/)
 - [HDInsight의 Machine Learning Server(R Server)](/azure/hdinsight/r-server/r-server-overview)
 
 ## <a name="deep-learning"></a>심층 학습
@@ -75,8 +74,7 @@ AI 응용 프로그램을 지원하는 예측 서비스는 사용자 지정 Mach
 
 관련 Azure 서비스:
 
-- 
-            [Azure Machine Learning](/azure/machine-learning/)
+- [Azure Machine Learning](/azure/machine-learning/)
 - [HDInsight의 Machine Learning Server(R Server)](/azure/hdinsight/r-server/r-server-overview)
 
 

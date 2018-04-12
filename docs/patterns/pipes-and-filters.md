@@ -1,18 +1,18 @@
 ---
-title: "파이프 및 필터"
-description: "복잡한 처리를 수행하는 작업을 재사용 가능한 일련의 별도 요소로 분류합니다."
-keywords: "디자인 패턴"
+title: 파이프 및 필터
+description: 복잡한 처리를 수행하는 작업을 재사용 가능한 일련의 별도 요소로 분류합니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories:
 - design-implementation
 - messaging
-ms.openlocfilehash: b41f3e46ad5982a3a4ec6635918481cb440c5e02
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 2c17504f594843c10fcfe221f0087f1087a73fb8
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="pipes-and-filters-pattern"></a>파이프 및 필터 패턴
 
@@ -274,7 +274,7 @@ public class FinalReceiverRoleEntry : RoleEntryPoint
 }
 ```
 
-##<a name="related-patterns-and-guidance"></a>관련 패턴 및 지침
+## <a name="related-patterns-and-guidance"></a>관련 패턴 및 지침
 
 이 패턴을 구현할 때 다음 패턴 및 지침도 관련이 있을 수 있습니다.
 - 이 패턴을 [GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/pipes-and-filters)에서 사용할 수 있음을 보여주는 샘플.

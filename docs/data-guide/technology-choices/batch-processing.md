@@ -1,13 +1,13 @@
 ---
-title: "일괄 처리 기술 선택"
-description: 
+title: 일괄 처리 기술 선택
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: bfb850ee8e9d8fd41927b4ca3b612e15b5ae6b11
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: 0117798af82f2caa6704dc86e88be57f09c381ea
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="choosing-a-batch-processing-technology-in-azure"></a>Azure에서 일괄 처리 기술 선택
 
@@ -46,38 +46,41 @@ Azure에서 다음의 모든 데이터 저장소는 일괄 처리의 핵심 요�
 | | Azure 데이터 레이크 분석 | Azure SQL Data Warehouse | HDInsight(Spark 포함) | HDInsight(Spark 포함) | HDInsight(Hive LLAP 포함) |
 | --- | --- | --- | --- | --- | --- |
 | 관리되는 서비스인지 여부 | 예 | 예 | 예 <sup>1</sup> | 예 <sup>1</sup> | 예 <sup>1</sup> |
-| 계산 일시 중지 지원 여부 | 아니요 | 예 | 아니요 | 아니요 | 아니요 |
-| 관계형 데이터 저장소 | 예 | 예 | 아니요 | 아니오 | 아니오 |
+| 계산 일시 중지 지원 여부 | 아니오 | 예 | 아니오 | 아니요 | 아니요 |
+| 관계형 데이터 저장소 | 예 | 예 | 아니요 | 아니요 | 아니요 |
 | 프로그래밍 기능 | U-SQL | T-SQL | Python, Scala, Java, R | HiveQL | HiveQL |
 | 프로그래밍 패러다임 | 선언적 및 명령적 방식 혼합  | 선언적 | 선언적 및 명령적 방식 혼합 | 선언적 | 선언적 | 
 | 가격 책정 모델 | 일괄 처리 작업 기준 | 클러스터 시간 기준 | 클러스터 시간 기준 | 클러스터 시간 기준 | 클러스터 시간 기준 |  
 
 [1] 수동 구성 및 크기 조정 사용
- 
+
 ### <a name="integration-capabilities"></a>통합 기능
+
 | | Azure 데이터 레이크 분석 | SQL Data Warehouse | HDInsight(Spark 포함) | HDInsight(Spark 포함) | HDInsight(Hive LLAP 포함) |
 | --- | --- | --- | --- | --- | --- |
 | Azure Data Lake Store에서 액세스 | 예 | 예 | 예 | 예 | 예 |
 | Azure Storage에서 쿼리 | 예 | 예 | 예 | 예 | 예 |
-| 외부 관계형 저장소에서 쿼리 | 예 | 아니요 | 예 | 아니요 | 아니요 |
+| 외부 관계형 저장소에서 쿼리 | 예 | 아니오 | 예 | 아니오 | 아니오 |
 
 ### <a name="scalability-capabilities"></a>확장성 기능
+
 | | Azure 데이터 레이크 분석 | SQL Data Warehouse | HDInsight(Spark 포함) | HDInsight(Spark 포함) | HDInsight(Hive LLAP 포함) |
 | --- | --- | --- | --- | --- | --- |
 | 스케일 아웃 단위  | 작업 기준 | 클러스터 기준 | 클러스터 기준 | 클러스터 기준 | 클러스터 기준 |
-| 빠른 스케일 아웃(1분 이내) | 예 | 예 | 아니요 | 아니요 | 아니오 |
+| 빠른 스케일 아웃(1분 이내) | 예 | 예 | 아니오 | 아니요 | 아니요 |
 | 데이터의 메모리 내 캐싱 | 아니오 | 예 | 예 | 아니오 | 예 | 
 
 ### <a name="security-capabilities"></a>보안 기능
+
 | | Azure 데이터 레이크 분석 | SQL Data Warehouse | HDInsight(Spark 포함) | HDInsight의 Apache Hive | HDInsight의 Hive LLAP |
 | --- | --- | --- | --- | --- | --- |
-| 인증  | Azure AD(Azure Active Directory) | SQL/Azure AD | 아니요 | 로컬/Azure AD <sup>1</sup> | 로컬/Azure AD <sup>1</sup> |
-| 권한 부여  | 예 | 예| 아니오 | 예 <sup>1</sup> | 예 <sup>1</sup> |
+| 인증  | Azure AD(Azure Active Directory) | SQL / Azure AD | 아니요 | 로컬/Azure AD <sup>1</sup> | 로컬/Azure AD <sup>1</sup> |
+| 권한 부여  | 예 | 예| 아니요 | 예 <sup>1</sup> | 예 <sup>1</sup> |
 | 감사  | 예 | 예 | 아니오 | 예 <sup>1</sup> | 예 <sup>1</sup> |
 | 휴지 상태의 암호화 | 예| 예 <sup>2</sup> | 예 | 예 | 예 |
-| 행 수준 보안 | 아니요 | 예 | 아니요 | 예 <sup>1</sup> | 예 <sup>1</sup> |
+| 행 수준 보안 | 아니오 | 예 | 아니요 | 예 <sup>1</sup> | 예 <sup>1</sup> |
 | 방화벽 지원 여부 | 예 | 예 | 예 | 예 <sup>3</sup> | 예 <sup>3</sup> |
-| 동적 데이터 마스킹 | 아니요 | 아니요 | 아니요 | 예 <sup>1</sup> | 예 <sup>1</sup> |
+| 동적 데이터 마스킹 | 아니오 | 아니요 | 아니오 | 예 <sup>1</sup> | 예 <sup>1</sup> |
 
 [1] [도메인 가입 HDInsight 클러스터](/azure/hdinsight/domain-joined/apache-domain-joined-introduction)를 사용해야 합니다.
 

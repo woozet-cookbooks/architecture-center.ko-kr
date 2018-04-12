@@ -1,13 +1,13 @@
 ---
-title: "트랜잭션 데이터"
-description: 
+title: 트랜잭션 데이터
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: b7fdbb403d2a438ebc59e40ef58ed8067489dddc
-ms.sourcegitcommit: 943e671a8d522cef5ddc8c6e04848134b03c2de4
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/05/2018
+ms.lasthandoff: 03/31/2018
 ---
 # <a name="transactional-data"></a>트랜잭션 데이터
 

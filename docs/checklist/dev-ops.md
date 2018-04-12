@@ -1,14 +1,14 @@
 ---
-title: "DevOps 검사 목록"
-description: "DevOps와 관련된 지침을 제공하는 검사 목록입니다."
+title: DevOps 검사 목록
+description: DevOps와 관련된 지침을 제공하는 검사 목록입니다.
 author: dragon119
 ms.date: 01/10/2018
 ms.custom: checklist
-ms.openlocfilehash: 356fef2415347ae132915695a25fd9b50779bd8b
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: 2e338d2f2e61b404223001a61f44e06e89e7f563
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="devops-checklist"></a>DevOps 검사 목록
 
@@ -130,7 +130,7 @@ DevOps는 개발, 품질 보증 및 IT 운영을 통합된 문화권으로 통�
 
 **리소스에 대한 액세스 권한을 부여할 때 최소 권한 원칙을 따릅니다.** 리소스에 대한 액세스를 주의 깊게 관리합니다. 사용자에게 리소스에 대한 액세스 권한이 명시적으로 지정되지 않으면 기본적으로 액세스는 거부되어야 합니다. 해당 작업을 완료하기 위해 필요한 액세스 권한만을 사용자에게 부여합니다. 사용자 사용 권한을 추적하고 기본 보안 감사를 수행합니다.
 
-**역할 기반 액세스 제어를 사용합니다.** 사용자 계정 및 리소스에 대한 액세스 권한을 할당하는 작업은 수동 프로세스가 아니어야 합니다. RBAC([역할 기반 액세스 제어][rbac])를 사용하여 [Azure Active Directory][azure-ad] ID 및 그룹에 따라 액세스 권한을 부여합니다. 
+<strong>역할 기반 액세스 제어를 사용합니다.</strong> 사용자 계정 및 리소스에 대한 액세스 권한을 할당하는 작업은 수동 프로세스가 아니어야 합니다. RBAC([역할 기반 액세스 제어][rbac])를 사용하여 [Azure Active Directory][azure-ad] ID 및 그룹에 따라 액세스 권한을 부여합니다. 
 
 **버그 추적 시스템을 사용하여 문제를 추적합니다.** 문제를 추적할 좋은 방법이 없으면 항목을 누락하거나, 작업이 중복되거나, 추가적인 문제가 발생할 수 있습니다. 버그의 상태를 추적하는 데 개인 간 비공식 통신을 사용하지 마십시오. 버그 추적 도구를 사용하여 문제에 대한 세부 정보를 기록하고, 리소스를 할당하여 문제를 해결하고, 프로세스 및 상태의 감사 내역을 제공합니다. 
 

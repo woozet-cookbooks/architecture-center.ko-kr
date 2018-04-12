@@ -1,13 +1,13 @@
 ---
-title: "Azure에서 고가용성 SharePoint Server 2016 팜 실행"
-description: "Azure에 고가용성 SharePoint Server 2016 팜을 설정하는 방법에 대한 검증된 사례입니다."
+title: Azure에서 고가용성 SharePoint Server 2016 팜 실행
+description: Azure에 고가용성 SharePoint Server 2016 팜을 설정하는 방법에 대한 검증된 사례입니다.
 author: njray
 ms.date: 08/01/2017
-ms.openlocfilehash: d16f8721c6edc8e5049766f13e2d3bc59524453f
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: d1e3f0b73c94844ac649bf2abb6917809202fdb7
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 03/30/2018
 ---
 # <a name="run-a-high-availability-sharepoint-server-2016-farm-in-azure"></a>Azure에서 고가용성 SharePoint Server 2016 팜 실행
 
@@ -320,7 +320,7 @@ SharePoint Server 2016을 실행하는 데 사용되는 도메인 수준 서비�
 [sql-sharepoint-best-practices]: https://technet.microsoft.com/library/hh292622(v=office.16).aspx
 [tempdb]: /sql/relational-databases/databases/tempdb-database
 [virtual-networks-nsg]: /azure/virtual-network/virtual-networks-nsg
-[visio-download]: https://archcenter.azureedge.net/cdn/Sharepoint-2016.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/Sharepoint-2016.vsdx
 [vm-sizes-general]: /azure/virtual-machines/windows/sizes-general
 [vm-sizes-memory]: /azure/virtual-machines/windows/sizes-memory
 [windows-n-tier]: ../virtual-machines-windows/n-tier.md

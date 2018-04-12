@@ -1,16 +1,19 @@
 ---
-title: "Azure에서 AD FS(Active Directory Federation Services) 구현"
-description: "Azure에서 Active Directory 페더레이션 서비스 권한 부여로 보안 하이브리드 네트워크 아키텍처를 구현하는 방법.\n지침, vpn-게이트웨이, expressroute, 부하 분산 장치, 가상 네트워크, active-directory"
+title: Azure에서 AD FS(Active Directory Federation Services) 구현
+description: >-
+  Azure에서 Active Directory 페더레이션 서비스 권한 부여로 보안 하이브리드 네트워크 아키텍처를 구현하는 방법.
+
+  지침, vpn-게이트웨이, expressroute, 부하 분산 장치, 가상 네트워크, active-directory
 author: telmosampaio
 ms.date: 11/28/2016
 pnp.series.title: Identity management
 pnp.series.prev: adds-forest
 cardTitle: Extend AD FS to Azure
-ms.openlocfilehash: b8c9ae0621c087c68d449dd13e60046104c01513
-ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
+ms.openlocfilehash: 87489b7b81cf323c221466c539ee14ea90e23c14
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/08/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="extend-active-directory-federation-services-ad-fs-to-azure"></a>Azure로 AD FS(Active Directory Federation Services) 확장
 
@@ -214,9 +217,9 @@ AD FS는 HTTPS 프로토콜을 사용하므로 웹 계층 VM을 포함하는 서
 
 ## <a name="deploy-the-solution"></a>솔루션 배포
 
-이 참조 아키텍처를 배포하기 위해 [GitHub][github]에서 솔루션을 사용할 수 있습니다. 솔루션을 배포하는 Powershell 스크립트를 실행하기 위해 최신 버전의 [Azure CLI][azure-cli]가 필요합니다. 참조 아키텍처를 배포하려면 다음 단계를 따릅니다.
+[GitHub][github]에서 이 참조 아키텍처를 배포할 수 있는 솔루션을 사용할 수 있습니다. 솔루션을 배포하는 PowerShell 스크립트를 실행하려면 최신 버전의 [Azure CLI][azure-cli]가 필요합니다. 이 참조 아키텍처를 배포하려면 다음 단계를 수행합니다.
 
-1. [GitHub][github]에서 로컬 컴퓨터로 솔루션 폴더를 다운로드 또는 복제합니다.
+1. [GitHub][github]의 해당 솔루션 폴더를 로컬 컴퓨터로 다운로드하거나 복제합니다.
 
 2. Azure CLI를 열고 로컬 솔루션 폴더로 이동합니다.
 
@@ -230,7 +233,7 @@ AD FS는 HTTPS 프로토콜을 사용하므로 웹 계층 VM을 포함하는 서
    
     `<location>`에서 Azure 지역(예: `eastus` 또는 `westus`)을 지정합니다.
    
-    `<mode>` 매개 변수는 배포의 세분성을 제어하며 이는 다음 값 중 하나일 수 있습니다.
+    `<mode>` 매개 변수는 배포의 세분성을 제어합니다. 매개 변수는 다음 값 중 하나일 수 있습니다.
    
    * `Onpremise`: 시뮬레이트된 온-프레미스 환경을 배포합니다. 기존 온-프레미스 네트워크가 없거나 기존 온-프레미스 네트워크의 구성을 변경하지 않고 이 참조 아키텍처를 테스트하려는 경우 이 배포를 사용하여 테스트 및 실험할 수 있습니다.
    * `Infrastructure`: VNet 인프라 및 점프 상자를 배포합니다.
@@ -247,7 +250,7 @@ AD FS는 HTTPS 프로토콜을 사용하므로 웹 계층 VM을 포함하는 서
 
 5. 점프 상자를 다시 시작하여(*ra-adfs-security-rg* 그룹에서 *ra-adfs-mgmt-vm1*) 해당 DNS 설정을 적용하도록 허용합니다.
 
-6. [AD FS용 SSL 인증서를 가져오고][adfs_certificates] AD FS VM에 이 인증서를 설치합니다. 점프 상자를 통해 연결할 수 있습니다. IP 주소는 *10.0.5.4* 및 *10.0.5.5*입니다. 기본 사용자 이름은 *AweSome@PW* 암호가 있는 *contoso\testuser*입니다.
+6. [AD FS용 SSL 인증서를 가져오고][adfs_certificates] AD FS VM에 이 인증서를 설치합니다. 점프 상자를 통해 연결할 수 있습니다. IP 주소는 <em>10.0.5.4</em> 및 <em>10.0.5.5</em>입니다. 기본 사용자 이름은 <em>AweSome@PW</em> 암호가 있는 <em>contoso\testuser</em>입니다.
    
    > [!NOTE]
    > 이 때 Deploy-ReferenceArchitecture.ps1 스크립트에 있는 설명은 `makecert` 명령을 사용하여 자체 서명된 테스트 인증서 및 권한을 만들기 위한 자세한 지침을 제공합니다. 그러나 이러한 단계를 **테스트**로만 수행하고 프로덕션 환경에서 makecert에 의해 생성된 인증서를 사용하지 마십시오.
@@ -260,7 +263,7 @@ AD FS는 HTTPS 프로토콜을 사용하므로 웹 계층 VM을 포함하는 서
     .\Deploy-ReferenceArchitecture.ps1 <subscription id> <location> Adfs
     ``` 
 
-8. 점프 상자에서 `https://adfs.contoso.com/adfs/ls/idpinitiatedsignon.htm`으로 이동하여 AD FS 설치를 테스트합니다(이 테스트를 무시할 수 있다고 경고하는 인증서를 받을 수 있음). Contoso Corporation 로그인 페이지가 표시되는지 확인합니다. 암호 *AweS0me@PW*를 사용하여 *contoso\testuser*로 로그인합니다.
+8. 점프 상자에서 `https://adfs.contoso.com/adfs/ls/idpinitiatedsignon.htm`으로 이동하여 AD FS 설치를 테스트합니다(이 테스트를 무시할 수 있다고 경고하는 인증서를 받을 수 있음). Contoso Corporation 로그인 페이지가 표시되는지 확인합니다. 암호 <em>AweS0me@PW</em>를 사용하여 <em>contoso\testuser</em>로 로그인합니다.
 
 9. AD FS 프록시 VM에 SSL 인증서를 설치합니다. IP 주소는 *10.0.6.4* 및 *10.0.6.5*입니다.
 
@@ -319,5 +322,5 @@ AD FS는 HTTPS 프로토콜을 사용하므로 웹 계층 VM을 포함하는 서
 [github]: https://github.com/mspnp/reference-architectures/tree/master/identity/adfs
 [adfs_certificates]: https://technet.microsoft.com/library/dn781428(v=ws.11).aspx
 [considerations]: ./considerations.md
-[visio-download]: https://archcenter.azureedge.net/cdn/identity-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/identity-architectures.vsdx
 [0]: ./images/adfs.png "Active Directory로 하이브리드 네트워크 아키텍처 보안"

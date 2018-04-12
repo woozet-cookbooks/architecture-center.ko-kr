@@ -1,12 +1,12 @@
 ---
-title: "클라우드 디자인 패턴"
-description: "Microsoft Azure에 대한 클라우드 디자인 패턴"
+title: 클라우드 디자인 패턴
+description: Microsoft Azure에 대한 클라우드 디자인 패턴
 keywords: Azure
-ms.openlocfilehash: 264b8296a428f9c1b87314b782efcabc89cf010f
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 4747c896fc6fc5866be782d76c5290d6b49ad451
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="cloud-design-patterns"></a>클라우드 디자인 패턴
 
@@ -29,5 +29,7 @@ ms.lasthandoff: 11/14/2017
 ## <a name="catalog-of-patterns"></a>패턴 카탈로그
 
 | 패턴 | 요약 |
-| ------- | ------- |
+|---------|---------|
+|         |         |
+
 {%- for pattern in patterns %} | [{{ pattern.title }}](./{{ pattern.file }}) | {{ pattern.description }} | {%- endfor %}

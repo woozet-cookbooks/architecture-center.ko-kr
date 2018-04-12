@@ -1,13 +1,13 @@
 ---
-title: "자연어 처리"
-description: 
+title: 자연어 처리
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: c03e2d017f9b4eb955a0e3494b5bc6c2603d1058
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: 0afd8ac9a8a2e56f79ade0b2e10328630866c03c
+ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 04/03/2018
 ---
 # <a name="natural-language-processing"></a>자연어 처리
 
@@ -34,7 +34,7 @@ NLP를 사용하여 자유 형식 텍스트에서 정보를 추출할 때는 일
 
 ## <a name="architecture"></a>건축
 
-NLP 솔루션에서는 텍스트 단락이 포함된 문서에 대해 자유 형식 텍스트 처리가 수행됩니다. 전체 아키텍처는 [일괄 처리](./batch-processing.md) 또는 [실시간 스트림 처리](./real-time-processing.md) 아키텍처일 수 있습니다.
+NLP 솔루션에서는 텍스트 단락이 포함된 문서에 대해 자유 형식 텍스트 처리가 수행됩니다. 전체 아키텍처는 [일괄 처리](../big-data/batch-processing.md) 또는 [실시간 스트림 처리](../big-data/real-time-processing.md) 아키텍처일 수 있습니다.
 
 실제 처리는 원하는 결과에 따라 다르지만, 파이프라인의 관점에서 볼 때 NLP를 일괄로 또는 실시간 방식으로 적용할 수 있습니다. 예를 들어 텍스트 블록에 대해 감정 분석에 사용하여 감정 점수를 생성할 수 있습니다. 이 작업은 저장소의 데이터에 대해 일괄 처리 프로세스를 실행하여 또는 메시지 서비스를 통해 흐르는 데이터의 보다 작은 청크를 사용하여 실시간으로 수행할 수 있습니다.
 

@@ -1,13 +1,13 @@
 ---
-title: "시계열 데이터"
-description: 
+title: 시계열 데이터
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: ceb8f34d4fd950e5270edfea05945a824c4492f0
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: 80ff6c45988062afcb0eb92cc79e640d39dbb21f
+ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 04/03/2018
 ---
 # <a name="time-series-solutions"></a>시계열 솔루션
 
@@ -42,7 +42,7 @@ ms.lasthandoff: 02/14/2018
 
 IoT 장치에서 수집된 데이터는 시계열 저장 및 분석에 기본적으로 적합합니다. 들어오는 데이터는 삽입되고, 거의 업데이트되지 않습니다. 데이터는 수신된 순서대로 타임스탬프가 지정되고 삽입되며, 일반적으로 시간순으로 표시되므로 사용자는 추세를 검색하고, 변칙을 찾아내고, 해당 정보를 예측 분석에 사용할 수 있습니다.
 
-자세한 내용은 [사물 인터넷](../concepts/big-data.md#internet-of-things-iot)을 참조하세요.
+자세한 내용은 [사물 인터넷](../big-data/index.md#internet-of-things-iot)을 참조하세요.
 
 ### <a name="real-time-analytics"></a>실시간 분석
 
@@ -57,7 +57,7 @@ IoT 장치에서 수집된 데이터는 시계열 저장 및 분석에 기본적
 
 ## <a name="architecture"></a>건축
 
-IoT를 비롯하여 시계열 데이터가 사용되는 많은 시나리오에서 데이터는 실시간으로 캡처됩니다. 따라서 [실시간 처리](./real-time-processing.md) 아키텍처가 적절합니다. 
+IoT를 비롯하여 시계열 데이터가 사용되는 많은 시나리오에서 데이터는 실시간으로 캡처됩니다. 따라서 [실시간 처리](../big-data/real-time-processing.md) 아키텍처가 적절합니다. 
 
 하나 이상의 데이터 원본에서 가져온 데이터가 [IoT Hub](/azure/iot-hub/), [Event Hubs](/azure/event-hubs/) 또는 [HDInsight의 Kafka](/azure/hdinsight/kafka/apache-kafka-introduction)에 의해 스트림 버퍼링 계층으로 수집됩니다. 그런 다음, 데이터는 스트림 처리 계층에서 처리되며, 필요에 따라 처리된 데이터가 예측 분석을 위해 Machine Learning 서비스로 전달될 수 있습니다. 처리된 데이터는 분석 데이터 저장소(예: [HBase](/azure/hdinsight/hbase/apache-hbase-overview), [Azure Cosmos DB](/azure/cosmos-db/), Azure Data Lake 또는 Blob Storage)에 저장됩니다. 분석 및 보고 애플리케이션이나 서비스[예: Power BI 또는 OpenTSDB(HBase에 저장되는 경우)]를 사용하여 분석을 위해 시계열 데이터를 표시할 수 있습니다.
 

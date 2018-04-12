@@ -1,13 +1,13 @@
 ---
-title: "검색 데이터 저장소 선택"
-description: 
+title: 검색 데이터 저장소 선택
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: 7fe5952c880921984beb30c71458fd1ef72ef239
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: ead07e307e96696faa5ddf48505eee378027523c
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="choosing-a-search-data-store-in-azure"></a>Azure에서 검색 데이터 저장소 선택
 
@@ -42,34 +42,38 @@ Azure에서 다음의 모든 데이터 저장소는 검색 인덱스를 제공�
 다음 표에서는 주요 기능 차이점을 요약해서 보여 줍니다.
 
 ### <a name="general-capabilities"></a>일반 기능
+
 | | Azure Search | Elasticsearch | Solr을 포함하는 HDInsight | SQL Database | 
 | --- | --- | --- | --- | --- | 
 | 관리되는 서비스인지 여부 | 예 | 아니오 | 예 | 예 |  
 | REST API | 예 | 예 | 예 | 아니요 |
 | 프로그래밍 기능 | .NET | 자바 | 자바 | T-SQL | 
-| 일반적인 파일 형식(PDF, DOCX, TXT 등)에 대한 문서 인덱서 | 예 | 아니요 | 예 | 아니요 |
+| 일반적인 파일 형식(PDF, DOCX, TXT 등)에 대한 문서 인덱서 | 예 | 아니오 | 예 | 아니오 |
 
 ### <a name="manageability-capabilities"></a>관리 효율성
+
 | | Azure Search | Elasticsearch | Solr을 포함하는 HDInsight | SQL Database | 
 | --- | --- | --- | --- | --- |
 | 업데이트 가능 스키마 | 아니요 | 예 | 예 | 예 |
-| 확장 지원  | 예 | 예 | 예 | 아니요 |
+| 확장 지원  | 예 | 예 | 예 | 아니오 |
 
 ### <a name="analytic-workload-capabilities"></a>분석 워크로드 기능
+
 | | Azure Search | Elasticsearch | Solr을 포함하는 HDInsight | SQL Databash | 
 | --- | --- | --- | --- | --- | 
 | 전체 텍스트 검색을 능가하는 분석 기능 지원 | 아니요 | 예 | 예 | 예 |
-| 로그 분석 스택에 포함되는지 여부 | 아니요 | 예(ELK) |  아니오 | 아니요 |
+| 로그 분석 스택에 포함되는지 여부 | 아니오 | 예(ELK) |  아니오 | 아니오 |
 | 의미 체계 검색 지원 | 예(유사 문서만 찾기) | 예 | 예 | 예 | 
 
 ### <a name="security-capabilities"></a>보안 기능
+
 | | Azure Search | Elasticsearch | Solr을 포함하는 HDInsight | SQL Databash | 
 | --- | --- | --- | --- | --- | 
 | 행 수준 보안 | 부분적(그룹 ID별로 필터링하기 위한 응용 프로그램 쿼리 필요) | 부분적(그룹 ID별로 필터링하기 위한 응용 프로그램 쿼리 필요) | 예 | 예 | 
-| 투명한 데이터 암호화 | 아니요 | 아니요 | 아니오 | 예 |  
+| 투명한 데이터 암호화 | 아니오 | 아니요 | 아니요 | 예 |  
 | 특정 IP 주소로 액세스 제한 | 아니오 | 예 | 예 | 예 |   
 | 가상 네트워크 액세스만 허용하도록 액세스 제한 | 아니요 | 예 | 예 | 예 |  
-| Active Directory 인증(통합 인증) | 아니요 | 아니요 | 아니요 | 예 | 
+| Active Directory 인증(통합 인증) | 아니오 | 아니요 | 아니요 | 예 | 
 
 ## <a name="see-also"></a>참고 항목
 

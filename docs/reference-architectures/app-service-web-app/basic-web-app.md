@@ -1,14 +1,14 @@
 ---
-title: "기본 웹앱 응용 프로그램"
-description: "Microsoft Azure에서 실행되는 기본 웹 응용 프로그램에 권장하는 아키텍처입니다."
+title: 기본 웹앱 응용 프로그램
+description: Microsoft Azure에서 실행되는 기본 웹 응용 프로그램에 권장하는 아키텍처입니다.
 author: MikeWasson
 ms.date: 12/12/2017
 cardTitle: Basic web application
-ms.openlocfilehash: 38b0739cc61d679742b610b99e92aaad8d3b394d
-ms.sourcegitcommit: 2123c25b1a0b5501ff1887f98030787191cf6994
+ms.openlocfilehash: efd831b1f54fa0662bdfa9874318e7b314172215
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/08/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="basic-web-application"></a>기본 웹앱 응용 프로그램
 [!INCLUDE [header](../../_includes/header.md)]
@@ -157,7 +157,7 @@ App Service App에는 라이브 프로덕션 사이트를 나타내는 `producti
 
 * Azure Portal에 [문제 해결 블레이드][troubleshoot-blade]를 사용하여 일반적인 문제에 대한 해결 방법을 찾습니다.
 * [로그 스트리밍][web-app-log-stream]을 사용하도록 설정하여 로그 정보를 거의 실시간으로 확인할 수 있습니다.
-* [Kudu 대시보드][ kudu]에는 응용 프로그램을 모니터링하고 디버깅하기 위한 여러 도구가 있습니다. 자세한 내용은 [Azure Websites online tools you should know about][kudu](알아 두면 도움이 되는 Azure 웹 사이트 온라인 도구)(블로그 게시물)를 참조하세요. Azure Portal에서 Kudu 대시보드에 연결할 수 있습니다. 앱의 블레이드를 열고 **도구**, **Kudu**를 차례로 클릭합니다.
+* [Kudu 대시보드][ kudu]에는 응용 프로그램을 모니터링하고 디버깅하기 위한 여러 도구가 있습니다. 자세한 내용은 [Azure Websites online tools you should know about][kudu](알아 두면 도움이 되는 Azure 웹 사이트 온라인 도구)(블로그 게시물)를 참조하세요. Azure Portal에서 Kudu 대시보드에 연결할 수 있습니다. 앱의 블레이드를 열고 <strong>도구</strong>, <strong>Kudu</strong>를 차례로 클릭합니다.
 * Visual Studio를 사용하는 경우 [Visual Studio를 사용하여 Azure App Service에서 웹앱 문제 해결][troubleshoot-web-app]에서 디버깅 및 문제 해결 팁을 참조하세요.
 
 ## <a name="security-considerations"></a>보안 고려 사항
@@ -252,7 +252,7 @@ New-AzureRmResourceGroupDeployment -Name <deployment-name> -ResourceGroupName <r
 [ssl-cert]: /azure/app-service-web/web-sites-purchase-ssl-web-site
 [troubleshoot-blade]: https://azure.microsoft.com/updates/self-service-troubleshooting-for-app-service-web-apps-customers/
 [troubleshoot-web-app]: /azure/app-service-web/web-sites-dotnet-troubleshoot-visual-studio
-[visio-download]: https://archcenter.azureedge.net/cdn/app-service-reference-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/app-service-reference-architectures.vsdx
 [vsts]: https://www.visualstudio.com/features/vso-cloud-load-testing-vs.aspx
 [web-app-autoscale]: /azure/app-service-web/web-sites-scale
 [web-app-backup]: /azure/app-service-web/web-sites-backup

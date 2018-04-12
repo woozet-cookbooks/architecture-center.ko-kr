@@ -1,17 +1,20 @@
 ---
-title: "Azure에서 ADDS 리소스 포리스트 만들기"
-description: "Azure에서 신뢰할 수 있는 Active Directory 도메인을 만드는 방법입니다.\n지침, vpn-게이트웨이, expressroute, 부하 분산 장치, 가상 네트워크, active-directory"
+title: Azure에서 ADDS 리소스 포리스트 만들기
+description: >-
+  Azure에서 신뢰할 수 있는 Active Directory 도메인을 만드는 방법입니다.
+
+  지침, vpn-게이트웨이, expressroute, 부하 분산 장치, 가상 네트워크, active-directory
 author: telmosampaio
 ms.date: 11/28/2016
 pnp.series.title: Identity management
 pnp.series.prev: adds-extend-domain
 pnp.series.next: adfs
 cardTitle: Create an AD DS forest in Azure
-ms.openlocfilehash: b946afa91e8bd303c51f97e18be170c4105cc8c5
-ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
+ms.openlocfilehash: e32a6420821e70c84e77d2c39614f0c45efbb7e2
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/08/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="create-an-active-directory-domain-services-ad-ds-resource-forest-in-azure"></a>Azure에서 AAD DS(Active Directory Domain Services) 리소스 포리스트 만들기
 
@@ -34,7 +37,7 @@ AD DS(Active Directory Domain Services)는 ID 정보를 계층 구조에 저장�
 * **온-프레미스 네트워크**. 온-프레미스 네트워크는 자체 Active Directory 포레스트와 도메인을 포함합니다.
 * **Active Directory 서버**. 클라우드에서 VM으로 실행되는 도메인 서비스를 구현하는 도메인 컨트롤러입니다. 이러한 서버는 온-프레미스에 위치한 도메인들과 분리된 하나 이상의 도메인을 포함하는 포레스트를 호스트합니다.
 * **단방향 트러스트 관계**. 이 다이어그램의 예제는 Azure 도메인으로부터 온-프레미스 도메인으로의 단방향 트러스트 관계를 보여 줍니다. 이 관계를 통해 온-프레미스 사용자는 Azure의 도메인에 있는 리소스에 접근할 수 있지만 Azure 사용자가 온-프레미스의 리소스에 접근할 수는 없습니다. 클라우드 사용자가 온-프레미스 리소스 액세스를 요구하는 경우 양방향 트러스트 관계를 생성할 수도 있습니다.
-* **Active Directory 서브넷**. AD DS 서버는 별도의 서브넷에 호스트됩니다. NSG(네트워크 보안 그룹) 규칙은 AD DS 서버를 보호하고 예상치 못한 소스로부터의 트래픽에 대한 방화벽을 제공합니다.
+* **Active Directory 서브넷**. AD DS 서버는 별도의 서브넷에 호스팅됩니다. NSG(네트워크 보안 그룹) 규칙은 AD DS 서버를 보호하고 예상치 못한 소스로부터의 트래픽에 대한 방화벽을 제공합니다.
 * **Azure 게이트웨이**. Azure 게이트웨이는 온-프레미스 네트워크와 Azure VNet 간 연결을 제공합니다. [VPN 연결][azure-vpn-gateway] 또는 [Azure ExpressRoute][azure-expressroute]가 제공될 수 있습니다. 자세한 내용은 [Azure에 안전한 하이브리드 보안 네트워크 아키텍처 구현][implementing-a-secure-hybrid-network-architecture]을 참조하세요.
 
 ## <a name="recommendations"></a>권장 사항
@@ -91,7 +94,7 @@ Active Directory 관련 보안 고려사항을 확인하려면 [Active Directory
 
 1. [GitHub][github]의 해당 솔루션 폴더를 로컬 컴퓨터로 다운로드하거나 복제합니다.
 
-2. Azure CLI을 실행하여 로컬 솔루션 폴더로 이동합니다.
+2. Azure CLI를 열고 로컬 솔루션 폴더로 이동합니다.
 
 3. 다음 명령 실행:
    
@@ -103,22 +106,22 @@ Active Directory 관련 보안 고려사항을 확인하려면 [Active Directory
    
     `<location>`에서 Azure 지역(예: `eastus` 또는 `westus`)을 지정합니다.
    
-    `<mode>` 매개 변수는 배포의 세분성을 제어하며 이는 다음 값 중 하나일 수 있습니다.
+    `<mode>` 매개 변수는 배포의 세분성을 제어합니다. 매개 변수는 다음 값 중 하나일 수 있습니다.
    
-   * `Onpremise`: 시뮬레이트된 온-프레미스 환경을 배포합니다.
-   * `Infrastructure`: Azure에 VNet 인프라 및 점프 박스를 배포합니다.
+   * `Onpremise`: 시뮬레이션된 온-프레미스 환경을 배포합니다.
+   * `Infrastructure`: Azure에 VNet 인프라 및 jumpbox를 배포합니다.
    * `CreateVpn`: Azure 가상 네트워크 게이트웨이를 배포하고 시뮬레이트된 온-프레미스 네트워크에 연결합니다.
    * `AzureADDS`: Active Directory DS 서버 역할을 하는 VM을 배포하고, 이러한 VM에 Active Directory를 배포하고, Azure에서 도메인을 만듭니다.
    * `WebTier`: 웹 계층 VM 및 부하 분산 장치를 배포합니다.
    * `Prepare`: 모든 이전 배포를 배포합니다. **기존의 온-프레미스 네트워크가 없지만 테스트나 평가를 위해 위의 완전한 참조 아키텍처를 배포하려는 경우를 위한 추천 옵션입니다.** 
    * `Workload`: 비즈니스 및 데이터 계층 VM과 부하 분산 장치를 배포합니다. 이 VM은 `Prepare` 배포에는 포함되지 않습니다.
 
-4. 배포가 완료될 때가지 기다립니다. `Prepare` 배포를 배포하는 데는 수 시간이 소요됩니다.
+4. 배포가 완료될 때가지 기다립니다. `Prepare` 배포를 배포하는 데는 몇 시간 정도 걸립니다.
      
 5. 5.시뮬레이션된 온-프레미스 구성을 사용하는 경우에는 수신 트러스트 관계를 설정합니다.
    
-   1. 점프 박스(*ra-adtrust-security-rg* 리소스 그룹의 *ra-adtrust-mgmt-vm1*)에 연결합니다. *AweS0me@PW* 암호를 사용해 *testuser*로 로그인합니다.
-   2. 점프 박스에서 *contoso.com* 도메인(온-프레미스 도메인) 내 첫 번째 VM에서 RDP 세션을 엽니다. 이 VM의 IP 주소는 192.168.0.4입니다. 사용자 이름은 *contoso\testuser*이고 암호는 *AweS0me@PW*입니다.
+   1. 점프 박스(<em>ra-adtrust-security-rg</em> 리소스 그룹의 <em>ra-adtrust-mgmt-vm1</em>)에 연결합니다. <em>AweS0me@PW</em> 암호를 사용해 <em>testuser</em>로 로그인합니다.
+   2. 점프 박스에서 <em>contoso.com</em> 도메인(온-프레미스 도메인) 내 첫 번째 VM에서 RDP 세션을 엽니다. 이 VM의 IP 주소는 192.168.0.4입니다. 사용자 이름은 <em>contoso\testuser</em>이고 암호는 <em>AweS0me@PW</em>입니다.
    3. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 수신 트러스트를 생성합니다.
 
 6. 자신의 온-프레미스 인프라를 사용한다면
@@ -127,7 +130,7 @@ Active Directory 관련 보안 고려사항을 확인하려면 [Active Directory
    2. 스크립트를 수정하고 변수 `$TrustedDomainName`의 값을 귀하의 도메인 이름으로 대체합니다.
    3. 스크립트를 실행합니다.
 
-7. 점프 박스로부터 *treyresearch.com* 도메인(클라우드 도메인)의 첫 번째 VM에 연결합니다. 이 VM의 IP 주소는 10.0.4.4입니다. 사용자 이름은 *treyresearch\testuser*이고 암호는 *AweS0me@PW*입니다.
+7. 점프 박스로부터 <em>treyresearch.com</em> 도메인(클라우드 도메인)의 첫 번째 VM에 연결합니다. 이 VM의 IP 주소는 10.0.4.4입니다. 사용자 이름은 <em>treyresearch\testuser</em>이고 암호는 <em>AweS0me@PW</em>입니다.
 
 8. [incoming-trust.ps1][outgoing-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 송신 트러스트를 생성합니다. 자신의 온-프레미스 컴퓨터를 사용한다면, 우선 이 스크립트를 수정합니다. 변수 `$TrustedDomainName`을 귀하의 온-프레미스 도메인 이름으로 설정하고, 변수 `$TrustedDomainDnsIpAddresses`에 이 도메인에 대한 Active Directory DS 서버의 IP 주소를 입력합니다.
 
@@ -162,5 +165,5 @@ Active Directory 관련 보안 고려사항을 확인하려면 [Active Directory
 [standby-operations-masters]: https://technet.microsoft.com/library/cc794737(v=ws.10).aspx
 [outgoing-trust]: https://raw.githubusercontent.com/mspnp/reference-architectures/master/identity/adds-forest/extensions/outgoing-trust.ps1
 [verify-a-trust]: https://technet.microsoft.com/library/cc753821.aspx
-[visio-download]: https://archcenter.azureedge.net/cdn/identity-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/identity-architectures.vsdx
 [0]: ./images/adds-forest.png "별도 Active Directory 도메인으로 하이브리드 네트워크 아키텍처 보안 유지"

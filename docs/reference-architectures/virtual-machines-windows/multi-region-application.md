@@ -1,15 +1,15 @@
 ---
-title: "고가용성을 위해 여러 Azure 지역에서 Windows VM 실행"
-description: "고가용성과 복원력을 위해 Azure의 여러 지역에 VM을 배포하는 방법"
+title: 고가용성을 위해 여러 Azure 지역에서 Windows VM 실행
+description: 고가용성과 복원력을 위해 Azure의 여러 지역에 VM을 배포하는 방법
 author: MikeWasson
 ms.date: 11/22/2016
 pnp.series.title: Windows VM workloads
 pnp.series.prev: n-tier
-ms.openlocfilehash: 9c54959da96115e55ba8a5c9e0f3c358d29ce5dd
-ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
+ms.openlocfilehash: 9772d57e6a11711d77032b049168565d52d919b8
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/08/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="run-windows-vms-in-multiple-regions-for-high-availability"></a>고가용성을 위해 여러 지역에서 Windows VM 실행
 
@@ -114,9 +114,9 @@ Windows Server 2016 이전 버전에서는 SQL Server Always On 가용성 그룹
 * 두 지역의 SQL Server 인스턴스를 포함하는 WSFC([Windows Server 장애 조치(failover) 클러스터링)][wsfc] 클러스터를 만듭니다. 
 * 주 지역과 보조 지역 모두에서 SQL Server 인스턴스를 포함하는 SQL Server Always On 가용성 그룹을 만듭니다. 단계는 [Extending Always On Availability Group to Remote Azure Datacenter (PowerShell)](https://blogs.msdn.microsoft.com/sqlcat/2014/09/22/extending-alwayson-availability-group-to-remote-azure-datacenter-powershell/)(원격 Azure 데이터 센터에 Always On 가용성 그룹 확장(PowerShell))를 참조하세요.
 
-    * 주 지역에 주 복제본을 배치합니다.
-    * 주 지역에 하나 이상의 보조 복제본을 배치합니다. 자동 장애 조치(failover)를 사용하는 동기 커밋을 사용하도록 구성합니다.
-    * 보조 지역에 보조 복제본을 하나 이상 배치합니다. 성능상의 이유로 *비동기* 커밋을 사용하도록 구성합니다. (그렇지 않은 경우 모든 T-SQL 트랜잭션이 네트워크를 통해 보조 지역으로 왕복하는 동안 기다려야 합니다.)
+  * 주 지역에 주 복제본을 배치합니다.
+  * 주 지역에 하나 이상의 보조 복제본을 배치합니다. 자동 장애 조치(failover)를 사용하는 동기 커밋을 사용하도록 구성합니다.
+  * 보조 지역에 보조 복제본을 하나 이상 배치합니다. 성능상의 이유로 *비동기* 커밋을 사용하도록 구성합니다. (그렇지 않은 경우 모든 T-SQL 트랜잭션이 네트워크를 통해 보조 지역으로 왕복하는 동안 기다려야 합니다.)
 
     > [!NOTE]
     > 비동기 커밋 복제본은 자동 장애 조치(failover)를 지원하지 않습니다.
@@ -182,7 +182,7 @@ SQL Server 클러스터의 경우 다음과 같은 두 가지 장애 조치(fail
 [tm-routing]: /azure/traffic-manager/traffic-manager-routing-methods
 [tm-sla]: https://azure.microsoft.com/support/legal/sla/traffic-manager/v1_0/
 [traffic-manager]: https://azure.microsoft.com/services/traffic-manager/
-[visio-download]: https://archcenter.azureedge.net/cdn/vm-reference-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/vm-reference-architectures.vsdx
 [vnet-dns]: /azure/virtual-network/virtual-networks-manage-dns-in-vnet
 [vnet-to-vnet]: /azure/vpn-gateway/vpn-gateway-vnet-vnet-rm-ps
 [vpn-gateway]: /azure/vpn-gateway/vpn-gateway-about-vpngateways

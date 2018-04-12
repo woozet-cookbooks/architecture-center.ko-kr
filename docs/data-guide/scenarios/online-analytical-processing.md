@@ -1,13 +1,13 @@
 ---
-title: "OLAP(온라인 분석 처리)"
-description: 
+title: OLAP(온라인 분석 처리)
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: f5ceea9c9dd03812e92fff811e54316edc22b59c
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 03/31/2018
 ---
 # <a name="online-analytical-processing-olap"></a>OLAP(온라인 분석 처리)
 

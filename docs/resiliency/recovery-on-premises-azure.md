@@ -1,15 +1,16 @@
 ---
-title: "기술 지침: 온-프레미스에서 Azure로 복구"
-description: "온-프레미스 인프라에서 Azure에 이르는 복구 시스템의 이해 및 설계에 대한 문서"
+title: '기술 지침: 온-프레미스에서 Azure로 복구'
+description: 온-프레미스 인프라에서 Azure에 이르는 복구 시스템의 이해 및 설계에 대한 문서
 author: adamglick
 ms.date: 08/18/2016
-ms.openlocfilehash: f5ce86dbd605fa7dc74e6a7cc97f0d6c6acd79e5
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 6992e27d148074b3d60c282318741f45974d1afd
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 [!INCLUDE [header](../_includes/header.md)]
+
 # <a name="azure-resiliency-technical-guidance-recovery-from-on-premises-to-azure"></a>Azure 복원력 기술 지침: 온-프레미스에서 Azure로 복구
 Azure는 고가용성 및 재해 복구를 위해서 Azure에 대한 온-프레미스 데이터 센터의 확장을 사용하도록 설정한 일련의 포괄적인 서비스를 제공합니다.
 

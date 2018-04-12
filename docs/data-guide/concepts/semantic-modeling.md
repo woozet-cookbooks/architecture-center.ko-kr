@@ -1,13 +1,13 @@
 ---
-title: "의미 체계 모델링"
-description: 
+title: 의미 체계 모델링
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: 343d17af0d933d515c724a062237c8d5df3a9e31
-ms.sourcegitcommit: 29fbcb1eec44802d2c01b6d3bcf7d7bd0bae65fc
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/27/2018
+ms.lasthandoff: 03/31/2018
 ---
 # <a name="semantic-modeling"></a>의미 체계 모델링
 

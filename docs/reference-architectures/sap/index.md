@@ -1,13 +1,13 @@
 ---
-title: "Azure에 SAP NetWeaver 및 SAP HANA 배포"
-description: "Azure의 고가용성 환경에서 SAP HANA를 실행하는 방법에 대한 검증된 사례입니다."
+title: Azure에 SAP NetWeaver 및 SAP HANA 배포
+description: Azure의 고가용성 환경에서 SAP HANA를 실행하는 방법에 대한 검증된 사례입니다.
 author: njray
 ms.date: 06/29/2017
-ms.openlocfilehash: 27a97103c0c6f305cb8e830d670c8d0ba7e22aa5
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 33171164c59a520a87ef3209c5bb1b208377221c
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 03/30/2018
 ---
 # <a name="deploy-sap-netweaver-and-sap-hana-on-azure"></a>Azure에 SAP NetWeaver 및 SAP HANA 배포
 
@@ -20,7 +20,7 @@ ms.lasthandoff: 11/14/2017
 > [!NOTE]
 > 이 참조 아키텍처를 배포하려면 적절한 SAP 제품 라이선스 및 기타 Microsoft 이외의 기술이 필요합니다. Microsoft와 SAP 간의 파트너 관계에 대한 정보는 [Azure 기반의 SAP HANA][sap-hana-on-azure]를 참조하세요.
 
-## <a name="architecture"></a>아키텍처
+## <a name="architecture"></a>건축
 
 이 아키텍처는 다음 구성 요소로 구성됩니다.
 
@@ -235,7 +235,7 @@ SAP 인프라를 배포한 후에는 다음과 같이 가상 머신에 SAP 응�
 [sap-hana-on-azure]: https://azure.microsoft.com/services/virtual-machines/sap-hana/
 [sap-netweaver-dr]: http://download.microsoft.com/download/9/5/6/956FEDC3-702D-4EFB-A7D3-2DB7505566B6/SAP%20NetWeaver%20-%20Building%20an%20Azure%20based%20Disaster%20Recovery%20Solution%20V1_5%20.docx
 [sap-security]: https://archive.sap.com/documents/docs/DOC-62943
-[visio-download]: https://archcenter.azureedge.net/cdn/SAP-HANA-architecture.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/SAP-HANA-architecture.vsdx
 [vm-sizes-mem]: /azure/virtual-machines/windows/sizes-memory
 [swd]: https://help.sap.com/doc/saphelp_nw70ehp2/7.02.16/en-us/48/8fe37933114e6fe10000000a421937/frameset.htm
 [0]: ./images/sap-hana.png "Microsoft Azure를 사용하는 SAP HANA 아키텍처"

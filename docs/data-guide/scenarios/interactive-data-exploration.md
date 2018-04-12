@@ -1,13 +1,13 @@
 ---
-title: "대화형 데이터 탐색"
-description: 
+title: 대화형 데이터 탐색
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: a9e72f4cf88c9082fe79f854dd79e98bfaa918f5
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: 20740a8fe912a63526c847416b832941f4ac33ec
+ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 04/03/2018
 ---
 # <a name="interactive-data-exploration"></a>대화형 데이터 탐색
 
@@ -52,7 +52,7 @@ ms.lasthandoff: 02/14/2018
 
 ## <a name="architecture"></a>건축
 
-이 시나리오의 목표는 대화형 데이터 분석을 지원하는 것이지만, 데이터 과학과 관련된 데이터 정리, 샘플링 및 구성 태스크에는 장기 실행 프로세스가 수반됩니다. 따라서 [일괄 처리](./batch-processing.md) 아키텍처가 적절할 수 있습니다.
+이 시나리오의 목표는 대화형 데이터 분석을 지원하는 것이지만, 데이터 과학과 관련된 데이터 정리, 샘플링 및 구성 태스크에는 장기 실행 프로세스가 수반됩니다. 따라서 [일괄 처리](../big-data/batch-processing.md) 아키텍처가 적절할 수 있습니다.
 
 ## <a name="technology-choices"></a>기술 선택
 

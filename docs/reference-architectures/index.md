@@ -1,12 +1,13 @@
 ---
-title: "Azure 참조 아키텍처"
-description: "Azure의 일반 워크로드에 대한 참조 아키텍처, 청사진 및 규범적 구현 지침입니다."
+title: Azure 참조 아키텍처
+description: Azure의 일반 워크로드에 대한 참조 아키텍처, 청사진 및 규범적 구현 지침입니다.
 layout: LandingPage
-ms.openlocfilehash: cd7f4b066ba7a4af16767db013c607bc0697dd98
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.topic: landing-page
+ms.openlocfilehash: 9708c975e543a04cafe22f38194e833be44d7b81
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 04/06/2018
 ---
 <!-- This file is generated! -->
 <!-- See the templates in ./build/reference-architectures  -->

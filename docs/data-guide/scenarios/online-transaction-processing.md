@@ -1,13 +1,13 @@
 ---
-title: "OLTP(온라인 트랜잭션 처리)"
-description: 
+title: OLTP(온라인 트랜잭션 처리)
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: 07e7f680c8ee5e8589ff7cd2236ff95f6ee84f4c
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 03/31/2018
 ---
 # <a name="online-transaction-processing-oltp"></a>OLTP(온라인 트랜잭션 처리)
 

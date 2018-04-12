@@ -1,18 +1,18 @@
 ---
-title: "리더 선택"
-description: "인스턴스 중 하나를 다른 인스턴스를 관리하는 리더로 선택하여 분산된 응용 프로그램의 공동 작업 인스턴스 컬렉션이 수행하는 작업을 조정합니다."
-keywords: "디자인 패턴"
+title: 리더 선택
+description: 인스턴스 중 하나를 다른 인스턴스를 관리하는 리더로 선택하여 분산된 응용 프로그램의 공동 작업 인스턴스 컬렉션이 수행하는 작업을 조정합니다.
+keywords: 디자인 패턴
 author: dragon119
 ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories:
 - design-implementation
 - resiliency
-ms.openlocfilehash: ddb61097ed3229ed0ed517b94c280d3ef892c999
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 3e7d47f70f660f2507f0619e1c41bf9a32a25be4
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="leader-election-pattern"></a>리더 선택 패턴
 
@@ -70,9 +70,9 @@ ms.lasthandoff: 11/14/2017
 LeaderElection 솔루션의 DistributedMutex 프로젝트([GitHub](https://github.com/mspnp/cloud-design-patterns/tree/master/leader-election)에서 이 패턴을 보여 주는 샘플을 확인할 수 있음)는 Azure Storage Blob의 임대를 사용하여 공유 분산 뮤텍스를 구현하는 메커니즘을 제공하는 방법을 보여 줍니다. 이 뮤텍스를 사용하여 Azure 클라우드 서비스의 역할 인스턴스 그룹 중에서 리더를 선택할 수 있습니다. 임대를 획득한 첫 번째 역할 인스턴스가 리더로 선택되고, 임대를 해제하거나 임대를 갱신할 수 없을 때까지 리더로 유지됩니다. 다른 역할 인스턴스는 리더를 더 이상 사용할 수 없는 경우를 위해 Blob 임대를 계속 모니터할 수 있습니다.
 
 >  Blob 임대는 Blob에 대한 배타적 쓰기 잠금입니다. 단일 Blob은 언제든지 한 임대의 주체만 될 수 있습니다. 역할 인스턴스가 지정된 Blob에 대한 임대를 요청할 수 있으며, 동일한 Blob에 대한 임대를 보유한 다른 역할 인스턴스가 없는 경우 임대가 부여됩니다. 다른 역할 인스턴스가 임대를 보유한 경우 요청에서 예외가 발생합니다.
-
+> 
 > 결함 있는 역할 인스턴스가 임대를 무기한 유지하는 것을 방지하려면 임대 수명을 지정합니다. 이 수명이 만료되면 임대를 사용할 수 있게 됩니다. 그러나 역할 인스턴스가 임대를 보유하는 동안 임대가 갱신되도록 요청할 수 있으며, 추가 기간 동안 임대가 부여됩니다. 역할 인스턴스가 임대를 유지하려는 경우 이 프로세스를 계속 반복할 수 있습니다.
-Blob 임대 방법에 대한 자세한 내용은 [Blob 임대(REST API)](https://msdn.microsoft.com/library/azure/ee691972.aspx)를 참조하세요.
+> Blob 임대 방법에 대한 자세한 내용은 [Blob 임대(REST API)](https://msdn.microsoft.com/library/azure/ee691972.aspx)를 참조하세요.
 
 아래 C# 예제의 `BlobDistributedMutex` 클래스에는 역할 인스턴스가 지정된 Blob에 대한 임대를 획득하려고 시도할 수 있게 하는 `RunTaskWhenMutexAquired` 메서드가 포함되어 있습니다. `BlobDistributedMutex` 개체를 만들 때(이 개체는 샘플 코드에 포함된 단순 구조체임) Blob의 세부 정보(이름, 컨테이너, 저장소 계정)가 `BlobSettings` 개체의 생성자에게 전달됩니다. 또한 생성자는 Blob에 대한 임대를 획득하고 리더로 선택된 경우 역할 인스턴스가 실행해야 하는 코드를 참조하는 `Task`를 허용합니다. 임대 획득의 하위 수준 세부 정보를 처리하는 코드는 `BlobLeaseManager`라는 별도의 도우미 클래스에서 구현됩니다.
 

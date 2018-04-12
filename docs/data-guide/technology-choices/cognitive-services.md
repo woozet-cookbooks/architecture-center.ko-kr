@@ -1,13 +1,13 @@
 ---
-title: "Cognitive Services 기술 선택"
-description: 
+title: Cognitive Services 기술 선택
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: d97e166abed4670e4bdc797cc8075be3314e677a
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.openlocfilehash: 055769188fbd6742b94094ee18766293812849fa
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="choosing-a-microsoft-cognitive-services-technology"></a>Microsoft Cognitive Services 기술 선택
 
@@ -54,35 +54,37 @@ Azure에는 수십 가지의 Cognitive Services가 제공됩니다. 이러한 �
 다음 표에서 주요 기능 차이점을 요약해서 보여 줍니다. 
 
 ### <a name="uses-prebuilt-models"></a>미리 작성된 모델 사용
-| | 입력 형식 | 주요 이점 |
-| --- | --- | --- |
-| Text Analytics API | 텍스트 | 의미 및 주제를 평가하여 사용자가 무엇을 원하는지 파악합니다. |
-| 엔터티 연결 API| 텍스트 | 명명된 엔터티 인식 및 명확성을 통해 앱 데이터 링크 기능을 강화합니다. |
-| LUIS(언어 인식 인텔리전트 서비스)| 텍스트 | 앱이 사용자의 명령을 인식하도록 학습합니다. |
-| QnA Maker Service| 텍스트 | FAQ 형식 정보를 탐색하기 쉬운 대화형 답변으로 추출합니다. |
-| Linguistic Analysis API | 텍스트 | 복잡한 언어 개념을 간소화하고 텍스트를 구문 분석합니다. |
-| 지식 탐색 서비스 | 텍스트 | 자연어 입력을 통해 구조적 데이터에 대한 대화형 검색 환경을 구현합니다. | 
-| Web Language Model API | 텍스트 | 웹 규모 데이터에서 학습한 예측 언어 모델을 활용합니다. | 
-| Academic Knowledge API | 텍스트 | Bing을 통해 채워진 Microsoft Academic Graph의 다양한 교육 콘텐츠를 활용합니다. |
-| Bing Autosuggest API | 텍스트 | 앱에 검색에 대한 지능형 자동 제안 옵션을 제공합니다. |
-| Bing Spell Check API | 텍스트 | 앱에서 맞춤법 오류를 감지 및 수정합니다. |
-| Translator Text API | 텍스트 | 기계 번역입니다. |
-| Recommendations API | 텍스트 | 고객이 원하는 품목을 예측 및 추천합니다. |
-| Bing Entity Search API | 텍스트(웹 검색 쿼리) | 웹에서 엔터티 정보를 식별하고 보강합니다. |
-| Bing Image Search API | 텍스트(웹 검색 쿼리) | 이미지를 검색합니다. |
-| Bing News Search API | 텍스트(웹 검색 쿼리) | 뉴스를 검색합니다. |
-| Bing Video Search API | 텍스트(웹 검색 쿼리) | 비디오를 검색합니다. |
-| Bing Web Search API | 텍스트(웹 검색 쿼리) | 수십억 개의 웹 문서에서 향상된 검색 세부 정보를 얻습니다. |에서도 확인할 수 있습니다.
-| Bing Speech API | 텍스트 또는 음성 | 음성을 텍스트로 변환하고 다시 음성으로 변환합니다. |
-| 화자 인식 API | 음성 | 음성을 사용하여 개별 화자를 식별하고 인증합니다. |
-| Translator Speech API | 음성 | 실시간 음성 번역을 수행합니다. |
-| Computer Vision API | 이미지(또는 비디오의 프레임) | 이미지에서 실행 가능한 정보를 추출하고, 사진 설명을 자동으로 만들고, 태그를 파생하고, 연예인을 인식하고, 텍스트를 추출하고, 정확한 축소판 그림을 만듭니다. |
-| Content Moderator | 텍스트, 이미지 또는 비디오 | 자동화된 이미지, 텍스트 및 비디오 조정 |
-| Emotion API | 이미지(인간 피사체가 있는 사진) | 인간 피사체의 다양한 감정을 식별합니다. |
-| Face API | 이미지(인간 피사체가 있는 사진) | 사진에서 얼굴을 감지, 식별, 분석, 구성하고 태그를 지정합니다. |
-| 비디오 인덱서 | 비디오 | 감정과 같은 정보를 비디오로 나타내고, 음성을 기록하고, 음성을 번역하고, 안면 및 감정을 인식하고, 키워드를 추출합니다. | 
+
+|                                                   |             입력 형식              |                                                                                주요 이점                                                                                |
+|---------------------------------------------------|-------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                Text Analytics API                 |                텍스트                 |                                                       의미 및 주제를 평가하여 사용자가 무엇을 원하는지 파악합니다.                                                        |
+|                엔터티 연결 API                 |                텍스트                 |                                               명명된 엔터티 인식 및 명확성을 통해 앱 데이터 링크 기능을 강화합니다.                                               |
+| LUIS(언어 인식 인텔리전트 서비스) |                텍스트                 |                                                          앱이 사용자의 명령을 인식하도록 학습합니다.                                                          |
+|                 QnA Maker Service                 |                텍스트                 |                                             FAQ 형식 정보를 탐색하기 쉬운 대화형 답변으로 추출합니다.                                              |
+|              Linguistic Analysis API              |                텍스트                 |                                                            복잡한 언어 개념을 간소화하고 텍스트를 구문 분석합니다.                                                             |
+|           지식 탐색 서비스           |                텍스트                 |                                          자연어 입력을 통해 구조적 데이터에 대한 대화형 검색 환경을 구현합니다.                                          |
+|              Web Language Model API               |                텍스트                 |                                                         웹 규모 데이터에서 학습한 예측 언어 모델을 활용합니다.                                                         |
+|              Academic Knowledge API               |                텍스트                 |                                        Bing을 통해 채워진 Microsoft Academic Graph의 다양한 교육 콘텐츠를 활용합니다.                                         |
+|               Bing Autosuggest API                |                텍스트                 |                                                        앱에 검색에 대한 지능형 자동 제안 옵션을 제공합니다.                                                        |
+|               Bing Spell Check API                |                텍스트                 |                                                             앱에서 맞춤법 오류를 감지 및 수정합니다.                                                             |
+|                Translator Text API                |                텍스트                 |                                                                           기계 번역입니다.                                                                            |
+|                Recommendations API                |                텍스트                 |                                                             고객이 원하는 품목을 예측 및 추천합니다.                                                              |
+|              Bing Entity Search API               |       텍스트(웹 검색 쿼리)       |                                                           웹에서 엔터티 정보를 식별하고 보강합니다.                                                           |
+|               Bing Image Search API               |       텍스트(웹 검색 쿼리)       |                                                                            이미지를 검색합니다.                                                                             |
+|               Bing News Search API                |       텍스트(웹 검색 쿼리)       |                                                                             뉴스를 검색합니다.                                                                              |
+|               Bing Video Search API               |       텍스트(웹 검색 쿼리)       |                                                                            비디오를 검색합니다.                                                                             |
+|                Bing Web Search API                |       텍스트(웹 검색 쿼리)       |                                                        수십억 개의 웹 문서에서 향상된 검색 세부 정보를 얻습니다.                                                        |
+|                  Bing Speech API                  |           텍스트 또는 음성            |                                                                  음성을 텍스트로 변환하고 다시 음성으로 변환합니다.                                                                   |
+|              화자 인식 API              |               음성                |                                                       음성을 사용하여 개별 화자를 식별하고 인증합니다.                                                        |
+|               Translator Speech API               |               음성                |                                                                   실시간 음성 번역을 수행합니다.                                                                   |
+|                Computer Vision API                |    이미지(또는 비디오의 프레임)    | 이미지에서 실행 가능한 정보를 추출하고, 사진 설명을 자동으로 만들고, 태그를 파생하고, 연예인을 인식하고, 텍스트를 추출하고, 정확한 축소판 그림을 만듭니다. |
+|                 Content Moderator                 |        텍스트, 이미지 또는 비디오        |                                                               자동화된 이미지, 텍스트 및 비디오 조정                                                                |
+|                    Emotion API                    | 이미지(인간 피사체가 있는 사진) |                                                              인간 피사체의 다양한 감정을 식별합니다.                                                               |
+|                     Face API                      | 이미지(인간 피사체가 있는 사진) |                                                       사진에서 얼굴을 감지, 식별, 분석, 구성하고 태그를 지정합니다.                                                       |
+|                   비디오 인덱서                   |                비디오                |                        감정과 같은 정보를 비디오로 나타내고, 음성을 기록하고, 음성을 번역하고, 안면 및 감정을 인식하고, 키워드를 추출합니다.                         |
 
 ### <a name="trained-with-custom-data-you-provide"></a>제공한 사용자 지정 데이터로 학습
+
 | | 입력 형식 | 주요 이점 |
 | --- | --- | --- |
 | 사용자 지정 시각 서비스 | 이미지(또는 비디오의 프레임) | 나만의 Computer Vision 모델을 사용자 지정합니다. |

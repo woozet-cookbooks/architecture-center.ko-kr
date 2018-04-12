@@ -1,10 +1,11 @@
 ---
 layout: LandingPage
-ms.openlocfilehash: b5c88ac0307c7d47f5bde73322bedd7063136576
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.topic: landing-page
+ms.openlocfilehash: 48600cc07983b1ec588cc56448c521f524f134e0
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="cloud-adoption-guide"></a>클라우드 도입 가이드
 

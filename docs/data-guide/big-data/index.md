@@ -1,13 +1,13 @@
 ---
-title: "빅 데이터 아키텍처"
-description: 
+title: 빅 데이터 아키텍처
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: 2a1336faea81470b082d4eef8e2cc53a082c63c7
-ms.sourcegitcommit: 023d88e781f7fe64c62b247d876441ee40921b1b
+ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/28/2018
+ms.lasthandoff: 04/03/2018
 ---
 # <a name="big-data-architectures"></a>빅 데이터 아키텍처
 

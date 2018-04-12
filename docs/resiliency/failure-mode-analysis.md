@@ -1,15 +1,15 @@
 ---
-title: "실패 모드 분석"
-description: "Azure에 기반한 클라우드 솔루션에 대한 장애 모드 분석을 수행하기 위한 지침입니다."
+title: 실패 모드 분석
+description: Azure에 기반한 클라우드 솔루션에 대한 장애 모드 분석을 수행하기 위한 지침입니다.
 author: MikeWasson
 ms.date: 03/24/2017
 ms.custom: resiliency
 pnp.series.title: Design for Resiliency
-ms.openlocfilehash: aca2088cb007728c5717a968969000c0a19bcd07
-ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
+ms.openlocfilehash: 8786c411249267e502003a90d5f2ff5e4c786803
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/30/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="failure-mode-analysis"></a>실패 모드 분석
 [!INCLUDE [header](../_includes/header.md)]
@@ -122,7 +122,7 @@ Application_End 로깅은 응용 프로그램 도메인 종료(소프트 프로�
 ### <a name="web-or-worker-roles-are-unexpectedlybeing-shut-down"></a>웹 또는 작업자 역할이 예기치 않게 종료됩니다.
 **검색**. [RoleEnvironment.Stopping][RoleEnvironment.Stopping] 이벤트가 발생합니다.
 
-**복구**. [RoleEntryPoint.OnStop][RoleEntryPoint.OnStop] 메서드를 재정의하여 정상적으로 정리합니다. 자세한 내용은 [Azure OnStop 이벤트를 처리하는 올바른 방법][onstop-events](블로그)을 참조하세요.
+<strong>복구</strong>. [RoleEntryPoint.OnStop][RoleEntryPoint.OnStop] 메서드를 재정의하여 정상적으로 정리합니다. 자세한 내용은 [Azure OnStop 이벤트를 처리하는 올바른 방법][onstop-events](블로그)을 참조하세요.
 
 ## <a name="cosmos-db"></a>Cosmos DB 
 ### <a name="reading-data-fails"></a>데이터 읽기가 실패합니다.

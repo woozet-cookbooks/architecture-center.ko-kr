@@ -1,13 +1,13 @@
 ---
-title: "Azure에서 Jenkins 서버 실행"
-description: "이 참조 아키텍처는 SSO(Single Sign-On)로 보호된 Azure에서 확장성 있는 엔터프라이즈급 Jenkins 서버를 배포하고 작동하는 방법을 보여 줍니다."
+title: Azure에서 Jenkins 서버 실행
+description: 이 참조 아키텍처는 SSO(Single Sign-On)로 보호된 Azure에서 확장성 있는 엔터프라이즈급 Jenkins 서버를 배포하고 작동하는 방법을 보여 줍니다.
 author: njray
 ms.date: 01/21/18
-ms.openlocfilehash: 724185e43ed743013f52ded04b779552dd8e48c1
-ms.sourcegitcommit: 29fbcb1eec44802d2c01b6d3bcf7d7bd0bae65fc
+ms.openlocfilehash: c07a341bbe4d0304087e4535408967c45d36199e
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/27/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="run-a-jenkins-server-on-azure"></a>Azure에서 Jenkins 서버 실행
 
@@ -15,7 +15,7 @@ ms.lasthandoff: 02/27/2018
 
 ![Azure에서 실행 중인 Jenkins 서버][0]
 
-*이 아키텍처 다이어그램이 포함된 [Visio 파일](https://arch-center.azureedge.net/cdn/Jenkins-architecture.vsdx)을 다운로드합니다.*
+*이 아키텍처 다이어그램이 포함된 [Visio 파일](https://archcenter.blob.core.windows.net/cdn/Jenkins-architecture.vsdx)을 다운로드합니다.*
 
 이 아키텍처는 Azure 서비스를 통한 재해 복구를 지원하지만 가동 중지 시간이 없는 다중 마스터 또는 HA(고가용성)과 관련된 보다 고급의 스케일 아웃 시나리오는 다루지 않습니다. Azure에서 CI/CD 파이프라인을 빌드하는 방법에 대한 단계별 자습서를 비롯하여 다양한 Azure 구성 요소에 대한 일반적인 정보는 [Azure의 Jenkins][jenkins-on-azure]를 참조하세요.
 
@@ -25,30 +25,30 @@ ms.lasthandoff: 02/27/2018
 
 이 아키텍처는 다음과 같은 구성 요소로 구성됩니다.
 
--   **리소스 그룹.** [리소스 그룹][rg]은 Azure 자산을 수명, 소유자를 비롯한 기준으로 관리할 수 있도록 Azure 자산을 그룹화하는 데 사용됩니다. 리소스 그룹을 사용하여 Azure 자산을 그룹 단위로 배포 및 모니터링하고, 리소스 그룹별로 청구 비용을 추적할 수 있습니다. 리소스를 하나의 집합으로 삭제할 수도 있습니다. 이러한 기능은 테스트 배포에서 매우 유용합니다.
+- **리소스 그룹.** [리소스 그룹][rg]은 Azure 자산을 수명, 소유자를 비롯한 기준으로 관리할 수 있도록 Azure 자산을 그룹화하는 데 사용됩니다. 리소스 그룹을 사용하여 Azure 자산을 그룹 단위로 배포 및 모니터링하고, 리소스 그룹별로 청구 비용을 추적할 수 있습니다. 리소스를 하나의 집합으로 삭제할 수도 있습니다. 이러한 기능은 테스트 배포에서 매우 유용합니다.
 
--   **Jenkins 서버**. 가상 머신은 [Jenkins][azure-market]를 자동화 서버로 실행하고 Jenkins 마스터 역할을 수행하도록 배포됩니다. 이 참조 아키텍처는 Azure의 Linux(Ubuntu 16.04 LTS) 가상 머신에 설치된 [Azure의 Jenkins용 솔루션 템플릿][solution]을 사용합니다. 다른 Jenkins 제품은 Azure Marketplace에서 제공됩니다.
+- **Jenkins 서버**. 가상 머신은 [Jenkins][azure-market]를 자동화 서버로 실행하고 Jenkins 마스터 역할을 수행하도록 배포됩니다. 이 참조 아키텍처는 Azure의 Linux(Ubuntu 16.04 LTS) 가상 머신에 설치된 [Azure의 Jenkins용 솔루션 템플릿][solution]을 사용합니다. 다른 Jenkins 제품은 Azure Marketplace에서 제공됩니다.
 
-    > [!NOTE]
-    > Nginx는 VM에 설치되어 Jenkins에 대한 역방향 프록시 역할을 합니다. Jenkins 서버에 SSL을 사용하도록 Nginx를 구성할 수 있습니다.
-    > 
-    > 
+  > [!NOTE]
+  > Nginx는 VM에 설치되어 Jenkins에 대한 역방향 프록시 역할을 합니다. Jenkins 서버에 SSL을 사용하도록 Nginx를 구성할 수 있습니다.
+  > 
+  > 
 
--   **가상 네트워크**. [가상 네트워크][vnet]는 Azure 리소스를 서로 연결하고 논리적 격리를 제공합니다. 이 아키텍처에서 Jenkins 서버는 가상 네트워크에서 실행됩니다.
+- **가상 네트워크**. [가상 네트워크][vnet]는 Azure 리소스를 서로 연결하고 논리적 격리를 제공합니다. 이 아키텍처에서 Jenkins 서버는 가상 네트워크에서 실행됩니다.
 
--   **서브넷**. Jenkins 서버는 성능에 영향을 미치지 않으면서 네트워크 트래픽을 보다 쉽게 관리하고 분리할 수 있도록 [서브넷][subnet]에 격리됩니다.
+- **서브넷**. Jenkins 서버는 성능에 영향을 미치지 않으면서 네트워크 트래픽을 보다 쉽게 관리하고 분리할 수 있도록 [서브넷][subnet]에 격리됩니다.
 
--   **NSG**. NSG([네트워크 보안 그룹][nsg])를 사용하여 네트워크 트래픽을 인터넷에서 가상 네트워크의 서브넷으로 제한합니다.
+- <strong>NSG</strong>. NSG([네트워크 보안 그룹][nsg])를 사용하여 네트워크 트래픽을 인터넷에서 가상 네트워크의 서브넷으로 제한합니다.
 
--   **관리 디스크**. [관리 디스크][managed-disk]는 응용 프로그램 저장소 및 Jenkins 서버의 상태를 유지하고 재해 복구를 제공하는 데 사용된 영구 VHD(가상 하드 디스크)입니다. 데이터 디스크는 Azure Storage에 저장됩니다. 고성능을 위해 [프리미엄 저장소][premium]를 사용하는 것이 좋습니다.
+- **관리 디스크**. [관리 디스크][managed-disk]는 응용 프로그램 저장소 및 Jenkins 서버의 상태를 유지하고 재해 복구를 제공하는 데 사용된 영구 VHD(가상 하드 디스크)입니다. 데이터 디스크는 Azure Storage에 저장됩니다. 고성능을 위해 [프리미엄 저장소][premium]를 사용하는 것이 좋습니다.
 
--   **Azure Blob Storage**. [Windows Azure Storage 플러그 인][configure-storage]은 Azure Blob Storage를 사용하여 다른 Jenkins 빌드로 생성 및 공유되는 빌드 아티팩트를 저장합니다.
+- **Azure Blob Storage**. [Windows Azure Storage 플러그 인][configure-storage]은 Azure Blob Storage를 사용하여 다른 Jenkins 빌드로 생성 및 공유되는 빌드 아티팩트를 저장합니다.
 
--   **Azure AD(Azure Active Directory)**. [Azure AD][azure-ad]는 SSO를 설정할 수 있도록 사용자 인증을 지원합니다. Azure AD [서비스 주체][service-principal]는 RBAC([역할 기반 액세스 제어][rbac])를 사용하여 워크플로에서 각 역할 권한 부여에 대한 정책 및 사용 권한을 정의합니다. 각 서비스 주체는 Jenkins 작업과 연결됩니다.
+- <strong>Azure AD(Azure Active Directory)</strong>. [Azure AD][azure-ad]는 SSO를 설정할 수 있도록 사용자 인증을 지원합니다. Azure AD [서비스 주체][service-principal]는 RBAC([역할 기반 액세스 제어][rbac])를 사용하여 워크플로에서 각 역할 권한 부여에 대한 정책 및 사용 권한을 정의합니다. 각 서비스 주체는 Jenkins 작업과 연결됩니다.
 
--   **Azure Key Vault.** 비밀이 요구될 때 Azure 자원을 프로비전하는 데 사용되는 비밀 및 암호화 키를 관리하기 위해 이 아키텍처는 [Key Vault][key-vault]를 사용합니다. 파이프라인에 있는 응용 프로그램과 관련된 비밀을 저장하는 추가 도움말은 Jenkins의 [Azure 자격 증명][configure-credential] 플러그 인을 참조하세요.
+- **Azure Key Vault.** 비밀이 요구될 때 Azure 자원을 프로비전하는 데 사용되는 비밀 및 암호화 키를 관리하기 위해 이 아키텍처는 [Key Vault][key-vault]를 사용합니다. 파이프라인에 있는 응용 프로그램과 관련된 비밀을 저장하는 추가 도움말은 Jenkins의 [Azure 자격 증명][configure-credential] 플러그 인을 참조하세요.
 
--   **Azure 모니터링 서비스**. 이 서비스는 Jenkins를 호스팅하는 Azure 가상 머신을 [모니터링][monitor]합니다. 이 배포는 가상 머신 상태 및 CPU 사용률을 모니터링하고 경고를 보냅니다.
+- **Azure 모니터링 서비스**. 이 서비스는 Jenkins를 호스팅하는 Azure 가상 머신을 [모니터링][monitor]합니다. 이 배포는 가상 머신 상태 및 CPU 사용률을 모니터링하고 경고를 보냅니다.
 
 ## <a name="recommendations"></a>권장 사항
 

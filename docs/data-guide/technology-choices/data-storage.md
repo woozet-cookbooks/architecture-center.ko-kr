@@ -1,13 +1,13 @@
 ---
-title: "데이터 저장소 기술 선택"
-description: 
+title: 데이터 저장소 기술 선택
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: d8f831e758ddc8604758392644a68b56dc51cf57
-ms.sourcegitcommit: 475064f0a3c2fac23e1286ba159aaded287eec86
+ms.openlocfilehash: b14611a2dc34bcb145cf420441795d4124e7baeb
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/19/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="choosing-a-big-data-storage-technology-in-azure"></a>Azure의 빅 데이터 저장소 기술 선택
 
@@ -109,12 +109,13 @@ Azure DB Cosmos 기능은 다음과 같습니다.
 
 ### <a name="nosql-database-capabilities"></a>NoSQL 데이터베이스 기능
 
-| | Azure Cosmos DB | HDInsight의 HBase |
-| --- | --- | --- |
-| 주 데이터베이스 모델 | 문서 저장소, 그래프, 키-값 저장소, 넓은 열 저장소 | 넓은 열 저장소 |
-| 보조 인덱스 | 예 | 아니요 |
-| SQL 언어 지원 | 예 | 예([Phoenix](http://phoenix.apache.org/) JDBC 드라이버 사용) |
-| 일관성 | 강력, 제한된 부실, 세션, 일관적인 접두사, 최종 | 강력 |
-| 네이티브 Azure Functions 통합 | [예](/azure/cosmos-db/serverless-computing-database) | 아니요 |
-| 자동 글로벌 배포 | [예](/azure/cosmos-db/distribute-data-globally) | 아니요 [HBase 클러스터 복제](/azure/hdinsight/hbase/apache-hbase-replication)를 최종 일관성을 갖는 지역 간에 구성할 수 있습니다. |
-| 가격 책정 모델 | 탄력적으로 확장 가능한 RU(요청 단위)에 필요에 따라 초당 요금 부과, 탄력적으로 확장 가능한 저장소 | HDInsight 클러스터에 대해 분단위 가격 책정(수평 노드 확장), 저장소 |
+|                                    |                                           Azure Cosmos DB                                           |                                                             HDInsight의 HBase                                                             |
+|------------------------------------|-----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+|       주 데이터베이스 모델       |                      문서 저장소, 그래프, 키-값 저장소, 넓은 열 저장소                      |                                                             넓은 열 저장소                                                              |
+|         보조 인덱스          |                                                 예                                                 |                                                                     아니요                                                                     |
+|        SQL 언어 지원        |                                                 예                                                 |                                     예([Phoenix](http://phoenix.apache.org/) JDBC 드라이버 사용)                                      |
+|            일관성             |                   강력, 제한된 부실, 세션, 일관적인 접두사, 최종                   |                                                                   강력                                                                   |
+| 네이티브 Azure Functions 통합 |                        [예](/azure/cosmos-db/serverless-computing-database)                        |                                                                     아니오                                                                     |
+|   자동 글로벌 배포    |                          [예](/azure/cosmos-db/distribute-data-globally)                           | 아니요 [HBase 클러스터 복제](/azure/hdinsight/hbase/apache-hbase-replication)를 최종 일관성을 갖는 지역 간에 구성할 수 있습니다. |
+|           가격 책정 모델            | 탄력적으로 확장 가능한 RU(요청 단위)에 필요에 따라 초당 요금 부과, 탄력적으로 확장 가능한 저장소 |                              HDInsight 클러스터에 대해 분단위 가격 책정(수평 노드 확장), 저장소                               |
+

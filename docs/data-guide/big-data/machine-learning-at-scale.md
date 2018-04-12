@@ -1,13 +1,13 @@
 ---
-title: "대규모 Machine Learning"
-description: 
+title: 대규모 Machine Learning
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: a92060008f90f43f71869bd1ad251af150b4a9db
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 04/03/2018
 ---
 # <a name="machine-learning-at-scale"></a>대규모 Machine Learning
 

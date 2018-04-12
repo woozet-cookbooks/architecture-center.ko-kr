@@ -1,22 +1,22 @@
 ---
-title: "고가용성의 네트워크 가상 어플라이언스 배포"
-description: "고가용성의 네트워크 가상 어플라이언스를 배포하는 방법입니다."
+title: 고가용성의 네트워크 가상 어플라이언스 배포
+description: 고가용성의 네트워크 가상 어플라이언스를 배포하는 방법입니다.
 author: telmosampaio
 ms.date: 12/06/2016
 pnp.series.title: Network DMZ
 pnp.series.prev: secure-vnet-dmz
 cardTitle: Deploy highly available network virtual appliances
-ms.openlocfilehash: 844c87f535d2a8cb415489cb2c8e840f8c585d7d
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: fe279eea3f9cb024d6c6c14943013b9b9a87bc9c
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="deploy-highly-available-network-virtual-appliances"></a>고가용성 네트워크 가상 어플라이언스 배포
 
 이 문서는 Azure에서 고가용성을 위한 일련의 NVA(네트워크 가상 어플라이언스)를 배포하는 방법을 보여 줍니다. NVA는 DMZ로 불리는 경계 네트워크로부터 다른 네트워크나 서브넷으로의 네트워크 트래픽 흐름을 제어하기 위해 주로 사용됩니다. Azure에서 DMZ를 구현하는 방법에 대한 자세한 내용은 [Microsoft Cloud Services 및 네트워크 보안][cloud-security]을 참조하세요. 이 문서에는 수신 전용, 송신 전용 및 송수신용 예제 아키텍처가 포함되어 있습니다. 
 
-**사전 요구 사항:** 이 문서는 [Azure Load Balancer][lb-overview] 및 UDR([사용자 정의 경로][udr-overview])에 대한 기본적인 이해를 전제로 합니다. 
+<strong>사전 요구 사항:</strong> 이 문서는 [Azure Load Balancer][lb-overview] 및 UDR([사용자 정의 경로][udr-overview])에 대한 기본적인 이해를 전제로 합니다. 
 
 
 ## <a name="architecture-diagrams"></a>아키텍처 다이어그램

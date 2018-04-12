@@ -1,13 +1,13 @@
 ---
-title: "설문 조사 응용 프로그램 실행"
-description: "설문 조사 샘플 응용 프로그램을 로컬로 실행하는 방법"
+title: 설문 조사 응용 프로그램 실행
+description: 설문 조사 샘플 응용 프로그램을 로컬로 실행하는 방법
 author: MikeWasson
 ms:date: 07/21/2017
-ms.openlocfilehash: d17cd939c1172edd0947b30ea13657806060b5f1
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 28d976374e5d6dbad434873eef149704f26a1f3f
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="run-the-surveys-application"></a>설문 조사 응용 프로그램 실행
 
@@ -52,15 +52,15 @@ Tailspin은 설문 조사 응용 프로그램을 호스트하는 가상의 회�
 
 3. **앱 등록** > **새 응용 프로그램 등록**을 클릭합니다.
 
-4.  **만들기** 블레이드에서 다음 정보를 입력합니다.
+4. **만들기** 블레이드에서 다음 정보를 입력합니다.
 
-  - **이름**: `Surveys.WebAPI`
+   - **이름**: `Surveys.WebAPI`
 
-  - **응용 프로그램 형식**: `Web app / API`
+   - **응용 프로그램 형식**: `Web app / API`
 
-  - **로그온 URL**: `https://localhost:44301/`
+   - **로그온 URL**: `https://localhost:44301/`
    
-  ![](./images/running-the-app/register-web-api.png) 
+   ![](./images/running-the-app/register-web-api.png) 
 
 5. **만들기**를 클릭합니다.
 
@@ -78,15 +78,15 @@ Tailspin은 설문 조사 응용 프로그램을 호스트하는 가상의 회�
 
 ## <a name="register-the-surveys-web-app"></a>설문 조사 웹앱 등록 
 
-1.  **앱 등록** 블레이드로 다시 이동하여 **새 응용 프로그램 등록**을 클릭합니다.
+1. **앱 등록** 블레이드로 다시 이동하여 **새 응용 프로그램 등록**을 클릭합니다.
 
-2.  **만들기** 블레이드에서 다음 정보를 입력합니다.
+2. **만들기** 블레이드에서 다음 정보를 입력합니다.
 
-  - **이름**: `Surveys`
-  - **응용 프로그램 형식**: `Web app / API`
-  - **로그온 URL**: `https://localhost:44300/`
+   - **이름**: `Surveys`
+   - **응용 프로그램 형식**: `Web app / API`
+   - **로그온 URL**: `https://localhost:44300/`
    
-    로그온 URL에 이전 단계의 `Surveys.WebAPI` 앱과 다른 포트 번호가 있는지 확인합니다.
+   로그온 URL에 이전 단계의 `Surveys.WebAPI` 앱과 다른 포트 번호가 있는지 확인합니다.
 
 3. **만들기**를 클릭합니다.
  
@@ -150,36 +150,36 @@ Tailspin은 설문 조사 응용 프로그램을 호스트하는 가상의 회�
 
     ![](./images/running-the-app/manifest.png)
  
-3.  `appRoles` 요소에 다음 JSON을 추가합니다. `id` 속성에 대한 새 GUID를 생성합니다.
+3. `appRoles` 요소에 다음 JSON을 추가합니다. `id` 속성에 대한 새 GUID를 생성합니다.
 
-    ```json
-    {
-      "allowedMemberTypes": ["User"],
-      "description": "Creators can create surveys",
-      "displayName": "SurveyCreator",
-      "id": "<Generate a new GUID. Example: 1b4f816e-5eaf-48b9-8613-7923830595ad>",
-      "isEnabled": true,
-      "value": "SurveyCreator"
-    },
-    {
-      "allowedMemberTypes": ["User"],
-      "description": "Administrators can manage the surveys in their tenant",
-      "displayName": "SurveyAdmin",
-      "id": "<Generate a new GUID>",  
-      "isEnabled": true,
-      "value": "SurveyAdmin"
-    }
-    ```
+   ```json
+   {
+     "allowedMemberTypes": ["User"],
+     "description": "Creators can create surveys",
+     "displayName": "SurveyCreator",
+     "id": "<Generate a new GUID. Example: 1b4f816e-5eaf-48b9-8613-7923830595ad>",
+     "isEnabled": true,
+     "value": "SurveyCreator"
+   },
+   {
+     "allowedMemberTypes": ["User"],
+     "description": "Administrators can manage the surveys in their tenant",
+     "displayName": "SurveyAdmin",
+     "id": "<Generate a new GUID>",  
+     "isEnabled": true,
+     "value": "SurveyAdmin"
+   }
+   ```
 
-5.  이전에 설문 조사 응용 프로그램을 등록할 때 얻은 설문 조사 웹 응용 프로그램의 응용 프로그램 ID를 `knownClientApplications` 속성에 추가합니다. 예: 
+4. 이전에 설문 조사 응용 프로그램을 등록할 때 얻은 설문 조사 웹 응용 프로그램의 응용 프로그램 ID를 `knownClientApplications` 속성에 추가합니다. 예: 
 
-  ```json
-  "knownClientApplications": ["be2cea23-aa0e-4e98-8b21-2963d494912e"],
-  ```
+   ```json
+   "knownClientApplications": ["be2cea23-aa0e-4e98-8b21-2963d494912e"],
+   ```
 
-  이 설정은 웹 API 호출 권한이 있는 클라이언트 목록에 설문 조사 앱을 추가합니다.
+   이 설정은 웹 API 호출 권한이 있는 클라이언트 목록에 설문 조사 앱을 추가합니다.
 
-6.  **저장**을 클릭합니다.
+5. **저장**을 클릭합니다.
 
 이제 설문 조사 앱에 대해 동일한 단계를 반복합니다. 단, `knownClientApplications`에 대한 항목은 추가하지 않습니다. 동일한 역할 정의를 사용하고 ID에 대한 새 GUID를 생성합니다.
 
@@ -224,7 +224,7 @@ Redis Cache 생성에 대한 자세한 내용은 [Azure Redis Cache 사용 방�
     다음과 같이 꺾쇠 괄호 안에 표시된 항목을 바꿉니다.
 
     - `AzureAd:ClientId`: 설문 조사 앱의 응용 프로그램 ID입니다.
-    - `AzureAd:ClientSecret`: Azure AD에 설문 조사 응용 프로그램을 등록할 때 생성된 키입니다.
+    - `AzureAd:ClientSecret`: Azure AD에 Surveys 응용 프로그램을 등록할 때 생성된 키입니다.
     - `AzureAd:WebApiResourceId`: Azure AD에서 Surveys.WebAPI 응용 프로그램을 만들 때 지정한 앱 ID URI입니다. `https://<directory>.onmicrosoft.com/surveys.webapi` 형식이어야 합니다.
     - `Redis:Configuration`: Redis Cache 및 기본 액세스 키의 DNS 이름에서 이 문자열을 작성합니다. 예를 들어 "tailspin.redis.cache.windows.net,password=2h5tBxxx,ssl=true"로 작성합니다.
 

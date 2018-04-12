@@ -1,13 +1,13 @@
 ---
-title: "OLTP 데이터 저장소 선택"
-description: 
+title: OLTP 데이터 저장소 선택
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 ms.openlocfilehash: 1c27d7d5f3b78f40822de6b77664dbf49b1367f6
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 03/31/2018
 ---
 # <a name="choosing-an-oltp-data-store-in-azure"></a>Azure에서 OLTP 데이터 저장소 선택
 
@@ -60,37 +60,37 @@ Azure에서 다음의 모든 데이터 저장소는 OLTP 및 트랜잭션 데이
 | | Azure SQL Database | Azure Virtual Machine의 SQL Server| Azure Database for MySQL | Azure Database for PostgreSQL|
 | --- | --- | --- | --- | --- | --- |
 | 최대 데이터베이스 인스턴스 크기 | [4TB](/azure/sql-database/sql-database-resource-limits) | 256TB | [1 TB](/azure/mysql/concepts-limits) | [1 TB](/azure/postgresql/concepts-limits) |
-| 용량 풀 지원 여부  | 예 | 예 | 아니요 | 아니요 |
-| 클러스터 스케일 아웃 지원 여부  | 아니오 | 예 | 아니요 | 아니요 |
-| 동적 확장성(강화)  | 예 | 아니요 | 예 | 예 |
+| 용량 풀 지원 여부  | 예 | 예 | 아니요 | 아니오 |
+| 클러스터 스케일 아웃 지원 여부  | 아니요 | 예 | 아니오 | 아니오 |
+| 동적 확장성(강화)  | 예 | 아니오 | 예 | 예 |
 
 ### <a name="analytic-workload-capabilities"></a>분석 워크로드 기능
 | | Azure SQL Database | Azure Virtual Machine의 SQL Server| Azure Database for MySQL | Azure Database for PostgreSQL|
 | --- | --- | --- | --- | --- | --- | 
-| 임시 테이블 | 예 | 예 | 아니요 | 아니요 |
-| 메모리 내(메모리 최적화) 테이블 | 예 | 예 | 아니요 | 아니오 |
+| 임시 테이블 | 예 | 예 | 아니오 | 아니요 |
+| 메모리 내(메모리 최적화) 테이블 | 예 | 예 | 아니오 | 아니오 |
 | Columnstore 지원 여부 | 예 | 예 | 아니요 | 아니요 |
 | 적응 쿼리 처리 | 예 | 예 | 아니요 | 아니요 |
 
 ### <a name="availability-capabilities"></a>가용성 기능
 | | Azure SQL Database | Azure Virtual Machine의 SQL Server| Azure Database for MySQL | Azure Database for PostgreSQL|
 | --- | --- | --- | --- | --- | --- | 
-| 읽기 가능 보조 복제본 | 예 | 예 | 아니요 | 아니오 | 
-| 지리적 복제 | 예 | 예 | 아니오 | 아니요 | 
-| 보조 복제본으로 자동 장애 조치(Failover) | 예 | 아니오 | 아니요 | 아니요|
+| 읽기 가능 보조 복제본 | 예 | 예 | 아니오 | 아니요 | 
+| 지리적 복제 | 예 | 예 | 아니요 | 아니오 | 
+| 보조 복제본으로 자동 장애 조치(Failover) | 예 | 아니요 | 아니요 | 아니오|
 | 지정 시간 복원 | 예 | 예 | 예 | 예 |
 
 ### <a name="security-capabilities"></a>보안 기능
 | | Azure SQL Database | Azure Virtual Machine의 SQL Server| Azure Database for MySQL | Azure Database for PostgreSQL|
 | --- | --- | --- | --- | --- | --- | 
 | 행 수준 보안 | 예 | 예 | 예 | 예 |
-| 데이터 마스킹 | 예 | 예 | 아니요 | 아니오 |
+| 데이터 마스킹 | 예 | 예 | 아니오 | 아니오 |
 | 투명한 데이터 암호화 | 예 | 예 | 예 | 예 |
 | 특정 IP 주소로 액세스 제한 | 예 | 예 | 예 | 예 |
-| VNET 액세스만 허용하도록 액세스 제한 | 예 | 예 | 아니요 | 아니요 |
-| Azure Active Directory 인증 | 예 | 예 | 아니요 | 아니요 |
-| Active Directory 인증 | 아니요 | 예 | 아니요 | 아니오 |
-| Multi-Factor Authentication | 예 | 예 | 아니요 | 아니요 |
-| [상시 암호화](/sql/relational-databases/security/encryption/always-encrypted-database-engine) 지원 여부 | 예 | 예 | 예 | 아니오 | 아니요 |
-| 개인 IP | 아니요 | 예 | 예 | 아니오 | 아니오 |
+| VNET 액세스만 허용하도록 액세스 제한 | 예 | 예 | 아니오 | 아니요 |
+| Azure Active Directory 인증 | 예 | 예 | 아니오 | 아니오 |
+| Active Directory 인증 | 아니오 | 예 | 아니오 | 아니오 |
+| Multi-Factor Authentication | 예 | 예 | 아니오 | 아니요 |
+| [상시 암호화](/sql/relational-databases/security/encryption/always-encrypted-database-engine) 지원 여부 | 예 | 예 | 예 | 아니요 | 아니요 |
+| 개인 IP | 아니오 | 예 | 예 | 아니오 | 아니오 |
 

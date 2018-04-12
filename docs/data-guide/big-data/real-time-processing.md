@@ -3,11 +3,11 @@ title: 실시간 처리
 description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: f1054ce5e8c2053aa4f80d8b472604125ba47187
-ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
+ms.openlocfilehash: 8d3497c37d15dc0aa4645ddfce3bd30740217b2c
+ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/31/2018
+ms.lasthandoff: 04/03/2018
 ---
 # <a name="real-time-processing"></a>실시간 처리
 
@@ -49,7 +49,7 @@ ms.lasthandoff: 03/31/2018
 
 ### <a name="data-storage"></a>데이터 저장소
 
-- **Azure Storage Blob 컨테이너** 또는 **Azure Data Lake Store**. 들어오는 실시간 데이터는 일반적으로 메시지 브로커에서 캡처되지만(위 참조), 일부 시나리오에서는 폴더에 새 파일이 있는지 모니터링한 후 생성 또는 업데이트될 때 처리하는 것이 적절할 수 있습니다. 또한 많은 실시간 처리 솔루션은 스트리밍 데이터를 파일 저장소에 저장될 수 있는 정적 참조 데이터에 결합합니다. 마지막으로, 파일 저장소를 보관하거나 [람다 아키텍처](../concepts/big-data.md#lambda-architecture)에서 추가로 일괄 처리하기 위해 캡처된 실시간 데이터에 대한 출력 대상으로 사용할 수 있습니다.
+- **Azure Storage Blob 컨테이너** 또는 **Azure Data Lake Store**. 들어오는 실시간 데이터는 일반적으로 메시지 브로커에서 캡처되지만(위 참조), 일부 시나리오에서는 폴더에 새 파일이 있는지 모니터링한 후 생성 또는 업데이트될 때 처리하는 것이 적절할 수 있습니다. 또한 많은 실시간 처리 솔루션은 스트리밍 데이터를 파일 저장소에 저장될 수 있는 정적 참조 데이터에 결합합니다. 마지막으로, 파일 저장소를 보관하거나 [람다 아키텍처](../big-data/index.md#lambda-architecture)에서 추가로 일괄 처리하기 위해 캡처된 실시간 데이터에 대한 출력 대상으로 사용할 수 있습니다.
 
 자세한 내용은 [데이터 저장소](../technology-choices/data-storage.md)를 참조하세요.
 

@@ -1,16 +1,19 @@
 ---
-title: "AD DS(Active Directory Domain Services)를 Azure로 확장"
-description: "Azure에서 Active Directory 인증으로 보안 하이브리드 네트워크 아키텍처를 구현하는 방법.\n지침, vpn-게이트웨이, expressroute, 부하 분산 장치, 가상 네트워크, active-directory"
+title: AD DS(Active Directory Domain Services)를 Azure로 확장
+description: >-
+  Azure에서 Active Directory 인증으로 보안 하이브리드 네트워크 아키텍처를 구현하는 방법.
+
+  지침, vpn-게이트웨이, expressroute, 부하 분산 장치, 가상 네트워크, active-directory
 author: telmosampaio
 ms.date: 11/28/2016
 pnp.series.title: Identity management
 pnp.series.prev: azure-ad
 pnp.series.next: adds-forest
-ms.openlocfilehash: 216c59a0a5912d0fe90011e49ad20eb017ada6be
-ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
+ms.openlocfilehash: 007d244f29bf11c6e2bd703c7f4f245d22c02f0f
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/08/2017
+ms.lasthandoff: 03/30/2018
 ---
 # <a name="extend-active-directory-domain-services-ad-ds-to-azure"></a>AD DS(Active Directory Domain Services)를 Azure로 확장
 
@@ -150,7 +153,7 @@ AD DS 데이터베이스를 호스팅하는 디스크를 BitLocker 또는 Azure 
 [security-considerations]: #security-considerations
 [set-a-static-ip-address]: https://azure.microsoft.com/documentation/articles/virtual-networks-static-private-ip-arm-pportal/
 [standby-operations-masters]: https://technet.microsoft.com/library/cc794737(v=ws.10).aspx
-[visio-download]: https://archcenter.azureedge.net/cdn/identity-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/identity-architectures.vsdx
 [vm-windows-sizes]: /azure/virtual-machines/virtual-machines-windows-sizes
 
 [0]: ./images/adds-extend-domain.png "Active Directory로 하이브리드 네트워크 아키텍처 보안"

@@ -1,14 +1,14 @@
 ---
-title: "서비스 관련 재시도 지침"
-description: "재시도 메커니즘 설정에 대한 서비스 관련 지침입니다."
+title: 서비스 관련 재시도 지침
+description: 재시도 메커니즘 설정에 대한 서비스 관련 지침입니다.
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices
-ms.openlocfilehash: 6bb623bd8be89573178f250570407bf83d62c098
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: 332f96e73def360926b6a934bbb1361b2254ec41
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="retry-guidance-for-specific-services"></a>특정 서비스에 대한 다시 시도 지침
 
@@ -478,7 +478,6 @@ public async static Task<SqlDataReader> ExecuteReaderWithRetryAsync(this SqlComm
 
     }, cancellationToken);
 }
-
 ```
 
 이 비동기 확장 메서드는 다음과 같이 사용할 수 있습니다.
@@ -792,7 +791,7 @@ namespace RetryCodeSamples
                 try
                 {
                     var retryTimeInMilliseconds = TimeSpan.FromSeconds(4).Milliseconds; // delay between retries
-                    
+
                     // Using object-based configuration.
                     var options = new ConfigurationOptions
                                         {
