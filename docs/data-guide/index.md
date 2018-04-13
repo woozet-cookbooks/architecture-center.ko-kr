@@ -1,14 +1,15 @@
 ---
-title: "Azure Data Architecture 가이드"
-description: 
+title: Azure Data Architecture 가이드
+description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
 layout: LandingPage
-ms.openlocfilehash: 848601f27faf56ea069852d8983e4d10fbad9d77
-ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
+ms.topic: landing-page
+ms.openlocfilehash: 9ffbe74bc55f4731369e938848cc5bbf9f7775f4
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/14/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="azure-data-architecture-guide"></a>Azure Data Architecture 가이드
 
@@ -20,58 +21,16 @@ ms.lasthandoff: 02/14/2018
 
 ## <a name="how-this-guide-is-structured"></a>이 가이드의 구조
 
-이 가이드는 *관계형* 데이터와 *비관계형* 데이터 간을 구분하는 기본 개념을 중심으로 구성되었습니다. 
+이 가이드는 *기존의 RDMBS 워크로드* 및 *빅 데이터 솔루션*이라는 두 가지 데이터 솔루션의 일반 범주를 중심으로 구성됩니다. 
 
-![](./images/guide-steps.svg)
+**[기존 RDBMS 워크로드](./relational-data/index.md)**. 이러한 워크로드에는 OLTP(온라인 트랜잭션 처리) 및 OLAP(온라인 분석 처리)가 포함됩니다. OLTP 시스템의 데이터는 일반적으로 참조 무결성을 유지하는 제약 조건의 집합 및 미리 정의된 스키마를 사용하는 관계형 데이터입니다. 종종 원본 데이터를 이동하고 변환하기 위해 ETL 프로세스를 사용하여 조직에서 여러 원본의 데이터가 데이터 웨어하우스로 통합될 수 있습니다.
 
-일반적으로 관계형 데이터는 전형적인 RDBMS 또는 데이터 웨어하우스에 저장됩니다. 참조 무결성을 유지하기 위해 제약 조건 집합으로 미리 정의된 스키마("쓰기 시 스키마")를 포함합니다. 대부분의 관계형 데이터베이스는 쿼리를 위해 SQL(구조적 쿼리 언어)을 사용합니다. 관계형 데이터베이스를 사용하는 솔루션에는 OLTP(온라인 트랜잭션 처리) 및 OLAP(온라인 분석 처리)가 포함됩니다.
+![](./images/guide-rdbms.svg)
 
-비관계형 데이터는 전형적인 RDBMS 시스템에 있는 [관계형 모델](https://en.wikipedia.org/wiki/Relational_model)을 사용하지 않는 모든 데이터입니다. 여기에는 키-값 데이터, JSON 데이터, 그래프 데이터, 시계열 데이터 및 기타 데이터 형식이 포함될 수 있습니다. 용어 *NoSQL*은 다양한 종류의 비관계형 데이터를 포함하도록 디자인된 데이터베이스를 나타냅니다. 그러나 많은 비관계형 데이터 저장소가 SQL 호환 쿼리를 지원하기 때문에 이 용어가 완전히 정확하다고 할 수는 없습니다. 비관계형 데이터 및 NoSQL 데이터베이스는 종종 *빅 데이터* 솔루션을 논의할 때 거론됩니다. 빅 데이터 아키텍처는 기존의 데이터베이스 시스템에 비해 너무 크거나 복잡한 데이터의 수집, 처리 및 분석을 수행하도록 디자인되었습니다. 
+**[빅 데이터 솔루션](./big-data/index.md)**. 빅 데이터 아키텍처는 기존의 데이터베이스 시스템에 비해 너무 크거나 복잡한 데이터의 수집, 처리 및 분석을 수행하도록 디자인되었습니다. 데이터는 일괄 처리 또는 실시간으로 처리할 수 있습니다. 빅 데이터 솔루션에는 일반적으로 키 값 데이터, JSON 문서 또는 시계열 데이터와 같은 비관계형 데이터가 많이 포함됩니다. 종종 기존의 RDBMS 시스템은 이러한 데이터 유형을 저장하는 데 적합하지 않습니다. *NoSQL*이란 용어는 비관계형 데이터를 포함하도록 디자인된 데이터베이스 제품군을 나타냅니다. (많은 비관계형 데이터 저장소가 SQL 호환 쿼리를 지원하기 때문에 이 용어가 완전히 정확하다고 할 수는 없습니다.)
 
-이러한 두 가지 주요 범주와 관련해서 데이터 아키텍처 가이드는 다음 섹션을 포함합니다.
+![](./images/guide-big-data.svg)
 
-- **개념.** 이러한 형식의 데이터를 사용할 때 이해해야 하는 주요 개념을 소개하는 개요 문서입니다.
-- **시나리오.** 관련 Azure 서비스를 논의하는 대표적인 데이터 시나리오 모음과 시나리오에 적합한 아키텍처를 소개합니다.
-- **기술 선택.** 오픈 소스 옵션을 포함하여 Azure에서 사용할 수 있는 다양한 데이터 기술을 자세히 비교합니다. 시나리오에 적합한 기술을 선택하는 데 도움을 주기 위해 범주별로 주요 선택 기준과 기능 매트릭스가 제시됩니다.
+이 두 가지 범주는 상호 배타적이지 않으며, 서로 겹치지만 토론을 구성하는 유용한 방법이라고 판단됩니다. 가이드는 각 범주 내에서 관련 Azure 서비스와 시나리오에 적합한 아키텍처를 포함한 **일반적인 시나리오**에 대해 논의합니다. 또한 가이드에서는 오픈 소스 옵션을 포함하여 Azure에서 데이터 솔루션을 위한 **기술 선택**을 비교합니다. 시나리오에 적합한 기술을 선택하는 데 도움을 주기 위해 범주별로 주요 선택 기준과 기능 매트릭스가 제시됩니다. 
 
 이 가이드는 데이터 과학 또는 데이터베이스 이론을 학습하기 위한 것이 아닙니다. 이러한 주제에 대한 전체 설명서를 찾아볼 수 있습니다. 이 가이드는 시나리오에 적합한 데이터 아키텍처 또는 데이터 파이프라인을 선택한 다음, 요구에 가장 잘 맞는 Azure 서비스 및 기술을 선택하는 데 도움을 주기 위해 작성되었습니다. 이미 아키텍처를 고려한 경우에는 기술 선택 단계로 바로 건너뛸 수 있습니다.
-
-## <a name="traditional-rdbms"></a>일반적인 RDBMS
-
-### <a name="concepts"></a>개념
-
-- [관계형 데이터](./concepts/relational-data.md) 
-- [트랜잭션 데이터](./concepts/transactional-data.md) 
-- [의미 체계 모델링](./concepts/semantic-modeling.md) 
-
-### <a name="scenarios"></a>시나리오
-
-- [OLAP(온라인 분석 처리)](./scenarios/online-analytical-processing.md)
-- [OLTP(온라인 트랜잭션 처리)](./scenarios/online-transaction-processing.md) 
-- [데이터 웨어하우징 및 데이터 마트](./scenarios/data-warehousing.md)
-- [ETL](./scenarios/etl.md) 
-
-## <a name="big-data-and-nosql"></a>빅 데이터 및 NoSQL
-
-### <a name="concepts"></a>개념
-
-- [비관계형 데이터 저장소](./concepts/non-relational-data.md)
-- [CSV 및 JSON 파일 사용](./concepts/csv-and-json.md)
-- [빅 데이터 아키텍처](./concepts/big-data.md)
-- [고급 분석](./concepts/advanced-analytics.md) 
-- [규모에 맞는 기계 학습](./concepts/machine-learning-at-scale.md)
-
-### <a name="scenarios"></a>시나리오
-
-- [일괄 처리](./scenarios/batch-processing.md)
-- [실시간 처리](./scenarios/real-time-processing.md)
-- [자유 형식 텍스트 검색](./scenarios/search.md)
-- [대화형 데이터 탐색](./scenarios/interactive-data-exploration.md)
-- [자연어 처리](./scenarios/natural-language-processing.md)
-- [시계열 솔루션](./scenarios/time-series.md)
-
-## <a name="cross-cutting-concerns"></a>복합적인 문제
-
-- [데이터 전송](./scenarios/data-transfer.md) 
-- [클라우드로 온-프레미스 데이터 솔루션 확장](./scenarios/hybrid-on-premises-and-cloud.md) 
-- [데이터 솔루션 보안](./scenarios/securing-data-solutions.md) 
