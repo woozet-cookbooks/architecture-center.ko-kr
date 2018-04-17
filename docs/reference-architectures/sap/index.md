@@ -20,7 +20,7 @@ ms.lasthandoff: 03/30/2018
 > [!NOTE]
 > 이 참조 아키텍처를 배포하려면 적절한 SAP 제품 라이선스 및 기타 Microsoft 이외의 기술이 필요합니다. Microsoft와 SAP 간의 파트너 관계에 대한 정보는 [Azure 기반의 SAP HANA][sap-hana-on-azure]를 참조하세요.
 
-## <a name="architecture"></a>건축
+## <a name="architecture"></a>아키텍처
 
 이 아키텍처는 다음 구성 요소로 구성됩니다.
 

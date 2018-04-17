@@ -20,7 +20,7 @@ ms.lasthandoff: 04/06/2018
 
 *이 아키텍처 다이어그램이 포함된 [Visio 파일][visio-download]을 다운로드합니다.*
 
-## <a name="architecture"></a>건축
+## <a name="architecture"></a>아키텍처
 
 Azure VM을 프로비전하려면 VM 외에도 네트워킹 및 저장소 리소스와 같은 추가 구성 요소가 필요합니다.
 
