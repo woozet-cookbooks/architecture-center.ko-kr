@@ -1,15 +1,15 @@
 ---
-title: "Azure에서 허브-스포크 네트워크 토폴로지 구현"
-description: "Azure에서 허브-스포크 네트워크 토폴로지를 구현하는 방법입니다."
+title: Azure에서 허브-스포크 네트워크 토폴로지 구현
+description: Azure에서 허브-스포크 네트워크 토폴로지를 구현하는 방법입니다.
 author: telmosampaio
 ms.date: 02/23/2018
 pnp.series.title: Implement a hub-spoke network topology in Azure
 pnp.series.prev: expressroute
-ms.openlocfilehash: 1a2855f0d4a903fc4d7a022aef20ea73fe763e2c
-ms.sourcegitcommit: 2123c25b1a0b5501ff1887f98030787191cf6994
+ms.openlocfilehash: 243ad026c7c9703d9659cbef6815131fcdaa8a11
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/08/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="implement-a-hub-spoke-network-topology-in-azure"></a>Azure에서 허브-스포크 네트워크 토폴로지 구현
 
@@ -115,7 +115,7 @@ VNet 피어링은 두 VNet 사이에 존재하는 비전이적 관계입니다. 
 
 사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.
 
-1. [AzureCAT 참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
+1. [참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
 
 2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI 설치 지침은 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)을 참조하세요.
 
@@ -123,9 +123,9 @@ VNet 피어링은 두 VNet 사이에 존재하는 비전이적 관계입니다. 
 
 4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 아래 명령을 사용하여 Azure 계정에 로그인하고, 프롬프트에 따릅니다.
 
-  ```bash
-  az login
-  ```
+   ```bash
+   az login
+   ```
 
 ### <a name="deploy-the-simulated-on-premises-datacenter-using-azbb"></a>azbb를 사용하여 시뮬레이션된 온-프레미스 데이터 센터 배포
 
@@ -135,20 +135,20 @@ VNet 피어링은 두 VNet 사이에 존재하는 비전이적 관계입니다. 
 
 2. `onprem.json` 파일을 열고 아래에 나와 있는 대로 36열과 37열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.
 
-  ```bash
-  "adminUsername": "XXX",
-  "adminPassword": "YYY",
-  ```
+   ```bash
+   "adminUsername": "XXX",
+   "adminPassword": "YYY",
+   ```
 
 3. `osType`의 38열에서 `Windows` 또는 `Linux`를 입력하여 jumpbox의 운영 체제로 Windows Server 2016 데이터 센터 또는 Ubuntu 16.04를 설치합니다.
 
 4. `azbb`를 실행하여 아래와 같이 시뮬레이션된 온-프레미스 환경을 배포합니다.
 
-  ```bash
-  azbb -s <subscription_id> -g onprem-vnet-rg - l <location> -p onoprem.json --deploy
-  ```
-  > [!NOTE]
-  > `onprem-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+   ```bash
+   azbb -s <subscription_id> -g onprem-vnet-rg - l <location> -p onoprem.json --deploy
+   ```
+   > [!NOTE]
+   > `onprem-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
 
 5. 배포가 완료될 때까지 기다립니다. 이 배포는 가상 네트워크, 가상 머신 및 VPN 게이트웨이를 생성합니다. VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.
 
@@ -158,26 +158,26 @@ VNet 피어링은 두 VNet 사이에 존재하는 비전이적 관계입니다. 
 
 1. `hub-vnet.json` 파일을 열고 아래에 나와 있는 대로 39열과 40열의 큰따옴표 사이에 사용자 이름과 암호를 입력합니다.
 
-  ```bash
-  "adminUsername": "XXX",
-  "adminPassword": "YYY",
-  ```
+   ```bash
+   "adminUsername": "XXX",
+   "adminPassword": "YYY",
+   ```
 
 2. `osType`의 41열에서 `Windows` 또는 `Linux`를 입력하여 jumpbox의 운영 체제로 Windows Server 2016 데이터 센터 또는 Ubuntu 16.04를 설치합니다.
 
 3. 아래에 나와 있는 대로 72열의 큰따옴표 사이에 공유 키를 입력한 다음, 파일을 저장합니다.
 
-  ```bash
-  "sharedKey": "",
-  ```
+   ```bash
+   "sharedKey": "",
+   ```
 
 4. `azbb`를 실행하여 아래와 같이 시뮬레이션된 온-프레미스 환경을 배포합니다.
 
-  ```bash
-  azbb -s <subscription_id> -g hub-vnet-rg - l <location> -p hub-vnet.json --deploy
-  ```
-  > [!NOTE]
-  > `hub-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+   ```bash
+   azbb -s <subscription_id> -g hub-vnet-rg - l <location> -p hub-vnet.json --deploy
+   ```
+   > [!NOTE]
+   > `hub-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
 
 5. 배포가 완료될 때까지 기다립니다. 이 배포는 가상 네트워크, 가상 머신, VPN 게이트웨이 및 이전 섹션에서 생성한 게이트웨이에 대한 연결을 생성합니다. VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.
 
@@ -187,15 +187,15 @@ Windows VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 허�
 
 1. Azure Portal에서 `onprem-jb-rg` 리소스 그룹으로 이동한 다음, `jb-vm1` 가상 머신 리소스를 클릭합니다.
 
-2.  포털에 있는 VM 블레이드의 왼쪽 위 모서리에서 `Connect`를 클릭하고, VM에 연결하기 위해 프롬프트를 따라 원격 데스크톱을 사용합니다. `onprem.json` 파일에서 36열과 37열에 지정된 사용자 이름 및 암호를 사용하도록 합니다.
+2. 포털에 있는 VM 블레이드의 왼쪽 위 모서리에서 `Connect`를 클릭하고, VM에 연결하기 위해 프롬프트를 따라 원격 데스크톱을 사용합니다. `onprem.json` 파일에서 36열과 37열에 지정된 사용자 이름 및 암호를 사용하도록 합니다.
 
 3. VM에서 PowerShell 콘솔을 열고 `Test-NetConnection` cmdlet을 사용하여 아래와 같이 허브 jumpbox VM에 연결할 수 있는지 확인합니다.
 
-  ```powershell
-  Test-NetConnection 10.0.0.68 -CommonTCPPort RDP
-  ```
-  > [!NOTE]
-  > 기본적으로 Windows Server VM을 사용하면 Azure에서 ICMP 응답을 허용하지 않습니다. `ping`을 사용하여 연결을 테스트하려는 경우 각 VM에 대한 Windows 고급 방화벽에서 ICMP 트래픽을 사용하도록 설정해야 합니다.
+   ```powershell
+   Test-NetConnection 10.0.0.68 -CommonTCPPort RDP
+   ```
+   > [!NOTE]
+   > 기본적으로 Windows Server VM을 사용하면 Azure에서 ICMP 응답을 허용하지 않습니다. `ping`을 사용하여 연결을 테스트하려는 경우 각 VM에 대한 Windows 고급 방화벽에서 ICMP 트래픽을 사용하도록 설정해야 합니다.
 
 Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 허브 VNet으로의 연결을 테스트하려면 다음 단계를 수행합니다.
 
@@ -205,17 +205,17 @@ Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 허브
 
 3. Linux 프롬프트에서 아래와 같이 위의 2 단계에서 복사한 정보를 사용하여 시뮬레이션된 온-프레미스 환경 jumpbox를 연결하기 위해 `ssh`를 실행합니다.
 
-  ```bash
-  ssh <your_user>@<public_ip_address>
-  ```
+   ```bash
+   ssh <your_user>@<public_ip_address>
+   ```
 
 4. `onprem.json` 파일의 37열에 지정된 암호를 사용하여 VM에 연결합니다.
 
 5. 다음과 같이 `ping` 명령을 사용하여 허브 jumpbox에 대한 연결을 테스트합니다.
 
-  ```bash
-  ping 10.0.0.68
-  ```
+   ```bash
+   ping 10.0.0.68
+   ```
 
 ### <a name="azure-spoke-vnets"></a>Azure 스포크 VNet
 
@@ -223,31 +223,31 @@ Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 허브
 
 1. `spoke1.json` 파일을 열고 아래에 나와 있는 대로 47열과 48열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.
 
-  ```bash
-  "adminUsername": "XXX",
-  "adminPassword": "YYY",
-  ```
+   ```bash
+   "adminUsername": "XXX",
+   "adminPassword": "YYY",
+   ```
 
 2. `osType`의 49열에서 `Windows` 또는 `Linux`를 입력하여 jumpbox의 운영 체제로 Windows Server 2016 데이터 센터 또는 Ubuntu 16.04를 설치합니다.
 
 3. `azbb`를 실행하여 아래와 같이 첫 번째 스포크 VNet 환경을 배포합니다.
 
-  ```bash
-  azbb -s <subscription_id> -g spoke1-vnet-rg - l <location> -p spoke1.json --deploy
-  ```
+   ```bash
+   azbb -s <subscription_id> -g spoke1-vnet-rg - l <location> -p spoke1.json --deploy
+   ```
   
-  > [!NOTE]
-  > `spoke1-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+   > [!NOTE]
+   > `spoke1-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
 
-3. `spoke2.json` 파일에서 위의 1단계를 반복합니다.
+4. `spoke2.json` 파일에서 위의 1단계를 반복합니다.
 
-4. `azbb`를 실행하여 아래와 같이 두 번째 스포크 VNet 환경을 배포합니다.
+5. `azbb`를 실행하여 아래와 같이 두 번째 스포크 VNet 환경을 배포합니다.
 
-  ```bash
-  azbb -s <subscription_id> -g spoke2-vnet-rg - l <location> -p spoke2.json --deploy
-  ```
-  > [!NOTE]
-  > `spoke2-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+   ```bash
+   azbb -s <subscription_id> -g spoke2-vnet-rg - l <location> -p spoke2.json --deploy
+   ```
+   > [!NOTE]
+   > `spoke2-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
 
 ### <a name="azure-hub-vnet-peering-to-spoke-vnets"></a>스포크 VNet에 대한 Azure 허브 VNet 피어링
 
@@ -257,12 +257,12 @@ Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 허브
 
 2. `azbb`를 실행하여 아래와 같이 첫 번째 스포크 VNet 환경을 배포합니다.
 
-  ```bash
-  azbb -s <subscription_id> -g hub-vnet-rg - l <location> -p hub-vnet-peering.json --deploy
-  ```
+   ```bash
+   azbb -s <subscription_id> -g hub-vnet-rg - l <location> -p hub-vnet-peering.json --deploy
+   ```
 
-  > [!NOTE]
-  > `hub-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+   > [!NOTE]
+   > `hub-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
 
 ### <a name="test-connectivity"></a>연결 테스트
 
@@ -270,14 +270,14 @@ Windows VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 스�
 
 1. Azure Portal에서 `onprem-jb-rg` 리소스 그룹으로 이동한 다음, `jb-vm1` 가상 머신 리소스를 클릭합니다.
 
-2.  포털에 있는 VM 블레이드의 왼쪽 위 모서리에서 `Connect`를 클릭하고, VM에 연결하기 위해 프롬프트를 따라 원격 데스크톱을 사용합니다. `onprem.json` 파일에서 36열과 37열에 지정된 사용자 이름 및 암호를 사용하도록 합니다.
+2. 포털에 있는 VM 블레이드의 왼쪽 위 모서리에서 `Connect`를 클릭하고, VM에 연결하기 위해 프롬프트를 따라 원격 데스크톱을 사용합니다. `onprem.json` 파일에서 36열과 37열에 지정된 사용자 이름 및 암호를 사용하도록 합니다.
 
 3. VM에서 PowerShell 콘솔을 열고 `Test-NetConnection` cmdlet을 사용하여 아래와 같이 허브 jumpbox VM에 연결할 수 있는지 확인합니다.
 
-  ```powershell
-  Test-NetConnection 10.1.0.68 -CommonTCPPort RDP
-  Test-NetConnection 10.2.0.68 -CommonTCPPort RDP
-  ```
+   ```powershell
+   Test-NetConnection 10.1.0.68 -CommonTCPPort RDP
+   Test-NetConnection 10.2.0.68 -CommonTCPPort RDP
+   ```
 
 Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 스포크 VNet으로의 연결을 테스트하려면 다음 단계를 수행합니다.
 
@@ -287,18 +287,18 @@ Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 스포
 
 3. Linux 프롬프트에서 아래와 같이 위의 2 단계에서 복사한 정보를 사용하여 시뮬레이션된 온-프레미스 환경 jumpbox를 연결하기 위해 `ssh`를 실행합니다.
 
-  ```bash
-  ssh <your_user>@<public_ip_address>
-  ```
+   ```bash
+   ssh <your_user>@<public_ip_address>
+   ```
 
-5. `onprem.json` 파일의 37열에 지정된 암호를 사용하여 VM에 연결합니다.
+4. `onprem.json` 파일의 37열에 지정된 암호를 사용하여 VM에 연결합니다.
 
-6. 다음과 같이 `ping` 명령을 사용하여 각 스포크에서 jumpbox에 대한 연결을 테스트합니다.
+5. 다음과 같이 `ping` 명령을 사용하여 각 스포크에서 jumpbox에 대한 연결을 테스트합니다.
 
-  ```bash
-  ping 10.1.0.68
-  ping 10.2.0.68
-  ```
+   ```bash
+   ping 10.1.0.68
+   ping 10.2.0.68
+   ```
 
 ### <a name="add-connectivity-between-spokes"></a>스포크 사이의 연결 추가
 
@@ -306,17 +306,17 @@ Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 스포
 
 1. `hub-nva.json` 파일을 열고 아래에 나와 있는 대로 13열과 14열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.
 
-  ```bash
-  "adminUsername": "XXX",
-  "adminPassword": "YYY",
-  ```
+   ```bash
+   "adminUsername": "XXX",
+   "adminPassword": "YYY",
+   ```
 2. `azbb`를 실행하여 NVA VM 및 사용자 정의 경로를 배포합니다.
 
-  ```bash
-  azbb -s <subscription_id> -g hub-nva-rg - l <location> -p hub-nva.json --deploy
-  ```
-  > [!NOTE]
-  > `hub-nva-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+   ```bash
+   azbb -s <subscription_id> -g hub-nva-rg - l <location> -p hub-nva.json --deploy
+   ```
+   > [!NOTE]
+   > `hub-nva-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
 
 <!-- links -->
 
@@ -336,7 +336,7 @@ Linux VM을 사용하여 시뮬레이션된 온-프레미스 환경에서 스포
 [vpn-appliance]: /azure/vpn-gateway/vpn-gateway-about-vpn-devices
 [windows-vm-ra]: ../virtual-machines-windows/index.md
 
-[visio-download]: https://archcenter.azureedge.net/cdn/hybrid-network-hub-spoke.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/hybrid-network-hub-spoke.vsdx
 [ref-arch-repo]: https://github.com/mspnp/reference-architectures
 [0]: ./images/hub-spoke.png "Azure의 허브-스포크 토폴로지"
 [1]: ./images/hub-spoke-gateway-routing.svg "전이적 라우팅이 사용되는 Azure의 허브-스포크 토폴로지"

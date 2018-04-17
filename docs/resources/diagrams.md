@@ -1,11 +1,11 @@
 ---
-title: "아키텍처 다이어그램의 아이콘 및 자산"
-description: "고유한 아키텍처 다이어그램을 생성하는 데 도움이 되는 아이콘, Viso 템플릿, PNG 파일 및 SVG 파일"
-ms.openlocfilehash: 58a2046c0d463c1f331ea3f950f0c11c273ffc36
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+title: 아키텍처 다이어그램의 아이콘 및 자산
+description: 고유한 아키텍처 다이어그램을 생성하는 데 도움이 되는 아이콘, Viso 템플릿, PNG 파일 및 SVG 파일
+ms.openlocfilehash: f65a09450ba1b7154e6d43bbc7bdb65212b21828
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 03/30/2018
 ---
 # <a name="icons-and-diagrams"></a>아이콘 및 다이어그램
 
@@ -27,6 +27,10 @@ Microsoft Office 및 관련 기술에 대한 추가 기호는 [Microsoft Office 
 ## <a name="reference-architectures-visio-template"></a>참조 아키텍처 Visio 템플릿 
 
 [참조 아키텍처](../reference-architectures/index.md)에서 사용되는 다이어그램 버전은 [Visio 형식으로 다운로드](https://aka.ms/arch-diagrams)할 수 있습니다.
+
+## <a name="solution-architecture-diagrams"></a>솔루션 아키텍처 다이어그램
+
+Microsoft에서 [솔루션 아키텍처 및 해당 다이어그램](https://azure.microsoft.com/solutions/architecture/)을 게시합니다. 다이어그램은 SVG 양식으로 다운로드할 수 있습니다. SVG를 연 다음, Visio 및 PowerPoint를 비롯한 많은 도구로 수정할 수 있습니다. 다이어그램의 그룹을 해제하면 개별 아이콘을 선택할 수 있습니다.   
 
 ## <a name="3d-blueprint-visio-template"></a>3D 청사진 Visio 템플릿
 

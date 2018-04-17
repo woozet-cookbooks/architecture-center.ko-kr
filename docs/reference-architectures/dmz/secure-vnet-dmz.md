@@ -1,17 +1,17 @@
 ---
-title: "Azure와 인터넷 간의 DMZ 구현"
-description: "Azure에서 인터넷 액세스로 보안 하이브리드 네트워크 아키텍처를 구현하는 방법입니다."
+title: Azure와 인터넷 간의 DMZ 구현
+description: Azure에서 인터넷 액세스로 보안 하이브리드 네트워크 아키텍처를 구현하는 방법입니다.
 author: telmosampaio
 ms.date: 11/23/2016
 pnp.series.title: Network DMZ
 pnp.series.next: nva-ha
 pnp.series.prev: secure-vnet-hybrid
 cardTitle: DMZ between Azure and the Internet
-ms.openlocfilehash: 372d5bb0fc0e3c272843e062210dec5c15b2b78a
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: c88545b1fcae49b413e7e2b6ac5bd92d3fd3456d
+ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 03/30/2018
 ---
 # <a name="dmz-between-azure-and-the-internet"></a>Azure와 인터넷 간의 DMZ
 
@@ -89,7 +89,7 @@ NVA 수준에서 응용 프로그램 연결을 종료하고 백 엔드 계층 �
    * **템플릿 루트 Uri** 또는 **매개 변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
    * 드롭다운 상자에서 **OS 유형**을 선택으로 **Windows** 또는 **Linux**를 선택합니다.
    * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
-   * **구입** 단추를 클릭합니다.
+   * **구매** 단추를 클릭합니다.
 3. 배포가 완료될 때가지 기다립니다.
 4. 아래 단추를 클릭합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fdmz%2Fsecure-vnet-dmz%2Fworkload.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 5. Azure 포털에서 링크가 열렸으면 일부 설정에 대한 값을 입력해야 합니다.
@@ -97,7 +97,7 @@ NVA 수준에서 응용 프로그램 연결을 종료하고 백 엔드 계층 �
    * **위치** 드롭다운 상자에서 하위 지역을 선택합니다.
    * **템플릿 루트 Uri** 또는 **매개 변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
    * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
-   * **구입** 단추를 클릭합니다.
+   * **구매** 단추를 클릭합니다.
 6. 배포가 완료될 때가지 기다립니다.
 7. 아래 단추를 클릭합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fdmz%2Fsecure-vnet-dmz%2Fsecurity.azuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 8. Azure 포털에서 링크가 열렸으면 일부 설정에 대한 값을 입력해야 합니다.
@@ -105,7 +105,7 @@ NVA 수준에서 응용 프로그램 연결을 종료하고 백 엔드 계층 �
    * **위치** 드롭다운 상자에서 하위 지역을 선택합니다.
    * **템플릿 루트 Uri** 또는 **매개 변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
    * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
-   * **구입** 단추를 클릭합니다.
+   * **구매** 단추를 클릭합니다.
 9. 배포가 완료될 때가지 기다립니다.
 10. 매개 변수 파일에는 모든 VM에 대한 하드 코딩된 관리자 사용자 이름 및 암호가 포함되어 있는데, 이 둘 모두를 즉시 변경할 것을 권장합니다. 배포의 각 VM을 Azure Portal에서 선택한 후 **지원 + 문제 해결** 블레이드에서 **암호 재설정**을 클릭합니다. **모드** 드롭다운 상자에서 **암호 재설정**을 선택한 후 새 **사용자 이름** 및 **암호**를 선택합니다. **업데이트** 단추를 클릭하여 저장합니다.
 
@@ -119,7 +119,7 @@ NVA 수준에서 응용 프로그램 연결을 종료하고 백 엔드 계층 �
 [load-balancer]: /azure/load-balancer/load-balancer-Internet-overview
 [network-security-group]: /azure/virtual-network/virtual-networks-nsg
 
-[visio-download]: https://archcenter.azureedge.net/cdn/dmz-reference-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/dmz-reference-architectures.vsdx
 
 
 [0]: ./images/dmz-public.png "하이브리드 네트워크 아키텍처 보안"

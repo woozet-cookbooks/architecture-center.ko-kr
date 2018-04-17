@@ -1,12 +1,12 @@
 ---
-title: "설명: Azure의 작동 방식"
-description: "Azure의 내부 작동 설명"
+title: '설명: Azure의 작동 방식'
+description: Azure의 내부 작동 설명
 author: petertay
-ms.openlocfilehash: 847d24b7057d80f3d34aac7900cfb64fec60a640
-ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242
+ms.openlocfilehash: b4830fec69ac6d256d934d91ea2c295219925a9a
+ms.sourcegitcommit: ea7108f71dab09175ff69322874d1bcba800a37a
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/09/2018
+ms.lasthandoff: 03/17/2018
 ---
 # <a name="explainer-how-does-azure-work"></a>설명: Azure의 작동 방식
 
@@ -22,7 +22,7 @@ Azure는 Microsoft의 공용 클라우드 플랫폼입니다. Azure는 PaaS(Plat
 
 패브릭 컨트롤러의 각 인스턴스는 클라우드 오케스트레이션 소프트웨어를 실행하는 **프런트 엔드**라고도 하는 또 다른 서버 집합에 연결됩니다. 프런트 엔드는 웹 서비스, RESTful API 및 클라우드가 수행하는 모든 기능에 사용되는 내부 Azure Database를 호스트합니다. 
 
-예를 들어, 프런트 엔드는 [가상 네트워크][vnet], [가상 머신][vms]과 같은 Azure 리소스와 [CosmosDB]와 같은 서비스에 대한 고객의 할당 요청을 처리하는 서비스를 호스트합니다. 첫째, 프런트 엔드는 사용자의 유효성을 검사하고 사용자가 요청된 리소스를 할당할 수 있도록 허가되는지 확인합니다. 사용자에게 권한이 있는 경우, 프런트 엔드는 데이터베이스를 확인하여 충분한 용량이 있는 서버 랙을 찾은 다음, 랙의 패브릭 컨트롤러에 리소스를 할당하도록 지시합니다.
+예를 들어, 프런트 엔드는 [가상 네트워크][vnet], [가상 머신][vms]과 같은 Azure 리소스와 [Cosmos DB][cosmosdb]와 같은 서비스에 대한 고객의 할당 요청을 처리하는 서비스를 호스트합니다. 첫째, 프런트 엔드는 사용자의 유효성을 검사하고 사용자가 요청된 리소스를 할당할 수 있도록 허가되는지 확인합니다. 사용자에게 권한이 있는 경우, 프런트 엔드는 데이터베이스를 확인하여 충분한 용량이 있는 서버 랙을 찾은 다음, 랙의 패브릭 컨트롤러에 리소스를 할당하도록 지시합니다.
 
 따라서 아주 간단하지만, Azure는 서버 및 네트워킹 하드웨어의 방대한 컬렉션이며, 해당 서버에서 가상화된 하드웨어 및 소프트웨어의 구성과 작동을 오케스트레이션하는 복잡한 분산 응용 프로그램을 포함합니다. 또한 이러한 오케스트레이션을 통해 Azure가 강력해질 수 있습니다. 즉, Azure가 백그라운드에서 하드웨어를 유지 관리하고 업그레이드하므로 사용자가 이러한 작업을 수행할 필요가 없습니다. 
 

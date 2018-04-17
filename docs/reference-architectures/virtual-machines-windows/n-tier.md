@@ -1,16 +1,16 @@
 ---
-title: "N 계층 아키텍처에 대한 Windows VM 실행"
-description: "가용성, 보안, 확장성 및 관리 보안에 주의를 기울이며 Azure에서 다중 계층 아키텍처를 구현하는 방법입니다."
+title: N 계층 아키텍처에 대한 Windows VM 실행
+description: 가용성, 보안, 확장성 및 관리 보안에 주의를 기울이며 Azure에서 다중 계층 아키텍처를 구현하는 방법입니다.
 author: MikeWasson
 ms.date: 11/22/2016
 pnp.series.title: Windows VM workloads
 pnp.series.next: multi-region-application
 pnp.series.prev: multi-vm
-ms.openlocfilehash: 0654239a5bbd966a2aa776415b7f15ae723ffd63
-ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
+ms.openlocfilehash: 5ed94eb9ab8203d35d9597336e367d54e03944d7
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/08/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="run-windows-vms-for-an-n-tier-application"></a>N 계층 응용 프로그램에 대한 Windows VM 실행
 
@@ -29,7 +29,7 @@ N 계층 아키텍처를 구현하는 방법은 여러 가지가 있습니다. �
 * **부하 분산 장치.** [인터넷 연결 부하 분산 장치][load-balancer-external]를 사용하여 들어오는 인터넷 트래픽을 웹 계층에 분산하고, [내부 부하 분산 장치][load-balancer-internal]를 사용하여 네트워크 트래픽을 웹 계층에서 비즈니스 계층으로 분산합니다.
 * **Jumpbox.** [요새 호스트]라고도 합니다. 관리자가 다른 VM에 연결할 때 사용하는 네트워크의 보안 VM입니다. Jumpbox는 안전 목록에 있는 공용 IP 주소의 원격 트래픽만 허용하는 NSG를 사용합니다. NSG는 RDP(원격 데스크톱) 트래픽을 허용해야 합니다.
 * **모니터링.** [Nagios], [Zabbix] 또는 [Icinga]와 같은 모니터링 소프트웨어는 응답 시간, VM 가동 시간 및 시스템의 전반적인 상태에 대한 정보를 제공합니다. 개별 관리 서브넷에 배치되어 있는 VM에 모니터링 소프트웨어를 설치합니다.
-* **NSG.** [NSG(네트워크 보안 그룹)][nsg]을 사용하여 VNet 내 네트워크 트래픽을 제한합니다. 예를 들어 여기에 표시된 3계층 아키텍처에서 데이터베이스 계층은 비즈니스 계층 및 관리 서브넷뿐 아니라 웹 프론트 엔드의 트래픽을 허용하지 않습니다.
+* <strong>NSG.</strong> [NSG(네트워크 보안 그룹)][nsg]을 사용하여 VNet 내 네트워크 트래픽을 제한합니다. 예를 들어 여기에 표시된 3계층 아키텍처에서 데이터베이스 계층은 비즈니스 계층 및 관리 서브넷뿐 아니라 웹 프론트 엔드의 트래픽을 허용하지 않습니다.
 * **SQL Server Always On 가용성 그룹.** 복제 및 장애 조치(failover)를 사용하여 데이터 계층에서 높은 가용성을 제공합니다.
 * **AD DS(Active Directory Domain Services) 서버**. Windows Server 2016 전 버전에서는 SQL Server Always On 가용성 그룹이 도메인에 연결되어야 합니다. 가용성 그룹이 WSFC(Windows Server 장애 조치 클러스터) 기술을 사용하기 때문입니다. Windows Server 2016부터는 Active Directory 없이도 장애 조치(failover) 클러스터를 만들 수 있는 기능이 추가되었기 때문에 이 아키텍처에 AD DS 서버가 필요하지 않습니다. 자세한 내용은 [Windows Server 2016 장애 조치(failover) 클러스터링의 새로운 기능][wsfc-whats-new]을 참조하세요.
 * **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다.
@@ -82,10 +82,10 @@ SQL Server의 고가용성을 위해 [Always On 가용성 그룹][sql-alwayson]�
 3. 가용성 그룹 수신기를 만든 다음 수신기의 DNS 이름을 내부 부하 분산 장치의 IP 주소로 매핑합니다. 
 4. SQL Server 수신 포트(기본값: TCP 포트 1433)에 대한 부하 분산 장치 규칙을 만듭니다. 부하 분산 장치 규칙은 Direct Server Return이라고도 불리는 *부동 IP*를 지원해야 합니다. 이로 인해 VM은 클라이언트에 직접 응답하여 주 복제본에 대한 직접 연결을 지원하게 됩니다.
   
-  > [!NOTE]
-  > 부동 IP가 지원된 경우에는 부하 분산 장치 규칙의 프론트 엔드 포트 번호가 백엔드 포트 번호와 같아야 합니다.
-  > 
-  > 
+   > [!NOTE]
+   > 부동 IP가 지원된 경우에는 부하 분산 장치 규칙의 프론트 엔드 포트 번호가 백엔드 포트 번호와 같아야 합니다.
+   > 
+   > 
 
 SQL 클라이언트가 연결을 시도하면 부하 분산 장치가 연결 요청을 주 복제본으로 라우팅합니다. 다른 복제본으로의 장애 조치(failover)가 이루어지면 부하 분산 장치가 이후의 요청을 새로운 주 복제본으로 자동 라우팅합니다. 자세한 내용은 [SQL Server Always On 가용성 그룹에 대한 ILB 수신기 구성][sql-alwayson-ilb]을 참조하세요.
 
@@ -131,25 +131,25 @@ NVA(네트워크 가상 어플라이언스)를 추가하여 인터넷과 Azure �
 
 이 참조 아키텍처에 대한 배포는 [GitHub][github-folder]에서 사용할 수 있습니다. 
 
-### <a name="prerequisites"></a>필수 구성 요소
+### <a name="prerequisites"></a>필수 조건
 
 사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.
 
-1. [AzureCAT 참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
+1. [참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
 
 2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI를 설치하려면 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)에 제시된 지침을 참조하세요.
 
 3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
 
-  ```bash
-  npm install -g @mspnp/azure-building-blocks
-  ```
+   ```bash
+   npm install -g @mspnp/azure-building-blocks
+   ```
 
 4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령 중 하나를 사용하여 Azure 계정에 로그인한 다음 프롬프트에 따릅니다.
 
-  ```bash
-  az login
-  ```
+   ```bash
+   az login
+   ```
 
 ### <a name="deploy-the-solution-using-azbb"></a>azbb를 사용하여 솔루션 배포
 
@@ -159,18 +159,18 @@ N 계층 응용 프로그램에 대한 Windows VM 참조 아키텍처를 배포�
 
 2. 매개 변수 파일은 배포 환경의 각 VM에 대해 관리자 사용자 이름과 암호의 기본값을 지정합니다. 참조 아키텍처를 배포하기 전에 먼저 이 값을 변경해야 합니다. `n-tier-windows.json` 파일을 열고 **adminUsername** 필드와 **adminPassword** 필드를 새로운 설정으로 변경합니다.
   
-  > [!NOTE]
-  > 이 배포가 진행될 때 **VirtualMachineExtension** 개체와 일부 **VirtualMachine** 개체의 **extensions** 설정에서 여러 개의 스크립트가 실행됩니다. 이러한 스크립트 중 일부에서 방금 변경한 관리자 사용자 이름과 암호가 필요합니다. 해당 스크립트를 검토하여 올바른 자격 증명을 지정했는지 확인하는 것이 좋습니다. 올바른 자격 증명을 지정하지 않으면 배포가 실패하게 됩니다.
-  > 
-  > 
+   > [!NOTE]
+   > 이 배포가 진행될 때 **VirtualMachineExtension** 개체와 일부 **VirtualMachine** 개체의 **extensions** 설정에서 여러 개의 스크립트가 실행됩니다. 이러한 스크립트 중 일부에서 방금 변경한 관리자 사용자 이름과 암호가 필요합니다. 해당 스크립트를 검토하여 올바른 자격 증명을 지정했는지 확인하는 것이 좋습니다. 올바른 자격 증명을 지정하지 않으면 배포가 실패하게 됩니다.
+   > 
+   > 
 
 파일을 저장합니다.
 
 3. 아래에 표시된 대로 **azbb** 명령줄 도구를 사용하여 참조 아키텍처를 배포합니다.
 
-  ```bash
-  azbb -s <your subscription_id> -g <your resource_group_name> -l <azure region> -p n-tier-windows.json --deploy
-  ```
+   ```bash
+   azbb -s <your subscription_id> -g <your resource_group_name> -l <azure region> -p n-tier-windows.json --deploy
+   ```
 
 Azure 구성 요소를 사용하여 이 샘플 참조 아키텍처를 배포하는 방법에 대한 자세한 내용은 [GitHub 리포지토리][git]를 방문하세요.
 
@@ -216,5 +216,5 @@ Azure 구성 요소를 사용하여 이 샘플 참조 아키텍처를 배포하�
 [Nagios]: https://www.nagios.org/
 [Zabbix]: http://www.zabbix.com/
 [Icinga]: http://www.icinga.org/
-[visio-download]: https://archcenter.azureedge.net/cdn/vm-reference-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/vm-reference-architectures.vsdx
 [0]: ./images/n-tier-diagram.png "Microsoft Azure를 사용하는 N 계층 아키텍처"

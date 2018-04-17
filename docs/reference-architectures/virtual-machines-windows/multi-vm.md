@@ -1,16 +1,16 @@
 ---
-title: "확장성 및 가용성을 위해 Azure에서 부하 분산된 VM 실행"
-description: "확장성 및 가용성을 위해 Azure에서 복수의 Windows VM을 실행하는 방법."
+title: 확장성 및 가용성을 위해 Azure에서 부하 분산된 VM 실행
+description: 확장성 및 가용성을 위해 Azure에서 복수의 Windows VM을 실행하는 방법.
 author: telmosampaio
 ms.date: 11/16/2017
 pnp.series.title: Windows VM workloads
 pnp.series.next: n-tier
 pnp.series.prev: single-vm
-ms.openlocfilehash: 14e7e023afd7cb7cbe0e8db8e224ba777f6fe863
-ms.sourcegitcommit: c9e6d8edb069b8c513de748ce8114c879bad5f49
+ms.openlocfilehash: d624ba74e3173b5f4218009de3ca6019f5f18143
+ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/08/2018
+ms.lasthandoff: 04/06/2018
 ---
 # <a name="run-load-balanced-vms-for-scalability-and-availability"></a>확장성 및 가용성을 위해 부하 분산된 VM 실행
 
@@ -125,11 +125,11 @@ VM이 여러 개인 경우에는 프로세스를 안정적이고 반복적으로
   * VM 확장 집합 앞에 위치한 부하 분산 장치.
   * VM 확장 집합에서 HTTP 트래픽을 수신할 수 있도록 허용하는 수신 규칙을 갖는 NSG.
 
-### <a name="prerequisites"></a>필수 구성 요소
+### <a name="prerequisites"></a>필수 조건
 
 사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.
 
-1. [AzureCAT 참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
+1. [참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
 
 2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI 설치 지침은 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)을 참조하세요.
 
@@ -137,9 +137,9 @@ VM이 여러 개인 경우에는 프로세스를 안정적이고 반복적으로
 
 4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령 중 하나를 사용하여 Azure 계정에 로그인한 다음 프롬프트에 따릅니다.
 
-  ```bash
-  az login
-  ```
+   ```bash
+   az login
+   ```
 
 ### <a name="deploy-the-solution-using-azbb"></a>azbb를 사용하여 솔루션 배포
 
@@ -149,16 +149,16 @@ VM이 여러 개인 경우에는 프로세스를 안정적이고 반복적으로
 
 2. `multi-vm-v2.json` 파일을 열고 아래 나와 있는 대로 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음 파일을 저장합니다.
 
-  ```bash
-  "adminUsername": "",
-  "adminPassword": "",
-  ```
+   ```bash
+   "adminUsername": "",
+   "adminPassword": "",
+   ```
 
 3. 아래 표시된 대로 `azbb`를 실행하여 VM을 배포합니다.
 
-  ```bash
-  azbb -s <subscription_id> -g <resource_group_name> -l <location> -p multi-vm-v2.json --deploy
-  ```
+   ```bash
+   azbb -s <subscription_id> -g <resource_group_name> -l <location> -p multi-vm-v2.json --deploy
+   ```
 
 이 샘플 참조 아키텍처를 배포하는 방법에 대한 자세한 내용은 [GitHub 리포지토리][git]를 참조하세요.
 
@@ -187,7 +187,7 @@ VM이 여러 개인 경우에는 프로세스를 안정적이고 반복적으로
 [runbook-gallery]: /azure/automation/automation-runbook-gallery#runbooks-in-runbook-gallery
 [single-vm]: single-vm.md
 [subscription-limits]: /azure/azure-subscription-service-limits
-[visio-download]: https://archcenter.azureedge.net/cdn/vm-reference-architectures.vsdx
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/vm-reference-architectures.vsdx
 [vm-disk-limits]: /azure/azure-subscription-service-limits#virtual-machine-disk-limits
 [vm-scaleset]: /azure/virtual-machine-scale-sets/virtual-machine-scale-sets-overview
 [vm-sizes]: https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/
