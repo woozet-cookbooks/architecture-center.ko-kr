@@ -5,11 +5,11 @@ author: MikeWasson
 ms.date: 05/26/2017
 ms.custom: resiliency
 pnp.series.title: Design for Resiliency
-ms.openlocfilehash: 0cbcf0a8af1a8e20f2a1c024f5146a37176c5d1e
-ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
+ms.openlocfilehash: 9a6bd1332ea59923b32379018060403024b15e10
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 12/08/2017
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="designing-resilient-applications-for-azure"></a>Azure용 복원 응용 프로그램 디자인
 
@@ -153,7 +153,7 @@ Azure에는 개별 VM에서 전체 영역에 이르는 모든 오류 수준에�
 
 **가용성 집합**. 디스크 또는 네트워크 전환이 실패한 경우 하드웨어 오류로부터 보호하려면 가용성 집합에 둘 이상의 VM을 배포합니다. 가용성 집합은 공통 전원 소스 및 네트워크 스위치를 공유하는 두 개 이상의 *장애 도메인*으로 구성됩니다. 가용성 집합의 VM은 장애 도메인에 분산되어 있으므로 하드웨어 오류가 하나의 장애 도메인에 영향을 주는 경우 네트워크 트래픽은 다른 오류 도메인에서 VM을 라우팅할 수 있습니다. 가용성 집합에 대한 자세한 내용은 [Azure에서 Windows 가상 머신의 가용성 관리](/azure/virtual-machines/windows/manage-availability)를 참조하세요.
 
-**가용성 영역(미리 보기)**  가용성 영역은 Azure 지역 내에서 물리적으로 별도 영역입니다. 각 가용성 영역에는 고유한 소스, 네트워크 및 냉각 장치가 있습니다. 가용성 영역 간에 VM을 배포하면 데이터 센터 전체의 오류로부터 응용 프로그램을 보호할 수 있습니다. 
+**가용성 영역**.  가용성 영역은 Azure 지역 내에서 물리적으로 별도 영역입니다. 각 가용성 영역에는 고유한 소스, 네트워크 및 냉각 장치가 있습니다. 가용성 영역 간에 VM을 배포하면 데이터 센터 전체의 오류로부터 응용 프로그램을 보호할 수 있습니다. 
 
 **쌍을 이루는 지역** 지역 가동 중단으로부터 응용 프로그램을 보호하려면 인터넷 트래픽을 서로 다른 지역에 배포하기 위해 Azure Traffic Manager를 사용하여 응용 프로그램을 여러 지역에 배포할 수 있습니다. 각 Azure 지역은 다른 지역과 쌍을 이룹니다. 이러한 지역은 함께 [지역 쌍](/azure/best-practices-availability-paired-regions)을 구성합니다. 브라질 남부를 제외하고 지역 쌍은 세금 및 법률 집행 관할 구역의 데이터 상주 요구 사항을 충족하기 위해 동일한 지리적 위치 내에 위치합니다.
 
@@ -164,7 +164,7 @@ Azure에는 개별 VM에서 전체 영역에 이르는 모든 오류 수준에�
 | 오류의 범위 | 랙 | 데이터 센터 | 지역 |
 | 요청 라우팅 | Load Balancer | 영역 간 부하 분산 장치 | Traffic Manager |
 | 네트워크 대기 시간 | 매우 낮음 | 낮음 | 중간부터 높음 |
-| 가상 네트워크  | VNet | VNet | 지역 간 VNet 피어링(미리 보기) |
+| 가상 네트워크  | VNet | VNet | 지역 간 VNet 피어링 |
 
 ## <a name="designing-for-resiliency"></a>복원력을 위한 디자인
 디자인 단계에서 FMA(오류 모드 분석)를 수행해야 합니다. FMA의 목표는 가능한 실패 지점을 식별하고 응용 프로그램이 이러한 오류에 대응하는 방식을 정의하는 것입니다.

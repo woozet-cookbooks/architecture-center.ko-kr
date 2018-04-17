@@ -5,11 +5,11 @@ keywords: AWS 전문가, Azure 비교, AWS 비교, azure와 aws의 차이점, az
 author: lbrader
 ms.date: 03/24/2017
 pnp.series.title: Azure for AWS Professionals
-ms.openlocfilehash: b8698675efa42bb3fae73cefe7b078942549b412
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: 0af0890d383d22db0ed9d3b445cdd5b561b498ae
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="azure-for-aws-professionals"></a>AWS 전문가를 위한 Azure
 
@@ -118,7 +118,7 @@ AWS에서는 한 영역이 두 개 이상의 가용성 영역으로 나뉩니다
 | 오류의 범위 | 랙 | 데이터 센터 | 지역 |
 | 요청 라우팅 | Load Balancer | 영역 간 부하 분산 장치 | Traffic Manager |
 | 네트워크 대기 시간 | 매우 낮음 | 낮음 | 중간부터 높음 |
-| 가상 네트워킹  | VNet | VNet | 지역 간 VNet 피어링(미리 보기) |
+| 가상 네트워킹  | VNet | VNet | 지역 간 VNet 피어링 |
 
 ### <a name="availability-sets"></a>가용성 집합 
 
@@ -130,7 +130,7 @@ AWS에서는 한 영역이 두 개 이상의 가용성 영역으로 나뉩니다
 
 ![각 응용 프로그램 역할에 대한 Azure 가용성 집합](./images/three-tier-example.png "각 응용 프로그램 역할에 대한 Azure 가용성 집합")
 
-### <a name="availability-zones-preview"></a>가용성 영역(미리 보기)
+### <a name="availability-zones"></a>가용성 영역
 
 [가용성 영역](/azure/availability-zones/az-overview)은 Azure 지역 내에서 물리적으로 별도의 영역입니다. 각 가용성 영역에는 고유한 소스, 네트워크 및 냉각 장치가 있습니다. 가용성 영역 간에 VM을 배포하면 데이터 센터 전체의 오류로부터 응용 프로그램을 보호할 수 있습니다. 
 
