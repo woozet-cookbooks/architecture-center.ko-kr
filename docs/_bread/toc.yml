@@ -2,7 +2,7 @@
   tocHref: /azure/
   topicHref: /azure
   items:
-    - name: 건축
+    - name: 아키텍처
       tocHref: /azure/architecture/
       topicHref: /azure/architecture
       items:
