@@ -537,7 +537,7 @@ Event Hubs에서 파티션을 사용하는 방법에 대한 자세한 내용은 
 * Microsoft 웹 사이트의 [Elastic Database 분할/병합 도구를 사용하여 확장하기] 페이지에는 분할/병합 서비스를 사용하여 Elastic Database 분할된 데이터베이스를 관리하는 방법에 대한 내용이 있습니다.
 * Microsoft 웹 사이트의 [Azure 저장소 확장성 및 성능 목표](https://msdn.microsoft.com/library/azure/dn249410.aspx) 페이지에는 Azure Storage의 현재 크기 조정 및 처리량 한도가 설명되어 있습니다.
 * Microsoft 웹 사이트의 [엔터티 그룹 트랜잭션 수행] 페이지에는 Azure 테이블 저장소에 저장된 엔터티에 트랜잭션 작업을 구현하는 방법에 대한 자세한 정보가 있습니다.
-* Microsoft 웹 사이트의 [Azure Storage 테이블 설계 가이드] 는 Azure 테이블 저장소에서 데이터를 분할하는 방법에 대한 자세한 내용을 포함합니다.
+* Microsoft 웹 사이트의 [Azure 저장소 테이블 설계 가이드] 는 Azure 테이블 저장소에서 데이터를 분할하는 방법에 대한 자세한 내용을 포함합니다.
 * Microsoft 웹 사이트의 [Azure 콘텐츠 배달 네트워크 사용] 페이지에서는 Azure Content Delivery Network를 사용하여 Azure Blob 저장소에 보관된 데이터를 복제하는 방법을 설명합니다.
 * Microsoft 웹 사이트의 [Azure Search란?] 페이지에는 Azure Search에서 사용할 수 있는 기능에 대한 전체 설명이 있습니다.
 * Microsoft 웹 사이트의 [Azure Search의 서비스 제한 사항] 페이지에는 Azure Search의 각 인스턴스 용량에 대한 정보가 있습니다.
@@ -552,7 +552,7 @@ Event Hubs에서 파티션을 사용하는 방법에 대한 자세한 내용은 
 [Azure에 콘텐츠 배달 네트워크]: /azure/cdn/cdn-overview
 [Azure Redis Cache]: http://azure.microsoft.com/services/cache/
 [Azure 저장소 확장성 및 성능 목표]: /azure/storage/storage-scalability-targets
-[Azure Storage Table Design Guide]: /azure/storage/storage-table-design-guide
+[Azure 저장소 테이블 설계 가이드]: /azure/storage/storage-table-design-guide
 [Polyglot 솔루션 빌드]: https://msdn.microsoft.com/library/dn313279.aspx
 [cosmos-db-ru]: /azure/cosmos-db/request-units
 [확장성이 뛰어난 솔루션에 대한 데이터 액세스: SQL, NoSQL 및 Polyglot 지속성 사용]: https://msdn.microsoft.com/library/dn271399.aspx
@@ -564,13 +564,13 @@ Event Hubs에서 파티션을 사용하는 방법에 대한 자세한 내용은 
 [event-hubs]: /azure/event-hubs
 [Federations Migration Utility]: https://code.msdn.microsoft.com/vstudio/Federations-Migration-ce61e9c1
 [Azure Service Fabric에서 신뢰할 수 있는 컬렉션에 대한 지침 및 권장 사항]: /azure/service-fabric/service-fabric-reliable-services-reliable-collections-guidelines
-[Index Table Pattern]: http://aka.ms/Index-Table-Pattern
+[인덱스 테이블 패턴]: http://aka.ms/Index-Table-Pattern
 [Materialized View Pattern]: http://aka.ms/Materialized-View-Pattern
 [다중 분할된 데이터베이스 쿼리]: /azure/sql-database/sql-database-elastic-scale-multishard-querying
 [Azure Service Fabric 개요]: /azure/service-fabric/service-fabric-overview
 [Service Fabric Reliable Services 분할]: /azure/service-fabric/service-fabric-concepts-partitioning
 [분할: 여러 Redis 인스턴스 간에 데이터를 분할하는 방법]: http://redis.io/topics/partitioning
-[Performing Entity Group Transactions]: https://msdn.microsoft.com/library/azure/dd894038.aspx
+[엔터티 그룹 트랜잭션 수행]: https://msdn.microsoft.com/library/azure/dd894038.aspx
 [Redis 클러스터 자습서]: http://redis.io/topics/cluster-tutorial
 [Azure의 CentOS Linux VM에서 Redis 실행]: http://blogs.msdn.com/b/tconte/archive/2012/06/08/running-redis-on-a-centos-linux-vm-in-windows-azure.aspx
 [Elastic Database 분할/병합 도구를 사용하여 확장하기]: /azure/sql-database/sql-database-elastic-scale-overview-split-and-merge
