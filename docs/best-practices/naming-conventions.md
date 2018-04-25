@@ -4,11 +4,11 @@ description: Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: f814201901af69b816d7f1588e58057b252b22db
-ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242
+ms.openlocfilehash: f3f010ceb3c810caafa53523de63aa787d392aa1
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/09/2018
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="naming-conventions"></a>명명 규칙
 
@@ -102,7 +102,7 @@ Azure의 각 리소스 또는 서비스 유형은 명명 제한 및 범위 집�
 |큐 이름 |Storage 계정 |3-63 |소문자 |영숫자 및 하이픈 |`<service short name>-<context>-<num>` |`awesomeservice-messages-001` |
 |테이블 이름 | Storage 계정 |3-63 |대/소문자 구분하지 않음 |영숫자 |`<service short name><context>` |`awesomeservicelogs` |
 |파일 이름 | Storage 계정 |3-63 |소문자 | 영숫자 |`<variable based on blob usage>` |`<variable based on blob usage>` |
-|Data Lake Store | 전역 |3-24 |소문자 | 영숫자 |`<name>-dls` |`telemetry-dls` |
+|Data Lake Store | 전역 |3-24 |소문자 | 영숫자 |`<name>dls` |`telemetrydls` |
 
 ### <a name="networking"></a>네트워킹
 
