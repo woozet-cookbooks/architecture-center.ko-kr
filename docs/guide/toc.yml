@@ -16,18 +16,21 @@
           href: architecture-styles/cqrs.md
         - name: 이벤트 기반 아키텍처
           href: architecture-styles/event-driven.md
-        - name: 빅데이터
+        - name: 빅 데이터
           href: architecture-styles/big-data.md
-        - name: 큰 계산
+        - name: 빅 컴퓨팅
           href: architecture-styles/big-compute.md
-    - name: 기술 선택
-      href: technology-choices/index.md
+    - name: 계산 서비스 선택
       items:
-        - name: 계산 옵션 개요
+        - name: 개요
           href: technology-choices/compute-overview.md
+        - name: 의사 결정 트리
+          href: technology-choices/compute-decision-tree.md
         - name: 계산 비교
           href: technology-choices/compute-comparison.md
-        - name: 데이터 저장소 개요
+    - name: 데이터 저장소 선택
+      items:
+        - name: 개요
           href: technology-choices/data-store-overview.md
         - name: 데이터 저장소 비교
           href: technology-choices/data-store-comparison.md

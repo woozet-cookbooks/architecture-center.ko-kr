@@ -10,9 +10,10 @@
   items:
     - name: 아키텍처 스타일
       href: guide/architecture-styles/index.md
-    - name: 기술 선택
-      href: guide/technology-choices/index.md
-      items: null
+    - name: 계산 서비스 선택
+      href: guide/technology-choices/compute-overview.md
+    - name: 데이터 저장소 선택
+      href: guide/technology-choices/data-store-overview.md
     - name: 디자인 원칙
       href: guide/design-principles/index.md
     - name: 소프트웨어 품질 핵심 요소
@@ -106,7 +107,7 @@
       href: antipatterns/synchronous-io/index.md
 - name: 디자인 검토 검사 목록
   items:
-    - name: Availability
+    - name: 가용성
       href: checklist/availability.md
     - name: DevOps
       href: checklist/dev-ops.md
