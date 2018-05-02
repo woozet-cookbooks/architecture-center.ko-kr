@@ -3,17 +3,17 @@ title: Azure 계산 옵션 개요
 description: Azure 계산 옵션 개요
 author: MikeWasson
 ms.date: 04/21/2018
-ms.openlocfilehash: 6781e1f1f6e239e3853920cb544092538cccfc62
-ms.sourcegitcommit: d702b4d27e96e7a5a248dc4f2f0e25cf6e82c134
+ms.openlocfilehash: 8ee508aaa07d87ac77ef484e20d572fdf2b9fb40
+ms.sourcegitcommit: 3846a0ab2b2b2552202a3c9c21af0097a145ffc6
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/23/2018
+ms.lasthandoff: 04/29/2018
 ---
 # <a name="overview-of-azure-compute-options"></a>Azure 계산 옵션 개요
 
 *계산*이라는 용어는 응용 프로그램이 실행되는 계산 리소스의 호스팅 모델을 말합니다. 
 
-스펙트럼의 한쪽 끝은 IaaS(**Intrastructure-as a Service**)입니다. IaaS를 사용하여 연결된 네트워크 및 저장소 구성 요소와 함께 필요한 VM을 프로비전합니다. 그런 다음 해당 VM에 배치하려는 모든 소프트웨어 및 응용 프로그램을 배포합니다. 이 모델은 Microsoft에서 인프라를 관리한다는 점을 제외하고는 기존 온-프레미스 환경과 가장 가깝습니다. 여전히 개별 VM을 관리하게 됩니다.  
+스펙트럼의 한쪽 끝은 IaaS(**Infrastructure-as-a-Service** )입니다. IaaS를 사용하여 연결된 네트워크 및 저장소 구성 요소와 함께 필요한 VM을 프로비전합니다. 그런 다음 해당 VM에 배치하려는 모든 소프트웨어 및 응용 프로그램을 배포합니다. 이 모델은 Microsoft에서 인프라를 관리한다는 점을 제외하고는 기존 온-프레미스 환경과 가장 가깝습니다. 여전히 개별 VM을 관리하게 됩니다.  
 
 PaaS(**Platform-as-a-Service**)는 VM 또는 네트워킹 리소스를 관리할 필요 없이 응용 프로그램을 배포할 수 있는 관리되는 호스팅 환경을 제공합니다. 예를 들어, 개별 VM을 만드는 대신, 인스턴스 수를 지정하기만 하면 서비스가 필요한 리소스를 프로비전, 구성 및 관리합니다. Azure App Service는 PaaS 서비스의 예제입니다.
 
