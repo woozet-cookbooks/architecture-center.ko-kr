@@ -5,11 +5,11 @@ author: telmosampaio
 ms.date: 02/25/2018
 pnp.series.title: Implement a hub-spoke network topology with shared services in Azure
 pnp.series.prev: hub-spoke
-ms.openlocfilehash: b492427f12e026be97629ccdc2b8d19c8c66f47d
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 83367a3be2f7a1e33c2ef7018d42f70aae99104d
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="implement-a-hub-spoke-network-topology-with-shared-services-in-azure"></a>Azure에서 공유 서비스를 사용하여 허브-스포크 네트워크 토폴로지 구현
 
@@ -31,7 +31,7 @@ ms.lasthandoff: 04/06/2018
 * 서로 연결할 필요가 없으나 공유 서비스에 대한 액세스가 필요한 워크로드.
 * DMZ로 기능한 허브의 방화벽, 각 스포크에서 워크로드에 대한 별도의 관리 등 보안 측면에 대한 중앙 제어가 필요한 엔터프라이즈.
 
-## <a name="architecture"></a>건축
+## <a name="architecture"></a>아키텍처
 
 이 아키텍처는 다음 구성 요소로 구성됩니다.
 

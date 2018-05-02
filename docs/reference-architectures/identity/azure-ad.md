@@ -7,11 +7,11 @@ ms.date: 11/28/2016
 pnp.series.next: adds-extend-domain
 pnp.series.prev: ./index
 cardTitle: Integrate on-premises AD with Azure AD
-ms.openlocfilehash: 431de4b2e08c79f70cc9830fda8315e07bf22c64
-ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
+ms.openlocfilehash: 9475d669b2cb8888a7ceabed7e36317fe63681fd
+ms.sourcegitcommit: d702b4d27e96e7a5a248dc4f2f0e25cf6e82c134
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/30/2018
+ms.lasthandoff: 04/23/2018
 ---
 # <a name="integrate-on-premises-active-directory-domains-with-azure-active-directory"></a>Azure Active Directory와 온-프레미스 Active Directory 도메인 통합
 
@@ -37,7 +37,7 @@ Azure AD(Azure Active Directory)는 클라우드 기반의 다중 테넌트 디�
 
 추가 고려 사항은 [온-프레미스 Active Directory를 Azure와 통합하기 위한 솔루션 선택][considerations]을 참조하세요. 
 
-## <a name="architecture"></a>건축
+## <a name="architecture"></a>아키텍처
 
 이 아키텍처의 구성 요소는 다음과 같습니다.
 
@@ -119,9 +119,9 @@ Azure AD Connect를 구성하여 조직의 요구 사항과 가장 잘 맞는 �
 
 ### <a name="user-authentication"></a>사용자 인증
 
-기본적으로 Azure AD Connect 동기화 서버는 온-프레미스 도메인과 Azure AD 간의 암호 동기화를 구성하고, Azure AD 서비스는 사용자가 온-프레미스에서 사용하는 것과 동일한 암호를 제공하여 사용자를 인증한다고 간주합니다. 이 방식은 많은 조직에서 적절하지만 조직의 기존 정책과 인프라를 고려해야 합니다. 예: 
+기본적으로 Azure AD Connect 동기화 서버는 온-프레미스 도메인과 Azure AD 간의 암호 해시 동기화를 구성하고, Azure AD 서비스는 사용자가 온-프레미스에서 사용하는 것과 동일한 암호를 제공하여 사용자를 인증한다고 간주합니다. 이 방식은 많은 조직에서 적절하지만 조직의 기존 정책과 인프라를 고려해야 합니다. 예: 
 
-* 조직의 보안 정책에 따라 암호 해시를 클라우드에 동기화하지 못하도록 금지할 수 있습니다.
+* 조직의 보안 정책에 따라 암호 해시를 클라우드에 동기화하지 못하도록 금지할 수 있습니다. 이 경우 조직은 [통과 인증](/azure/active-directory/connect/active-directory-aadconnect-pass-through-authentication)을 고려해야 합니다.
 * 회사 네트워크의 도메인 조인 컴퓨터에서 클라우드 리소스에 액세스할 때 원활한 SSO(Single Sign-On)가 필요할 수 있습니다.
 * 조직에 이미 AD FS(Active Directory Federation Service) 또는 타사 페더레이션 공급자가 배포되어 있을 수 있습니다. 클라우드에서 보유한 암호 정보를 사용하는 대신 이 인프라를 사용하여 인증 및 SSO를 구현하도록 Azure AD를 구성할 수 있습니다.
 

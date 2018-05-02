@@ -4,11 +4,11 @@ description: 재시도 메커니즘 설정에 대한 서비스 관련 지침입�
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices
-ms.openlocfilehash: 332f96e73def360926b6a934bbb1361b2254ec41
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: c80a4aa232cca1283d84368a36dd7341cab8a314
+ms.sourcegitcommit: 3846a0ab2b2b2552202a3c9c21af0097a145ffc6
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 04/29/2018
 ---
 # <a name="retry-guidance-for-specific-services"></a>특정 서비스에 대한 다시 시도 지침
 
@@ -924,7 +924,7 @@ ADAL(Active Directory 인증 라이브러리)의 Azure Active Directory에 대�
 Azure Active Directory를 사용하는 경우 다음 지침을 고려합니다.
 
 * 가능하다면 재시도에 ADAL 라이브러리와 기본 제공 지원을 사용합니다.
-* Azure Active Directory에 REST API를 사용하는 경우 결과가 5xx 범위의 오류(예: 500 내부 서버 오류, 502 잘못된 게이트웨이, 503 서비스를 사용할 수 없음 및 504 게이트웨이 시간 초과)인 경우에만 작업을 재시도해야 합니다. 다른 오류의 경우에는 재시도하지 마세요.
+* Azure Active Directory용 REST API를 사용하는 경우, 결과 코드가 429(너무 많은 요청)이거나 5xx 범위의 오류인 경우 작업을 재시도합니다. 다른 오류의 경우에는 재시도하지 마세요.
 * Azure Active Directory의 일괄 처리 시나리오에는 지수 백오프 정책을 사용하는 것이 좋습니다.
 
 재시도 작업에 대해 다음 설정을 사용하여 시작하는 것이 좋습니다. 이러한 설정은 범용이므로 작업을 모니터링하고 고유한 시나리오에 맞게 값을 미세 조정해야 합니다.
@@ -989,6 +989,7 @@ Azure 또는 타사 서비스에 액세스하는 경우 다음 사항을 고려�
 * 일시적인 검색 논리는 REST를 호출하는 데 사용하는 실제 클라이언트 API에 따라 달라집니다. 최신 **HttpClient** 클래스와 같은 일부 클라이언트는 성공이 아닌 HTTP 상태 코드를 사용하여 완료된 요청에 대한 예외를 throw하지 않습니다. 따라서 성능은 향상되지만 일시적인 오류 처리 응용 프로그램 블록을 사용할 수 없습니다. 이런 경우 성공이 아닌 HTTP 상태 코드에 대해 예외를 생성하는 코드를 사용하여 REST API에 대한 호출을 래핑한 다음 블록에서 처리할 수 있습니다. 또는 다른 메커니즘을 사용하여 재시도를 실행할 수 있습니다.
 * 서비스에서 반환된 HTTP 상태 코드는 오류가 일시적인지 여부를 나타내는 데 도움이 될 수 있습니다. 클라이언트 또는 재시도 프레임워크에서 생성된 예외를 검사하여 상태 코드에 액세스하거나 해당되는 예외 유형을 확인해야 할 수 있습니다. 다음 HTTP 코드는 일반적으로 재시도가 적합함을 나타냅니다.
   * 408 요청 시간 초과
+  * 429 요청이 너무 많음
   * 500 내부 서버 오류
   * 502 잘못된 게이트웨이
   * 503 서비스를 사용할 수 없음

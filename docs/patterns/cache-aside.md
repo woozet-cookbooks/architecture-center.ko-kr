@@ -8,21 +8,21 @@ pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories:
 - data-management
 - performance-scalability
-ms.openlocfilehash: 1536a33884c9c9faa1e3702c951067249e691bf8
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: d4d7c9dcd612c780e3e494509a57b6b4a0144423
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="cache-aside-pattern"></a>캐시 배제 패턴
 
 [!INCLUDE [header](../_includes/header.md)]
 
-필요할 때 데이터를 데이터 저장소에서 캐시로 로드합니다. 이렇게 하면 성능이 개선되고 캐시에 저장된 데이터 및 기본 데이터 저장소의 데이터 간 일관성을 유지할 수 있습니다.
+필요할 때 데이터를 데이터 저장소에서 캐시로 로드합니다. This can improve performance and also helps to maintain consistency between data held in the cache and data in the underlying data store.
 
 ## <a name="context-and-problem"></a>컨텍스트 및 문제점
 
-응용 프로그램에서 캐시를 사용하여 데이터 저장소에 저장된 정보에 반복되는 액세스를 개선합니다. 그러나, 캐시된 데이터가 언제나 데이터 저장소에 저장된 데이터와 일관성을 완전히 유지하지는 것은 불가능합니다. 응용 프로그램은 캐시에 보관된 데이터를 최신 상태로 유지할 수 있도록 지원하는 전략을 구현하는 동시에, 캐시에 보관된 오래된 데이터로 인해 발생하는 상황을 감지하고 처리할 수 있어야 합니다.
+Applications use a cache to improve repeated access to information held in a data store. 그러나, 캐시된 데이터가 언제나 데이터 저장소에 저장된 데이터와 일관성을 완전히 유지하지는 것은 불가능합니다. 응용 프로그램은 캐시에 보관된 데이터를 최신 상태로 유지할 수 있도록 지원하는 전략을 구현하는 동시에, 캐시에 보관된 오래된 데이터로 인해 발생하는 상황을 감지하고 처리할 수 있어야 합니다.
 
 ## <a name="solution"></a>해결 방법
 
@@ -84,7 +84,7 @@ private static Lazy<ConnectionMultiplexer> lazyConnection = new Lazy<ConnectionM
 public static ConnectionMultiplexer Connection => lazyConnection.Value;
 ```
 
-다음 코드 예제의 `GetMyEntityAsync` 메서드는 Azure Redis Cache를 기반으로 하는 캐시 배제 패턴의 구현을 보여 줍니다. 이 메서드는 read-though 접근 방식을 사용해 캐시에서 개체를 검색합니다.
+다음 코드 예제의 `GetMyEntityAsync` 메서드는 Azure Redis Cache를 기반으로 하는 캐시 배제 패턴의 구현을 보여 줍니다. 이 메서드는 read-through 접근 방식을 사용해 캐시에서 개체를 검색합니다.
 
 개체 식별 키는 정수 ID입니다. `GetMyEntityAsync` 메서드는 이 키를 포함한 항목을 캐시에서 검색하려고 합니다. 일치하는 항목이 발견되면 해당 항목이 반환됩니다. 캐시에 일치하는 항목이 없으면 `GetMyEntityAsync` 메서드는 개체를 데이터 저장소에서 검색해 캐시에 추가한 후 반환합니다. 데이터 저장소의 종속성 때문에, 데이터 저장소에서 데이터를 실제로 읽는 코드는 여기에 표시되지 않습니다. 캐시된 항목을 만료 방식으로 구성하여 다른 위치에서 업데이트되더라도 오래되지 않도록 조치해야 합니다.
 

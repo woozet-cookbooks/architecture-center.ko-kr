@@ -2,11 +2,12 @@
 title: Azure 계산 옵션 개요
 description: Azure 계산 옵션 개요
 author: MikeWasson
-ms.openlocfilehash: a23dd49f24bc52db6f357540e3ebccb19e0497ee
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.date: 04/21/2018
+ms.openlocfilehash: 6781e1f1f6e239e3853920cb544092538cccfc62
+ms.sourcegitcommit: d702b4d27e96e7a5a248dc4f2f0e25cf6e82c134
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/23/2018
 ---
 # <a name="overview-of-azure-compute-options"></a>Azure 계산 옵션 개요
 
@@ -42,4 +43,6 @@ IaaS가 가장 높은 제어 능력, 유연성 및 이동성을 제공합니다.
 - 각 서비스의 전반적인 제한 사항은 무엇인가요? 
 - 이 서비스에 어떤 유형의 응용 프로그램 아키텍처가 적절한가요? 
 
-Azure의 계산 옵션에 대한 보다 자세한 비교 데이터를 보려면 [Azure 계산 옵션 선택 기준](./compute-comparison.md)을 참조하세요.
+응용 프로그램에 대한 계산 서비스를 선택하려면 [Azure 계산 서비스에 대한 의사 결정 트리](./compute-decision-tree.md)를 사용합니다.
+
+Azure의 계산 옵션에 대한 보다 자세한 비교 데이터를 보려면 [Azure 계산 서비스 선택 기준](./compute-comparison.md)을 참조하세요.

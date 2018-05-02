@@ -5,11 +5,11 @@ author: MikeWasson
 ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: client-assertion
-ms.openlocfilehash: 45d1564c255f2450f68c5e92ebe0d7de0c40ae31
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: d49129a38d0413f6006095f03b817885e1ce6c92
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="use-azure-key-vault-to-protect-application-secrets"></a>Azure Key Vault를 사용하여 응용 프로그램 암호 보호
 
@@ -23,7 +23,7 @@ ms.lasthandoff: 11/14/2017
 
 보안 모범 사례로 이 암호를 소스 제어에 저장해서는 안됩니다. 소스 코드 저장소가 비공개인 경우에도 쉽게 누출될 수 있습니다. 공용으로부터 암호를 유지하는 것 뿐만이 아닙니다. 대규모 프로젝트에서 프로덕션 암호에 액세스할 수 있는 개발자 및 운영자를 제한할 수 있습니다. (테스트 또는 개발 환경에 대한 설정은 서로 다릅니다.)
 
-보다 안전한 옵션은 이러한 비밀을 [Azure Key Vault][KeyVault]에 저장하는 것입니다. 키 자격 증명 모음은 암호화 키 및 기타 암호를 관리하기 위한 클라우드 호스티드 서비스입니다. 이 문서는 키 자격 증명 모음을 사용하여 앱에 대한 구성 설정을 저장하는 방법을 보여 줍니다.
+보다 안전한 옵션은 이러한 비밀을 [Azure Key Vault][KeyVault]에 저장하는 것입니다. 키 자격 증명 모음은 암호화 키 및 기타 암호를 관리하기 위한 클라우드 호스티드 서비스입니다. 이 문서는 키 자격 증명 모음을 사용하여 앱에 대한 구성 설정을 저장하는 방법을 보여줍니다.
 
 [Tailspin Surveys][Surveys] 응용 프로그램에서 다음 설정은 비밀입니다.
 
@@ -31,7 +31,7 @@ ms.lasthandoff: 11/14/2017
 * Redis 연결 문자열.
 * 웹 응용 프로그램에 대한 클라이언트 암호.
 
-Surveys 응용 프로그램은 다음 위치에서 구성 설정을 로드합니다.
+설문 조사 응용 프로그램은 다음 위치에서 구성 설정을 로드합니다.
 
 * appsettings.json 파일
 * [사용자 비밀 저장소][user-secrets](개발 환경에만 해당, 테스트용)
@@ -45,7 +45,7 @@ Surveys 응용 프로그램은 다음 위치에서 구성 설정을 로드합니
 
 시작 시 응용 프로그램은 모든 등록된 구성 공급자에서 설정을 읽고 이를 사용하여 강력한 형식의 옵션 개체를 채웁니다. 자세한 내용은 [옵션 및 구성 개체 사용][options]을 참조하세요.
 
-## <a name="setting-up-key-vault-in-the-surveys-app"></a>Surveys 앱에서 키 자격 증명 모음 설정
+## <a name="setting-up-key-vault-in-the-surveys-app"></a>설문 조사 앱에서 키 자격 증명 모음 설정
 필수 조건:
 
 * [Azure Resource Manager cmdlet][azure-rm-cmdlets]을 설치합니다.
@@ -66,7 +66,7 @@ Surveys 응용 프로그램은 다음 위치에서 구성 설정을 로드합니
 > 
 > 
 
-이 단계에서 Surveys 앱이 등록된 테넌트에서 사용자로 로그인한 상태에서 키 자격 증명 모음을 만들 수 있는지 확인합니다.
+이 단계에서 설문 조사 앱이 등록된 테넌트에서 사용자로 로그인한 상태에서 키 자격 증명 모음을 만들 수 있는지 확인합니다.
 
 Surveys 응용 프로그램이 등록된 Azure AD 테넌트 내에서 관리자 사용자를 만듭니다.
 
@@ -242,7 +242,7 @@ Surveys 응용 프로그램이 등록된 Azure AD 테넌트 내에서 관리자 
 
 [대괄호] 안에 있는 항목을 올바른 값으로 바꿉니다.
 
-* `AzureAd:ClientId`: Surveys 앱의 클라이언트 ID입니다.
+* `AzureAd:ClientId`: 설문 조사 앱의 클라이언트 ID입니다.
 * `AzureAd:ClientSecret`: Azure AD에 Surveys 응용 프로그램을 등록할 때 생성된 키입니다.
 * `AzureAd:WebApiResourceId`: Azure AD에서 Surveys.WebAPI 응용 프로그램을 만들 때 지정한 앱 ID URI입니다.
 * `Asymmetric:CertificateThumbprint`: 클라이언트 인증서를 만들 때 이전에 가져온 인증서 지문입니다.
@@ -278,7 +278,7 @@ Surveys 응용 프로그램이 등록된 Azure AD 테넌트 내에서 관리자 
 [대괄호] 안에 있는 항목의 이름을 바꾸고 secrets.json 파일을 저장합니다.
 
 > [!NOTE]
-> 웹 API의 경우 Surveys 응용 프로그램이 아닌 Surveys.WebAPI 응용 프로그램에 대한 클라이언트 ID를 사용해야 합니다.
+> 웹 API의 경우 설문 조사 응용 프로그램이 아닌 Surveys.WebAPI 응용 프로그램에 대한 클라이언트 ID를 사용해야 합니다.
 > 
 > 
 

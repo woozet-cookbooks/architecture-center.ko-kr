@@ -3,11 +3,11 @@ title: 격벽 패턴
 description: 하나가 고장 나더라도 나머지는 정상적으로 작동하도록 응용 프로그램의 요소를 여러 풀에 격리합니다.
 author: dragon119
 ms.date: 06/23/2017
-ms.openlocfilehash: a2c499d77fafc4bee6b74ee0e0d84e6c23b47851
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 9917870e1dcbed87aaa41e051f1622ad4950456a
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="bulkhead-pattern"></a>격벽 패턴
 

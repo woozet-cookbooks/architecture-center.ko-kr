@@ -3,11 +3,11 @@ title: 데이터 손상 또는 우발적 삭제로부터 복구
 description: 데이터 손상 또는 실수로 인한 데이터 삭제로부터 데이터를 복구하는 방법을 이해하고 재해 복구에 대한 계획 뿐만 아니라 복원력 있고 항상 사용 가능한 내결함성 응용 프로그램을 설계하는 방법에 대한 문서입니다.
 author: MikeWasson
 ms.date: 01/10/2018
-ms.openlocfilehash: 76d2f996750d5a67b67bd5dc4977580f3b8abbc3
-ms.sourcegitcommit: 3d6dba524cc7661740bdbaf43870de7728d60a01
+ms.openlocfilehash: b0716de39fe69d607b9a63e51356d28bbcdbfeae
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/11/2018
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="recover-from-data-corruption-or-accidental-deletion"></a>데이터 손상 또는 우발적 삭제로부터 복구 
 
@@ -23,7 +23,7 @@ Azure Storage는 자동화된 복제본을 통해 데이터 복구 기능을 제
 
 - **블록 Blobs**. 각 블록 Blob의 지정 시간 스냅숏을 만듭니다. 자세한 내용은 [Blob의 스냅숏 만들기](/rest/api/storageservices/creating-a-snapshot-of-a-blob)를 참조하세요. 각 스냅숏의 경우 마지막 스냅숏 상태 이후 Blob 내의 차이점을 저장하는 데 필요한 저장소에 대한 비용이 청구됩니다. 스냅숏은 기반하는 원본 Blob의 존재 여부에 종속되므로 다른 Blob 또는 다른 저장소 계정에 대한 복사 작업을 권장합니다. 이렇게 하면 실수로 삭제되지 않도록 백업 데이터를 적절하게 보호합니다. [AzCopy](/azure/storage/common/storage-use-azcopy) 또는 [Azure PowerShell](/azure/storage/common/storage-powershell-guide-full)을 사용하여 다른 저장소 계정에 파일을 복사할 수 있습니다.
 
-- **파일**. [스냅숏(미리보기) 공유](/azure/storage/files/storage-how-to-use-files-snapshots)를 사용하거나 AzCopy나 PowerShell을 사용해 파일을 다른 저장소 계정에 복사합니다.
+- **파일**. [스냅숏 공유](/azure/storage/files/storage-snapshots-files)를 사용하거나 AzCopy나 PowerShell을 사용해 파일을 다른 저장소 계정에 복사합니다.
 
 - **테이블**. AzCopy를 사용하여 다른 지역에 있는 다른 저장소 계정으로 테이블 데이터를 내보냅니다.
 

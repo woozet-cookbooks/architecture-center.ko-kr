@@ -3,11 +3,11 @@ title: Azure Service Fabric으로 Azure Cloud Services 응용 프로그램 마�
 description: Azure Cloud Services에서 Azure Service Fabric으로 응용 프로그램을 마이그레이션하는 방법입니다.
 author: MikeWasson
 ms.date: 04/27/2017
-ms.openlocfilehash: ce9c138a6b093fb7f0329c619c75bd4f4aacc2e7
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: b9ecbc88ae74da99a0ff3bb8814a9cb3422f79d5
+ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
+ms.lasthandoff: 04/16/2018
 ---
 # <a name="migrate-an-azure-cloud-services-application-to-azure-service-fabric"></a>Azure Service Fabric으로 Azure Cloud Services 응용 프로그램 마이그레이션 
 
@@ -141,9 +141,9 @@ ASP.NET MVC를 사용하는 원래 설문 조사 응용 프로그램. ASP.NET MV
 
 - 웹 역할을 자체적으로 호스팅될 수 있는 ASP.NET Core로 포팅합니다.
 - 웹 사이트를 ASP.NET Web API를 사용하여 구현된 웹 API를 호출하는 SPA(단일 페이지 응용 프로그램)로 변환합니다. 이를 위해서는 웹 프런트 엔드를 완전히 다시 디자인해야 합니다.
-- 기존 ASP.NET MVC 코드를 유지하고 Windows Server 컨테이너의 IIS를 Service Fabric에 배포합니다. 이 방법은 코드가 거의 변경되지 않습니다. 그러나 Service Fabric의 [컨테이너 지원][sf-containers]은 현재 미리 보기 상태입니다.
+- 기존 ASP.NET MVC 코드를 유지하고 Windows Server 컨테이너의 IIS를 Service Fabric에 배포합니다. 이 방법은 코드가 거의 변경되지 않습니다. 
 
-이러한 고려 사항에 따라, 첫 번째 옵션을 선택하여 ASP.NET Core로 포팅했습니다. 이를 위해 [ASP.NET MVC에서 ASP.NET Core MVC로 마이그레이션][aspnet-migration]에 설명된 단계를 수행하였습니다. 
+첫 번째 옵션, ASP.NET Core로 이식을 사용하면 ASP.NET Core에서 최신 기능을 활용할 수 있었습니다. 전환을 수행하기 위해 [ASP.NET MVC에서 ASP.NET Core MVC로 마이그레이션][aspnet-migration]에 설명된 단계를 수행하였습니다. 
 
 > [!NOTE]
 > Kestrel과 함께 ASP.NET Core를 사용하는 경우 보안상의 이유로 인터넷을 통해 트래픽을 처리하도록 Kestrel 앞에 역방향 프록시를 배치해야 합니다. 자세한 내용은 [ASP.NET Core에서 Kestrel 웹 서버 구현][kestrel]을 참조하세요. [응용 프로그램 배포](#deploying-the-application) 섹션에 권장되는 Azure 배포가 설명되어 있습니다.
