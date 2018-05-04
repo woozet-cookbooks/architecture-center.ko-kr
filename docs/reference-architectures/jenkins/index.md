@@ -3,11 +3,11 @@ title: Azure에서 Jenkins 서버 실행
 description: 이 참조 아키텍처는 SSO(Single Sign-On)로 보호된 Azure에서 확장성 있는 엔터프라이즈급 Jenkins 서버를 배포하고 작동하는 방법을 보여 줍니다.
 author: njray
 ms.date: 01/21/18
-ms.openlocfilehash: c07a341bbe4d0304087e4535408967c45d36199e
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 5f9c54e71a8750e88de1ae633ccc1316f8375d3a
+ms.sourcegitcommit: 0de300b6570e9990e5c25efc060946cb9d079954
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 05/03/2018
 ---
 # <a name="run-a-jenkins-server-on-azure"></a>Azure에서 Jenkins 서버 실행
 
@@ -58,7 +58,7 @@ ms.lasthandoff: 04/06/2018
 
 Azure 구독을 위한 [Azure AD][azure-ad] 테넌트가 Jenkins 사용자를 위해 SSO를 사용하도록 설정하고, Jenkins 작업이 Azure 리소스에 액세스할 수 있도록 [서비스 주체][service-principal]를 설정하는 데 사용됩니다.
 
-SSO 인증 및 권한 부여는 Jenkins 서버에 설치된 Azure AD 플러그 인에서 구현됩니다. SSO를 사용하면 Jenkins 서버에 로그온할 때 Azure AD에서 조직 자격 증명을 사용하여 인증할 수 있습니다. Azure AD 플러그 인을 구성할 때 Jenkin 서버에 대한 권한이 있는 사용자의 수준을 지정할 수 있습니다.
+SSO 인증 및 권한 부여는 Jenkins 서버에 설치된 Azure AD 플러그 인에서 구현됩니다. SSO를 사용하면 Jenkins 서버에 로그온할 때 Azure AD에서 조직 자격 증명을 사용하여 인증할 수 있습니다. Azure AD 플러그 인을 구성할 때 Jenkins 서버에 대한 권한이 있는 사용자의 수준을 지정할 수 있습니다.
 
 Azure 리소스에 대한 액세스 권한과 함께 Jenkins 작업을 제공하기 위해 Azure AD 관리자는 서비스 주체를 작성합니다. 이러한 권한 부여 응용 프로그램(이 경우 Jenkins 작업)은 Azure 리소스에 대해 [인증되고 권한 부여된 액세스][ad-sp]를 포함합니다.
 
@@ -74,7 +74,7 @@ Azure에서 Jenkins를 위한 솔루션 템플릿은 여러 Azure 플러그 인�
 
 -   [Azure AD 플러그 인][configure-azure-ad]을 통해 Jenkins 서버가 Azure AD에 따라 사용자에 대한 SSO를 지원하도록 할 수 있습니다.
 
--   [Azure VM 에이전트][configure-agent] 플러그 인은 ARM(Azure Resource Manager) 템플릿을 사용하여 Azure 가상 머신에 Jenkins 에이전트를 만듭니다.
+-   [Azure VM 에이전트][configure-agent] 플러그 인은 Azure Resource Manager 템플릿을 사용하여 Azure 가상 머신에 Jenkins 에이전트를 만듭니다.
 
 -   [Azure 자격 증명][configure-credential] 플러그 인을 사용하여 Jenkins에 Azure 서비스 주체를 저장할 수 있습니다.
 
@@ -113,13 +113,13 @@ VM 크기를 변경하여 Jenkins 서버 VM의 규모를 확장 또는 축소할
 
 ## <a name="availability-considerations"></a>가용성 고려 사항
 
-워크플로의 가용성 요구 사항과 Jenkin 서버가 다운되는 경우 Jenkin 상태를 복구하는 방법을 평가합니다. 가용성 요구 사항을 평가하려면 두 가지 공통 메트릭을 고려합니다.
+Jenkins 서버의 컨텍스트에서 가용성이란 테스트 결과, 만든 라이브러리, 기타 아티팩트 등의 워크플로와 연결된 모든 상태 정보를 복원할 수 있다는 뜻입니다. Jenkins 서버가 중단되었을 때 워크플로를 복구할 수 있도록 중요한 워크플로 상태 또는 아티팩트를 유지해야 합니다. 가용성 요구 사항을 평가하려면 두 가지 공통 메트릭을 고려합니다.
 
 -   RTO(복구 시간 목표)는 Jenkins 없이 얼마나 오래 갈 수 있는지 지정합니다.
 
 -   RPO(복구 지점 목표)는 서비스 중단으로 인해 Jenkins에 영향을 줄 경우 잃을 수 있는 데이터 양을 나타냅니다.
 
-실제로 RTO와 RPO는 중복성과 백업을 의미합니다. 가용성은 Azure의 일부인 하드웨어 복구의 문제가 아니라 Jenkins 서버의 상태를 유지하는 것을 보장합니다. 이 참조 아키텍처는 단일 가상 머신에 대해 99.9%의 작동 시간을 보장하는 [Azure Service Level Agreement(서비스 수준 약정)][sla]를 사용합니다. 이 SLA가 가동 시간 요구 사항을 충족시키지 못하는 경우 재해 복구 계획을 수립했는지 확인하거나 [다중 마스터 Jenkins 서버][multi-master] 배포(이 문서에서는 다루지 않음)를 사용하는 것을 고려하세요.
+실제로 RTO와 RPO는 중복성과 백업을 의미합니다. 가용성은 Azure의 일부인 하드웨어 복구의 문제가 아니라 Jenkins 서버의 상태를 유지하는 것을 보장합니다. Microsoft에서는 단일 VM 인스턴스를 위한 [SLA(서비스 수준 계약)][sla]를 제공합니다. 이 SLA가 가동 시간 요구 사항을 충족시키지 못하는 경우 재해 복구 계획을 수립했는지 확인하거나 [다중 마스터 Jenkins 서버][multi-master] 배포(이 문서에서는 다루지 않음)를 사용하는 것을 고려하세요.
 
 배포 7단계에서 재해 복구 [스크립트][disaster]를 사용하여 Jenkins 서버 상태를 저장할 관리 디스크가 있는 Azure Storage 계정을 만드는 것이 좋습니다. Jenkins가 다운되면 이 별도의 저장소 계정에 저장된 상태로 복원할 수 있습니다.
 
@@ -127,7 +127,7 @@ VM 크기를 변경하여 Jenkins 서버 VM의 규모를 확장 또는 축소할
 
 다음과 같은 방법을 사용하여 기본 Jenkins 서버의 보안을 잠글 수 있습니다. 기본 상태에서는 안전하지 않기 때문입니다.
 
--   Jenkin 서버에 보안 로그온하는 방법을 설정합니다. HTTP는 기본적으로 안전하지 않으며 이 아키텍처에서는 HTTP를 사용하고 공용 IP를 보유합니다. 보안 로그온에 사용되는 [Nginx 서버에 HTTPS][nginx]를 설정하는 것이 좋습니다.
+-   Jenkins 서버에 로그인하는 안전한 방법을 설정합니다. 이 아키텍처에서 HTTP를 사용하고 공용 IP를 보유하고 있지만, HTTP는 기본적으로 안전하지 않습니다. 보안 로그온에 사용되는 [Nginx 서버에 HTTPS][nginx]를 설정하는 것이 좋습니다.
 
     > [!NOTE]
     > 서버에 SSL을 추가할 경우 Jenkins 서브넷에 대해 NSG 규칙을 만들어 포트 443을 엽니다. 자세한 내용은 [Azure Portal을 사용하여 가상 머신에 대한 포털을 여는 방법][port443]을 참조하세요.
@@ -185,7 +185,7 @@ Jenkins 커뮤니티의 더 많은 모범 사례는 [Jenkins 모범 사례][jenk
 
 이 단계는 Jenkins 관리자에 의해 실행되며, 이때 Jenkins 관리자는 구독의 Azure AD 디렉터리에 사용자 계정을 포함하고 참가자 역할이 할당되어 있어야 합니다.
 
-Jenkin 서버의 Jenkins 업데이트 센터에서 [Azure AD 플러그 인][configure-azure-ad]을 사용하고 지침에 따라 SSO를 설정합니다.
+Jenkins 서버의 Jenkins 업데이트 센터에서 [Azure AD 플러그 인][configure-azure-ad]을 사용하고 지침에 따라 SSO를 설정합니다.
 
 ### <a name="step-3-provision-jenkins-server-with-azure-vm-agent-plugin"></a>3단계: Azure VM 에이전트 플러그 인이 있는 Jenkins 서버 프로비전
 
