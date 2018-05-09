@@ -5,11 +5,11 @@ author: zoinerTejada
 ms:date: 02/12/2018
 layout: LandingPage
 ms.topic: landing-page
-ms.openlocfilehash: 9ffbe74bc55f4731369e938848cc5bbf9f7775f4
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 0975d056aa971c627ca91c9fc05c4e16e07b6fc0
+ms.sourcegitcommit: d08f6ee27e1e8a623aeee32d298e616bc9bb87ff
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 05/07/2018
 ---
 # <a name="azure-data-architecture-guide"></a>Azure Data Architecture 가이드
 
@@ -27,7 +27,7 @@ ms.lasthandoff: 04/06/2018
 
 ![](./images/guide-rdbms.svg)
 
-**[빅 데이터 솔루션](./big-data/index.md)**. 빅 데이터 아키텍처는 기존의 데이터베이스 시스템에 비해 너무 크거나 복잡한 데이터의 수집, 처리 및 분석을 수행하도록 디자인되었습니다. 데이터는 일괄 처리 또는 실시간으로 처리할 수 있습니다. 빅 데이터 솔루션에는 일반적으로 키 값 데이터, JSON 문서 또는 시계열 데이터와 같은 비관계형 데이터가 많이 포함됩니다. 종종 기존의 RDBMS 시스템은 이러한 데이터 유형을 저장하는 데 적합하지 않습니다. *NoSQL*이란 용어는 비관계형 데이터를 포함하도록 디자인된 데이터베이스 제품군을 나타냅니다. (많은 비관계형 데이터 저장소가 SQL 호환 쿼리를 지원하기 때문에 이 용어가 완전히 정확하다고 할 수는 없습니다.)
+**[빅 데이터 솔루션](./big-data/index.md)**. 빅 데이터 아키텍처는 기존의 데이터베이스 시스템에 비해 너무 크거나 복잡한 데이터의 수집, 처리 및 분석을 수행하도록 디자인되었습니다. 데이터는 일괄 처리하거나 실시간으로 처리할 수 있습니다. 빅 데이터 솔루션에는 일반적으로 키 값 데이터, JSON 문서 또는 시계열 데이터와 같은 비관계형 데이터가 많이 포함됩니다. 종종 기존의 RDBMS 시스템은 이러한 데이터 유형을 저장하는 데 적합하지 않습니다. *NoSQL*이란 용어는 비관계형 데이터를 포함하도록 디자인된 데이터베이스 제품군을 나타냅니다. (많은 비관계형 데이터 저장소가 SQL 호환 쿼리를 지원하기 때문에 이 용어가 완전히 정확하다고 할 수는 없습니다.)
 
 ![](./images/guide-big-data.svg)
 
