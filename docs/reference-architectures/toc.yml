@@ -44,6 +44,19 @@
           href: identity/adds-forest.md
         - name: AD FS를 Azure로 확장
           href: identity/adfs.md
+    - name: N 계층 응용 프로그램
+      href: n-tier/index.md
+      items:
+        - name: SQL Server를 통한 N 계층 응용 프로그램
+          href: n-tier/n-tier-sql-server.md
+        - name: 다중 지역 N 계층 응용 프로그램
+          href: n-tier/multi-region-sql-server.md
+        - name: Cassandra를 통한 N 계층 응용 프로그램
+          href: n-tier/n-tier-cassandra.md
+        - name: Linux VM 배포
+          href: n-tier/linux-vm.md
+        - name: Windows VM 배포
+          href: n-tier/windows-vm.md
     - name: 네트워크 DMZ
       href: dmz/index.md
       items:
@@ -53,28 +66,6 @@
           href: dmz/secure-vnet-dmz.md
         - name: 고가용성 네트워크 가상 어플라이언스
           href: dmz/nva-ha.md
-    - name: VM 워크로드(Linux)
-      href: virtual-machines-linux/index.md
-      items:
-        - name: 단일 VM
-          href: virtual-machines-linux/single-vm.md
-        - name: 부하 분산된 VM
-          href: virtual-machines-linux/multi-vm.md
-        - name: N 계층 응용 프로그램
-          href: virtual-machines-linux/n-tier.md
-        - name: 다중 지역 응용 프로그램
-          href: virtual-machines-linux/multi-region-application.md
-    - name: VM 워크로드(Windows)
-      href: virtual-machines-windows/index.md
-      items:
-        - name: 단일 VM
-          href: virtual-machines-windows/single-vm.md
-        - name: 부하 분산된 VM
-          href: virtual-machines-windows/multi-vm.md
-        - name: N 계층 응용 프로그램
-          href: virtual-machines-windows/n-tier.md
-        - name: 다중 지역 응용 프로그램
-          href: virtual-machines-windows/multi-region-application.md
     - name: Jenkins 서버
       href: jenkins/index.md
     - name: SAP NetWeaver 및 SAP HANA

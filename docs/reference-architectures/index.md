@@ -3,11 +3,11 @@ title: Azure 참조 아키텍처
 description: Azure의 일반 워크로드에 대한 참조 아키텍처, 청사진 및 규범적 구현 지침입니다.
 layout: LandingPage
 ms.topic: landing-page
-ms.openlocfilehash: 9708c975e543a04cafe22f38194e833be44d7b81
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 4c0006404ed0c0f603e9599cd9c04e6d02fdbfeb
+ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 05/06/2018
 ---
 <!-- This file is generated! -->
 <!-- See the templates in ./build/reference-architectures  -->
@@ -19,47 +19,30 @@ Azure 참조 아키텍처는 시나리오별로 정리되며, 관련 아키텍�
 
 <section class="series">
     <ul class="panelContent">
-    <!-- Windows VM workloads -->
+
+<!-- N-tier -->
 <li style="display: flex; flex-direction: column;">
-    <a href="./virtual-machines-windows/index.md" style="display: flex; flex-direction: column; flex: 1 0 auto;">
+    <a href="./n-tier/index.md" style="display: flex; flex-direction: column; flex: 1 0 auto;">
         <div class="cardSize" style="flex: 1 0 auto; display: flex;">
             <div class="cardPadding" style="display: flex;">
                 <div class="card">
                     <div class="cardImageOuter">
                         <div class="cardImage">
-                            <img src="./virtual-machines-windows/images/n-tier.svg" height="140px" />
+                            <img src="./n-tier/images/n-tier-sql-server.svg" />
                         </div>
                     </div>
                     <div class="cardText">
-                        <h3>Windows VM 워크로드</h3>
-                        <p>이 시리즈에서는 단일 Windows VM을 실행하는 모범 사례를 먼저 살펴본 후 다중 부하 분산 VM, 그리고 마지막으로 다중 지역 N 계층 응용 프로그램을 살펴봅니다.</p>
+                        <h3>N 계층 응용 프로그램</h3>
+                        <p>Azure에 Windows 또는 Linux용 N 계층 응용 프로그램을 배포합니다.</p>
+                        <p>SQL Server 및 Apache Cassandra에 대한 구성이 표시됩니다. 고가용성을 위해 두 지역에 활성-수동 구성을 배포합니다.</p>
                     </div>
                 </div>
             </div>
         </div>
     </a>
 </li>
-    <!-- Linux VM workloads -->
-<li style="display: flex; flex-direction: column;">
-    <a href="./virtual-machines-linux/index.md" style="display: flex; flex-direction: column; flex: 1 0 auto;">
-        <div class="cardSize" style="flex: 1 0 auto; display: flex;">
-            <div class="cardPadding" style="display: flex;">
-                <div class="card">
-                    <div class="cardImageOuter">
-                        <div class="cardImage">
-                            <img src="./virtual-machines-linux/images/n-tier.svg" height="140px" />
-                        </div>
-                    </div>
-                    <div class="cardText">
-                        <h3>Linux VM 워크로드</h3>
-                        <p>이 시리즈에서는 단일 Linux VM을 실행하는 모범 사례를 먼저 살펴본 후 다중 부하 분산 VM, 그리고 마지막으로 다중 지역 N 계층 응용 프로그램을 살펴봅니다.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </a>
-</li>
-    <!-- Hybrid network -->
+
+<!-- Hybrid network -->
 <li style="display: flex; flex-direction: column;">
     <a href="./hybrid-networking/index.md" style="display: flex; flex-direction: column; flex: 1 0 auto;">
         <div class="cardSize" style="flex: 1 0 auto; display: flex;">
@@ -73,6 +56,7 @@ Azure 참조 아키텍처는 시나리오별로 정리되며, 관련 아키텍�
                     <div class="cardText">
                         <h3>하이브리드 네트워크</h3>
                         <p>이 시리즈에서는 온-프레미스 네트워크와 Azure 사이에 네트워크 연결을 만드는 옵션을 보여 줍니다.</p>
+                        <p>구성에는 개인 전용 연결을 위한 사이트 간 VPN 또는 Azure ExpressRoute가 포함됩니다.</p>
                     </div>
                 </div>
             </div>
