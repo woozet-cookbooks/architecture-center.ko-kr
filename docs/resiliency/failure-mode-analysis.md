@@ -5,11 +5,11 @@ author: MikeWasson
 ms.date: 03/24/2017
 ms.custom: resiliency
 pnp.series.title: Design for Resiliency
-ms.openlocfilehash: 8786c411249267e502003a90d5f2ff5e4c786803
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 95068bf8b1f5b559255e27819aaddb454d3427bc
+ms.sourcegitcommit: d08f6ee27e1e8a623aeee32d298e616bc9bb87ff
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 05/07/2018
 ---
 # <a name="failure-mode-analysis"></a>실패 모드 분석
 [!INCLUDE [header](../_includes/header.md)]
@@ -466,7 +466,7 @@ FMA 프로세스에 대한 자세한 내용은 [클라우드 서비스 디자인
 [QuotaExceededException]: https://msdn.microsoft.com/library/azure/microsoft.servicebus.messaging.quotaexceededexception.aspx
 [ra-web-apps-basic]: ../reference-architectures/app-service-web-app/basic-web-app.md
 [redis-monitor]: /azure/redis-cache/cache-how-to-monitor/
-[redis-retry]: ../best-practices/retry-service-specific.md#azure-redis-cache-retry-guidelines
+[redis-retry]: ../best-practices/retry-service-specific.md#azure-redis-cache
 [resilience-by-design-pdf]: http://download.microsoft.com/download/D/8/C/D8C599A4-4E8A-49BF-80EE-FE35F49B914D/Resilience_by_Design_for_Cloud_Services_White_Paper.pdf
 [RoleEntryPoint.OnStop]: https://msdn.microsoft.com/library/azure/microsoft.windowsazure.serviceruntime.roleentrypoint.onstop.aspx
 [RoleEnvironment.Stopping]: https://msdn.microsoft.com/library/azure/microsoft.windowsazure.serviceruntime.roleenvironment.stopping.aspx
@@ -478,7 +478,7 @@ FMA 프로세스에 대한 자세한 내용은 [클라우드 서비스 디자인
 [sb-outages]: /azure/service-bus-messaging/service-bus-outages-disasters/#protecting-queues-and-topics-against-datacenter-outages-or-disasters
 [sb-partition]: /azure/service-bus-messaging/service-bus-partitioning/
 [sb-poison-message]: /azure/app-service-web/websites-dotnet-webjobs-sdk-storage-queues-how-to/#poison
-[sb-retry]: ../best-practices/retry-service-specific.md#service-bus-retry-guidelines
+[sb-retry]: ../best-practices/retry-service-specific.md#service-bus
 [search-sdk]: https://msdn.microsoft.com/library/dn951165.aspx
 [scheduler-agent-supervisor]: https://msdn.microsoft.com/library/dn589780.aspx
 [search-analytics]: /azure/search/search-traffic-analytics/
