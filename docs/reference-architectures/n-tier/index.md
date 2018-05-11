@@ -3,10 +3,10 @@ title: N 계층 응용 프로그램 참조 아키텍처
 description: Azure에 엔터프라이즈 규모 응용 프로그램을 호스트하는 VM을 배포하기 위한 몇 가지 일반적인 아키텍처를 설명합니다.
 layout: LandingPage
 ms.openlocfilehash: 288acc36e7c310e70240caa3ed9f2095bbb8bc58
-ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
+ms.sourcegitcommit: d08f6ee27e1e8a623aeee32d298e616bc9bb87ff
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/06/2018
+ms.lasthandoff: 05/10/2018
 ---
 <!-- This file is generated! -->
 <!-- See the templates in ./build/reference-architectures  -->
