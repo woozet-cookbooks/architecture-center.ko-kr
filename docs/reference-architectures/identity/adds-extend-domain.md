@@ -2,15 +2,15 @@
 title: AD DS(Active Directory Domain Services)를 Azure로 확장
 description: 온-프레미스 Active Directory 도메인을 Azure로 확장
 author: telmosampaio
-ms.date: 04/13/2018
+ms.date: 05/02/2018
 pnp.series.title: Identity management
 pnp.series.prev: azure-ad
 pnp.series.next: adds-forest
-ms.openlocfilehash: bcd1e2b1b925a5d64665c5651c24589a77e39ec9
-ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
+ms.openlocfilehash: 763fffd321a1b50a562ef462dab59aafae717908
+ms.sourcegitcommit: 0de300b6570e9990e5c25efc060946cb9d079954
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/16/2018
+ms.lasthandoff: 05/03/2018
 ---
 # <a name="extend-active-directory-domain-services-ad-ds-to-azure"></a>AD DS(Active Directory Domain Services)를 Azure로 확장
 
@@ -104,7 +104,7 @@ AD DS 데이터베이스를 호스팅하는 디스크를 BitLocker 또는 Azure 
 
 ### <a name="prerequisites"></a>필수 조건
 
-1. [참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
+1. [참조 아키텍처][github] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
 
 2. [Azure CLI 2.0][azure-cli-2]을 설치합니다.
 
@@ -118,34 +118,11 @@ AD DS 데이터베이스를 호스팅하는 디스크를 BitLocker 또는 Azure 
 
 ### <a name="deploy-the-simulated-on-premises-datacenter"></a>시뮬레이션된 온-프레미스 데이터 센터 배포
 
-1. 참조 아키텍처 리포지토리의 `identity/adds-extend-domain` 폴더로 이동합니다.
+1. GitHub 리포지토리의 `identity/adds-extend-domain` 폴더로 이동합니다.
 
-2. `onprem.json` 파일을 엽니다. `adminPassword`를 검색하고 암호에 대한 값을 추가합니다. 파일에 세 개의 인스턴스가 있습니다.
+2. `onprem.json` 파일을 엽니다. `adminPassword` 및 `Password` 인스턴스를 검색하고 암호 값을 추가합니다.
 
-    ```bash
-    "adminUsername": "testuser",
-    "adminPassword": "<password>",
-    ```
-
-3. 동일한 파일에서 `protectedSettings`를 검색하고 암호에 대한 값을 추가합니다. 각 AD 서버에 대한 `protectedSettings`의 두 개의 인스턴스가 있습니다.
-
-    ```bash
-    "protectedSettings": {
-      "configurationArguments": {
-        ...
-        "AdminCreds": {
-          "UserName": "testadminuser",
-          "Password": "<password>"
-        },
-        "SafeModeAdminCreds": {
-          "UserName": "testsafeadminuser",
-          "Password": "<password>"
-        }
-      }
-    }
-    ```
-
-4. 다음 명령을 실행하고 배포가 끝나기를 기다립니다.
+3. 다음 명령을 실행하고 배포가 끝나기를 기다립니다.
 
     ```bash
     azbb -s <subscription_id> -g <resource group> -l <location> -p onprem.json --deploy
@@ -153,38 +130,15 @@ AD DS 데이터베이스를 호스팅하는 디스크를 BitLocker 또는 Azure 
 
 ### <a name="deploy-the-azure-vnet"></a>Azure VNet에 배포
 
-1. `azure.json` 파일을 엽니다.  `adminPassword`를 검색하고 암호에 대한 값을 추가합니다. 파일에 세 개의 인스턴스가 있습니다.
+1. `azure.json` 파일을 엽니다.  `adminPassword` 및 `Password` 인스턴스를 검색하고 암호 값을 추가합니다. 
 
-    ```bash
-    "adminUsername": "testuser",
-    "adminPassword": "<password>",
-    ```
-
-2. 동일한 파일에서 `protectedSettings`를 검색하고 암호에 대한 값을 추가합니다. 각 AD 서버에 대한 `protectedSettings`의 두 개의 인스턴스가 있습니다.
-
-    ```bash
-    "protectedSettings": {
-      "configurationArguments": {
-        ...
-        "AdminCreds": {
-          "UserName": "testadminuser",
-          "Password": "<password>"
-        },
-        "SafeModeAdminCreds": {
-          "UserName": "testsafeadminuser",
-          "Password": "<password>"
-        }
-      }
-    }
-    ```
-
-3. `sharedKey`의 경우 VPN 연결에 대한 공유 키를 입력합니다. 매개 변수 파일에 `sharedKey`의 두 개의 인스턴스가 있습니다.
+2. 동일한 파일에서 `sharedKey` 인스턴스를 검색하고 VPN 연결에 대한 공유 키를 입력합니다. 
 
     ```bash
     "sharedKey": "",
     ```
 
-4. 다음 명령을 실행하고 배포가 끝나기를 기다립니다.
+3. 다음 명령을 실행하고 배포가 끝나기를 기다립니다.
 
     ```bash
     azbb -s <subscription_id> -g <resource group> -l <location> -p onoprem.json --deploy
@@ -194,17 +148,19 @@ AD DS 데이터베이스를 호스팅하는 디스크를 BitLocker 또는 Azure 
 
 ### <a name="test-connectivity-with-the-azure-vnet"></a>Azure VNet을 사용하여 연결 테스트
 
-배포가 완료된 후 시뮬레이션된 온-프레미스 환경에서 Azure VNet으로 연결을 테스트할 수 있습니다.
+배포가 완료되면 시뮬레이션된 온-프레미스 환경에서 Azure VNet으로의 연결을 테스트할 수 있습니다.
 
-1. Azure Portal을 사용하여 `ra-onpremise-mgmt-vm1`이라는 VM을 찾습니다.
+1. Azure Portal을 사용하여 만든 리소스 그룹으로 이동합니다.
 
-2. `Connect`를 클릭하여 VM에 대한 원격 데스크톱 세션을 엽니다. 사용자 이름은 `contoso\testuser`이고, 암호는 `onprem.json` 매개 변수 파일에서 지정한 것입니다.
+2. `ra-onpremise-mgmt-vm1`이라는 VM을 찾습니다.
 
-3. 원격 데스크톱 세션 내에서 `adds-vm1`이라는 VM의 IP 주소인 10.0.4.4에 대한 다른 원격 데스크톱 세션을 엽니다. 사용자 이름은 `contoso\testuser`이고, 암호는 `azure.json` 매개 변수 파일에서 지정한 것입니다.
+3. `Connect`를 클릭하여 VM에 대한 원격 데스크톱 세션을 엽니다. 사용자 이름은 `contoso\testuser`이고, 암호는 `onprem.json` 매개 변수 파일에서 지정한 것입니다.
 
-4. `adds-vm1`에 대한 원격 데스크톱 세션 내에서 **서버 관리자**로 이동하고 **관리할 다른 서버 추가**를 클릭합니다. 
+4. 원격 데스크톱 세션 내에서 `adds-vm1`이라는 VM의 IP 주소인 10.0.4.4에 대한 다른 원격 데스크톱 세션을 엽니다. 사용자 이름은 `contoso\testuser`이고, 암호는 `azure.json` 매개 변수 파일에서 지정한 것입니다.
 
-5. **Active Directory** 탭에서 **지금 찾기**를 클릭합니다. AD, AD DS 및 웹 VM의 목록이 표시됩니다.
+5. `adds-vm1`에 대한 원격 데스크톱 세션 내에서 **서버 관리자**로 이동하고 **관리할 다른 서버 추가**를 클릭합니다. 
+
+6. **Active Directory** 탭에서 **지금 찾기**를 클릭합니다. AD, AD DS 및 웹 VM의 목록이 표시됩니다.
 
    ![](./images/add-servers-dialog.png)
 

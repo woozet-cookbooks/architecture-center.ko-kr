@@ -5,16 +5,16 @@ description: >-
 
   지침, vpn-게이트웨이, expressroute, 부하 분산 장치, 가상 네트워크, active-directory
 author: telmosampaio
-ms.date: 11/28/2016
+ms.date: 05/02/2018
 pnp.series.title: Identity management
 pnp.series.prev: adds-extend-domain
 pnp.series.next: adfs
 cardTitle: Create an AD DS forest in Azure
-ms.openlocfilehash: e32a6420821e70c84e77d2c39614f0c45efbb7e2
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 047ecea41ba30ce4cccf17b8c4964a37ae60150f
+ms.sourcegitcommit: 0de300b6570e9990e5c25efc060946cb9d079954
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 05/03/2018
 ---
 # <a name="create-an-active-directory-domain-services-ad-ds-resource-forest-in-azure"></a>Azure에서 AAD DS(Active Directory Domain Services) 리소스 포리스트 만들기
 
@@ -30,7 +30,7 @@ AD DS(Active Directory Domain Services)는 ID 정보를 계층 구조에 저장�
 
 추가 고려 사항은 [온-프레미스 Active Directory를 Azure와 통합하기 위한 솔루션 선택][considerations]을 참조하세요. 
 
-## <a name="architecture"></a>건축
+## <a name="architecture"></a>아키텍처
 
 이 아키텍처의 구성 요소는 다음과 같습니다.
 
@@ -90,51 +90,71 @@ Active Directory 관련 보안 고려사항을 확인하려면 [Active Directory
 
 ## <a name="deploy-the-solution"></a>솔루션 배포
 
-[GitHub][github]에서 이 참조 아키텍처를 배포할 수 있는 솔루션을 사용할 수 있습니다. 솔루션을 배포하는 PowerShell 스크립트를 실행하려면 최신 버전의 Azure CLI가 필요합니다. 이 참조 아키텍처를 배포하려면 아래의 단계를 수행하세요.
+이 아키텍처에 대한 배포는 [GitHub][github]에서 사용할 수 있습니다. 전체 배포는 최대 2시간이 걸릴 수 있으며 VPN 게이트웨이 만들기 및 AD DS를 구성하는 스크립트 실행을 포함합니다.
 
-1. [GitHub][github]의 해당 솔루션 폴더를 로컬 컴퓨터로 다운로드하거나 복제합니다.
+### <a name="prerequisites"></a>필수 조건
 
-2. Azure CLI를 열고 로컬 솔루션 폴더로 이동합니다.
+1. [참조 아키텍처][github] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
 
-3. 다음 명령 실행:
-   
-    ```Powershell
-    .\Deploy-ReferenceArchitecture.ps1 <subscription id> <location> <mode>
+2. [Azure CLI 2.0][azure-cli-2]을 설치합니다.
+
+3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
+
+4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 아래 명령을 사용하여 Azure 계정에 로그인합니다.
+
+   ```bash
+   az login
+   ```
+
+### <a name="deploy-the-simulated-on-premises-datacenter"></a>시뮬레이션된 온-프레미스 데이터 센터 배포
+
+1. GitHub 리포지토리의 `identity/adds-forest` 폴더로 이동합니다.
+
+2. `onprem.json` 파일을 엽니다. `adminPassword` 및 `Password` 인스턴스를 검색하고 암호 값을 추가합니다.
+
+3. 다음 명령을 실행하고 배포가 끝나기를 기다립니다.
+
+    ```bash
+    azbb -s <subscription_id> -g <resource group> -l <location> -p onprem.json --deploy
     ```
-   
-    `<subscription id>` 를 Azure 구독 ID로 바꿉니다.
-   
-    `<location>`에서 Azure 지역(예: `eastus` 또는 `westus`)을 지정합니다.
-   
-    `<mode>` 매개 변수는 배포의 세분성을 제어합니다. 매개 변수는 다음 값 중 하나일 수 있습니다.
-   
-   * `Onpremise`: 시뮬레이션된 온-프레미스 환경을 배포합니다.
-   * `Infrastructure`: Azure에 VNet 인프라 및 jumpbox를 배포합니다.
-   * `CreateVpn`: Azure 가상 네트워크 게이트웨이를 배포하고 시뮬레이트된 온-프레미스 네트워크에 연결합니다.
-   * `AzureADDS`: Active Directory DS 서버 역할을 하는 VM을 배포하고, 이러한 VM에 Active Directory를 배포하고, Azure에서 도메인을 만듭니다.
-   * `WebTier`: 웹 계층 VM 및 부하 분산 장치를 배포합니다.
-   * `Prepare`: 모든 이전 배포를 배포합니다. **기존의 온-프레미스 네트워크가 없지만 테스트나 평가를 위해 위의 완전한 참조 아키텍처를 배포하려는 경우를 위한 추천 옵션입니다.** 
-   * `Workload`: 비즈니스 및 데이터 계층 VM과 부하 분산 장치를 배포합니다. 이 VM은 `Prepare` 배포에는 포함되지 않습니다.
 
-4. 배포가 완료될 때가지 기다립니다. `Prepare` 배포를 배포하는 데는 몇 시간 정도 걸립니다.
-     
-5. 5.시뮬레이션된 온-프레미스 구성을 사용하는 경우에는 수신 트러스트 관계를 설정합니다.
-   
-   1. 점프 박스(<em>ra-adtrust-security-rg</em> 리소스 그룹의 <em>ra-adtrust-mgmt-vm1</em>)에 연결합니다. <em>AweS0me@PW</em> 암호를 사용해 <em>testuser</em>로 로그인합니다.
-   2. 점프 박스에서 <em>contoso.com</em> 도메인(온-프레미스 도메인) 내 첫 번째 VM에서 RDP 세션을 엽니다. 이 VM의 IP 주소는 192.168.0.4입니다. 사용자 이름은 <em>contoso\testuser</em>이고 암호는 <em>AweS0me@PW</em>입니다.
-   3. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 수신 트러스트를 생성합니다.
+### <a name="deploy-the-azure-vnet"></a>Azure VNet에 배포
 
-6. 자신의 온-프레미스 인프라를 사용한다면
-   
-   1. [incoming-trust.ps1][incoming-trust] 스크립트를 다운로드합니다.
-   2. 스크립트를 수정하고 변수 `$TrustedDomainName`의 값을 귀하의 도메인 이름으로 대체합니다.
-   3. 스크립트를 실행합니다.
+1. `azure.json` 파일을 엽니다. `adminPassword` 및 `Password` 인스턴스를 검색하고 암호 값을 추가합니다.
 
-7. 점프 박스로부터 <em>treyresearch.com</em> 도메인(클라우드 도메인)의 첫 번째 VM에 연결합니다. 이 VM의 IP 주소는 10.0.4.4입니다. 사용자 이름은 <em>treyresearch\testuser</em>이고 암호는 <em>AweS0me@PW</em>입니다.
+2. 동일한 파일에서 `sharedKey` 인스턴스를 검색하고 VPN 연결에 대한 공유 키를 입력합니다. 
 
-8. [incoming-trust.ps1][outgoing-trust] 스크립트를 다운로드 및 실행하여 *treyresearch.com* 도메인으로부터 송신 트러스트를 생성합니다. 자신의 온-프레미스 컴퓨터를 사용한다면, 우선 이 스크립트를 수정합니다. 변수 `$TrustedDomainName`을 귀하의 온-프레미스 도메인 이름으로 설정하고, 변수 `$TrustedDomainDnsIpAddresses`에 이 도메인에 대한 Active Directory DS 서버의 IP 주소를 입력합니다.
+    ```bash
+    "sharedKey": "",
+    ```
 
-9. 4.이전 단계가 완료될 때까지 몇 분간 기다린 다음 온-프레미스 VM에 접속하여 [트러스트 확인][verify-a-trust] 문서에 설명된 절차를 수행하여 *contoso.com*과 *treyresearch.com* 도메인 간 트러스트 관계가 정확히 설정되었는지 확인합니다.
+3. 다음 명령을 실행하고 배포가 끝나기를 기다립니다.
+
+    ```bash
+    azbb -s <subscription_id> -g <resource group> -l <location> -p onoprem.json --deploy
+    ```
+
+   온-프레미스 VNet과 동일한 리소스 그룹에 배포합니다.
+
+
+### <a name="test-the-ad-trust-relation"></a>AD 신뢰 관계 테스트
+
+1. Azure Portal을 사용하여 만든 리소스 그룹으로 이동합니다.
+
+2. Azure Portal을 사용하여 `ra-adt-mgmt-vm1`이라는 VM을 찾습니다.
+
+2. `Connect`를 클릭하여 VM에 대한 원격 데스크톱 세션을 엽니다. 사용자 이름은 `contoso\testuser`이고, 암호는 `onprem.json` 매개 변수 파일에서 지정한 것입니다.
+
+3. 원격 데스크톱 세션 내에서 `ra-adtrust-onpremise-ad-vm1`이라는 VM의 IP 주소인 192.168.0.4에 대한 다른 원격 데스크톱 세션을 엽니다. 사용자 이름은 `contoso\testuser`이고, 암호는 `azure.json` 매개 변수 파일에서 지정한 것입니다.
+
+4. `ra-adtrust-onpremise-ad-vm1`에 대한 원격 데스크톱 세션 내에서 **서버 관리자**로 이동하고, **도구** > **Active Directory 도메인 및 신뢰**를 클릭합니다. 
+
+5. 왼쪽 창에서 contoso.com을 마우스 오른쪽 단추로 클릭하고, **속성**을 선택합니다.
+
+6. **신뢰** 탭을 클릭합니다. 들어오는 신뢰로 나열된 treyresearch.net이 표시됩니다.
+
+![](./images/ad-forest-trust.png)
+
 
 ## <a name="next-steps"></a>다음 단계
 
@@ -144,6 +164,8 @@ Active Directory 관련 보안 고려사항을 확인하려면 [Active Directory
 <!-- links -->
 [adds-extend-domain]: adds-extend-domain.md
 [adfs]: adfs.md
+[azure-cli-2]: /azure/install-azure-cli
+[azbb]: https://github.com/mspnp/template-building-blocks/wiki/Install-Azure-Building-Blocks
 
 [implementing-a-secure-hybrid-network-architecture]: ../dmz/secure-vnet-hybrid.md
 [implementing-a-secure-hybrid-network-architecture-with-internet-access]: ../dmz/secure-vnet-dmz.md

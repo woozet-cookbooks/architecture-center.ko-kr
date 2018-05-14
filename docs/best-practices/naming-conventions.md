@@ -4,11 +4,11 @@ description: Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: f3f010ceb3c810caafa53523de63aa787d392aa1
-ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
+ms.openlocfilehash: b4f40c427fc91c6b00d934c9a5dacdca91a55690
+ms.sourcegitcommit: 0de300b6570e9990e5c25efc060946cb9d079954
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/16/2018
+ms.lasthandoff: 05/03/2018
 ---
 # <a name="naming-conventions"></a>명명 규칙
 

@@ -9,17 +9,17 @@ pnp.pattern.categories:
 - data-management
 - design-implementation
 - performance-scalability
-ms.openlocfilehash: ce8d20ae82ae7d5ba00b4bc264a5c4d90fc383bd
-ms.sourcegitcommit: ea7108f71dab09175ff69322874d1bcba800a37a
+ms.openlocfilehash: c2832aa806909c6f0aab8b6345ffb8162eb59903
+ms.sourcegitcommit: d08f6ee27e1e8a623aeee32d298e616bc9bb87ff
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/17/2018
+ms.lasthandoff: 05/07/2018
 ---
 # <a name="command-and-query-responsibility-segregation-cqrs-pattern"></a>CQRS(명령 및 쿼리 책임 분리) 패턴
 
 [!INCLUDE [header](../_includes/header.md)]
 
-별도의 인터페이스를 사용하여 데이터를 업데이트하는 작업과 데이터를 읽는 작업을 분리합니다. 이 패턴은 시스템 성능, 확장성 및 보안을 극대화할 수 있습니다. 유연성을 높여 시간이 지나면서 시스템이 진화되는 것을 지원하여 업데이트 명령으로 인해 도메인 수준에서 병합 충돌이 발생하는 것을 방지합니다.
+별도의 인터페이스를 사용하여 데이터를 업데이트하는 작업과 데이터를 읽는 작업을 분리합니다. 이 패턴은 시스템 성능, 확장성 및 보안을 극대화할 수 있습니다. 높은 유연성을 통해 시간이 지남에 따라 시스템이 진화하도록 지원하고, 업데이트 명령으로 인해 도메인 수준에서 병합 충돌이 발생하지 않도록 방지합니다.
 
 ## <a name="context-and-problem"></a>컨텍스트 및 문제점
 
