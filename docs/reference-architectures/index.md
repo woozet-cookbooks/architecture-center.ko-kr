@@ -3,11 +3,11 @@ title: Azure 참조 아키텍처
 description: Azure의 일반 워크로드에 대한 참조 아키텍처, 청사진 및 규범적 구현 지침입니다.
 layout: LandingPage
 ms.topic: landing-page
-ms.openlocfilehash: 4c0006404ed0c0f603e9599cd9c04e6d02fdbfeb
-ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
+ms.openlocfilehash: 6c9be20e2b831f2e6c1ffd33aa89a56375a0511c
+ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/06/2018
+ms.lasthandoff: 05/21/2018
 ---
 <!-- This file is generated! -->
 <!-- See the templates in ./build/reference-architectures  -->
@@ -179,8 +179,8 @@ Azure 참조 아키텍처는 시나리오별로 정리되며, 관련 아키텍�
                         </div>
                     </div>
                     <div class="cardText">
-                        <h3>SAP NetWeaver 및 SAP HANA</h3>
-                        <p>Azure의 고가용성 환경에 SAP NetWeaver 및 SAP HANA를 배포하고 실행합니다.</p>
+                        <h3>Azure의 SAP 실행</h3>
+                        <p>Azure의 고가용성 환경에 SAP를 배포하고 실행합니다.</p>
                     </div>
                 </div>
             </div>
