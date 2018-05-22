@@ -66,9 +66,16 @@
           href: dmz/secure-vnet-dmz.md
         - name: 고가용성 네트워크 가상 어플라이언스
           href: dmz/nva-ha.md
+    - name: SAP
+      href: sap/index.md
+      items:
+        - name: AnyDB용 SAP NetWeaver
+          href: sap/sap-netweaver.md
+        - name: SAP S/4HANA
+          href: sap/sap-s4hana.md
+        - name: Azure의 SAP HANA(대규모 인스턴스)
+          href: sap/hana-large-instances.md
     - name: Jenkins 서버
       href: jenkins/index.md
-    - name: SAP NetWeaver 및 SAP HANA
-      href: sap/index.md
     - name: SharePoint Server 2016
       href: sharepoint/index.md

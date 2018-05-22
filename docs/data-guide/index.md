@@ -5,11 +5,11 @@ author: zoinerTejada
 ms:date: 02/12/2018
 layout: LandingPage
 ms.topic: landing-page
-ms.openlocfilehash: 0975d056aa971c627ca91c9fc05c4e16e07b6fc0
-ms.sourcegitcommit: d08f6ee27e1e8a623aeee32d298e616bc9bb87ff
+ms.openlocfilehash: 63c1cca45fe9d99b5d0679360ef487c3a42da956
+ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/07/2018
+ms.lasthandoff: 05/21/2018
 ---
 # <a name="azure-data-architecture-guide"></a>Azure Data Architecture 가이드
 
@@ -21,7 +21,7 @@ ms.lasthandoff: 05/07/2018
 
 ## <a name="how-this-guide-is-structured"></a>이 가이드의 구조
 
-이 가이드는 *기존의 RDMBS 워크로드* 및 *빅 데이터 솔루션*이라는 두 가지 데이터 솔루션의 일반 범주를 중심으로 구성됩니다. 
+이 가이드는 *기존의 RDBMS 워크로드* 및 *빅 데이터 솔루션*이라는 두 가지 데이터 솔루션의 일반 범주를 중심으로 구성됩니다. 
 
 **[기존 RDBMS 워크로드](./relational-data/index.md)**. 이러한 워크로드에는 OLTP(온라인 트랜잭션 처리) 및 OLAP(온라인 분석 처리)가 포함됩니다. OLTP 시스템의 데이터는 일반적으로 참조 무결성을 유지하는 제약 조건의 집합 및 미리 정의된 스키마를 사용하는 관계형 데이터입니다. 종종 원본 데이터를 이동하고 변환하기 위해 ETL 프로세스를 사용하여 조직에서 여러 원본의 데이터가 데이터 웨어하우스로 통합될 수 있습니다.
 
