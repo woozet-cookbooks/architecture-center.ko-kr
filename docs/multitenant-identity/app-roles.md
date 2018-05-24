@@ -6,11 +6,11 @@ ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: signup
 pnp.series.next: authorize
-ms.openlocfilehash: a39c64f003c26f860086701dd988a8bb21fab5bf
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: ec563936e5f00aba79d65844762feeed97ad547d
+ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 05/21/2018
 ---
 # <a name="application-roles"></a>응용 프로그램 역할
 
@@ -29,7 +29,7 @@ ms.lasthandoff: 11/14/2017
 * [응용 프로그램 역할 관리자](#roles-using-an-application-role-manager)
 
 ## <a name="roles-using-azure-ad-app-roles"></a>Azure AD 앱 역할을 사용하는 역할
-이 방식은 Tailspin Surveys 앱에서 사용하는 방식입니다.
+이 방식은 Tailspin 설문 조사 앱에서 사용하는 방식입니다.
 
 이 방법에서 SaaS 공급자는 응용 프로그램 역할을 응용 프로그램 매니페스트에 추가하여 응용 프로그램 역할을 정의합니다. 고객이 등록하면 고객의 AD 디렉터리 관리자가 사용자를 해당 역할에 할당합니다. 사용자가 로그인하면 사용자에게 할당된 역할이 클레임으로 전송됩니다.
 
@@ -51,9 +51,9 @@ ms.lasthandoff: 11/14/2017
 * 웹앱과 별도로 백 엔드 Web API가 있는 경우 웹앱에 대한 역할 할당은 Web API에 적용되지 않습니다. 이에 대한 자세한 내용은 [백 엔드 Web API 보안]을 참조하세요.
 
 ### <a name="implementation"></a>구현
-**역할 정의.** SaaS 공급자는 [응용 프로그램 매니페스트]에서 앱 역할을 선언합니다. 예를 들어 다음은 Surveys 앱을 위한 매니페스트 항목입니다.
+**역할 정의.** SaaS 공급자는 [응용 프로그램 매니페스트]에서 앱 역할을 선언합니다. 예를 들어 다음은 설문 조사 앱을 위한 매니페스트 항목입니다.
 
-```
+```json
 "appRoles": [
   {
     "allowedMemberTypes": [
@@ -123,7 +123,7 @@ if (context.User.HasClaim(ClaimTypes.Role, "Admin")) { ... }
 ### <a name="implementation"></a>구현
 응용 프로그램 매니페스트에서 `groupMembershipClaims` 속성을 "SecurityGroup"으로 설정합니다. 이를 위해서는 AAD에서 그룹 구성원 자격 클레임을 가져와야 합니다.
 
-```
+```json
 {
    // ...
    "groupMembershipClaims": "SecurityGroup",

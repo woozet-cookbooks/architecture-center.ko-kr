@@ -4,11 +4,11 @@ description: Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: b4f40c427fc91c6b00d934c9a5dacdca91a55690
-ms.sourcegitcommit: 0de300b6570e9990e5c25efc060946cb9d079954
+ms.openlocfilehash: df536a4b34a29b93edc4e03fa1142e20fe84a6a7
+ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/03/2018
+ms.lasthandoff: 05/21/2018
 ---
 # <a name="naming-conventions"></a>명명 규칙
 
@@ -85,7 +85,7 @@ Azure의 각 리소스 또는 서비스 유형은 명명 제한 및 범위 집�
 
 | 엔터티 | 범위 | 길이 | 대/소문자 구분 | 사용할 수 있는 문자 | 제안된 패턴 | 예 |
 | --- | --- | --- | --- | --- | --- | --- |
-|Virtual Machine |리소스 그룹 |1-15(Windows), 1-64(Linux) |대/소문자 구분하지 않음 |영숫자, 밑줄 및 하이픈 |`<name>-<role>-vm<number>` |`profx-sql-vm1` |
+|Virtual Machine |리소스 그룹 |1-15(Windows), 1-64(Linux) |대/소문자 구분하지 않음 |영숫자 및 하이픈 |`<name>-<role>-vm<number>` |`profx-sql-vm1` |
 |함수 앱 | 전역 |1-60 |대/소문자 구분하지 않음 |영숫자 및 하이픈 |`<name>-func` |`calcprofit-func` |
 
 > [!NOTE]
