@@ -4,11 +4,11 @@ description: 재시도 메커니즘 설정에 대한 서비스 관련 지침입�
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices
-ms.openlocfilehash: d03cc9dd1af92a91bbfab1ebc8c438e6312eeb49
-ms.sourcegitcommit: d08f6ee27e1e8a623aeee32d298e616bc9bb87ff
+ms.openlocfilehash: 65206c5f39a74d228c7eaa0fea0c5b1b0710b22f
+ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/07/2018
+ms.lasthandoff: 05/21/2018
 ---
 # <a name="retry-guidance-for-specific-services"></a>특정 서비스에 대한 다시 시도 지침
 
@@ -855,7 +855,7 @@ var stats = await client.GetServiceStatsAsync(null, context);
 
 | **설정** | **기본값** | **의미** |
 | --- | --- | --- |
-| MaximumExecutionTime | 120초 | 모든 잠재적인 재시도 횟수를 포함하여 요청의 최대 실행 시간입니다. |
+| MaximumExecutionTime | 없음 | 모든 잠재적인 재시도 횟수를 포함하여 요청의 최대 실행 시간입니다. 지정하지 않으면 요청에 허용되는 시간이 제한되지 않습니다. 즉, 요청이 중단될 수 있습니다. |
 | ServerTimeout | 없음 | 요청에 대한 서버 제한 시간 간격(값은 초로 반올림됨)입니다. 지정하지 않으면 서버에 대한 모든 요청에 기본값이 사용됩니다. 일반적으로 최상의 옵션은 서버 기본값이 사용되도록 이 설정을 생략하는 것입니다. | 
 | LocationMode | 없음 | RA-GRS(읽기 액세스 지역 중복 저장소) 복제 옵션을 사용하여 저장소 계정을 만드는 경우 위치 모드를 사용하여 요청을 수신할 위치를 나타낼 수 있습니다. 예를 들어 **PrimaryThenSecondary**를 지정하면 요청은 항상 기본 위치로 먼저 전송됩니다. 요청이 실패하면 보조 위치로 전송됩니다. |
 | RetryPolicy | ExponentialPolicy | 각 옵션에 대한 자세한 내용은 아래를 참조하세요. |
