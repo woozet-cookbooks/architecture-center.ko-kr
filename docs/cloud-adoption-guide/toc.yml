@@ -10,6 +10,8 @@
           items:
             - name: '설명: Azure의 작동 방식'
               href: adoption-intro/azure-explainer.md
+            - name: '설명: 클라우드 리소스 관리란?'
+              href: adoption-intro/governance-explainer.md
         - name: Azure의 디지털 ID 이해
           items:
             - name: '설명: Azure Active Directory 테넌트란?'
@@ -62,3 +64,8 @@
                   href: /azure/virtual-machines/linux/quick-create-portal?toc=/azure/architecture/cloud-adoption-guide/toc.json
                 - name: '지침: Azure에 Linux VM을 배포하는 방법에 대한 모범 사례'
                   href: /azure/architecture/reference-architectures/virtual-machines-linux/single-vm?toc=/azure/architecture/cloud-adoption-guide/toc.json
+    - name: 중급 Azure 도입
+      href: intermediate-stage/overview.md
+      items:
+        - name: 거버넌스 디자인 가이드
+          href: intermediate-stage/governance-design-guide.md
