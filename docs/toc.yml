@@ -127,12 +127,16 @@
   items:
     - name: AWS 전문가를 위한 Azure
       href: aws-professional/index.md
+    - name: Azure에서 마이크로 서비스 빌드
+      href: ./microservices/index.md
     - name: 다중 테넌트 응용 프로그램의 ID 관리
       href: multitenant-identity/index.md
     - name: Cloud Services에서 Service Fabric으로 마이그레이션
-      href: service-fabric/migrate-from-cloud-services.md
-    - name: Azure Cloud Services에서 마이그레이션된 Azure Service Fabric 응용 프로그램 리팩터링
-      href: service-fabric/refactor-migrated-app.md
+      items:
+        - name: Service Fabric으로 Cloud Services 응용 프로그램 마이그레이션
+          href: service-fabric/migrate-from-cloud-services.md
+        - name: Service Fabric 응용 프로그램 리팩터링
+          href: service-fabric/refactor-migrated-app.md
     - name: Azure Resource Manager 템플릿 기능 확장
       href: building-blocks/extending-templates/index.md
 - name: 리소스
