@@ -5,11 +5,12 @@ keywords: 클라우드 서비스 비교, 클라우드 서비스 비교, 다중 �
 author: lbrader
 ms.date: 11/30/2017
 pnp.series.title: Azure for AWS Professionals
-ms.openlocfilehash: 5a564c7b4825340deb3c6deb037f755108cb0896
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 096721348d525eb95767ab3cf188d21a32236cc6
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35253046"
 ---
 # <a name="aws-to-azure-services-comparison"></a>AWS와 Azure 서비스 비교 
 
@@ -174,7 +175,7 @@ AWS 사용자를 위한 Azure 개요는 [AWS 전문가를 위한 Azure 소개](i
 |        디렉터리 서비스        | AWS의 AWS Directory Service + Windows Server Active Directory  |                                       [Azure IaaS의 Azure Active Directory Domain Services + Windows Server Active Directory](https://azure.microsoft.com/services/active-directory/)                                        | 포괄적인 ID 및 액세스 관리 클라우드 솔루션으로 사용자 및 그룹 관리를 위한 강력한 기능 모음을 제공합니다. Office 365와 같은 Microsoft 온라인 서비스와 다양한 타사 SaaS 응용 프로그램을 포함한 온-프레미스 및 클라우드 응용 프로그램에 대한 안전한 액세스를 돕습니다. |
 |     <strong>&nbsp;</strong>      |                            Cognito                             |                                                                   [Azure Active Directory B2C](https://azure.microsoft.com/services/active-directory-b2c/)                                                                    |                                                                          수억 개의 ID로 확장하는 소비자 지향 응용 프로그램에 항상 사용 가능한 전역적인 ID 관리 서비스입니다.                                                                           |
 |     <strong>&nbsp;</strong>      |                     AWS Directory Service                      |                                                                 [Windows Server Active Directory](https://azure.microsoft.com/services/active-directory-ds/)                                                                  |                                                                                                                클라우드에서 Microsoft Active Directory를 지원하기 위한 서비스입니다.                                                                                                                |
-|            규정 준수            |                          AWS Artifact                          |                                                                   [Microsoft Service Trust Portal](https://www.microsoft.com/TrustCenter/STP/default.aspx)                                                                    |                                                                                              클라우드 서비스 전체에서 감사 보고서, 규정 준수 지침 및 신뢰 문서에 대한 액세스를 제공합니다.                                                                                              |
+|            규정 준수            |                          AWS Artifact                          |                                                                   [서비스 신뢰 플랫폼](https://www.microsoft.com/en-us/TrustCenter/STP/default.aspx)                                                                    |                                                                                              클라우드 서비스 전체에서 감사 보고서, 규정 준수 지침 및 신뢰 문서에 대한 액세스를 제공합니다.                                                                                              |
 |             보안             |                           AWS Shield                           |                                                      [Azure DDos Protection Service(미리 보기)](https://azure.microsoft.com/blog/azure-ddos-protection-service-preview/)                                                       |                                                                                                  클라우드 서비스에 DDoS(분산형 서비스 거부) 공격으로부터의 보호를 제공합니다.                                                                                                   |
 
 ## <a name="developer-tools"></a>개발자 도구

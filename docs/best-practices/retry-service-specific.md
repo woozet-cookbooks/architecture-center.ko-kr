@@ -4,11 +4,12 @@ description: 재시도 메커니즘 설정에 대한 서비스 관련 지침입�
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices
-ms.openlocfilehash: 65206c5f39a74d228c7eaa0fea0c5b1b0710b22f
-ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
+ms.openlocfilehash: f02843f179671da04bc2f09326b58075b432ba95
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/21/2018
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35253080"
 ---
 # <a name="retry-guidance-for-specific-services"></a>특정 서비스에 대한 다시 시도 지침
 
@@ -37,6 +38,9 @@ ms.lasthandoff: 05/21/2018
 
 ## <a name="azure-active-directory"></a>Azure Active Directory
 Azure AD(Azure Active Directory)는 핵심 디렉터리 서비스, 고급 ID 관리, 보안 및 응용 프로그램 액세스 관리를 결합하는 포괄적인 ID 및 액세스 관리 클라우드 솔루션입니다. 또한 Azure AD는 개발자에게 ID 관리 플랫폼을 제공하여 중앙 집중식 정책 및 규칙에 따라 해당 응용 프로그램에 대한 액세스 제어 권한을 제공합니다.
+
+> [!NOTE]
+> 관리 서비스 ID 엔드포인트에 대한 다시 시도 지침은 [토큰 획득을 위해 Azure VM MSI(관리 서비스 ID)를 사용하는 방법](/azure/active-directory/managed-service-identity/how-to-use-vm-token#error-handling)을 참조합니다.
 
 ### <a name="retry-mechanism"></a>재시도 메커니즘
 ADAL(Active Directory 인증 라이브러리)의 Azure Active Directory에 대한 기본 제공 재시도 메커니즘은 있습니다. 예기치 않은 잠김을 방지하기 위해, 타사 라이브러리와 응용 프로그램 코드가 실패한 연결을 재시도하지 **않고** ADAL이 재시도를 처리하게 하는 것이 좋습니다. 

@@ -7,11 +7,12 @@ ms.date: 06/23/2017
 pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories:
 - design-implementation
-ms.openlocfilehash: 85191fc630549559f8a1395e5a8622a7a6140a2d
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 6e05a30245fbf5183a4e50a54650505f5a5f2aa8
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35252927"
 ---
 # <a name="compute-resource-consolidation-pattern"></a>계산 리소스 통합 패턴
 
@@ -88,7 +89,7 @@ Azure에서 클라우드 서비스를 빌드할 때는 여러 작업이 수행�
 
 이 역할이 작업의 시작 및 중지를 담당합니다. Azure 패브릭 컨트롤러가 역할을 로드하면 역할에 대한 `Start` 이벤트가 발생합니다. `WebRole` 또는 `WorkerRole` 클래스의 `OnStart` 메서드를 재정의하여 이 이벤트를 처리하고 이 메서드가 의존하는 작업에 필요한 데이터와 다른 리소스를 시작할 수 있습니다.
 
-`OnStart ` 메서드가 완료되면 역할은 요청에 대한 응답을 시작할 수 있습니다. 역할에서 `OnStart` 및 `Run` 메서드의 사용에 대한 자세한 내용과 지침은 패턴 및 사례 가이드인 [Moving Applications to the Cloud](https://msdn.microsoft.com/library/ff728592.aspx)(응용 프로그램에서 클라우드로 이동)의 [Application Startup Processes](https://msdn.microsoft.com/library/ff803371.aspx#sec16)(응용 프로그램 시작 프로세스) 섹션에서 확인할 수 있습니다.
+`OnStart` 메서드가 완료되면 역할은 요청에 대한 응답을 시작할 수 있습니다. 역할에서 `OnStart` 및 `Run` 메서드의 사용에 대한 자세한 내용과 지침은 패턴 및 사례 가이드인 [Moving Applications to the Cloud](https://msdn.microsoft.com/library/ff728592.aspx)(응용 프로그램에서 클라우드로 이동)의 [Application Startup Processes](https://msdn.microsoft.com/library/ff803371.aspx#sec16)(응용 프로그램 시작 프로세스) 섹션에서 확인할 수 있습니다.
 
 > `OnStart` 메서드의 코드는 최대한 간결하게 유지합니다. Azure는 이 메서드를 완료하는 데 소요되는 시간에 제한을 두지 않지만, 이 메서드가 완료되기 전까지는 역할이 전송된 네트워크 요청에 대해 응답할 수 없습니다.
 

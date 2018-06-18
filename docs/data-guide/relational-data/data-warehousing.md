@@ -3,11 +3,12 @@ title: 데이터 웨어하우징 및 데이터 마트
 description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: 552cdfad2d571c93f83bc1e4ff0d09ac12d0b6a4
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 9b90d77ce1a81cd4a7532f5d4230ada8b4991d13
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35252808"
 ---
 # <a name="data-warehousing-and-data-marts"></a>데이터 웨어하우징 및 데이터 마트
 
@@ -122,7 +123,7 @@ MPP 시스템은 계산 노드(자체 CUP, 메모리 및 I/O 하위 시스템 �
 | 관리되는 서비스인지 여부 | 예 | 아니오 | 예 | 예 <sup>1</sup> | 예 <sup>1</sup> |
 | 데이터 오케스트레이션 필요(데이터 사본/기록 데이터 보유) | 아니오 | 아니요 | 예 | 예 | 예 |
 | 여러 데이터 원본을 쉽게 통합 | 아니오 | 아니요 | 예 | 예 | 예 |
-| 계산 일시 중지 지원 여부 | 아니요 | 아니요 | 예 | 아니요 <sup>2</sup> | 아니요 <sup>2</sup> |
+| 계산 일시 중지 지원 여부 | 아니오 | 아니요 | 예 | 아니요 <sup>2</sup> | 아니요 <sup>2</sup> |
 | 관계형 데이터 저장소 | 예 | 예 |  예 | 아니오 | 아니오 |
 | 실시간 보고 | 예 | 예 | 아니오 | 아니요 | 예 |
 | 유연한 백업/복원 지점 | 예 | 예 | 아니요 <sup>3</sup> | 예 <sup>4</sup> | 예 <sup>4</sup> |
@@ -140,9 +141,9 @@ MPP 시스템은 계산 노드(자체 CUP, 메모리 및 I/O 하위 시스템 �
 
 | | Azure SQL Database | SQL Server(VM) |  SQL Data Warehouse | HDInsight의 Apache Hive | HDInsight의 Hive LLAP |
 | --- | --- | --- | --- | --- | --- | -- |
-| 고가용성을 위한 중복 지역 서버  | 예 | 예 | 예 | 아니오 | 아니요 |
-| 쿼리 스케일 아웃 지원 여부(분산 쿼리)  | 아니요 | 아니요 | 예 | 예 | 예 |
-| 동적 확장성(강화)  | 예 | 아니오 | 예 <sup>1</sup> | 아니오 | 아니오 |
+| 고가용성을 위한 중복 지역 서버  | 예 | 예 | 예 | 아니오 | 아니오 |
+| 쿼리 스케일 아웃 지원 여부(분산 쿼리)  | 아니오 | 아니요 | 예 | 예 | 예 |
+| 동적 확장성 | 예 | 아니오 | 예 <sup>1</sup> | 아니오 | 아니오 |
 | 데이터의 메모리 내 캐싱 지원 여부 | 예 |  예 | 아니오 | 예 | 예 |
 
 [1] SQL Data Warehouse에서는 DWU(데이터 웨어하우스 단위) 수를 조정하여 강화 및 축소할 수 있습니다. [Azure SQL Data Warehouse의 계산 능력 관리](/azure/sql-data-warehouse/sql-data-warehouse-manage-compute-overview)를 참조하세요.

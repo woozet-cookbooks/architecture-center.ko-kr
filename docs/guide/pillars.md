@@ -2,11 +2,12 @@
 title: 소프트웨어 품질 핵심 요소
 description: 확장성, 가용성, 복원력, 관리 및 보안이라는 5가지 소프트웨어 품질 핵심 요소를 설명합니다.
 author: MikeWasson
-ms.openlocfilehash: 1d5e30602cafa0d39f92de3101974e77ae258595
-ms.sourcegitcommit: a7aae13569e165d4e768ce0aaaac154ba612934f
+ms.openlocfilehash: 117706046ca1a9b7f3203a99737347809d0c323f
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/30/2018
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35252790"
 ---
 # <a name="pillars-of-software-quality"></a>소프트웨어 품질 핵심 요소 
 
@@ -15,7 +16,7 @@ ms.lasthandoff: 01/30/2018
 | 핵심 요소 | 설명 |
 |--------|-------------|
 | 확장성 | 증가된 부하를 처리하는 시스템의 기능입니다. |
-| Availability | 시스템이 기능하고 작동하는 시간의 비율입니다. |
+| 가용성 | 시스템이 기능하고 작동하는 시간의 비율입니다. |
 | 복원력 | 오류를 복구하여 계속 작동하는 시스템 기능입니다. |
 | 관리 | 프로덕션에서 시스템을 실행하는 작업 프로세스입니다. |
 | 보안 | 위협으로부터 응용 프로그램 및 데이터를 보호합니다. |
@@ -47,7 +48,7 @@ ms.lasthandoff: 01/30/2018
 - [확장성 및 성능을 위한 디자인 패턴][scalability-patterns]
 - 모범 사례: [자동 크기 조정][autoscale], [배경 작업][background-jobs], [캐싱][caching], [CDN][cdn], [데이터 분할][data-partitioning]
 
-## <a name="availability"></a>Availability
+## <a name="availability"></a>가용성
 
 가용성은 시스템이 기능하고 작동하는 시간의 비율입니다. 일반적으로 가동 시간의 백분율로 측정됩니다. 응용 프로그램 오류, 인프라 문제 및 시스템 부하는 모두 가용성을 저하시킬 수 있습니다. 
 

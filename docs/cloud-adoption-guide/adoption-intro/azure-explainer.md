@@ -2,11 +2,12 @@
 title: '설명: Azure의 작동 방식'
 description: Azure의 내부 작동 설명
 author: petertay
-ms.openlocfilehash: b4830fec69ac6d256d934d91ea2c295219925a9a
-ms.sourcegitcommit: ea7108f71dab09175ff69322874d1bcba800a37a
+ms.openlocfilehash: 1cebcc001b8d2ae93d8b0271c48d54617281c7c2
+ms.sourcegitcommit: b3d74d8a89b2224fc796ce0e89cea447af43a0d4
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/17/2018
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35290512"
 ---
 # <a name="explainer-how-does-azure-work"></a>설명: Azure의 작동 방식
 
@@ -28,7 +29,7 @@ Azure는 Microsoft의 공용 클라우드 플랫폼입니다. Azure는 PaaS(Plat
 
 ## <a name="next-steps"></a>다음 단계
 
-* 지금까지 Azure의 내부 기능을 이해했으므로 Azure를 조정하는 첫 번째 단계는 [Azure의 디지털 ID](tenant-explainer.md)를 이해하는 거입니다. 그러면 [Azure AD에서 첫 번째 사용자를 만들 수 있게 됩니다][docs-add-users-to-aad].
+* Azure의 내부 기능에 대해 이해했으므로 [리소스 액세스 거버넌스](governance-explainer.md)에 대해 알아봅니다. 그런 다음, Azure를 채택하는 첫 번째 단계로 이동하여 [Azure에서 디지털 ID를 이해](tenant-explainer.md)합니다. 해당 단계를 완료되면 [Azure AD에서 첫 번째 사용자 만들기][docs-add-users-to-aad]가 준비된 것입니다.
 
 <!-- Links -->
 

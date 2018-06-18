@@ -2,11 +2,12 @@
 title: 적절한 데이터 저장소 선택
 description: Azure의 데이터 저장소 선택 개요
 author: MikeWasson
-ms.openlocfilehash: 3a5780c4a2dbd8a41e9c7bfa7f68d8a7916a7374
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 4836ae1997f86d35d8ab8aa66bbc63b4ef826d23
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35252637"
 ---
 # <a name="choose-the-right-data-store"></a>적절한 데이터 저장소 선택
 

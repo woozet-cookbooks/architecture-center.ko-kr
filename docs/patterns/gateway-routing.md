@@ -3,11 +3,12 @@ title: 게이트웨이 라우팅 패턴
 description: 단일 엔드포인트를 사용하여 요청을 여러 서비스에 라우팅합니다.
 author: dragon119
 ms.date: 06/23/2017
-ms.openlocfilehash: 53239b23cfd98fad1edc38ca37c2274d5a9d7a0f
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: ea0bc4d31b745043a7ac3afb277dfc46d87ff109
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35252603"
 ---
 # <a name="gateway-routing-pattern"></a>게이트웨이 라우팅 패턴
 
@@ -31,14 +32,14 @@ ms.lasthandoff: 11/14/2017
 
 ## <a name="issues-and-considerations"></a>문제 및 고려 사항
 
-- 게이트웨이 서비스로 인해 단일 실패 지점이 발생할 수 있습니다. 가용성 요구 사항을 충족하도록 올바르게 설계되었는지 확인합니다. 구현 시 복원력 및 내결함성 기능을 고려합니다.
+- 게이트웨이 서비스에 단일 실패 지점이 발생할 수 있습니다. 가용성 요구 사항을 충족하도록 올바르게 설계되었는지 확인합니다. 구현 시 복원력 및 내결함성 기능을 고려합니다.
 - 게이트웨이 서비스로 인해 병목 상태가 발생할 수 있습니다. 게이트웨이가 부하를 처리할 수 있는 적절한 성능을 갖추고 있고 예상 증가량에 맞게 쉽게 확장될 수 있는지 확인합니다.
 - 게이트웨이에 대해 부하 테스트를 수행하여 서비스 실패가 계단식으로 연속되지 않도록 합니다.
 - 게이트웨이 라우팅은 수준 7입니다. IP, 포트, 헤더 또는 URL을 기반으로 할 수 있습니다.
 
 ## <a name="when-to-use-this-pattern"></a>이 패턴을 사용해야 하는 경우
 
-다음과 같은 경우 이 패턴을 사용하세요.
+다음 경우에 이 패턴을 사용합니다.
 
 - 클라이언트가 게이트웨이 뒤에서 액세스할 수 있는 여러 서비스를 이용해야 하는 경우.
 - 단일 끝점을 사용하여 클라이언트 응용 프로그램을 간소화하려는 경우.

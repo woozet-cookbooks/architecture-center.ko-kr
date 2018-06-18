@@ -9,11 +9,12 @@ ms.date: 11/28/2016
 pnp.series.title: Identity management
 pnp.series.prev: adds-forest
 cardTitle: Extend AD FS to Azure
-ms.openlocfilehash: 87489b7b81cf323c221466c539ee14ea90e23c14
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 37edae209334da96aa9c121b1ac68c5e1d363323
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35252732"
 ---
 # <a name="extend-active-directory-federation-services-ad-fs-to-azure"></a>Azure로 AD FS(Active Directory Federation Services) 확장
 
@@ -42,7 +43,7 @@ AD FS는 온-프레미스에서 호스팅될 수 있지만 응용 프로그램�
 
 추가 고려 사항은 [온-프레미스 Active Directory를 Azure와 통합하기 위한 솔루션 선택][considerations]을 참조하세요. 
 
-## <a name="architecture"></a>건축
+## <a name="architecture"></a>아키텍처
 
 이 아키텍처는 [Azure로 AD DS 확장][extending-ad-to-azure]에 설명된 구현을 확장합니다. 여기에는 다음 구성 요소가 포함됩니다.
 
@@ -118,7 +119,7 @@ AD FS 및 WAP VM에 대한 별도 Azure 가용성 집합을 만듭니다. 각 �
 * WAP VM에 대한 외부 액세스를 제공하는 Azure 부하 분산 장치 및 팜의 AD FS 서버 간에 부하를 분산하는 내부 부하 분산 장치를 사용합니다.
 * 포트 443(HTTPS)에 표시되는 트래픽을 AD FS/WAP 서버에 전달합니다.
 * 부하 분산 장치에 고정 IP 주소를 지정합니다.
-* HTTPS 보다는 TCP 프로토콜을 사용하는 상태 프로브를 만듭니다. AD FS 서버가 작동하는지 확인하도록 포트 443을 ping할 수 있습니다.
+* `/adfs/probe`에 대해 HTTP를 사용하여 상태 프로브를 만듭니다. 자세한 내용은 [하드웨어 Load Balancer 상태 검사 및 웹 응용 프로그램 프록시 / AD FS 2012 R2](https://blogs.technet.microsoft.com/applicationproxyblog/2014/10/17/hardware-load-balancer-health-checks-and-web-application-proxy-ad-fs-2012-r2/)를 참조합니다.
   
   > [!NOTE]
   > AD FS 서버는 SNI(서버 이름 표시) 프로토콜을 사용하므로 부하 분산 장치에서 HTTPS 엔드포인트를 사용하는 프로브에 대한 시도는 실패합니다.
@@ -140,7 +141,7 @@ WAP 서버를 도메인에 조인하지 마십시오.
 
 [페더레이션 서버 팜 배포][Deploying_a_federation_server_farm] 문서는 AD FS 설치 및 구성에 대한 자세한 지침을 제공합니다. 팜의 첫 번째 AD FS 서버를 구성하기 전에 다음 작업을 수행합니다.
 
-1. 서버 인증을 수행하기 위해 공개적으로 신뢰할 수 있는 인증서를 가져옵니다. *주체 이름*은 페더레이션 서비스에 액세스하는 데 사용하는 이름 클라이언트를 포함해야 합니다. 부하 분산에 대해 등록된 DNS 이름일 수 있습니다(예: *adfs.contoso.com*). (보안상의 이유로 \**.contoso.com* 과 같은 와일드카드 이름 사용을 피합니다.) 모든 AD FS 서버 VM에 동일한 인증서를 사용합니다. 신뢰할 수 있는 인증 기관에서 인증서를 구입할 수 있지만 조직에서 Active Directory Certificate Services를 사용하는 경우 직접 만들 수 있습니다. 
+1. 서버 인증을 수행하기 위해 공개적으로 신뢰할 수 있는 인증서를 가져옵니다. *주체 이름*은 페더레이션 서비스에 액세스하는 데 사용하는 이름 클라이언트를 포함해야 합니다. 부하 분산에 대해 등록된 DNS 이름일 수 있습니다(예: *adfs.contoso.com*). (보안상의 이유로 **.contoso.com*과 같은 와일드카드 이름 사용을 피합니다.) 모든 AD FS 서버 VM에 동일한 인증서를 사용합니다. 신뢰할 수 있는 인증 기관에서 인증서를 구입할 수 있지만 조직에서 Active Directory Certificate Services를 사용하는 경우 직접 만들 수 있습니다. 
    
     *주체 대체 이름*은 외부 장치에서 액세스할 수 있도록 DRS(장치 등록 서비스)에서 사용됩니다. *enterpriseregistration.contoso.com* 형식이어야 합니다.
    

@@ -4,11 +4,12 @@ description: Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: df536a4b34a29b93edc4e03fa1142e20fe84a6a7
-ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
+ms.openlocfilehash: 42d91da3eacdcda66b82dff82ba444170c11d7d1
+ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/21/2018
+ms.lasthandoff: 06/11/2018
+ms.locfileid: "35253063"
 ---
 # <a name="naming-conventions"></a>명명 규칙
 
@@ -166,7 +167,7 @@ Azure Resource Manager는 임의적인 텍스트 문자열로 태그 지정 엔�
 > [!TIP]
 > 저장소 계정(데이터 또는 디스크에 대한)은 여러 저장소 계정을 활용되도록 허용하는 명명 규칙을 따라야 합니다(즉 항상 숫자 접미사 사용).
 
-Azure Storage 계정에서 Blob 데이터에 액세스할 수 있도록 사용자 지정 도메인 이름을 구성할 수 있습니다. Blob Service의 기본 끝점은 https://<name>.blob.core.windows.net`입니다.
+Azure Storage 계정에서 Blob 데이터에 액세스할 수 있도록 사용자 지정 도메인 이름을 구성할 수 있습니다. Blob Service의 기본 엔드포인트는 https://\<name\>.blob.core.windows.net입니다.
 
 그러나 사용자 지정 도메인(예: www.contoso.com )을 저장소 계정의 Blob 끝점에 매핑하는 경우 해당 도메인을 사용하여 저장소 계정의 Blob 데이터에 액세스할 수 있습니다. 예를 들어 사용자 지정 도메인 이름을 통해 `http://mystorage.blob.core.windows.net/mycontainer/myblob`에 `http://www.contoso.com/mycontainer/myblob`로 액세스할 수 있습니다.
 
