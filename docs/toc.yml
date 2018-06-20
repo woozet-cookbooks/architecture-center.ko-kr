@@ -5,6 +5,8 @@
   items:
     - name: 기본 도입 단계
       href: cloud-adoption-guide/adoption-intro/overview.md
+    - name: 중급 도입 단계
+      href: cloud-adoption-guide/intermediate-stage/overview.md
 - name: 응용 프로그램 아키텍처 가이드
   href: guide/index.md
   items:
@@ -19,7 +21,8 @@
     - name: 소프트웨어 품질 핵심 요소
       href: guide/pillars.md
     - name: 디자인 패턴
-      href: patterns/index.md?toc=/azure/architecture/guide/toc.json
+      href: patterns/index.md
+      maintainContext: true
 - name: 데이터 아키텍처 가이드
   href: data-guide/index.md
 - name: 참조 아키텍처
@@ -120,7 +123,8 @@
     - name: 복원력 있는 응용 프로그램 디자인
       href: resiliency/index.md
     - name: 복원력 검사 목록
-      href: checklist/resiliency.md?toc=/azure/architecture/resiliency/toc.json
+      href: checklist/resiliency.md
+      maintainContext: true
     - name: 실패 모드 분석
       href: resiliency/failure-mode-analysis.md
 - name: 시나리오 가이드
