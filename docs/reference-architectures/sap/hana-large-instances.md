@@ -8,6 +8,7 @@ ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/21/2018
+ms.locfileid: "34423089"
 ---
 # <a name="run-sap-hana-on-azure-large-instances"></a>Azure의 SAP HANA(대규모 인스턴스) 실행
 

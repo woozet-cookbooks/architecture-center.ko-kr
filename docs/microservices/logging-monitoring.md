@@ -8,6 +8,7 @@ ms.sourcegitcommit: 786bafefc731245414c3c1510fc21027afe303dc
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 12/12/2017
+ms.locfileid: "26652997"
 ---
 # <a name="designing-microservices-logging-and-monitoring"></a>마이크로 서비스 디자인: 로깅 및 모니터링
 

@@ -7,6 +7,7 @@ ms.sourcegitcommit: 7764a804f000180c37a4f8dbab946b525f784f58
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 01/09/2018
+ms.locfileid: "27717643"
 ---
 # <a name="microservices-architecture-style"></a>마이크로 서비스 아키텍처 스타일
 

@@ -8,6 +8,7 @@ ms.sourcegitcommit: 744ad1381e01bbda6a1a7eff4b25e1a337385553
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 01/08/2018
+ms.locfileid: "27701105"
 ---
 # <a name="designing-building-and-operating-microservices-on-azure"></a>Azure에서 마이크로 서비스 설계, 구축 및 운영
 

@@ -8,6 +8,7 @@ ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/03/2018
+ms.locfileid: "30298671"
 ---
 # <a name="non-relational-data-and-nosql"></a>비관계형 데이터 및 NoSQL
 

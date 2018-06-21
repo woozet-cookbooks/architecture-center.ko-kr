@@ -8,6 +8,7 @@ ms.sourcegitcommit: c93f1b210b3deff17cc969fb66133bc6399cfd10
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 01/05/2018
+ms.locfileid: "27595988"
 ---
 # <a name="no-caching-antipattern"></a>캐싱 없음 안티패턴
 

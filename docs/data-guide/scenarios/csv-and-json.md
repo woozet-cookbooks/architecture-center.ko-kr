@@ -8,6 +8,7 @@ ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/03/2018
+ms.locfileid: "30298611"
 ---
 # <a name="working-with-csv-and-json-files-for-data-solutions"></a>데이터 솔루션용 CSV 및 JSON 파일 작업
 

@@ -11,6 +11,7 @@ ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/06/2018
+ms.locfileid: "33673595"
 ---
 # <a name="n-tier-application-with-sql-server"></a>SQL Server를 통한 N 계층 응용 프로그램
 

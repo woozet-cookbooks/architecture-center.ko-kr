@@ -14,6 +14,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30847852"
 ---
 # <a name="health-endpoint-monitoring-pattern"></a>상태 끝점 모니터링 패턴
 

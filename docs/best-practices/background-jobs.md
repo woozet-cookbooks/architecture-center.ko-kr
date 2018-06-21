@@ -9,6 +9,7 @@ ms.sourcegitcommit: 3426a9c5ed937f097725c487cf3d073ae5e2a347
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/01/2018
+ms.locfileid: "28907049"
 ---
 # <a name="background-jobs"></a>백그라운드 작업
 [!INCLUDE [header](../_includes/header.md)]

@@ -8,6 +8,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30848702"
 ---
 # <a name="online-transaction-processing-oltp"></a>OLTP(온라인 트랜잭션 처리)
 

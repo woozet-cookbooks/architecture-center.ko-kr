@@ -19,6 +19,7 @@ ms.sourcegitcommit: 4ec010846b9b5545c843a32e08293f906e512302
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/17/2018
+ms.locfileid: "34299919"
 ---
 # <a name="azure-enterprise-scaffold---prescriptive-subscription-governance"></a>Azure 엔터프라이즈 스캐폴드 - 규범적 구독 거버넌스
 기업은 민첩성과 유연성을 위해 공용 클라우드 도입을 확대하고 있습니다. 또한 수익을 창출하고 비즈니스에 맞게 리소스를 최적화하는 클라우드의 장점을 활용하고 있습니다. Microsoft Azure는 광범위한 워크로드 및 응용 프로그램을 처리할 구성 요소와 같이 기업에서 조합할 수 있는 다양한 서비스를 제공합니다. 

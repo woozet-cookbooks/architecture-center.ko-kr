@@ -8,6 +8,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "24851507"
 ---
 # <a name="monolithic-persistence-antipattern"></a>모놀리식 지속성 안티패턴
 

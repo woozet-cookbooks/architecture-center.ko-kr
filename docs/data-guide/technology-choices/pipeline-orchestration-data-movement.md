@@ -8,6 +8,7 @@ ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/14/2018
+ms.locfileid: "29288805"
 ---
 # <a name="choosing-a-data-pipeline-orchestration-technology-in-azure"></a>Azure의 데이터 파이프라인 오케스트레이션 기술 선택
 

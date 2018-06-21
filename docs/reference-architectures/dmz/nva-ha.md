@@ -11,6 +11,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30847750"
 ---
 # <a name="deploy-highly-available-network-virtual-appliances"></a>고가용성 네트워크 가상 어플라이언스 배포
 

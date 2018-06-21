@@ -8,6 +8,7 @@ ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/14/2018
+ms.locfileid: "29288815"
 ---
 # <a name="processing-free-form-text-for-search"></a>검색을 위해 자유 형식 텍스트 처리
 
