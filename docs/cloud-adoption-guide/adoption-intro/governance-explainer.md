@@ -2,12 +2,12 @@
 title: '설명: 클라우드 관리란?'
 description: Azure 및 클라우드에 대한 리소스 관리 개념 설명
 author: petertay
-ms.openlocfilehash: 63b04089aad5fc736641f8aaa6ff5247ea8ba13e
-ms.sourcegitcommit: b3d74d8a89b2224fc796ce0e89cea447af43a0d4
+ms.openlocfilehash: 3404beaa719177ee7638feed8a8442b5c3b455c6
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/11/2018
-ms.locfileid: "35291250"
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206483"
 ---
 # <a name="explainer-what-is-cloud-resource-governance"></a>설명: 클라우드 리소스 관리란?
 
@@ -16,6 +16,8 @@ ms.locfileid: "35291250"
 그러나 무제한으로 개발자에게 리소스 액세스 권한을 부여하면 개발자들이 매우 기민해질 수 있는 반면 의도하지 않은 비용이 소요되는 결과가 발생할 수도 있습니다. 예를 들어 개발 팀은 테스트를 위한 리소스 집합을 배포하도록 승인받지만 테스트를 완료하는 경우 리소스 집합을 삭제하는 것을 잊어버릴 수 있습니다. 이러한 리소스는 그 사용이 더 이상 승인되지 않거나 필요하지 않다고 해도 비용을 계속 발생시킵니다. 
 
 이 문제의 솔루션은 리소스 액세스 **관리**입니다. 거버넌스는 조직의 요구 사항 및 목표 달성을 위해 Azure 리소스의 사용을 관리, 모니터링 및 감사하는 지속적인 프로세스를 가리킵니다. 
+
+> [!VIDEO https://www.microsoft.com/en-us/videoplayer/embed/RE2ii94] 
 
 이러한 목표와 요구 사항은 각 조직에 고유하므로 거버넌스에 대한 모든 접근에 보편적으로 적용할 수 있는 단일 크기 전략은 가능하지 않습니다. Azure는 **RBAC(리소스 기반 액세스 제어)** 및 **리소스 정책**의 두 가지 기본 거버넌스 도구를 구현합니다. 이 둘을 사용하여 해당 거버넌스 모델을 디자인하는 것은 각 조직에 달려 있습니다.
 

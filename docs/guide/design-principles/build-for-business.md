@@ -2,12 +2,12 @@
 title: 비즈니스 요구 사항에 맞게 구축
 description: 모든 디자인 결정은 비즈니스 요구 사항에 맞춰 정당화되어야 합니다.
 author: MikeWasson
-layout: LandingPage
-ms.openlocfilehash: 110a441ae74334d212a717da2cb038d60b24bb1f
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 768f2298860d91774d93c1917cf95000bb2b873d
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206637"
 ---
 # <a name="build-for-the-needs-of-the-business"></a>비즈니스 요구 사항에 맞게 구축
 

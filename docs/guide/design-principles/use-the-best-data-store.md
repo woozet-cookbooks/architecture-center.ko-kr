@@ -2,12 +2,12 @@
 title: 작업에 가장 적합한 데이터 저장소 사용
 description: 데이터에 가장 적합한 저장소 기술과 사용 방법을 선택합니다.
 author: MikeWasson
-layout: LandingPage
-ms.openlocfilehash: ef9439f7a3766d13b498eac915e0f5afd23de4e2
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: c3619012e8c199d154e4ac432ce03b2a9295c26f
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206634"
 ---
 # <a name="use-the-best-data-store-for-the-job"></a>작업에 가장 적합한 데이터 저장소 사용
 

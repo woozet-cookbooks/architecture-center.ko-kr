@@ -4,11 +4,12 @@ description: 잘 디자인된 Web API를 만드는 방법에 관한 지침입니
 author: dragon119
 ms.date: 01/12/2018
 pnp.series.title: Best Practices
-ms.openlocfilehash: a8c4a81835ebd3ebdba2fd2cec624a9a9d5646f5
-ms.sourcegitcommit: ea7108f71dab09175ff69322874d1bcba800a37a
+ms.openlocfilehash: db9784f454e0b52b335d6dff3a054c2c59124c9f
+ms.sourcegitcommit: f7418f8bdabc8f5ec33ae3551e3fbb466782caa5
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/17/2018
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36209613"
 ---
 # <a name="api-design"></a>API 디자인
 
@@ -247,7 +248,7 @@ Content-Type: application/json
 
 {
     "status":"In progress",
-    "link": { "rel":"cancel", "method":"delete", "href":"/api/status/12345"
+    "link": { "rel":"cancel", "method":"delete", "href":"/api/status/12345" }
 }
 ```
 

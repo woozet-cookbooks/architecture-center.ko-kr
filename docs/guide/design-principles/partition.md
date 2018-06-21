@@ -2,12 +2,12 @@
 title: 한도에 맞춘 분할
 description: 분할을 사용하여 데이터베이스, 네트워크 및 계산 한도를 해결합니다.
 author: MikeWasson
-layout: LandingPage
-ms.openlocfilehash: 4371490385b24230551bf17db0075052f320b574
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 86306c6c33ea7a93c4c1f868d820cc522095a8b7
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206643"
 ---
 # <a name="partition-around-limits"></a>한도에 맞춘 분할
 

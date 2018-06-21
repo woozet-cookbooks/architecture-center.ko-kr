@@ -2,16 +2,18 @@
 title: '설명: Azure의 작동 방식'
 description: Azure의 내부 작동 설명
 author: petertay
-ms.openlocfilehash: 1cebcc001b8d2ae93d8b0271c48d54617281c7c2
-ms.sourcegitcommit: b3d74d8a89b2224fc796ce0e89cea447af43a0d4
+ms.openlocfilehash: 88514ba01efabe38a1b92d135321c2e44cef004e
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/11/2018
-ms.locfileid: "35290512"
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206466"
 ---
 # <a name="explainer-how-does-azure-work"></a>설명: Azure의 작동 방식
 
 Azure는 Microsoft의 공용 클라우드 플랫폼입니다. Azure는 PaaS(Platform as a Service), IaaS(Infrastructure as a Service), DBaaS(Database as a Service) 등을 비롯한 다양한 서비스 컬렉션을 제공합니다. 하지만 Azure란 정확히 무엇이며 어떤 방식으로 작동할까요?
+
+> [!VIDEO https://www.microsoft.com/en-us/videoplayer/embed/RE2ixGo] 
 
 다른 클라우드 플랫폼과 마찬가지로, Azure는 **가상화**라는 기술에 의존합니다. 대부분의 컴퓨터 하드웨어는 간단히 말해서 실리콘에 영구적으로 또는 반영구적으로 인코딩되는 명령 집합이므로, 소프트웨어에 에뮬레이트할 수 있습니다. 소프트웨어 명령을 하드웨어의 명령에 매핑하는 에뮬레이션 계층을 사용하여, 가상화된 하드웨어는 마치 실제 하드웨어인 것처럼 소프트웨어에서 실행될 수 있습니다.
 
