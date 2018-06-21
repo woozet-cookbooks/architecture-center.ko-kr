@@ -2,43 +2,43 @@
 title: 작업에 가장 적합한 데이터 저장소 사용
 description: 데이터에 가장 적합한 저장소 기술과 사용 방법을 선택합니다.
 author: MikeWasson
-layout: LandingPage
-ms.openlocfilehash: ef9439f7a3766d13b498eac915e0f5afd23de4e2
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: c3619012e8c199d154e4ac432ce03b2a9295c26f
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206634"
 ---
-# <a name="use-the-best-data-store-for-the-job"></a>작업에 가장 적합한 데이터 저장소 사용
+# <a name="use-the-best-data-store-for-the-job"></a><span data-ttu-id="3b505-103">작업에 가장 적합한 데이터 저장소 사용</span><span class="sxs-lookup"><span data-stu-id="3b505-103">Use the best data store for the job</span></span>
 
-## <a name="pick-the-storage-technology-that-is-the-best-fit-for-your-data-and-how-it-will-be-used"></a>데이터에 가장 적합한 저장소 기술과 사용 방법을 선택합니다.
+## <a name="pick-the-storage-technology-that-is-the-best-fit-for-your-data-and-how-it-will-be-used"></a><span data-ttu-id="3b505-104">데이터에 가장 적합한 저장소 기술과 사용 방법을 선택합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-104">Pick the storage technology that is the best fit for your data and how it will be used</span></span>
 
-이제 대용량 관계형 SQL 데이터베이스에 모든 데이터를 저장하는 시대는 끝났습니다. 관계형 데이터베이스는 관계형 데이터를 통한 트랜잭션을 위해 ACID 보증을 제공하는 뛰어난 데이터베이스입니다. 그러나 여기에는 약간의 비용이 필요합니다.
+<span data-ttu-id="3b505-105">이제 대용량 관계형 SQL 데이터베이스에 모든 데이터를 저장하는 시대는 끝났습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-105">Gone are the days when you would just stick all of your data into a big relational SQL database.</span></span> <span data-ttu-id="3b505-106">관계형 데이터베이스는 관계형 데이터를 통한 트랜잭션을 위해 ACID 보증을 제공하는 뛰어난 데이터베이스입니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-106">Relational databases are very good at what they do &mdash; providing ACID guarantees for transactions over relational data.</span></span> <span data-ttu-id="3b505-107">그러나 여기에는 약간의 비용이 필요합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-107">But they come with some costs:</span></span>
 
-- 쿼리에 비용이 많이 드는 조인이 필요할 수 있습니다.
-- 데이터는 정규화되고 사전 정의된 스키마(스키마 온 라이트(schema-on-write))를 준수해야 합니다.
-- 잠금 경합은 성능에 영향을 줄 수 있습니다.
+- <span data-ttu-id="3b505-108">쿼리에 비용이 많이 드는 조인이 필요할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-108">Queries may require expensive joins.</span></span>
+- <span data-ttu-id="3b505-109">데이터는 정규화되고 사전 정의된 스키마(스키마 온 라이트(schema-on-write))를 준수해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-109">Data must be normalized and conform to a predefined schema (schema on write).</span></span>
+- <span data-ttu-id="3b505-110">잠금 경합은 성능에 영향을 줄 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-110">Lock contention may impact performance.</span></span>
 
-아무리 큰 솔루션이라도 단일 데이터 저장소 기술이 모든 요구를 충족할 수는 없습니다. 관계형 데이터베이스의 대안으로는 키/값 저장소, 문서 데이터베이스, 검색 엔진 데이터베이스, 시계열 데이터베이스, 열 패밀리 데이터베이스 및 그래프 데이터베이스가 있습니다. 각 데이터베이스마다 장단점이 있으며, 서로 다른 유형의 데이터에 적합합니다. 
+<span data-ttu-id="3b505-111">아무리 큰 솔루션이라도 단일 데이터 저장소 기술이 모든 요구를 충족할 수는 없습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-111">In any large solution, it's likely that a single data store technology won't fill all your needs.</span></span> <span data-ttu-id="3b505-112">관계형 데이터베이스의 대안으로는 키/값 저장소, 문서 데이터베이스, 검색 엔진 데이터베이스, 시계열 데이터베이스, 열 패밀리 데이터베이스 및 그래프 데이터베이스가 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-112">Alternatives to relational databases include key/value stores, document databases, search engine databases, time series databases, column family databases, and graph databases.</span></span> <span data-ttu-id="3b505-113">각 데이터베이스마다 장단점이 있으며, 서로 다른 유형의 데이터에 적합합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-113">Each has pros and cons, and different types of data fit more naturally into one or another.</span></span> 
 
-예를 들어 유연한 스키마를 허용하는 Cosmos DB와 같은 문서 데이터베이스에는 제품 카탈로그를 저장할 수 있습니다. 이 경우 각 제품 설명은 자체 포함 문서입니다. 전체 카탈로그에 대한 쿼리의 경우 카탈로그를 인덱싱하고 Azure Search에 인덱스를 저장할 수 있습니다. 제품 재고는 ACID 보증이 필요한 데이터이므로 SQL 데이터베이스에 저장할 수 있습니다.
+<span data-ttu-id="3b505-114">예를 들어 유연한 스키마를 허용하는 Cosmos DB와 같은 문서 데이터베이스에는 제품 카탈로그를 저장할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-114">For example, you might store a product catalog in a document database, such as Cosmos DB, which allows for a flexible schema.</span></span> <span data-ttu-id="3b505-115">이 경우 각 제품 설명은 자체 포함 문서입니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-115">In that case, each product description is a self-contained document.</span></span> <span data-ttu-id="3b505-116">전체 카탈로그에 대한 쿼리의 경우 카탈로그를 인덱싱하고 Azure Search에 인덱스를 저장할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-116">For queries over the entire catalog, you might index the catalog and store the index in Azure Search.</span></span> <span data-ttu-id="3b505-117">제품 재고는 ACID 보증이 필요한 데이터이므로 SQL 데이터베이스에 저장할 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-117">Product inventory might go into a SQL database, because that data requires ACID guarantees.</span></span>
 
-데이터에는 지속적인 응용 프로그램 데이터 그 이상이 포함됩니다. 또한 응용 프로그램 로그, 이벤트, 메시지 및 캐시도 포함됩니다.
+<span data-ttu-id="3b505-118">데이터에는 지속적인 응용 프로그램 데이터 그 이상이 포함됩니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-118">Remember that data includes more than just the persisted application data.</span></span> <span data-ttu-id="3b505-119">또한 응용 프로그램 로그, 이벤트, 메시지 및 캐시도 포함됩니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-119">It also includes application logs, events, messages, and caches.</span></span>
 
-## <a name="recommendations"></a>권장 사항
+## <a name="recommendations"></a><span data-ttu-id="3b505-120">권장 사항</span><span class="sxs-lookup"><span data-stu-id="3b505-120">Recommendations</span></span>
 
-**모든 경우에 관계형 데이터베이스를 사용하지 않음**. 상황에 맞게 적절한 다른 데이터 저장소를 고려합니다. [적절한 데이터 저장소 선택][data-store-overview]을 참조하세요.
+<span data-ttu-id="3b505-121">**모든 경우에 관계형 데이터베이스를 사용하지 않음**.</span><span class="sxs-lookup"><span data-stu-id="3b505-121">**Don't use a relational database for everything**.</span></span> <span data-ttu-id="3b505-122">상황에 맞게 적절한 다른 데이터 저장소를 고려합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-122">Consider other data stores when appropriate.</span></span> <span data-ttu-id="3b505-123">[적절한 데이터 저장소 선택][data-store-overview]을 참조하세요.</span><span class="sxs-lookup"><span data-stu-id="3b505-123">See [Choose the right data store][data-store-overview].</span></span>
 
-**Polyglot 지속성 사용**. 아무리 큰 솔루션이라도 단일 데이터 저장소 기술이 모든 요구를 충족할 수는 없습니다. 
+<span data-ttu-id="3b505-124">**Polyglot 지속성 사용**.</span><span class="sxs-lookup"><span data-stu-id="3b505-124">**Embrace polyglot persistence**.</span></span> <span data-ttu-id="3b505-125">아무리 큰 솔루션이라도 단일 데이터 저장소 기술이 모든 요구를 충족할 수는 없습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-125">In any large solution, it's likely that a single data store technology won't fill all your needs.</span></span> 
 
-**데이터 형식 고려**. 예를 들어 트랜잭션 데이터는 SQL에, JSON 문서는 문서 데이터베이스에, 원격 분석 데이터는 시계열 데이터베이스에, 응용 프로그램 로그는 Elasticsearch에, BLOB은 Azure Blob Storage에 저장합니다.
+<span data-ttu-id="3b505-126">**데이터 형식 고려**.</span><span class="sxs-lookup"><span data-stu-id="3b505-126">**Consider the type of data**.</span></span> <span data-ttu-id="3b505-127">예를 들어 트랜잭션 데이터는 SQL에, JSON 문서는 문서 데이터베이스에, 원격 분석 데이터는 시계열 데이터베이스에, 응용 프로그램 로그는 Elasticsearch에, BLOB은 Azure Blob Storage에 저장합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-127">For example, put transactional data into SQL, put JSON documents into a document database, put telemetry data into a time series data base, put application logs in Elasticsearch, and put blobs in Azure Blob Storage.</span></span>
 
-**(강력한) 일관성보다 가용성 선호**. CAP 정리는 분산 시스템이 가용성과 일관성 사이에서 균형을 유지해야 함을 의미합니다. CAP 정리의 다른 부분인 네트워크 파티션은 완전히 피할 수 없습니다. 종종 *결과적 일관성* 모델을 사용하여 가용성을 높일 수 있습니다. 
+<span data-ttu-id="3b505-128">**(강력한) 일관성보다 가용성 선호**.</span><span class="sxs-lookup"><span data-stu-id="3b505-128">**Prefer availability over (strong) consistency**.</span></span> <span data-ttu-id="3b505-129">CAP 정리는 분산 시스템이 가용성과 일관성 사이에서 균형을 유지해야 함을 의미합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-129">The CAP theorem implies that a distributed system must make trade-offs between availability and consistency.</span></span> <span data-ttu-id="3b505-130">CAP 정리의 다른 부분인 네트워크 파티션은 완전히 피할 수 없습니다. 종종 *결과적 일관성* 모델을 사용하여 가용성을 높일 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-130">(Network partitions, the other leg of the CAP theorem, can never be completely avoided.) Often, you can achieve higher availability by adopting an *eventual consistency* model.</span></span> 
 
-**개발 팀의 기술 고려**. Polyglot 지속성을 사용할 경우 장점도 있지만 속도가 느려질 수 있습니다. 새로운 데이터 저장 기술을 사용하려면 새로운 기술이 필요합니다. 개발 팀은 기술을 최대한 활용하는 방법을 이해해야 합니다. 적절한 사용 패턴, 쿼리 최적화 방법, 성능 조정 방법 등을 이해해야 합니다. 저장 기술을 선택할 때 이 점을 고려해야 합니다. 
+<span data-ttu-id="3b505-131">**개발 팀의 기술 고려**.</span><span class="sxs-lookup"><span data-stu-id="3b505-131">**Consider the skill set of the development team**.</span></span> <span data-ttu-id="3b505-132">Polyglot 지속성을 사용할 경우 장점도 있지만 속도가 느려질 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-132">There are advantages to using polyglot persistence, but it's possible to go overboard.</span></span> <span data-ttu-id="3b505-133">새로운 데이터 저장 기술을 사용하려면 새로운 기술이 필요합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-133">Adopting a new data storage technology requires a new set of skills.</span></span> <span data-ttu-id="3b505-134">개발 팀은 기술을 최대한 활용하는 방법을 이해해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-134">The development team must understand how to get the most out of the technology.</span></span> <span data-ttu-id="3b505-135">적절한 사용 패턴, 쿼리 최적화 방법, 성능 조정 방법 등을 이해해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-135">They must understand appropriate usage patterns, how to optimize queries, tune for performance, and so on.</span></span> <span data-ttu-id="3b505-136">저장 기술을 선택할 때 이 점을 고려해야 합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-136">Factor this in when considering storage technologies.</span></span> 
 
-**보정 트랜잭션 적용**. Polyglot 지속성의 단점은 단일 트랜잭션이 여러 저장소에 데이터를 쓸 수 있다는 것입니다. 실패한 경우 트랜잭션 보정을 사용하여 이미 완료된 단계를 실행 취소합니다.
+<span data-ttu-id="3b505-137">**보정 트랜잭션 적용**.</span><span class="sxs-lookup"><span data-stu-id="3b505-137">**Use compensating transactions**.</span></span> <span data-ttu-id="3b505-138">Polyglot 지속성의 단점은 단일 트랜잭션이 여러 저장소에 데이터를 쓸 수 있다는 것입니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-138">A side effect of polyglot persistence is that single transaction might write data to multiple stores.</span></span> <span data-ttu-id="3b505-139">실패한 경우 트랜잭션 보정을 사용하여 이미 완료된 단계를 실행 취소합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-139">If something fails, use compensating transactions to undo any steps that already completed.</span></span>
 
-**제한된 컨텍스트 확인**. *제한된 컨텍스트*는 도메인 기반 디자인의 용어입니다. 제한된 컨텍스트는 도메인 모델 주위의 명시적인 경계이며 모델이 적용되는 도메인 부분을 정의합니다. 원칙적으로 제한된 컨텍스트는 비즈니스 도메인의 하위 도메인에 매핑됩니다. 시스템의 제한된 컨텍스트는 Polyglot 지속성을 고려합니다. 예를 들어 “제품”은 제품 카탈로그 하위 도메인과 제품 재고 하위 도메인에 모두 표시될 수 있지만 이러한 두 하위 도메인은 제품 저장, 업데이트 및 쿼리에 대한 요구 사항이 다를 수 있습니다.
+<span data-ttu-id="3b505-140">**제한된 컨텍스트 확인**.</span><span class="sxs-lookup"><span data-stu-id="3b505-140">**Look at bounded contexts**.</span></span> <span data-ttu-id="3b505-141">*제한된 컨텍스트*는 도메인 기반 디자인의 용어입니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-141">*Bounded context* is a term from domain driven design.</span></span> <span data-ttu-id="3b505-142">제한된 컨텍스트는 도메인 모델 주위의 명시적인 경계이며 모델이 적용되는 도메인 부분을 정의합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-142">A bounded context is an explicit boundary around a domain model, and defines which parts of the domain the model applies to.</span></span> <span data-ttu-id="3b505-143">원칙적으로 제한된 컨텍스트는 비즈니스 도메인의 하위 도메인에 매핑됩니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-143">Ideally, a bounded context maps to a subdomain of the business domain.</span></span> <span data-ttu-id="3b505-144">시스템의 제한된 컨텍스트는 Polyglot 지속성을 고려합니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-144">The bounded contexts in your system are a natural place to consider polyglot persistence.</span></span> <span data-ttu-id="3b505-145">예를 들어 “제품”은 제품 카탈로그 하위 도메인과 제품 재고 하위 도메인에 모두 표시될 수 있지만 이러한 두 하위 도메인은 제품 저장, 업데이트 및 쿼리에 대한 요구 사항이 다를 수 있습니다.</span><span class="sxs-lookup"><span data-stu-id="3b505-145">For example, "products" may appear in both the Product Catalog subdomain and the Product Inventory subdomain, but it's very likely that these two subdomains have different requirements for storing, updating, and querying products.</span></span>
 
 [data-store-overview]: ../technology-choices/data-store-overview.md
