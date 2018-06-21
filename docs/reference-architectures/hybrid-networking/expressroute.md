@@ -12,6 +12,7 @@ ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 03/30/2018
+ms.locfileid: "30270322"
 ---
 # <a name="connect-an-on-premises-network-to-azure-using-expressroute"></a><span data-ttu-id="061de-103">ExpressRoute를 사용하여 온-프레미스 네트워크를 Azure에 연결</span><span class="sxs-lookup"><span data-stu-id="061de-103">Connect an on-premises network to Azure using ExpressRoute</span></span>
 

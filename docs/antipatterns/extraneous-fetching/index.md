@@ -8,6 +8,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30846606"
 ---
 # <a name="extraneous-fetching-antipattern"></a><span data-ttu-id="4227e-103">불필요한 가져오기 안티패턴</span><span class="sxs-lookup"><span data-stu-id="4227e-103">Extraneous Fetching antipattern</span></span>
 

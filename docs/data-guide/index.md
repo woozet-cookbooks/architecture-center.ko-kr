@@ -10,6 +10,7 @@ ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/21/2018
+ms.locfileid: "34422884"
 ---
 # <a name="azure-data-architecture-guide"></a>Azure Data Architecture 가이드
 

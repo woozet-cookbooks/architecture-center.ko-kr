@@ -7,6 +7,7 @@ ms.sourcegitcommit: d08f6ee27e1e8a623aeee32d298e616bc9bb87ff
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/07/2018
+ms.locfileid: "33810434"
 ---
 # <a name="architecture-styles"></a>아키텍처 스타일
 

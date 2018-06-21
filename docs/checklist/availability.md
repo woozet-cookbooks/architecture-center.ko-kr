@@ -9,6 +9,7 @@ ms.sourcegitcommit: 441185360db49cfb3cf39527b68f318d17d4cb3d
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 01/19/2018
+ms.locfileid: "27973113"
 ---
 # <a name="availability-checklist"></a><span data-ttu-id="04646-103">가용성 검사 목록</span><span class="sxs-lookup"><span data-stu-id="04646-103">Availability checklist</span></span>
 

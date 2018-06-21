@@ -8,6 +8,7 @@ ms.sourcegitcommit: a8453c4bc7c870fa1a12bb3c02e3b310db87530c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 12/29/2017
+ms.locfileid: "27549130"
 ---
 # <a name="designing-microservices-interservice-communication"></a><span data-ttu-id="e49c4-103">마이크로 서비스 디자인: 서비스 간 통신</span><span class="sxs-lookup"><span data-stu-id="e49c4-103">Designing microservices: Interservice communication</span></span>
 

@@ -11,6 +11,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582747"
 ---
 # <a name="secure-a-backend-web-api"></a><span data-ttu-id="eb2e8-103">백 엔드 웹 API의 보안 유지</span><span class="sxs-lookup"><span data-stu-id="eb2e8-103">Secure a backend web API</span></span>
 

@@ -8,6 +8,7 @@ ms.sourcegitcommit: 786bafefc731245414c3c1510fc21027afe303dc
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 12/12/2017
+ms.locfileid: "26653201"
 ---
 # <a name="designing-microservices-api-design"></a><span data-ttu-id="71281-103">마이크로 서비스 디자인: API 디자인</span><span class="sxs-lookup"><span data-stu-id="71281-103">Designing microservices: API design</span></span>
 

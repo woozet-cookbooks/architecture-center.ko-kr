@@ -13,6 +13,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582794"
 ---
 # <a name="scheduler-agent-supervisor-pattern"></a><span data-ttu-id="03d77-104">Scheduler 에이전트 감독자 패턴</span><span class="sxs-lookup"><span data-stu-id="03d77-104">Scheduler Agent Supervisor pattern</span></span>
 

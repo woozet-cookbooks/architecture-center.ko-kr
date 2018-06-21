@@ -12,6 +12,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30846511"
 ---
 # <a name="improve-scalability-in-a-web-application"></a><span data-ttu-id="4fe9b-103">웹 응용 프로그램의 확장성 향상</span><span class="sxs-lookup"><span data-stu-id="4fe9b-103">Improve scalability in a web application</span></span>
 

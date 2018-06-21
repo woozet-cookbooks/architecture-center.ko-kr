@@ -13,6 +13,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582821"
 ---
 # <a name="priority-queue-pattern"></a><span data-ttu-id="7dd11-104">우선 순위 큐 패턴</span><span class="sxs-lookup"><span data-stu-id="7dd11-104">Priority Queue pattern</span></span>
 

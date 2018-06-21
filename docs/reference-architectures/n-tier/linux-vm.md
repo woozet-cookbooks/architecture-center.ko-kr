@@ -5,8 +5,10 @@ author: telmosampaio
 ms.date: 04/03/2018
 ms.openlocfilehash: f29b7225c2e0edbb1569c9e3a55d112d12041af8
 ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
+ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/06/2018
+ms.locfileid: "33673585"
 ---
 # <a name="run-a-linux-vm-on-azure"></a><span data-ttu-id="f8684-103">Azure에서 Linux VM 실행</span><span class="sxs-lookup"><span data-stu-id="f8684-103">Run a Linux VM on Azure</span></span>
 

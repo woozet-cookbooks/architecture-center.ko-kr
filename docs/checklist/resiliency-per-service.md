@@ -9,6 +9,7 @@ ms.sourcegitcommit: 2123c25b1a0b5501ff1887f98030787191cf6994
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 03/08/2018
+ms.locfileid: "29783512"
 ---
 # <a name="resiliency-checklist-for-specific-azure-services"></a><span data-ttu-id="f94a3-103">특정 Azure 서비스에 대한 복원력 검사 목록</span><span class="sxs-lookup"><span data-stu-id="f94a3-103">Resiliency checklist for specific Azure services</span></span>
 

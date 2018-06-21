@@ -9,6 +9,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30846406"
 ---
 # <a name="basic-web-application"></a><span data-ttu-id="f71cd-103">기본 웹앱 응용 프로그램</span><span class="sxs-lookup"><span data-stu-id="f71cd-103">Basic web application</span></span>
 [!INCLUDE [header](../../_includes/header.md)]

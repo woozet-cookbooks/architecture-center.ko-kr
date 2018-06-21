@@ -8,6 +8,7 @@ ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/03/2018
+ms.locfileid: "30298824"
 ---
 # <a name="traditional-relational-database-solutions"></a><span data-ttu-id="345f7-102">기존 관계형 데이터베이스 솔루션</span><span class="sxs-lookup"><span data-stu-id="345f7-102">Traditional relational database solutions</span></span>
 

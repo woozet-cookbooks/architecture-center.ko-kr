@@ -7,6 +7,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582758"
 ---
 # <a name="choose-a-solution-for-integrating-on-premises-active-directory-with-azure"></a><span data-ttu-id="936c3-103">온-프레미스 Active Directory를 Azure와 통합하기 위한 솔루션 선택</span><span class="sxs-lookup"><span data-stu-id="936c3-103">Choose a solution for integrating on-premises Active Directory with Azure</span></span>
 

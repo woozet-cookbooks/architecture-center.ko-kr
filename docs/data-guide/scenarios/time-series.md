@@ -8,6 +8,7 @@ ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/03/2018
+ms.locfileid: "30298110"
 ---
 # <a name="time-series-solutions"></a><span data-ttu-id="e8ebc-102">시계열 솔루션</span><span class="sxs-lookup"><span data-stu-id="e8ebc-102">Time series solutions</span></span>
 

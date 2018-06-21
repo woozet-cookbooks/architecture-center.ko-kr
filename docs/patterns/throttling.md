@@ -13,6 +13,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582736"
 ---
 # <a name="throttling-pattern"></a><span data-ttu-id="20a1a-104">제한 패턴</span><span class="sxs-lookup"><span data-stu-id="20a1a-104">Throttling pattern</span></span>
 

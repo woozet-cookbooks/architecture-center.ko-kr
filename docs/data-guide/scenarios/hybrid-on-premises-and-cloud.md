@@ -8,6 +8,7 @@ ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/14/2018
+ms.locfileid: "29289689"
 ---
 # <a name="extending-on-premises-data-solutions-to-the-cloud"></a><span data-ttu-id="fb72d-102">클라우드로 온-프레미스 데이터 솔루션 확장</span><span class="sxs-lookup"><span data-stu-id="fb72d-102">Extending on-premises data solutions to the cloud</span></span>
 

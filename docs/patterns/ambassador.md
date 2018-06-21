@@ -8,6 +8,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582716"
 ---
 # <a name="ambassador-pattern"></a><span data-ttu-id="867a4-103">특사 패턴</span><span class="sxs-lookup"><span data-stu-id="867a4-103">Ambassador pattern</span></span>
 

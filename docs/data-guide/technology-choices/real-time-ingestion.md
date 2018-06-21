@@ -8,6 +8,7 @@ ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/21/2018
+ms.locfileid: "34422986"
 ---
 # <a name="choosing-a-real-time-message-ingestion-technology-in-azure"></a><span data-ttu-id="dd6da-102">Azure에서 실시간 메시지 수집 기술 선택</span><span class="sxs-lookup"><span data-stu-id="dd6da-102">Choosing a real-time message ingestion technology in Azure</span></span>
 

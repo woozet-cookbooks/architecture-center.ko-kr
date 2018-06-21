@@ -8,6 +8,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "24851508"
 ---
 # <a name="performance-antipatterns-for-cloud-applications"></a><span data-ttu-id="64657-103">클라우드 응용 프로그램에 대한 성능 안티패턴</span><span class="sxs-lookup"><span data-stu-id="64657-103">Performance antipatterns for cloud applications</span></span>
 

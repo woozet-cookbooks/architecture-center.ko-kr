@@ -8,6 +8,7 @@ ms.sourcegitcommit: 3d6dba524cc7661740bdbaf43870de7728d60a01
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 01/11/2018
+ms.locfileid: "27765989"
 ---
 # <a name="designing-microservices-domain-analysis"></a><span data-ttu-id="45f3d-103">마이크로 서비스 설계: 도메인 분석</span><span class="sxs-lookup"><span data-stu-id="45f3d-103">Designing microservices: Domain analysis</span></span> 
 

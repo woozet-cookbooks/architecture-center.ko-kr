@@ -10,6 +10,7 @@ ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/16/2018
+ms.locfileid: "31012521"
 ---
 # <a name="use-azure-key-vault-to-protect-application-secrets"></a><span data-ttu-id="83217-103">Azure Key Vault를 사용하여 응용 프로그램 암호 보호</span><span class="sxs-lookup"><span data-stu-id="83217-103">Use Azure Key Vault to protect application secrets</span></span>
 

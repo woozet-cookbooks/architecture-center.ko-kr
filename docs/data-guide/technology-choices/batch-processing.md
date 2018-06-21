@@ -8,6 +8,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30848668"
 ---
 # <a name="choosing-a-batch-processing-technology-in-azure"></a><span data-ttu-id="5b3cc-102">Azure에서 일괄 처리 기술 선택</span><span class="sxs-lookup"><span data-stu-id="5b3cc-102">Choosing a batch processing technology in Azure</span></span>
 

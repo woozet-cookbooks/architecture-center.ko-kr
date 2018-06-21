@@ -9,6 +9,7 @@ ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/23/2018
+ms.locfileid: "29478462"
 ---
 # <a name="autoscaling"></a><span data-ttu-id="4b516-103">자동 확장</span><span class="sxs-lookup"><span data-stu-id="4b516-103">Autoscaling</span></span>
 [!INCLUDE [header](../_includes/header.md)]

@@ -8,6 +8,7 @@ ms.sourcegitcommit: 90cf2de795e50571d597cfcb9b302e48933e7f18
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/14/2018
+ms.locfileid: "29288935"
 ---
 # <a name="choosing-a-machine-learning-technology-in-azure"></a><span data-ttu-id="0f9ea-102">Azure에서 Machine Learning 기술 선택</span><span class="sxs-lookup"><span data-stu-id="0f9ea-102">Choosing a machine learning technology in Azure</span></span>
 

@@ -8,6 +8,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582636"
 ---
 # <a name="implement-a-property-transformer-and-collector-in-an-azure-resource-manager-template"></a><span data-ttu-id="b31e8-103">Azure Resource Manager 템플릿에서 속성 변환기 및 수집기 구현</span><span class="sxs-lookup"><span data-stu-id="b31e8-103">Implement a property transformer and collector in an Azure Resource Manager template</span></span>
 

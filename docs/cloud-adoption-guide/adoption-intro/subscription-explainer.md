@@ -7,6 +7,7 @@ ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/23/2018
+ms.locfileid: "29478309"
 ---
 # <a name="explainer-what-is-an-azure-subscription"></a><span data-ttu-id="e471e-103">설명: Azure 구독이란?</span><span class="sxs-lookup"><span data-stu-id="e471e-103">Explainer: What is an Azure subscription?</span></span>
 

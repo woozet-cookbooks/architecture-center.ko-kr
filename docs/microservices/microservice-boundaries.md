@@ -8,6 +8,7 @@ ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/06/2018
+ms.locfileid: "33673405"
 ---
 # <a name="designing-microservices-identifying-microservice-boundaries"></a><span data-ttu-id="d347b-103">마이크로 서비스 디자인: 마이크로 서비스 경계 식별</span><span class="sxs-lookup"><span data-stu-id="d347b-103">Designing microservices: Identifying microservice boundaries</span></span>
 

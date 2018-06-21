@@ -8,6 +8,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582737"
 ---
 # <a name="gateway-aggregation-pattern"></a><span data-ttu-id="8c501-103">게이트웨이 집계 패턴</span><span class="sxs-lookup"><span data-stu-id="8c501-103">Gateway Aggregation pattern</span></span>
 

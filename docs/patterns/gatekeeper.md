@@ -12,6 +12,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582739"
 ---
 # <a name="gatekeeper-pattern"></a><span data-ttu-id="9609c-104">게이트키퍼 패턴</span><span class="sxs-lookup"><span data-stu-id="9609c-104">Gatekeeper pattern</span></span>
 

@@ -11,6 +11,7 @@ ms.sourcegitcommit: 8ab30776e0c4cdc16ca0dcc881960e3108ad3e94
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 12/08/2017
+ms.locfileid: "26582883"
 ---
 # <a name="cache-access-tokens"></a><span data-ttu-id="10eb5-103">액세스 토큰 캐시</span><span class="sxs-lookup"><span data-stu-id="10eb5-103">Cache access tokens</span></span>
 

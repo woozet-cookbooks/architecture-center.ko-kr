@@ -8,6 +8,7 @@ ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 03/30/2018
+ms.locfileid: "30270022"
 ---
 # <a name="backends-for-frontends-pattern"></a><span data-ttu-id="39200-103">프런트 엔드에 대한 백 엔드 패턴</span><span class="sxs-lookup"><span data-stu-id="39200-103">Backends for Frontends pattern</span></span>
 

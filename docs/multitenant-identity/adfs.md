@@ -11,6 +11,7 @@ ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/23/2018
+ms.locfileid: "29477447"
 ---
 # <a name="federate-with-a-customers-ad-fs"></a><span data-ttu-id="b71c0-103">고객의 AD FS로 페더레이션</span><span class="sxs-lookup"><span data-stu-id="b71c0-103">Federate with a customer's AD FS</span></span>
 

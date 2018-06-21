@@ -8,6 +8,7 @@ ms.sourcegitcommit: a8453c4bc7c870fa1a12bb3c02e3b310db87530c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 12/29/2017
+ms.locfileid: "27549181"
 ---
 # <a name="designing-microservices-api-gateways"></a><span data-ttu-id="29d23-103">마이크로 서비스 디자인: API 게이트웨이</span><span class="sxs-lookup"><span data-stu-id="29d23-103">Designing microservices: API gateways</span></span>
 

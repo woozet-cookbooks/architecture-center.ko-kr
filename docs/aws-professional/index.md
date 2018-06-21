@@ -10,6 +10,7 @@ ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/16/2018
+ms.locfileid: "31012623"
 ---
 # <a name="azure-for-aws-professionals"></a><span data-ttu-id="81a73-106">AWS 전문가를 위한 Azure</span><span class="sxs-lookup"><span data-stu-id="81a73-106">Azure for AWS Professionals</span></span>
 

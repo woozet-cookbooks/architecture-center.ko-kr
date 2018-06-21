@@ -8,6 +8,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "24851503"
 ---
 # <a name="synchronous-io-antipattern"></a><span data-ttu-id="06535-103">동기 I/O 안티패턴</span><span class="sxs-lookup"><span data-stu-id="06535-103">Synchronous I/O antipattern</span></span>
 

@@ -11,6 +11,7 @@ ms.sourcegitcommit: 0de300b6570e9990e5c25efc060946cb9d079954
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/03/2018
+ms.locfileid: "32323876"
 ---
 # <a name="extend-active-directory-domain-services-ad-ds-to-azure"></a><span data-ttu-id="1c53c-103">AD DS(Active Directory Domain Services)를 Azure로 확장</span><span class="sxs-lookup"><span data-stu-id="1c53c-103">Extend Active Directory Domain Services (AD DS) to Azure</span></span>
 

@@ -10,6 +10,7 @@ ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/16/2018
+ms.locfileid: "31012640"
 ---
 # <a name="designing-resilient-applications-for-azure"></a><span data-ttu-id="734f9-103">Azure용 복원 응용 프로그램 디자인</span><span class="sxs-lookup"><span data-stu-id="734f9-103">Designing resilient applications for Azure</span></span>
 

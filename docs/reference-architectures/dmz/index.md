@@ -7,6 +7,7 @@ ms.sourcegitcommit: 7ced70ebc11aa0df0dc0104092d3cc6ad5c28bd6
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/11/2018
+ms.locfileid: "34062734"
 ---
 <!-- This file is generated! -->
 <!-- See the templates in ./build/reference-architectures  -->

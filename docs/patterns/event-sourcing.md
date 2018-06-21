@@ -13,6 +13,7 @@ ms.sourcegitcommit: ea7108f71dab09175ff69322874d1bcba800a37a
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 03/17/2018
+ms.locfileid: "29963213"
 ---
 # <a name="event-sourcing-pattern"></a><span data-ttu-id="e9c38-104">이벤트 소싱 패턴</span><span class="sxs-lookup"><span data-stu-id="e9c38-104">Event Sourcing pattern</span></span>
 

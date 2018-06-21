@@ -7,6 +7,7 @@ ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/09/2018
+ms.locfileid: "29062061"
 ---
 # <a name="guidance-azure-subscription-design"></a><span data-ttu-id="db382-103">지침: Azure 구독 디자인</span><span class="sxs-lookup"><span data-stu-id="db382-103">Guidance: Azure subscription design</span></span> 
 

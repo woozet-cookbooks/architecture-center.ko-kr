@@ -14,6 +14,7 @@ ms.sourcegitcommit: d08f6ee27e1e8a623aeee32d298e616bc9bb87ff
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/07/2018
+ms.locfileid: "33811052"
 ---
 # <a name="command-and-query-responsibility-segregation-cqrs-pattern"></a><span data-ttu-id="4dd61-104">CQRS(명령 및 쿼리 책임 분리) 패턴</span><span class="sxs-lookup"><span data-stu-id="4dd61-104">Command and Query Responsibility Segregation (CQRS) pattern</span></span>
 

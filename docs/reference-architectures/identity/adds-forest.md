@@ -15,6 +15,7 @@ ms.sourcegitcommit: 0de300b6570e9990e5c25efc060946cb9d079954
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/03/2018
+ms.locfileid: "32323910"
 ---
 # <a name="create-an-active-directory-domain-services-ad-ds-resource-forest-in-azure"></a><span data-ttu-id="f95d9-104">Azure에서 AAD DS(Active Directory Domain Services) 리소스 포리스트 만들기</span><span class="sxs-lookup"><span data-stu-id="f95d9-104">Create an Active Directory Domain Services (AD DS) resource forest in Azure</span></span>
 

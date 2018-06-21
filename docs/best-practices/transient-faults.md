@@ -9,6 +9,7 @@ ms.sourcegitcommit: c53adf50d3a787956fc4ebc951b163a10eeb5d20
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/23/2017
+ms.locfileid: "26582874"
 ---
 # <a name="transient-fault-handling"></a><span data-ttu-id="a9734-103">일시적인 오류 처리</span><span class="sxs-lookup"><span data-stu-id="a9734-103">Transient fault handling</span></span>
 

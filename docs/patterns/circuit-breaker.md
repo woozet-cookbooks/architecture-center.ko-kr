@@ -12,6 +12,7 @@ ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 03/30/2018
+ms.locfileid: "30270475"
 ---
 # <a name="circuit-breaker-pattern"></a><span data-ttu-id="36895-104">회로 차단기 패턴</span><span class="sxs-lookup"><span data-stu-id="36895-104">Circuit Breaker pattern</span></span>
 

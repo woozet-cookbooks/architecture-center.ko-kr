@@ -11,6 +11,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582744"
 ---
 # <a name="tenant-sign-up-and-onboarding"></a><span data-ttu-id="a4cbc-103">테넌트 등록 및 온보딩</span><span class="sxs-lookup"><span data-stu-id="a4cbc-103">Tenant sign-up and onboarding</span></span>
 

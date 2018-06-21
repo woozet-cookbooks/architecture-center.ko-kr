@@ -12,6 +12,7 @@ ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 03/30/2018
+ms.locfileid: "30270407"
 ---
 # <a name="dmz-between-azure-and-the-internet"></a><span data-ttu-id="0a9ea-103">Azure와 인터넷 간의 DMZ</span><span class="sxs-lookup"><span data-stu-id="0a9ea-103">DMZ between Azure and the Internet</span></span>
 

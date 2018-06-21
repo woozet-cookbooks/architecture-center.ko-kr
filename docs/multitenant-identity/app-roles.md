@@ -11,6 +11,7 @@ ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 05/21/2018
+ms.locfileid: "34422969"
 ---
 # <a name="application-roles"></a><span data-ttu-id="85767-103">응용 프로그램 역할</span><span class="sxs-lookup"><span data-stu-id="85767-103">Application roles</span></span>
 

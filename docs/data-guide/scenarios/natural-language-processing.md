@@ -8,6 +8,7 @@ ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/03/2018
+ms.locfileid: "30297974"
 ---
 # <a name="natural-language-processing"></a><span data-ttu-id="22494-102">자연어 처리</span><span class="sxs-lookup"><span data-stu-id="22494-102">Natural language processing</span></span>
 

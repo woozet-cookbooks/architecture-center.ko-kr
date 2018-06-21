@@ -10,6 +10,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30847195"
 ---
 # <a name="resiliency-patterns"></a><span data-ttu-id="da2d0-106">복원력 패턴</span><span class="sxs-lookup"><span data-stu-id="da2d0-106">Resiliency patterns</span></span>
 

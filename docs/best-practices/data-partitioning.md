@@ -9,6 +9,7 @@ ms.sourcegitcommit: 2e8b06e9c07875d65b91d5431bfd4bc465a7a242
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/09/2018
+ms.locfileid: "29059975"
 ---
 # <a name="data-partitioning"></a><span data-ttu-id="962cf-103">데이터 분할</span><span class="sxs-lookup"><span data-stu-id="962cf-103">Data partitioning</span></span>
 

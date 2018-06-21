@@ -8,6 +8,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30846885"
 ---
 # <a name="choosing-an-analytical-data-store-in-azure"></a><span data-ttu-id="b6607-102">Azure에서 분석 데이터 저장소 선택</span><span class="sxs-lookup"><span data-stu-id="b6607-102">Choosing an analytical data store in Azure</span></span>
 

@@ -10,6 +10,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30847801"
 ---
 # <a name="design-and-implementation-patterns"></a><span data-ttu-id="91225-105">디자인 및 구현 패턴</span><span class="sxs-lookup"><span data-stu-id="91225-105">Design and Implementation patterns</span></span>
 

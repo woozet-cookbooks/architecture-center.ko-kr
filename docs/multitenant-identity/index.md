@@ -10,6 +10,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "24851563"
 ---
 # <a name="manage-identity-in-multitenant-applications"></a><span data-ttu-id="fbeb8-103">다중 테넌트 응용 프로그램의 ID 관리</span><span class="sxs-lookup"><span data-stu-id="fbeb8-103">Manage Identity in Multitenant Applications</span></span>
 

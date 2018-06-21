@@ -8,6 +8,7 @@ ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/03/2018
+ms.locfileid: "30297959"
 ---
 # <a name="interactive-data-exploration"></a><span data-ttu-id="ef56e-102">대화형 데이터 탐색</span><span class="sxs-lookup"><span data-stu-id="ef56e-102">Interactive data exploration</span></span>
 

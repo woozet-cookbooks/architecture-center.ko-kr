@@ -12,6 +12,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30849657"
 ---
 # <a name="dmz-between-azure-and-your-on-premises-datacenter"></a><span data-ttu-id="24356-103">Azure와 온-프레미스 데이터 센터 간의 DMZ</span><span class="sxs-lookup"><span data-stu-id="24356-103">DMZ between Azure and your on-premises datacenter</span></span>
 

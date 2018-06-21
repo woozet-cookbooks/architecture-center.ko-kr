@@ -8,6 +8,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30847178"
 ---
 # <a name="use-an-object-as-a-parameter-in-an-azure-resource-manager-template"></a><span data-ttu-id="73b3e-103">Azure Resource Manager 템플릿에서 개체를 매개 변수로 사용</span><span class="sxs-lookup"><span data-stu-id="73b3e-103">Use an object as a parameter in an Azure Resource Manager template</span></span>
 

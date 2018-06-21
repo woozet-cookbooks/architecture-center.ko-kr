@@ -7,6 +7,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582669"
 ---
 # <a name="big-compute-architecture-style"></a><span data-ttu-id="9ccc5-103">큰 계산 아키텍처 스타일</span><span class="sxs-lookup"><span data-stu-id="9ccc5-103">Big compute architecture style</span></span>
 

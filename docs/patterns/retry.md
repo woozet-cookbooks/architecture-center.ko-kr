@@ -12,6 +12,7 @@ ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 02/23/2018
+ms.locfileid: "29478258"
 ---
 # <a name="retry-pattern"></a><span data-ttu-id="3c2a6-104">다시 시도 패턴</span><span class="sxs-lookup"><span data-stu-id="3c2a6-104">Retry pattern</span></span>
 

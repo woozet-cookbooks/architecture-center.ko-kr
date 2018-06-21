@@ -14,6 +14,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582759"
 ---
 # <a name="static-content-hosting-pattern"></a><span data-ttu-id="01442-104">정적 콘텐츠 호스팅 패턴</span><span class="sxs-lookup"><span data-stu-id="01442-104">Static Content Hosting pattern</span></span>
 

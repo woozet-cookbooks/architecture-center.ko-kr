@@ -11,6 +11,7 @@ ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 11/14/2017
+ms.locfileid: "26582770"
 ---
 # <a name="work-with-claims-based-identities"></a><span data-ttu-id="c1d85-103">클레임 기반 ID 사용</span><span class="sxs-lookup"><span data-stu-id="c1d85-103">Work with claims-based identities</span></span>
 

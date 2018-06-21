@@ -8,6 +8,7 @@ ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/03/2018
+ms.locfileid: "30298858"
 ---
 # <a name="big-data-architectures"></a><span data-ttu-id="c542b-102">빅 데이터 아키텍처</span><span class="sxs-lookup"><span data-stu-id="c542b-102">Big data architectures</span></span>
 

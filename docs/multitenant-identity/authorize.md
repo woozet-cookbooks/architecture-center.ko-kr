@@ -11,6 +11,7 @@ ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
 ms.lasthandoff: 04/06/2018
+ms.locfileid: "30849674"
 ---
 # <a name="role-based-and-resource-based-authorization"></a><span data-ttu-id="260fc-103">역할 기반 및 리소스 기반 권한 부여</span><span class="sxs-lookup"><span data-stu-id="260fc-103">Role-based and resource-based authorization</span></span>
 
