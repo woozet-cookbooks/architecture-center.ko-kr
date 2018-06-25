@@ -4,12 +4,12 @@ description: Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: 42d91da3eacdcda66b82dff82ba444170c11d7d1
-ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
+ms.openlocfilehash: a92b6a1a23b35e7379f586d477b6f7cc6ccfc7e1
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/11/2018
-ms.locfileid: "35253063"
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206381"
 ---
 # <a name="naming-conventions"></a>명명 규칙
 
@@ -34,7 +34,7 @@ Azure 구독을 명명하는 경우 자세한 이름은 각 구독의 컨텍스�
 `<Company> <Department (optional)> <Product Line (optional)> <Environment>`
 
 * 일반적으로 회사는 각 구독에 대해 동일할 것입니다. 그러나 일부 회사에서는 조직 구조 내에 자식 회사가 있을 수 있습니다. 이러한 회사는 중앙 IT 그룹에서 관리될 수 있습니다. 이 경우 부모 회사 이름(*Contoso*) 및 자식 회사 이름(*Northwind*)을 모두 사용하여 구분할 수 있습니다.
-* 부서는 개인 작업의 그룹인 조직 내에서 이름입니다. 네임스페이스 내에서 이 항목은 선택적입니다.
+* 부서는 개인 그룹을 포함하는 조직 내 이름입니다. 네임스페이스 내에서 이 항목은 선택 사항입니다.
 * 제품 라인은 부서 내에서 수행되는 제품 또는 기능에 대한 특정 이름입니다. 일반적으로 내부 전용 서비스 및 응용 프로그램에는 선택 사항입니다. 쉬운 분리 및 ID(예: 청구 레코드의 명확한 분리)가 필요한 공용 서비스에 사용하는 것이 좋습니다.
 * 환경은 개발, QA 또는 프로덕션 등의 응용 프로그램 또는 서비스의 배포 수명 주기를 설명하는 이름입니다.
 

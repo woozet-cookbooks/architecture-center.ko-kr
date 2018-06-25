@@ -2,12 +2,12 @@
 title: 'Azure 도입: 중간'
 description: 엔터프라이즈가 Azure를 채택하기 위해 필요한 중간 지식 수준 설명
 author: petertay
-ms.openlocfilehash: 39b98595dd615ba1aa36921e48a0b23797bebaa0
-ms.sourcegitcommit: b3d74d8a89b2224fc796ce0e89cea447af43a0d4
+ms.openlocfilehash: 227d9558647ed8076b2832d95e192f2f0c43b9db
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/11/2018
-ms.locfileid: "35291303"
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206364"
 ---
 # <a name="azure-cloud-adoption-guide-intermediate-overview"></a>Azure 클라우드 도입 가이드: 중간 개요
 
@@ -53,31 +53,31 @@ Azure 클라우드 도입 가이드의 [기본 단계](/azure/architecture/cloud
 다음 단계를 수행하세요.
 
 1. 조직에 아직 [Azure 계정](/azure/active-directory/sign-up-organization)이 없는 경우 새로 하나 만듭니다. Azure 계정에 등록하는 사람이 Azure 계정 관리자가 되고 조직의 지도부는 이 역할을 맡을 개인을 선정해야 합니다. 이 개인은 다음을 담당하게 됩니다.
-  * 구독 만들기 및
-  * 해당 구독에 대한 사용자 ID를 저장하는 [Azure AD(Active Directory)](/azure/active-directory/active-directory-whatis) 테넌트 만들기 및 관리하기.    
+    * 구독 만들기 및
+    * 해당 구독에 대한 사용자 ID를 저장하는 [Azure AD(Active Directory)](/azure/active-directory/active-directory-whatis) 테넌트 만들기 및 관리하기.    
 2. 조직의 경영진은 사람들이 담당하는 분야를 결정합니다.
-  * 사용자 ID 관리, 조직의 Azure 계정을 만들 경우 기본적으로 만든 [Azure AD 테넌트](/azure/active-directory/develop/active-directory-howto-tenant) 및 기본적으로 [Azure AD 전역 관리자](/azure/active-directory/active-directory-assign-admin-roles-azure-portal#details-about-the-global-administrator-role)로서 추가된 계정 관리자. 조직에서는 [해당 사용자에게 Azure AD 전역 관리자 역할을 할당](/azure/active-directory/active-directory-users-assign-role-azure-portal)하여 사용자 ID를 관리할 다른 사용자를 선택할 수 있습니다. 
-  * 이러한 사용자를 의미하는 구독입니다.
-    * 해당 구독에서 리소스 사용량과 연결된 비용을 관리하고
-    * 리소스 액세스에 대한 최소 권한 모델을 구현 및 관리하고
-    * 서비스 제한을 추적합니다.
-  * 공유 인프라 서비스(조직이 이 모델을 사용하기로 결정하는 경우)는 이 사용자가 다음을 담당하는 것을 의미합니다.
-    * 온-프레미스와 Azure 네트워크 연결 및 
-    * 가상 네트워크 피어링을 통해 Azure 내에서 네트워크 연결의 소유권입니다.
-  * 워크로드 소유자입니다. 
+    * 사용자 ID 관리, 조직의 Azure 계정을 만들 경우 기본적으로 만든 [Azure AD 테넌트](/azure/active-directory/develop/active-directory-howto-tenant) 및 기본적으로 [Azure AD 전역 관리자](/azure/active-directory/active-directory-assign-admin-roles-azure-portal#details-about-the-global-administrator-role)로서 추가된 계정 관리자. 조직에서는 [해당 사용자에게 Azure AD 전역 관리자 역할을 할당](/azure/active-directory/active-directory-users-assign-role-azure-portal)하여 사용자 ID를 관리할 다른 사용자를 선택할 수 있습니다. 
+    * 이러한 사용자를 의미하는 구독입니다.
+        * 해당 구독에서 리소스 사용량과 연결된 비용을 관리하고
+        * 리소스 액세스에 대한 최소 권한 모델을 구현 및 관리하고
+        * 서비스 제한을 추적합니다.
+    * 공유 인프라 서비스(조직이 이 모델을 사용하기로 결정하는 경우)는 이 사용자가 다음을 담당하는 것을 의미합니다.
+        * 온-프레미스와 Azure 네트워크 연결 및 
+        * 가상 네트워크 피어링을 통해 Azure 내에서 네트워크 연결의 소유권입니다.
+    * 워크로드 소유자입니다. 
 3. Azure AD 전역 관리자는 다음에 대한 [새 사용자 계정을 만듭니다](/azure/active-directory/add-users-azure-active-directory).
-  * 각 환경과 연결된 각 구독에 대한 **구독 소유자**가 될 사용자입니다. 구독 **서비스 관리자**가 각 구독/환경에 대한 리소스 액세스를 관리하는 작업을 담당하지 않을 경우에만 필요합니다.
-  * **네트워크 작업 사용자**가 될 사용자 및
-  * **워크로드 소유자**인 사용자입니다.
+    * 각 환경과 연결된 각 구독에 대한 **구독 소유자**가 될 사용자입니다. 구독 **서비스 관리자**가 각 구독/환경에 대한 리소스 액세스를 관리하는 작업을 담당하지 않을 경우에만 필요합니다.
+    * **네트워크 작업 사용자**가 될 사용자 및
+    * **워크로드 소유자**인 사용자입니다.
 4. Azure 계정 관리자는 사[Azure 계정 포털](https://account.azure.com)을 사용하여 다음과 같은 세 개의 구독을 만듭니다.
-  * **공유 인프라** 환경에 대한 구독,
-  * **프로덕션** 환경에 대한 구독 및 
-  * **개발** 환경에 대한 구독입니다. 
+    * **공유 인프라** 환경에 대한 구독,
+    * **프로덕션** 환경에 대한 구독 및 
+    * **개발** 환경에 대한 구독입니다. 
 5. Azure 계정 관리자는 [각 구독에 구독 서비스 소유자를 추가](/azure/billing/billing-add-change-azure-subscription-administrator#add-an-rbac-owner-admin-for-a-subscription-in-azure-portal)합니다.
-6. 리소스 그룹의 생성을 요청하려면 **워크로드 소유자**에 대한 승인 프로세스를 만듭니다. 승인 프로세스는 이메일 등의 다양한 방식으로 구현될 수 있습니다. 또는 [Sharepoint 워크플로](https://support.office.com/article/introduction-to-sharepoint-workflow-07982276-54e8-4e17-8699-5056eff4d9e3) 같은 프로세스 관리 도구를 사용하여 구현합니다. 승인 프로세스는 다음 단계를 수행할 수 있습니다.
-  1. **워크로드 소유자**는 **개발** 환경이나 **프로덕션** 환경 또는 둘 다에서 필요한 Azure 리소스에 대한 제품 구성 정보를 준비하여 **구독 소유자**에게 전송합니다.
-  2. **구독 소유자**는 제품 구성 정보를 검토하고 요청한 리소스의 유효성을 검사하여 요청된 리소스가 계획된 용도에 적절한지 확인합니다. 예를 들어 요청된 [ 가상 머신 크기](/azure/virtual-machines/windows/sizes)가 올바른지 확인합니다.
-  3. 요청이 승인되지 않은 경우 **워크로드 소유자**에게 알립니다. 요청이 승인된 경우 **구독 소유자**는 조직의 [명명 규칙](/azure/architecture/best-practices/naming-conventions)에 따라 [요청된 리소스 그룹을 만들고](/azure/azure-resource-manager/resource-group-portal#manage-resource-groups), [[**기여자** 역할이 있는 **워크로드 소유자**](/azure/role-based-access-control/role-assignments-portal#add-access)를 추가하고](/azure/role-based-access-control/built-in-roles#contributor), **워크로드 소유자**에게 리소스 그룹을 생성했다는 알림을 보냅니다.
+6. 리소스 그룹의 생성을 요청하려면 **워크로드 소유자**에 대한 승인 프로세스를 만듭니다. 승인 프로세스는 이메일 등의 다양한 방식으로 구현될 수 있습니다. 또는 [Sharepoint 워크플로](https://support.office.com/article/introduction-to-sharepoint-workflow-07982276-54e8-4e17-8699-5056eff4d9e3) 같은 프로세스 관리 도구를 사용하여 구현합니다. 승인 프로세스는 다음 단계를 수행할 수 있습니다.  
+    * **워크로드 소유자**는 **개발** 환경이나 **프로덕션** 환경 또는 둘 다에서 필요한 Azure 리소스에 대한 제품 구성 정보를 준비하여 **구독 소유자**에게 전송합니다.
+    * **구독 소유자**는 제품 구성 정보를 검토하고 요청한 리소스의 유효성을 검사하여 요청된 리소스가 계획된 용도에 적절한지 확인합니다. 예를 들어 요청된 [ 가상 머신 크기](/azure/virtual-machines/windows/sizes)가 올바른지 확인합니다.
+    * 요청이 승인되지 않은 경우 **워크로드 소유자**에게 알립니다. 요청이 승인된 경우 **구독 소유자**는 조직의 [명명 규칙](/azure/architecture/best-practices/naming-conventions)에 따라 [요청된 리소스 그룹을 만들고](/azure/azure-resource-manager/resource-group-portal#manage-resource-groups), [[**기여자** 역할이 있는 **워크로드 소유자**](/azure/role-based-access-control/role-assignments-portal#add-access)를 추가하고](/azure/role-based-access-control/built-in-roles#contributor), **워크로드 소유자**에게 리소스 그룹을 생성했다는 알림을 보냅니다.
 7. 워크로드 소유자가 공유 인프라 소유자에게서 가상 네트워크 피어링 연결을 요청하려면 승인 프로세스를 만듭니다. 이전 단계에서와 마찬가지로 이 승인 프로세스는 이메일 또는 프로세스 관리 도구를 사용하여 구현할 수 있습니다.
 
 거버넌스 모델을 구현했으므로 공유 인프라 서비스를 배포할 수 있습니다.

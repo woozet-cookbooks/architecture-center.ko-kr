@@ -2,14 +2,15 @@
 title: Azure에서 공유 서비스를 사용하여 허브-스포크 네트워크 토폴로지 구현
 description: Azure에서 공유 서비스를 사용하여 허브-스포크 네트워크 토폴로지를 구현하는 방법입니다.
 author: telmosampaio
-ms.date: 02/25/2018
+ms.date: 06/19/2018
 pnp.series.title: Implement a hub-spoke network topology with shared services in Azure
 pnp.series.prev: hub-spoke
-ms.openlocfilehash: 83367a3be2f7a1e33c2ef7018d42f70aae99104d
-ms.sourcegitcommit: f665226cec96ec818ca06ac6c2d83edb23c9f29c
+ms.openlocfilehash: 5e5029dd7de78c6953229364f9e8ae2789c2b348
+ms.sourcegitcommit: f7418f8bdabc8f5ec33ae3551e3fbb466782caa5
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/16/2018
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36209562"
 ---
 # <a name="implement-a-hub-spoke-network-topology-with-shared-services-in-azure"></a>Azure에서 공유 서비스를 사용하여 허브-스포크 네트워크 토폴로지 구현
 
@@ -92,19 +93,26 @@ Azure에서 NVA(네트워크 가상 어플라이언스)를 사용하여 다른 �
 
 ## <a name="deploy-the-solution"></a>솔루션 배포
 
-이 아키텍처에 대한 배포는 [GitHub][ref-arch-repo]에서 사용할 수 있습니다. 이 아키텍처에 대한 배포는 연결을 테스트하기 위해 각 VNet에서 Ubuntu VM을 사용합니다. **허브 VNet**의 **shared-services** 서브넷에 실제로 호스팅된 서비스는 없습니다.
+이 아키텍처에 대한 배포는 [GitHub][ref-arch-repo]에서 사용할 수 있습니다. 배포는 구독에서 다음과 같은 리소스 그룹을 만듭니다.
+
+- hub-adds-rg
+- hub-nva-rg
+- hub-vnet-rg
+- onprem-vnet-rg
+- spoke1-vnet-rg
+- spoke2-vent-rg
+
+템플릿 매개 변수 파일은 이러한 이름을 참조하므로 이름을 변경하는 경우 매개 변수 파일을 일치하도록 업데이트합니다.
 
 ### <a name="prerequisites"></a>필수 조건
 
-사용자의 구독에 참조 아키텍처를 배포하려면 먼저 다음 단계를 수행해야 합니다.
-
 1. [참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
 
-2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI 설치 지침은 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)을 참조하세요.
+2. [Azure CLI 2.0][azure-cli-2]을 설치합니다.
 
 3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
 
-4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 아래 명령을 사용하여 Azure 계정에 로그인하고, 프롬프트에 따릅니다.
+4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 아래 명령을 사용하여 Azure 계정에 로그인합니다.
 
    ```bash
    az login
@@ -112,143 +120,137 @@ Azure에서 NVA(네트워크 가상 어플라이언스)를 사용하여 다른 �
 
 ### <a name="deploy-the-simulated-on-premises-datacenter-using-azbb"></a>azbb를 사용하여 시뮬레이션된 온-프레미스 데이터 센터 배포
 
-시뮬레이션된 온-프레미스 데이터 센터를 Azure VNet으로서 배포하려면 다음 단계를 수행합니다.
+이 단계에서는 시뮬레이션된 온-프레미스 데이터 센터를 Azure VNet으로서 배포합니다.
 
-1. 위의 필수 조건 단계에서 다운로드한 리포지토리가 있는 `hybrid-networking\shared-services-stack\` 폴더로 이동합니다.
+1. GitHub 리포지토리의 `hybrid-networking\shared-services-stack\` 폴더로 이동합니다.
 
-2. `onprem.json` 파일을 열고 아래에 나와 있는 대로 45열과 46열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.
+2. `onprem.json` 파일을 엽니다. 
+
+3. `Password` 및 `adminPassword`의 모든 인스턴스를 검색합니다. 매개 변수에서 사용자 이름과 암호에 값을 입력하고 파일을 저장합니다. 
+
+4. 다음 명령 실행:
 
    ```bash
-   "adminUsername": "XXX",
-   "adminPassword": "YYY",
+   azbb -s <subscription_id> -g onprem-vnet-rg -l <location> -p onprem.json --deploy
+   ```
+5. 배포가 완료될 때까지 기다립니다. 이 배포는 가상 네트워크, Windows를 실행하는 가상 머신 및 VPN 게이트웨이를 생성합니다. VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.
+
+### <a name="deploy-the-hub-vnet"></a>허브 VNet 배포
+
+이 단계에서는 허브 VNet을 배포하고 시뮬레이션된 온-프레미스 VNet에 연결합니다.
+
+1. `hub-vnet.json` 파일을 엽니다. 
+
+2. `adminPassword`를 검색하고 매개 변수에서 사용자 이름 및 암호를 입력합니다. 
+
+3. `sharedKey`의 모든 인스턴스를 검색하고 공유 키에 대한 값을 입력합니다. 파일을 저장합니다.
+
+   ```bash
+   "sharedKey": "abc123",
    ```
 
-3. `azbb`를 실행하여 아래와 같이 시뮬레이션된 온-프레미스 환경을 배포합니다.
+4. 다음 명령 실행:
 
    ```bash
-   azbb -s <subscription_id> -g onprem-vnet-rg - l <location> -p onoprem.json --deploy
-   ```
-   > [!NOTE]
-   > `onprem-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
-
-4. 배포가 완료될 때까지 기다립니다. 이 배포는 가상 네트워크, Windows를 실행하는 가상 머신 및 VPN 게이트웨이를 생성합니다. VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.
-
-### <a name="azure-hub-vnet"></a>Azure 허브 VNet
-
-허브 VNet을 배포하고 위에서 만든 시뮬레이션된 온-프레미스 VNet에 연결하려면 다음 단계를 수행합니다.
-
-1. `hub-vnet.json` 파일을 열고 아래에 나와 있는 대로 50열과 51열의 큰따옴표 사이에 사용자 이름과 암호를 입력합니다.
-
-   ```bash
-   "adminUsername": "XXX",
-   "adminPassword": "YYY",
+   azbb -s <subscription_id> -g hub-vnet-rg -l <location> -p hub-vnet.json --deploy
    ```
 
-2. `osType`의 52열에서 `Windows` 또는 `Linux`를 입력하여 jumpbox의 운영 체제로 Windows Server 2016 데이터 센터 또는 Ubuntu 16.04를 설치합니다.
+5. 배포가 완료될 때까지 기다립니다. 이 배포는 가상 네트워크, 가상 머신, VPN 게이트웨이 및 이전 섹션에서 생성한 게이트웨이에 대한 연결을 생성합니다. VPN 게이트웨이를 완료하는 데 40분 이상이 걸릴 수 있습니다.
 
-3. 아래에 나와 있는 대로 83열의 큰따옴표 사이에 공유 키를 입력한 다음, 파일을 저장합니다.
+### <a name="deploy-ad-ds-in-azure"></a>Azure에서 AD DS 배포
 
-   ```bash
-   "sharedKey": "",
-   ```
+이 단계에서는 Azure에서 AD DS 도메인 컨트롤러를 배포합니다.
 
-4. `azbb`를 실행하여 아래와 같이 시뮬레이션된 온-프레미스 환경을 배포합니다.
+1. `hub-adds.json` 파일을 엽니다.
 
-   ```bash
-   azbb -s <subscription_id> -g hub-vnet-rg - l <location> -p hub-vnet.json --deploy
-   ```
-   > [!NOTE]
-   > `hub-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+2. `Password` 및 `adminPassword`의 모든 인스턴스를 검색합니다. 매개 변수에서 사용자 이름과 암호에 값을 입력하고 파일을 저장합니다. 
 
-5. 배포가 완료될 때까지 기다립니다. 이 배포는 가상 네트워크, 가상 머신, VPN 게이트웨이 및 이전 섹션에서 생성한 게이트웨이에 대한 연결을 생성합니다. VPN 게이트웨이의 생성이 완료되기까지 40분 이상이 걸릴 수 있습니다.
-
-### <a name="adds-in-azure"></a>Azure의 ADDS
-
-Azure에서 ADDS 도메인 컨트롤러를 배포하려면 다음 단계를 수행합니다.
-
-1. `hub-adds.json` 파일을 열고 아래에 나와 있는 대로 14열과 15열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.
+3. 다음 명령 실행:
 
    ```bash
-   "adminUsername": "XXX",
-   "adminPassword": "YYY",
-   ```
-
-2. 아래와 같이 `azbb`를 실행하여 ADDS 도메인 컨트롤러를 배포합니다.
-
-   ```bash
-   azbb -s <subscription_id> -g hub-adds-rg - l <location> -p hub-adds.json --deploy
+   azbb -s <subscription_id> -g hub-adds-rg -l <location> -p hub-adds.json --deploy
    ```
   
-   > [!NOTE]
-   > `hub-adds-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+시뮬레이션된 온-프레미스 데이터 센터에서 호스팅되는 도메인에 두 VM을 조인시키고 AD DS를 설치하기 때문에 이 배포 단계는 몇 분 정도 걸릴 수 있습니다.
 
-   > [!NOTE]
-   > 두 개의 VM을 시뮬레이션된 온-프레미스 데이터 센터의 호스트 도메인에 조인한 다음, AD DS를 설치해야 하므로 배포에서 이 파트는 몇 분 정도 걸릴 수 있습니다.
+### <a name="deploy-the-spoke-vnets"></a>스포크 VNet 배포
 
-### <a name="nva"></a>NVA
+이 단계에서는 스포크 VNet을 배포합니다.
 
-`dmz` 서브넷에서 NVA를 배포하려면 다음 단계를 수행합니다.
+1. `spoke1.json` 파일을 엽니다.
 
-1. `hub-nva.json` 파일을 열고 아래에 나와 있는 대로 13열과 14열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.
+2. `adminPassword`를 검색하고 매개 변수에서 사용자 이름 및 암호를 입력합니다. 
 
-   ```bash
-   "adminUsername": "XXX",
-   "adminPassword": "YYY",
-   ```
-2. `azbb`를 실행하여 NVA VM 및 사용자 정의 경로를 배포합니다.
+3. 다음 명령 실행:
 
    ```bash
-   azbb -s <subscription_id> -g hub-nva-rg - l <location> -p hub-nva.json --deploy
-   ```
-   > [!NOTE]
-   > `hub-nva-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
-
-### <a name="azure-spoke-vnets"></a>Azure 스포크 VNet
-
-스포크 VNet을 배포하려면 다음 단계를 수행합니다.
-
-1. `spoke1.json` 파일을 열고 아래에 나와 있는 대로 52열과 53열의 큰따옴표 사이에 사용자 이름과 암호를 입력한 다음, 파일을 저장합니다.
-
-   ```bash
-   "adminUsername": "XXX",
-   "adminPassword": "YYY",
-   ```
-
-2. `osType`의 54열에서 `Windows` 또는 `Linux`를 입력하여 jumpbox의 운영 체제로 Windows Server 2016 데이터 센터 또는 Ubuntu 16.04를 설치합니다.
-
-3. `azbb`를 실행하여 아래와 같이 첫 번째 스포크 VNet 환경을 배포합니다.
-
-   ```bash
-   azbb -s <subscription_id> -g spoke1-vnet-rg - l <location> -p spoke1.json --deploy
+   azbb -s <subscription_id> -g spoke1-vnet-rg -l <location> -p spoke1.json --deploy
    ```
   
-   > [!NOTE]
-   > `spoke1-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+4. `spoke2.json` 파일에 대해 1 및 2단계 반복합니다.
 
-4. `spoke2.json` 파일에서 위의 1단계를 반복합니다.
-
-5. `azbb`를 실행하여 아래와 같이 두 번째 스포크 VNet 환경을 배포합니다.
+5. 다음 명령 실행:
 
    ```bash
-   azbb -s <subscription_id> -g spoke2-vnet-rg - l <location> -p spoke2.json --deploy
+   azbb -s <subscription_id> -g spoke2-vnet-rg -l <location> -p spoke2.json --deploy
    ```
-   > [!NOTE]
-   > `spoke2-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
 
-### <a name="azure-hub-vnet-peering-to-spoke-vnets"></a>스포크 VNet에 대한 Azure 허브 VNet 피어링
+### <a name="peer-the-hub-vnet-to-the-spoke-vnets"></a>허브 VNet과 스포크 VNet 간 피어링
 
-허브 VNet에서 스포크 VNet으로의 피어링을 연결하려면 다음 단계를 수행합니다.
+허브 VNet에서 스포크 VNet으로의 피어링을 연결하려면 다음 명령을 실행합니다.
 
-1. `hub-vnet-peering.json` 파일을 열고, 29열에서 리소스 그룹 이름 및 각 가상 네트워크 피어링의 가상 네트워크 이름이 올바른지 확인합니다.
+```bash
+azbb -s <subscription_id> -g hub-vnet-rg -l <location> -p hub-vnet-peering.json --deploy
+```
 
-2. `azbb`를 실행하여 아래와 같이 첫 번째 스포크 VNet 환경을 배포합니다.
+### <a name="deploy-the-nva"></a>NVA 배포
+
+이 단계에서는 `dmz` 서브넷에서 NVA를 배포합니다.
+
+1. `hub-nva.json` 파일을 엽니다.
+
+2. `adminPassword`를 검색하고 매개 변수에서 사용자 이름 및 암호를 입력합니다. 
+
+3. 다음 명령 실행:
 
    ```bash
-   azbb -s <subscription_id> -g hub-vnet-rg - l <location> -p hub-vnet-peering.json --deploy
+   azbb -s <subscription_id> -g hub-nva-rg -l <location> -p hub-nva.json --deploy
    ```
 
-   > [!NOTE]
-   > `hub-vnet-rg`이 아닌 다른 리소스 그룹 이름을 사용하려면 해당 이름을 사용하는 모든 매개 변수 파일을 검색하여 각 파일에서 사용자의 리소스 그룹 이름을 사용하도록 편집해야 합니다.
+### <a name="test-connectivity"></a>연결 테스트 
+
+시뮬레이션된 온-프레미스 환경에서 허브 VNet으로의 연결을 테스트합니다.
+
+1. Azure Portal을 사용하여 `onprem-jb-rg` 리소스 그룹에서 `jb-vm1`이라는 VM을 찾습니다.
+
+2. `Connect`를 클릭하여 VM에 대한 원격 데스크톱 세션을 엽니다. `onprem.json` 매개 변수 파일에서 지정한 암호를 사용합니다.
+
+3. VM에서 PowerShell 콘솔을 열고, `Test-NetConnection` cmdlet을 사용하여 허브 VNet에서 jumpbox VM에 연결할 수 있는지 확인합니다.
+
+   ```powershell
+   Test-NetConnection 10.0.0.68 -CommonTCPPort RDP
+   ```
+출력은 다음과 비슷해야 합니다.
+
+```powershell
+ComputerName     : 10.0.0.68
+RemoteAddress    : 10.0.0.68
+RemotePort       : 3389
+InterfaceAlias   : Ethernet 2
+SourceAddress    : 192.168.1.000
+TcpTestSucceeded : True
+```
+
+> [!NOTE]
+> 기본적으로 Windows Server VM을 사용하면 Azure에서 ICMP 응답을 허용하지 않습니다. `ping`을 사용하여 연결을 테스트하려는 경우 각 VM에 대한 Windows 고급 방화벽에서 ICMP 트래픽을 사용하도록 설정해야 합니다.
+
+같은 단계를 반복하여 스포크 VNet에 대한 연결을 테스트합니다.
+
+```powershell
+Test-NetConnection 10.1.0.68 -CommonTCPPort RDP
+Test-NetConnection 10.2.0.68 -CommonTCPPort RDP
+```
+
 
 <!-- links -->
 

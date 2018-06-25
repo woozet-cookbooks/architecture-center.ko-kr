@@ -5,11 +5,12 @@ author: telmosampaio
 ms.date: 04/09/2018
 pnp.series.title: Implement a hub-spoke network topology in Azure
 pnp.series.prev: expressroute
-ms.openlocfilehash: 3b19526a9ed77c1605325a9eec101ffbee7c8401
-ms.sourcegitcommit: 3846a0ab2b2b2552202a3c9c21af0097a145ffc6
+ms.openlocfilehash: 4ebb0d4df3e1907662537516cae1f077e68e47b4
+ms.sourcegitcommit: f7418f8bdabc8f5ec33ae3551e3fbb466782caa5
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/29/2018
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36209579"
 ---
 # <a name="implement-a-hub-spoke-network-topology-in-azure"></a>Azure에서 허브-스포크 네트워크 토폴로지 구현
 
@@ -272,7 +273,7 @@ TcpTestSucceeded : True
 
 2. `Connect`를 클릭하여 VM에 대한 원격 데스크톱 세션을 엽니다. `onprem.json` 매개 변수 파일에서 지정한 암호를 사용합니다.
 
-3. VM에서 PowerShell 콘솔을 열고, `Test-NetConnection` cmdlet을 사용하여 허브 VNet에서 jumpbox VM에 연결할 수 있는지 확인합니다.
+3. VM에서 PowerShell 콘솔을 열고, `Test-NetConnection` cmdlet을 사용하여 스포크 VNet에서 jumpbox VM에 연결할 수 있는지 확인합니다.
 
    ```powershell
    Test-NetConnection 10.1.0.68 -CommonTCPPort RDP

@@ -2,12 +2,13 @@
 title: Azure 계산 서비스에 대한 의사 결정 트리
 description: 계산 서비스를 선택하기 위한 순서도
 author: MikeWasson
-ms.date: 04/21/2018
-ms.openlocfilehash: 3dcfbd156d4fced863a56bcc8bb74483aa665f9f
-ms.sourcegitcommit: 7ced70ebc11aa0df0dc0104092d3cc6ad5c28bd6
+ms.date: 06/13/2018
+ms.openlocfilehash: 60bb84d4bf210888d3d43498db043b6e452f6a80
+ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/11/2018
+ms.lasthandoff: 06/19/2018
+ms.locfileid: "36206724"
 ---
 # <a name="decision-tree-for-azure-compute-services"></a>Azure 계산 서비스에 대한 의사 결정 트리
 
@@ -25,5 +26,20 @@ Azure는 응용 프로그램 코드를 호스트하는 다양한 방법을 제�
 
 응용 프로그램이 여러 워크로드로 구성된 경우 각 워크로드를 개별적으로 평가합니다. 완벽한 솔루션은 두 개 이상의 계산 서비스를 통합할 수 있습니다.
 
+## <a name="flowchart"></a>순서도
+
 ![](../images/compute-decision-tree.svg)
 
+## <a name="definitions"></a>정의
+
+- **그린필드**는 완전히 새롭고 처음부터 빌드된 소프트웨어 프로젝트를 설명합니다. 레거시 코드는 포함되지 않습니다. 
+
+- **브라운필드**는 기존 응용 프로그램을 기반으로 하는 소프트웨어 프로젝트를 설명합니다. 레거시 코드 또는 프레임워크를 상속할 수 있습니다.
+
+- **리프트 앤 시프트**는 응용 프로그램을 다시 디자인하거나 코드를 변경하지 않고 워크로드를 클라우드로 마이그레이션하는 전략입니다. *재 호스팅*이라고도 합니다. 자세한 내용은 [Azure 마이그레이션 센터](https://azure.microsoft.com/migration/)를 참조하세요.
+
+- **클라우드 최적화**는 클라우드 고유 기능 및 성능을 활용하도록 응용 프로그램을 리팩터링하여 클라우드로 마이그레이션하는 전략입니다.
+
+## <a name="next-steps"></a>다음 단계
+
+고려해야 할 추가 기준은 [Azure 계산 서비스를 선택하기 위한 조건](./compute-comparison.md)을 참조하세요.
