@@ -6,12 +6,12 @@ ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: app-roles
 pnp.series.next: web-api
-ms.openlocfilehash: 03c4d5fa10c75437a7b066534619ba9a123c350c
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 321dc52a3e6f803a032288c2341e490cdba8c20a
+ms.sourcegitcommit: 9a2d56ac7927f0a2bbfee07198d43d9c5cb85755
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
-ms.locfileid: "30849674"
+ms.lasthandoff: 06/22/2018
+ms.locfileid: "36327656"
 ---
 # <a name="role-based-and-resource-based-authorization"></a>역할 기반 및 리소스 기반 권한 부여
 
@@ -155,7 +155,7 @@ if (await _authorizationService.AuthorizeAsync(User, survey, Operations.Read) ==
 다음은 Surveys 응용 프로그램의 예입니다. 이 응용 프로그램에서는 몇 가지 사용 권한 유형을 정의합니다.
 
 * 관리자
-* 참가자
+* 기여자
 * 작성자
 * 소유자
 * 판독기
@@ -218,7 +218,7 @@ public class SurveyAuthorizationHandler : AuthorizationHandler<OperationAuthoriz
 }
 ```
 
-다중 테넌트 응용 프로그램에서는 권한이 다른 테넌트의 데이터로 "누출"되지 않도록 해야 합니다. Surveys 앱에서 참가자 권한은 테넌트 전체에서 허용되므로 다른 테넌트의 사용자를 참가자로 할당할 수 있습니다. 다른 권한 유형은 해당 사용자의 테넌트에 속하는 리소스로 제한됩니다. 이 요구 사항을 적용하기 위해 코드에서 권한을 부여하기 전에 테넌트 ID를 확인합니다. `TenantId` 필드는 설문 조사를 만들 때 할당됩니다.
+다중 테넌트 응용 프로그램에서는 권한이 다른 테넌트의 데이터로 "누출"되지 않도록 해야 합니다. Surveys 앱에서 기여자 권한은 테넌트 &mdash; 전체에서 허용되므로 다른 테넌트의 사용자를 기여자로 할당할 수 있습니다. 다른 권한 유형은 해당 사용자의 테넌트에 속하는 리소스로 제한됩니다. 이 요구 사항을 적용하기 위해 코드에서 권한을 부여하기 전에 테넌트 ID를 확인합니다. `TenantId` 필드는 설문 조사를 만들 때 할당됩니다.
 
 다음 단계에서는 사용 권한에 대해 작업(읽기, 업데이트, 삭제 등)을 확인합니다. Surveys 응용 프로그램은 함수의 조회 테이블을 사용하여 이 단계를 구현합니다.
 

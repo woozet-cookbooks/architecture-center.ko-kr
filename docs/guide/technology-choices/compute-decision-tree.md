@@ -3,12 +3,12 @@ title: Azure 계산 서비스에 대한 의사 결정 트리
 description: 계산 서비스를 선택하기 위한 순서도
 author: MikeWasson
 ms.date: 06/13/2018
-ms.openlocfilehash: 60bb84d4bf210888d3d43498db043b6e452f6a80
-ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
+ms.openlocfilehash: 689ec3f265e563273a75ad98268d03624a7b4536
+ms.sourcegitcommit: ce2fa8ac2d310f7078317cade12f1b89db1ffe06
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/19/2018
-ms.locfileid: "36206724"
+ms.lasthandoff: 06/23/2018
+ms.locfileid: "36338186"
 ---
 # <a name="decision-tree-for-azure-compute-services"></a>Azure 계산 서비스에 대한 의사 결정 트리
 
@@ -25,6 +25,8 @@ Azure는 응용 프로그램 코드를 호스트하는 다양한 방법을 제�
 - [계산 비교 표](./compute-comparison.md)
 
 응용 프로그램이 여러 워크로드로 구성된 경우 각 워크로드를 개별적으로 평가합니다. 완벽한 솔루션은 두 개 이상의 계산 서비스를 통합할 수 있습니다.
+
+Azure에서 컨테이너 호스팅을 위한 옵션에 대한 자세한 내용은 https://azure.microsoft.com/overview/containers/를 참조합니다.
 
 ## <a name="flowchart"></a>순서도
 

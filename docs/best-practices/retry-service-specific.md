@@ -4,12 +4,12 @@ description: 재시도 메커니즘 설정에 대한 서비스 관련 지침입�
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices
-ms.openlocfilehash: f02843f179671da04bc2f09326b58075b432ba95
-ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
+ms.openlocfilehash: 77cf5d90373da2118d34301bd5c790080d3cf63f
+ms.sourcegitcommit: 9a2d56ac7927f0a2bbfee07198d43d9c5cb85755
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/11/2018
-ms.locfileid: "35253080"
+ms.lasthandoff: 06/22/2018
+ms.locfileid: "36327690"
 ---
 # <a name="retry-guidance-for-specific-services"></a>특정 서비스에 대한 다시 시도 지침
 
@@ -325,7 +325,7 @@ Service Bus는 [RetryPolicy](http://msdn.microsoft.com/library/microsoft.service
 * [RetryExponential 클래스](http://msdn.microsoft.com/library/microsoft.servicebus.retryexponential.aspx). 이 클래스는 백오프 간격, 재시도 횟수 및 작업이 완료되는 총 시간을 제한하는 데 사용되는 **TerminationTimeBuffer** 속성을 제어하는 속성을 표시합니다.
 * [NoRetry 클래스](http://msdn.microsoft.com/library/microsoft.servicebus.noretry.aspx). 이 클래스는 재시도가 일괄 처리 또는 다단계 작업의 일부로 다른 프로세스에서 관리되는 경우처럼 Service Bus API 수준의 재시도가 필요하지 않은 경우에 사용됩니다.
 
-Service Bus 작업은 [부록: 메시징 예외](http://msdn.microsoft.com/library/hh418082.aspx)에 나열된 일련의 예외를 반환할 수 있습니다. 이 목록에서는 작업 재시도가 적절한지 여부를 나타내는 예외에 대한 정보를 제공합니다. 예를 들어 [ServerBusyException](http://msdn.microsoft.com/library/microsoft.servicebus.messaging.serverbusyexception.aspx) 은 클라이언트가 일정 기간 동안 대기한 후 작업을 재시도해야 함을 나타냅니다. 또한 **ServerBusyException** 이 발생하면 Service Bus가 다른 모드로 전환되어 추가 10초의 지연이 계산된 재시도 지연에 추가될 수 있습니다. 이 모드는 잠시 후 다시 설정됩니다.
+Service Bus 작업은 [Service Bus 메시징 예외](/azure/service-bus-messaging/service-bus-messaging-exceptions)에 나열된 일련의 예외를 반환할 수 있습니다. 이 목록에서는 작업 재시도가 적절한지 여부를 나타내는 예외에 대한 정보를 제공합니다. 예를 들어 **ServerBusyException** 은 클라이언트가 일정 기간 동안 대기한 후 작업을 재시도해야 함을 나타냅니다. 또한 **ServerBusyException** 이 발생하면 Service Bus가 다른 모드로 전환되어 추가 10초의 지연이 계산된 재시도 지연에 추가될 수 있습니다. 이 모드는 잠시 후 다시 설정됩니다.
 
 Service Bus에서 반환된 예외는 클라이언트가 작업을 재시도해야 하는지 여부를 나타내는 **IsTransient** 속성을 표시합니다. 기본 제공 **RetryExponential** 정책은 모든 Service Bus 예외에 대한 기본 클래스인 **MessagingException** 클래스의 **IsTransient** 속성을 사용합니다. **RetryPolicy** 기본 클래스의 사용자 지정 구현을 만드는 경우 예외 유형과 **IsTransient** 속성의 조합을 사용하여 재시도 작업을 보다 세부적으로 제어할 수 있습니다. 예를 들어 **QuotaExceededException**을 검색하고 조치를 취하여 메시지 보내기를 재시도하기 전에 큐를 비울 수 있습니다.
 

@@ -2,16 +2,13 @@
 title: SQL Server를 통한 N 계층 응용 프로그램
 description: 가용성, 보안, 확장성 및 관리 효율성을 위해 Azure에서 다중 계층 아키텍처를 구현하는 방법을 설명합니다.
 author: MikeWasson
-ms.date: 05/03/2018
-pnp.series.title: Windows VM workloads
-pnp.series.next: multi-region-application
-pnp.series.prev: multi-vm
-ms.openlocfilehash: 0f170f2fbcbbfeace53db199cb5d3949415b5546
-ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
+ms.date: 06/23/2018
+ms.openlocfilehash: 050ea9b3104a2dc9af4cdaad3b4540cd75434e9d
+ms.sourcegitcommit: 767c8570d7ab85551c2686c095b39a56d813664b
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/06/2018
-ms.locfileid: "33673595"
+ms.lasthandoff: 06/24/2018
+ms.locfileid: "36746675"
 ---
 # <a name="n-tier-application-with-sql-server"></a>SQL Server를 통한 N 계층 응용 프로그램
 
@@ -43,9 +40,11 @@ ms.locfileid: "33673595"
 
 * **Jumpbox.** [요새 호스트]라고도 합니다. 관리자가 다른 VM에 연결할 때 사용하는 네트워크의 보안 VM입니다. Jumpbox는 안전 목록에 있는 공용 IP 주소의 원격 트래픽만 허용하는 NSG를 사용합니다. NSG는 RDP(원격 데스크톱) 트래픽을 허용해야 합니다.
 
-* **SQL Server Always On 가용성 그룹.** 복제 및 장애 조치(failover)를 사용하여 데이터 계층에서 높은 가용성을 제공합니다.
+* **SQL Server Always On 가용성 그룹.** 복제 및 장애 조치(failover)를 사용하여 데이터 계층에서 높은 가용성을 제공합니다. 장애 조치(failover)에 대해 WSFC(Windows Server 장애 조치 클러스터) 기술을 사용합니다.
 
-* **AD DS(Active Directory Domain Services) 서버**. SQL Server Always On 가용성 그룹이 도메인에 조인되어 장애 조치에 WSFC(Windows Server 장애 조치 클러스터) 기술을 사용할 수 있도록 합니다. 
+* **AD DS(Active Directory Domain Services) 서버**. 장애 조치(failover) 클러스터 및 관련 클러스터형 역할에 대한 컴퓨터 개체는 AD DS(Active Directory Domain Services)에서 만들어집니다.
+
+* **클라우드 감시**. 장애 조치(failover) 클러스터는 쿼럼이 있는 것으로 알려진 해당 노드의 절반을 초과하여 실행되어야 합니다. 클러스터에 두 개의 노드만 있는 경우 네트워크 파티션은 각 노드가 마스터 노드라고 인지하게 할 수 있습니다. 그 경우에 연결을 차단하고 쿼럼을 설정할 *감시*가 필요합니다. 감시는 쿼럼을 설정하려면 연결 차단기로 작동할 수 있는 공유 디스크 같은 리소스입니다. 클라우드 감시는 Azure Blob Storage를 사용하는 감시의 한 유형입니다. 쿼럼의 개념에 대한 자세한 알려면 [클러스터 및 풀 쿼럼 이해](/windows-server/storage/storage-spaces/understand-quorum)를 참조합니다. 클라우드 감시에 대한 자세한 내용은 [장애 조치(Failover) 클러스터에 대한 클라우드 감시 배포](/windows-server/failover-clustering/deploy-cloud-witness)를 참조하세요. 
 
 * **Azure DNS**. [Azure DNS][azure-dns]는 Microsoft Azure 인프라를 사용하여 이름 확인을 제공하는 DNS 도메인에 대한 호스팅 서비스입니다. Azure에 도메인을 호스트하면 다른 Azure 서비스와 동일한 자격 증명, API, 도구 및 대금 청구를 사용하여 DNS 레코드를 관리할 수 있습니다.
 
@@ -157,13 +156,13 @@ NVA(네트워크 가상 어플라이언스)를 추가하여 인터넷과 Azure �
 
 ## <a name="deploy-the-solution"></a>솔루션 배포
 
-이 참조 아키텍처에 대한 배포는 [GitHub][github-folder]에서 사용할 수 있습니다. 
+이 참조 아키텍처에 대한 배포는 [GitHub][github-folder]에서 사용할 수 있습니다. AD DS, Windows Server 장애 조치(failover) 클러스터 및 SQL Server 가용성 그룹을 구성하는 스크립트 실행을 포함하여 전체 배포에는 최대 2시간이 걸릴 수 있습니다.
 
 ### <a name="prerequisites"></a>필수 조건
 
 1. [참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
 
-2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI를 설치하려면 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)에 제시된 지침을 참조하세요.
+2. [Azure CLI 2.0][azure-cli-2]을 설치합니다.
 
 3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
 
@@ -171,32 +170,80 @@ NVA(네트워크 가상 어플라이언스)를 추가하여 인터넷과 Azure �
    npm install -g @mspnp/azure-building-blocks
    ```
 
-4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령 중 하나를 사용하여 Azure 계정에 로그인한 다음 프롬프트에 따릅니다.
+4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 아래 명령을 사용하여 Azure 계정에 로그인합니다.
 
    ```bash
    az login
    ```
 
-### <a name="deploy-the-solution-using-azbb"></a>azbb를 사용하여 솔루션 배포
+### <a name="deploy-the-solution"></a>솔루션 배포 
 
-N 계층 응용 프로그램에 대한 Windows VM 참조 아키텍처를 배포하려면 다음 단계를 수행합니다.
+1. 다음 명령을 실행하여 리소스 그룹을 만듭니다.
 
-1. 위의 필수 조건 단계 중 1단계에서 복제한 리포지토리가 있는 `virtual-machines\n-tier-windows` 폴더로 이동합니다.
+    ```bash
+    az group create --location <location> --name <resource-group-name>
+    ```
 
-2. 매개 변수 파일은 배포 환경의 각 VM에 대해 관리자 사용자 이름과 암호의 기본값을 지정합니다. 참조 아키텍처를 배포하기 전에 먼저 이 값을 변경해야 합니다. `n-tier-windows.json` 파일을 열고 **adminUsername** 필드와 **adminPassword** 필드를 새로운 설정으로 변경합니다.
-  
-   > [!NOTE]
-   > 이 배포가 진행될 때 **VirtualMachineExtension** 개체와 일부 **VirtualMachine** 개체의 **extensions** 설정에서 여러 개의 스크립트가 실행됩니다. 이러한 스크립트 중 일부에서 방금 변경한 관리자 사용자 이름과 암호가 필요합니다. 해당 스크립트를 검토하여 올바른 자격 증명을 지정했는지 확인하는 것이 좋습니다. 올바른 자격 증명을 지정하지 않으면 배포가 실패하게 됩니다.
-   > 
-   > 
+2. 클라우드 감시에 대한 저장소 계정을 만들려면 다음 명령을 실행합니다.
 
-파일을 저장합니다.
+    ```bash
+    az storage account create --location <location> \
+      --name <storage-account-name> \
+      --resource-group <resource-group-name> \
+      --sku Standard_LRS
+    ```
 
-3. 아래에 표시된 대로 **azbb** 명령줄 도구를 사용하여 참조 아키텍처를 배포합니다.
+3. 참조 아키텍처 GitHub 리포지토리의 `virtual-machines\n-tier-windows` 폴더로 이동합니다.
 
-   ```bash
-   azbb -s <your subscription_id> -g <your resource_group_name> -l <azure region> -p n-tier-windows.json --deploy
-   ```
+4. `n-tier-windows.json` 파일을 엽니다. 
+
+5. "witnessStorageBlobEndPoint"의 모든 인스턴스를 검색하고 2단계에서 자리 표시자 텍스트를 저장소 계정의 이름으로 바꿉니다.
+
+    ```json
+    "witnessStorageBlobEndPoint": "https://[replace-with-storageaccountname].blob.core.windows.net",
+    ```
+
+6. 다음 명령을 실행하여 저장소 계정에 대한 계정 키를 나열합니다.
+
+    ```bash
+    az storage account keys list \
+      --account-name <storage-account-name> \
+      --resource-group <resource-group-name>
+    ```
+
+    출력은 다음과 비슷합니다. `key1`의 값을 복사합니다.
+
+    ```json
+    [
+    {
+        "keyName": "key1",
+        "permissions": "Full",
+        "value": "..."
+    },
+    {
+        "keyName": "key2",
+        "permissions": "Full",
+        "value": "..."
+    }
+    ]
+    ```
+
+7. `n-tier-windows.json` 파일에서 "witnessStorageAccountKey"의 모든 인스턴스를 검색하여 계정 키에 붙여넣습니다.
+
+    ```json
+    "witnessStorageAccountKey": "[replace-with-storagekey]"
+    ```
+
+8. `n-tier-windows.json` 파일에서 `testPassw0rd!23`, `test$!Passw0rd111` 및 `AweS0me@SQLServicePW`의 모든 인스턴스를 검색합니다. 인스턴스를 자신의 암호로 바꾸고 파일을 저장합니다.
+
+    > [!NOTE]
+    > 관리자 사용자 이름을 변경하는 경우 JSON 파일에서 `extensions` 블록을 업데이트해야 합니다. 
+
+9. 다음 명령을 실행하여 아키텍처를 배포합니다.
+
+    ```bash
+    azbb -s <your subscription_id> -g <resource_group_name> -l <location> -p n-tier-windows.json --deploy
+    ```
 
 Azure 구성 요소를 사용하여 이 샘플 참조 아키텍처를 배포하는 방법에 대한 자세한 내용은 [GitHub 리포지토리][git]를 방문하세요.
 
