@@ -16,6 +16,8 @@
       items:
         - name: SQL Data Warehouse를 사용하는 Enterprise BI
           href: data/enterprise-bi-sqldw.md
+        - name: SQL Data Warehouse 및 Data Factory를 사용하는 자동화된 Enterprise BI
+          href: data/enterprise-bi-adf.md
     - name: 하이브리드 네트워크
       href: hybrid-networking/index.md
       items:
