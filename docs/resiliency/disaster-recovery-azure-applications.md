@@ -3,12 +3,12 @@ title: Azure 응용 프로그램에 대한 재해 복구
 description: Microsoft Azure에서 재해 복구를 위한 응용 프로그램 설계에 대한 기술 개요와 자세한 정보입니다.
 author: adamglick
 ms.date: 05/26/2017
-ms.openlocfilehash: 7235e752cf1b96e392a700b223d63b07c0f85b66
-ms.sourcegitcommit: 3d9ee03e2dda23753661a80c7106d1789f5223bb
+ms.openlocfilehash: 2d890e479e008e03dcfce9b7240f8bcbaf270372
+ms.sourcegitcommit: e8f4786b187697b1bea374e5f35f217c65d2dfe0
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 02/23/2018
-ms.locfileid: "29477777"
+ms.lasthandoff: 07/02/2018
+ms.locfileid: "37343382"
 ---
 # <a name="disaster-recovery-for-azure-applications"></a>Azure 응용 프로그램에 대한 재해 복구
 
@@ -278,7 +278,7 @@ Automation 스크립트는 Azure에 의해 투명하게 처리되지 않는 DR�
 자동화의 모범 사례는 Azure 재해 복구에 대한 PowerShell 스크립트 또는 CLI(명령줄 인터페이스) 스크립트의 리포지토리를 만드는 것입니다. 빠른 액세스를 위해 명확하게 표시하고 분류합니다. 리포지토리 및 스크립트의 버전을 관리할 기본 사용자를 지정합니다. 매개 변수에 대한 설명 및 스크립트 사용 예를 사용하여 문서화합니다. 또한 이 설명서가 Azure 배포와 동기화되었는지 확인합니다. 리포지토리의 모든 부분을 담당하는 기본 사용자가 필요하다는 목적을 달성합니다.
 
 ## <a name="failure-detection"></a>실패 감지
-가용성 및 재해 복구와 관련된 문제를 올바르게 처리하려면 오류를 감지하고 진단할 수 있어야 합니다. 시스템 또는 해당 구성 요소가 갑자기 사용할 수 없게 되는 경우를 빠르게 인식하도록 고급 서버 및 배포 모니터링을 수행합니다. 클라우드 서비스 및 해당 종속성의 전반적인 상태를 평가하는 모니터링 도구는 이러한 작업의 일부를 수행할 수 있습니다. 적합한 Microsoft 도구는 [System Center 2016](https://www.microsoft.com/server-cloud/products/system-center-2016/)입니다. 타사 도구가 모니터링 기능을 제공할 수도 있습니다. 대부분의 모니터링 솔루션은 주요 성능 카운터 및 서비스 가용성을 추적합니다.
+가용성 및 재해 복구와 관련된 문제를 올바르게 처리하려면 오류를 감지하고 진단할 수 있어야 합니다. 시스템 또는 해당 구성 요소가 갑자기 사용할 수 없게 되는 경우를 빠르게 인식하도록 고급 서버 및 배포 모니터링을 수행합니다. 클라우드 서비스 및 해당 종속성의 전반적인 상태를 평가하는 모니터링 도구는 이러한 작업의 일부를 수행할 수 있습니다. 적합한 Microsoft 도구는 [System Center 2016](https://www.microsoft.com/cloud-platform/system-center)입니다. 타사 도구가 모니터링 기능을 제공할 수도 있습니다. 대부분의 모니터링 솔루션은 주요 성능 카운터 및 서비스 가용성을 추적합니다.
 
 이러한 도구가 중요하지만 클라우드 서비스 내에서 오류 감지 및 보고에 대해 계획해야 합니다. 또한 Azure 진단을 올바르게 사용하기 위해 계획해야 합니다. 사용자 지정 성능 카운터 또는 이벤트 로그 항목도 전반적인 전략의 일부가 될 수 있습니다. 오류 중에 더 많은 데이터를 제공하여 신속하게 문제를 진단하고 전체 기능을 복원합니다. 또한 모니터링 도구가 응용 프로그램 상태를 확인하는 데 사용할 수 있는 추가 메트릭을 제공합니다. 자세한 내용은 [Azure Cloud Services에서 Azure 진단 사용](/azure/cloud-services/cloud-services-dotnet-diagnostics/)을 참조하세요. 전반적인 “상태 모델”에 대한 계획하는 방법은 [Failsafe: 복원력 있는 클라우드 아키텍처에 대한 지침](https://channel9.msdn.com/Series/FailSafe)을 참조하세요.
 

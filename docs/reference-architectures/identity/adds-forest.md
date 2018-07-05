@@ -10,12 +10,12 @@ pnp.series.title: Identity management
 pnp.series.prev: adds-extend-domain
 pnp.series.next: adfs
 cardTitle: Create an AD DS forest in Azure
-ms.openlocfilehash: 047ecea41ba30ce4cccf17b8c4964a37ae60150f
-ms.sourcegitcommit: 0de300b6570e9990e5c25efc060946cb9d079954
+ms.openlocfilehash: 105ffc4b329331522529161731b1947f99e02280
+ms.sourcegitcommit: 58d93e7ac9a6d44d5668a187a6827d7cd4f5a34d
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/03/2018
-ms.locfileid: "32323910"
+ms.lasthandoff: 07/02/2018
+ms.locfileid: "37142202"
 ---
 # <a name="create-an-active-directory-domain-services-ad-ds-resource-forest-in-azure"></a>Azure에서 AAD DS(Active Directory Domain Services) 리소스 포리스트 만들기
 
@@ -95,17 +95,7 @@ Active Directory 관련 보안 고려사항을 확인하려면 [Active Directory
 
 ### <a name="prerequisites"></a>필수 조건
 
-1. [참조 아키텍처][github] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
-
-2. [Azure CLI 2.0][azure-cli-2]을 설치합니다.
-
-3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
-
-4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 아래 명령을 사용하여 Azure 계정에 로그인합니다.
-
-   ```bash
-   az login
-   ```
+[!INCLUDE [ref-arch-prerequisites.md](../../../includes/ref-arch-prerequisites.md)]
 
 ### <a name="deploy-the-simulated-on-premises-datacenter"></a>시뮬레이션된 온-프레미스 데이터 센터 배포
 

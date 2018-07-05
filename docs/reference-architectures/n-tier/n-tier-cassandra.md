@@ -3,12 +3,12 @@ title: Apache Cassandra를 통한 N 계층 응용 프로그램
 description: Microsoft Azure에서 N 계층 아키텍처에 대한 Linux VM 실행 방법
 author: MikeWasson
 ms.date: 05/03/2018
-ms.openlocfilehash: 46e9a821a33dd3ea3ae9129ab5ad69172bfcd667
-ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
+ms.openlocfilehash: 7ee14088a2fae3cfc5c1119daf717236c75ecc6a
+ms.sourcegitcommit: 58d93e7ac9a6d44d5668a187a6827d7cd4f5a34d
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/06/2018
-ms.locfileid: "33673615"
+ms.lasthandoff: 07/02/2018
+ms.locfileid: "37142236"
 ---
 # <a name="n-tier-application-with-apache-cassandra"></a>Apache Cassandra를 통한 N 계층 응용 프로그램
 
@@ -144,21 +144,7 @@ NVA(네트워크 가상 어플라이언스)를 추가하여 인터넷과 Azure �
 
 ### <a name="prerequisites"></a>필수 조건
 
-1. [참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
-
-2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI를 설치하려면 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)에 제시된 지침을 참조하세요.
-
-3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
-
-   ```bash
-   npm install -g @mspnp/azure-building-blocks
-   ```
-
-4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령 중 하나를 사용하여 Azure 계정에 로그인한 다음 프롬프트에 따릅니다.
-
-   ```bash
-   az login
-   ```
+[!INCLUDE [ref-arch-prerequisites.md](../../../includes/ref-arch-prerequisites.md)]
 
 ### <a name="deploy-the-solution-using-azbb"></a>azbb를 사용하여 솔루션 배포
 

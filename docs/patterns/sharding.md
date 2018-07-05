@@ -8,12 +8,12 @@ pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories:
 - data-management
 - performance-scalability
-ms.openlocfilehash: 328483e24c75137f07576104d50dc59d426b8ac4
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: a4e35a19851f4742b5c154197c22bb1fe13de108
+ms.sourcegitcommit: e9d9e214529edd0dc78df5bda29615b8fafd0e56
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
-ms.locfileid: "26582816"
+ms.lasthandoff: 06/28/2018
+ms.locfileid: "37091107"
 ---
 # <a name="sharding-pattern"></a>분할 패턴
 
@@ -215,11 +215,10 @@ Trace.TraceInformation("Fanout query complete - Record Count: {0}",
 ## <a name="related-patterns-and-guidance"></a>관련 패턴 및 지침
 
 이 패턴을 구현할 때 다음 패턴 및 지침도 관련이 있을 수 있습니다.
-- [데이터 일관성 입문서](https://msdn.microsoft.com/library/dn589800.aspx). 서로 다른 분할된 데이터베이스 간에 분산된 데이터의 일관성을 유지해야 할 수 있습니다. 분산된 데이터의 일관성 유지 관리와 관련된 문제를 요약하고 다양한 일관성 모델의 장점과 단점을 설명합니다.
+- [Data Consistency Primer](https://msdn.microsoft.com/library/dn589800.aspx)(데이터 일관성 입문서). 서로 다른 분할된 데이터베이스 간에 분산된 데이터의 일관성을 유지해야 할 수 있습니다. 분산된 데이터의 일관성 유지 관리와 관련된 문제를 요약하고 다양한 일관성 모델의 장점과 단점을 설명합니다.
 - [데이터 분할 지침](https://msdn.microsoft.com/library/dn589795.aspx). 데이터 저장소 분할에 다양한 문제가 추가로 제기될 수 있습니다. 확장성을 개선하고, 경합을 줄이고, 성능을 최적화하기 위해 클라우드의 데이터 저장소 분할과 관련된 이러한 문제에 대해 설명합니다.
 - [인덱스 테이블 패턴](index-table.md). 분할 키 디자인만으로 쿼리를 완전히 지원할 수 없는 경우가 있습니다. 응용 프로그램에서 분할 키 이외의 키를 지정하여 대규모 데이터 저장소에서 데이터를 빠르게 검색할 수 있습니다.
 - [구체화된 뷰 패턴](materialized-view.md). 일부 쿼리 작업의 성능을 유지 관리하려면 데이터를 집계하고 요약하는 구체화된 뷰를 만드는 것이 유용합니다. 이 요약 데이터가 분할된 데이터베이스 간에 분산된 정보를 기반으로 할 경우에 특히 유용합니다. 이러한 뷰를 생성하고 채우는 방법에 대해 설명합니다.
 - Adding Simplicity 블로그의 [Shard Lessons](http://www.addsimplicity.com/adding_simplicity_an_engi/2008/08/shard-lessons.html)(분할된 데이터베이스 단원)
 - CodeFutures 웹 사이트의 [Database Sharding](http://dbshards.com/database-sharding/)(데이터베이스 분할)
-- Max Indelicato 블로그의 [Scalability Strategies Primer: Database Sharding](http://blog.maxindelicato.com/2008/12/scalability-strategies-primer-database-sharding.html)(확장성 전략 입문서: 데이터베이스 분할)
 - Dare Obasanjo 블로그의 [Building Scalable Databases: Pros and Cons of Various Database Sharding Schemes](http://www.25hoursaday.com/weblog/2009/01/16/BuildingScalableDatabasesProsAndConsOfVariousDatabaseShardingSchemes.aspx)(확장성 있는 데이터베이스 빌드: 다양한 데이터베이스 분할 구성표의 장단점)

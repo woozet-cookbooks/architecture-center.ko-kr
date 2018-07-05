@@ -3,12 +3,12 @@ title: Azure에서 Windows VM 실행
 description: 확장성, 복원력, 관리 효율성 및 보안에 주의하면서 Azure에서 Windows VM을 실행하는 방법입니다.
 author: telmosampaio
 ms.date: 04/03/2018
-ms.openlocfilehash: 748bcfcf599c7fa0e82691632d14e0f78fd78582
-ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
+ms.openlocfilehash: d790c9a6693dca751e0ba05f1fd3c23756cf53bb
+ms.sourcegitcommit: 58d93e7ac9a6d44d5668a187a6827d7cd4f5a34d
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/06/2018
-ms.locfileid: "33673605"
+ms.lasthandoff: 07/02/2018
+ms.locfileid: "37142219"
 ---
 # <a name="run-a-windows-vm-on-azure"></a>Azure에서 Windows VM 실행
 
@@ -127,17 +127,7 @@ RDP를 사용하도록 설정하려면 TCP 포트 3389에 인바운드 트래픽
 
 ### <a name="prerequisites"></a>필수 조건
 
-1. [참조 아키텍처][ref-arch-repo] GitHub 리포지토리의 zip 파일을 복제, 포크 또는 다운로드합니다.
-
-2. Azure CLI 2.0이 컴퓨터에 설치되어 있는지 확인합니다. CLI 설치 지침은 [Install Azure CLI 2.0][azure-cli-2](Azure CLI 2.0 설치)을 참조하세요.
-
-3. [Azure 빌딩 블록][azbb] npm 패키지를 설치합니다.
-
-4. 명령 프롬프트, bash 프롬프트 또는 PowerShell 프롬프트에서 다음 명령을 입력하여 Azure 계정에 로그인합니다.
-
-  ```bash
-  az login
-  ```
+[!INCLUDE [ref-arch-prerequisites.md](../../../includes/ref-arch-prerequisites.md)]
 
 ### <a name="deploy-the-solution-using-azbb"></a>azbb를 사용하여 솔루션 배포
 

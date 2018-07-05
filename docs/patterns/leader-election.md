@@ -8,12 +8,12 @@ pnp.series.title: Cloud Design Patterns
 pnp.pattern.categories:
 - design-implementation
 - resiliency
-ms.openlocfilehash: 3e7d47f70f660f2507f0619e1c41bf9a32a25be4
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 8c8efa0846550557bb53ea81f85ac0e303a77b19
+ms.sourcegitcommit: f19314f18cd794ebe380fa722ca92066b8735b56
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
-ms.locfileid: "30846654"
+ms.lasthandoff: 07/03/2018
+ms.locfileid: "37348272"
 ---
 # <a name="leader-election-pattern"></a>리더 선택 패턴
 
@@ -200,6 +200,5 @@ private static async Task MyLeaderCoordinatorTask(CancellationToken token)
 - [태스크 기반 비동기 패턴](https://msdn.microsoft.com/library/hh873175.aspx).
 - [Bully 알고리즘](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/BullyExample.html)을 보여 주는 예제.
 - [Ring 알고리즘](http://www.cs.colostate.edu/~cs551/CourseNotes/Synchronization/RingElectExample.html)을 보여 주는 예제.
-- Microsoft Open Technologies 웹 사이트에 있는 [Microsoft Azure의 Apache Zookeeper](https://msopentech.com/opentech-projects/apache-zookeeper-on-windows-azure-2/) 문서.
 - Apache ZooKeeper용 클라이언트 라이브러리인 [Apache Curator](http://curator.apache.org/).
 - MSDN에 있는 [Blob 임대(REST API)](https://msdn.microsoft.com/library/azure/ee691972.aspx) 문서.
