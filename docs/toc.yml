@@ -127,6 +127,8 @@
       maintainContext: true
     - name: 실패 모드 분석
       href: resiliency/failure-mode-analysis.md
+- name: 예제 시나리오
+  href: example-scenario/index.md
 - name: 시나리오 가이드
   items:
     - name: AWS 전문가를 위한 Azure
