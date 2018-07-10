@@ -1,0 +1,19 @@
+- name: Azure 아키텍처 센터
+  href: /azure/architecture
+- name: 예제 시나리오
+  href: index.md
+  items:
+    - name: AI
+      items:
+        - name: 이미지 처리
+          href: ai/intelligent-apps-image-processing.md
+    - name: 앱
+      items:
+        - name: 호텔 예약 챗봇
+          href: apps/commerce-chatbot.md
+        - name: Azure Kubernetes Service에서 DevOps
+          href: apps/devops-with-aks.md
+    - name: 데이터 및 분석
+      items:
+        - name: 실시간 사기 감지
+          href: data/fraud-detection.md
