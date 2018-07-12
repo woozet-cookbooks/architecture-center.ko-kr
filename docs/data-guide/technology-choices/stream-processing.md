@@ -3,12 +3,12 @@ title: 스트림 처리 기술 선택
 description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: 29e4cd3d5ea6e10f036bfe226152290512dafa65
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: fd93418c62b584e79f229e9f42703d148aeb0eca
+ms.sourcegitcommit: e9d9e214529edd0dc78df5bda29615b8fafd0e56
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
-ms.locfileid: "30848651"
+ms.lasthandoff: 06/28/2018
+ms.locfileid: "37091066"
 ---
 # <a name="choosing-a-stream-processing-technology-in-azure"></a>Azure에서 스트림 처리 기술 선택
 
@@ -53,8 +53,8 @@ Azure에서 다음의 모든 데이터 저장소는 핵심 요구 사항을 충�
 
 | | Azure Stream Analytics | HDInsight(Spark Streaming 포함) | Azure Databricks의 Apache Spark | HDInsight(Storm 포함) | Azure 기능 | Azure App Service WebJobs |
 | --- | --- | --- | --- | --- | --- | --- | 
-| 입력 | [Stream Analytics 입력](/azure/stream-analytics/stream-analytics-define-inputs)  | Event Hubs, IoT Hub, Kafka, HDFS, Storage Blobs, Azure Data Lake Store  | Event Hubs, IoT Hub, Kafka, HDFS, Storage Blobs, Azure Data Lake Store  | Event Hubs, IoT Hub, Storage Blob, Azure Data Lake Store  | [지원되는 바인딩](/azure/azure-functions/functions-triggers-bindings#supported-bindings) | Service Bus, Storage Queues, Storage Blob, Event Hubs, WebHooks, Cosmos DB, Files |
-| Sinks |  [Stream Analytics 출력](/azure/stream-analytics/stream-analytics-define-outputs) | HDFS, Kafka, Storage Blobs, Azure Data Lake Store, Cosmos DB | HDFS, Kafka, Storage Blobs, Azure Data Lake Store, Cosmos DB | Event Hubs, Service Bus, Kafka | [지원되는 바인딩](/azure/azure-functions/functions-triggers-bindings#supported-bindings) | Service Bus, Storage Queues, Storage Blob, Event Hubs, WebHooks, Cosmos DB, Files | 
+| 입력 | Azure Event Hubs, Azure IoT Hub 및 Azure Blob Storage  | Event Hubs, IoT Hub, Kafka, HDFS, Storage Blobs, Azure Data Lake Store  | Event Hubs, IoT Hub, Kafka, HDFS, Storage Blobs, Azure Data Lake Store  | Event Hubs, IoT Hub, Storage Blob, Azure Data Lake Store  | [지원되는 바인딩](/azure/azure-functions/functions-triggers-bindings#supported-bindings) | Service Bus, Storage Queues, Storage Blob, Event Hubs, WebHooks, Cosmos DB, Files |
+| Sinks |  Azure Data Lake Store, Azure SQL Database, Storage Blobs, Event Hubs, Power BI, Table Storage, Service Bus Queues, Service Bus Topics, Cosmos DB, Azure Functions  | HDFS, Kafka, Storage Blobs, Azure Data Lake Store, Cosmos DB | HDFS, Kafka, Storage Blobs, Azure Data Lake Store, Cosmos DB | Event Hubs, Service Bus, Kafka | [지원되는 바인딩](/azure/azure-functions/functions-triggers-bindings#supported-bindings) | Service Bus, Storage Queues, Storage Blob, Event Hubs, WebHooks, Cosmos DB, Files | 
 
 ### <a name="processing-capabilities"></a>처리 기능
 
@@ -63,7 +63,7 @@ Azure에서 다음의 모든 데이터 저장소는 핵심 요구 사항을 충�
 | 기본 제공 임시/창 지원 | 예 | 예 | 예 | 예 | 아니오 | 아니오 |
 | 입력 데이터 형식 | Avro, JSON 또는 CSV, UTF-8로 인코딩 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 | 사용자 지정 코드를 사용하는 모든 형식 |
 | 확장성 | [쿼리 파티션](/azure/stream-analytics/stream-analytics-parallelization) | 클러스터 크기에 따라 제한 | Databricks 클러스터 크기 조정 구성에 따라 제한 | 클러스터 크기에 따라 제한 | 최대 200개의 함수 앱 인스턴스를 병렬로 처리 | App Service 계획 용량에 따라 제한 | 
-| 지연 도착 및 순서가 벗어난 이벤트 처리 지원 | 예 | 예 | 예 | 예 | 아니요 | 아니오 |
+| 지연 도착 및 순서가 벗어난 이벤트 처리 지원 | 예 | 예 | 예 | 예 | 아니오 | 아니오 |
 
 참고 항목:
 

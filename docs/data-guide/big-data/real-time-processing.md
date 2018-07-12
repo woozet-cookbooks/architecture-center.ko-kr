@@ -3,12 +3,12 @@ title: 실시간 처리
 description: ''
 author: zoinerTejada
 ms:date: 02/12/2018
-ms.openlocfilehash: 8d3497c37d15dc0aa4645ddfce3bd30740217b2c
-ms.sourcegitcommit: 51f49026ec46af0860de55f6c082490e46792794
+ms.openlocfilehash: 4abb159924f902b5babe0673cc021e80b00c8529
+ms.sourcegitcommit: e9d9e214529edd0dc78df5bda29615b8fafd0e56
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/03/2018
-ms.locfileid: "30298631"
+ms.lasthandoff: 06/28/2018
+ms.locfileid: "37090988"
 ---
 # <a name="real-time-processing"></a>실시간 처리
 
@@ -24,7 +24,7 @@ ms.locfileid: "30298631"
 
 실시간 처리 솔루션의 가장 큰 해결 과제 중 하나는 메시지(특히 고용량)를 실시간으로 메시지를 수집, 처리 및 저장하는 것입니다. 수집 파이프라인을 차단하지 않는 방식으로 처리를 수행해야 합니다. 데이터 저장소는 대용량 쓰기를 지원해야 합니다. 또 다른 문제는 실시간으로 경고를 생성하고 실시간(또는 거의 실시간) 대시보드에 데이터를 표시하는 등의 작업을 빠르게 수행하는 것입니다.
 
-## <a name="architecture"></a>건축
+## <a name="architecture"></a>아키텍처
 
 실시간 처리 아키텍처는 다음 논리적 구성 요소를 갖습니다.
 
@@ -56,7 +56,7 @@ ms.locfileid: "30298631"
 
 ### <a name="stream-processing"></a>스트림 처리
 
-- **Azure Stream Analytics** - Azure Stream Analytics는 바인딩되지 않은 데이터 스트림에 대해 영구 쿼리를 실행할 수 있습니다. 이러한 쿼리는 저장소 또는 메시지 브로커의 데이터 스트림을 사용하고, 임시 기간을 기준으로 데이터를 필터링 및 집계하고, 결과를 저장소, 데이터베이스 같은 싱크에 쓰거나 Power BI의 보고서에 직접 씁니다.
+- **Azure Stream Analytics** - Azure Stream Analytics는 바인딩되지 않은 데이터 스트림에 대해 영구 쿼리를 실행할 수 있습니다. 이러한 쿼리는 저장소 또는 메시지 브로커의 데이터 스트림을 사용하고, 임시 기간을 기준으로 데이터를 필터링 및 집계하고, 결과를 저장소, 데이터베이스 같은 싱크에 쓰거나 Power BI의 보고서에 직접 씁니다. Stream Analytics는 임시 및 지리 공간적 구문을 지원하는 SQL 기반 쿼리 언어를 사용하고, JavaScript를 사용하여 확장할 수 있습니다.
 - **Storm**. Apache Storm은 Spout 및 Bolt 토폴로지를 사용하여 실시간 처리 데이터 원본의 결과를 사용, 처리 및 출력하는 스트림 처리를 위한 오픈 소스 프레임워크입니다. Azure HDInsight 클러스터에서 Storm을 프로비전하고 Java 또는 C#에서 토폴로지를 구현할 수 있습니다.
 - **Spark Streaming**. Apache Spark는 일반 데이터 처리를 위한 오픈 소스 분산 플랫폼입니다. Spark는 Java, Scala 및 Python을 포함하여 지원되는 모든 Spark 언어로 코드를 작성할 수 있는 Spark Streaming API를 제공합니다. Spark 2.0은 보다 간단하면서 일관된 프로그래밍 모델을 제공하는 Spark Structured Streaming API를 도입했습니다. Spark 2.0은 Azure HDInsight 클러스터에서 사용할 수 있습니다.
 

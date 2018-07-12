@@ -2,21 +2,21 @@
 title: Azure에서 보안 하이브리드 네트워크 아키텍처 구현
 description: Azure에서 보안 하이브리드 네트워크 아키텍처를 구현하는 방법입니다.
 author: telmosampaio
-ms.date: 11/23/2016
+ms.date: 07/01/2018
 pnp.series.title: Network DMZ
 pnp.series.prev: ./index
 pnp.series.next: secure-vnet-dmz
 cardTitle: DMZ between Azure and on-premises
-ms.openlocfilehash: 81dea2e4439d5a01ebb88ab86dc0a59609bb7bc3
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 45583473ef297b2c7a5b0c4baff52485286dd051
+ms.sourcegitcommit: 9b459f75254d97617e16eddd0d411d1f80b7fe90
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
-ms.locfileid: "30849657"
+ms.lasthandoff: 07/03/2018
+ms.locfileid: "37403167"
 ---
 # <a name="dmz-between-azure-and-your-on-premises-datacenter"></a>Azure와 온-프레미스 데이터 센터 간의 DMZ
 
-이 참조 아키텍처는 온-프레미스 네트워크를 Azure로 확장하는 보안 하이브리드 네트워크를 보여줍니다. 아키텍처는 DMZ를 구현하며 또한 온-프레미스 네트워크와 Azure VNet(Virtual Network) 간의 *경계 네트워크*라고도 합니다. DMZ에는 방화벽 및 패킷 검사와 같은 보안 기능을 구현하는 NVA(네트워크 가상 어플라이언스)가 포함됩니다. VNet에서 나가는 모든 트래픽이 감사될 수 있도록 온-프레미스 네트워크를 통해 인터넷에 강제 터널링됩니다.
+이 참조 아키텍처는 온-프레미스 네트워크를 Azure로 확장하는 보안 하이브리드 네트워크를 보여줍니다. 아키텍처는 DMZ를 구현하며 또한 온-프레미스 네트워크와 Azure VNet(Virtual Network) 간의 *경계 네트워크*라고도 합니다. DMZ에는 방화벽 및 패킷 검사와 같은 보안 기능을 구현하는 NVA(네트워크 가상 어플라이언스)가 포함됩니다. VNet에서 나가는 모든 트래픽이 감사될 수 있도록 온-프레미스 네트워크를 통해 인터넷에 강제 터널링됩니다. [**이 솔루션을 배포합니다**.](#deploy-the-solution)
 
 [![0]][0] 
 
@@ -28,7 +28,7 @@ ms.locfileid: "30849657"
 * 온-프레미스 데이터 센터에서 Azure VNet을 입력하는 트래픽을 통해 세부적으로 제어해야 하는 인프라
 * 나가는 트래픽을 감사해야 하는 응용 프로그램 이 항목은 여러 상용 시스템의 규제 요구 사항이며 개인 정보를 공개하지 않도록 방지할 수 있습니다.
 
-## <a name="architecture"></a>건축
+## <a name="architecture"></a>아키텍처
 
 이 아키텍처는 다음 구성 요소로 구성됩니다.
 
@@ -78,7 +78,8 @@ VM, VNet 및 부하 분산 장치와 같은 Azure 리소스는 리소스 그룹�
 
 ### <a name="nva-recommendations"></a>NVA 권장 사항
 
-NVA는 네트워크 트래픽을 관리하고 모니터링하기 위한 다양한 서비스를 제공합니다. [Azure Marketplace][azure-marketplace-nva]는 사용할 수 있는 여러 타사 공급 업체 NVA를 제공합니다. 이러한 타사 NVA 중 요구 사항을 충족하는 것이 없는 경우 VM을 사용하여 사용자 지정 NVA를 만들 수 있습니다. 
+NVA는 네트워크 트래픽을 관리하고 모니터링하기 위한 다양한 서비스를 제공합니다. 
+  [Azure Marketplace][azure-marketplace-nva]는 사용할 수 있는 여러 타사 공급 업체 NVA를 제공합니다. 이러한 타사 NVA 중 요구 사항을 충족하는 것이 없는 경우 VM을 사용하여 사용자 지정 NVA를 만들 수 있습니다. 
 
 예를 들어 이 참조 아키텍처에 솔루션을 배포하면 VM에서 다음과 같은 기능을 사용하여 NVA를 구현합니다.
 
@@ -159,19 +160,65 @@ NSG를 사용하여 계층 간 트래픽을 제한합니다. 비즈니스 계층
 ### <a name="devops-access"></a>DevOps 액세스
 [RBAC][rbac]를 사용하여 DevOps가 각 계층에서 수행할 수 있는 작업을 제한합니다. 사용 권한을 부여할 때 [최소 권한의 원칙][security-principle-of-least-privilege]을 사용합니다. 모든 관리 작업을 기록하고 정기 감사를 수행하여 구성 변경을 계획했는지 확인합니다.
 
-## <a name="solution-deployment"></a>솔루션 배포
+## <a name="deploy-the-solution"></a>솔루션 배포
 
-이러한 권장 사항을 구현하는 참조 아키텍처 배포는 [GitHub][github-folder]를 통해 수행할 수 있습니다. 이 참조 아키텍처는 다음 지침에 따라 배포할 수 있습니다.
+이러한 권장 사항을 구현하는 참조 아키텍처 배포는 [GitHub][github-folder]를 통해 수행할 수 있습니다. 
 
-1. 아래 단추를 클릭합니다.<br><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmspnp%2Freference-architectures%2Fmaster%2Fdmz%2Fsecure-vnet-hybrid%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-2. Azure 포털에서 링크가 열렸으면 일부 설정에 대한 값을 입력해야 합니다.   
-   * **리소스 그룹** 이름이 매개 변수 파일에 이미 정의되어 있으므로 **새로 만들기**를 선택하고 텍스트 상자에 `ra-private-dmz-rg`를 입력합니다.
-   * **위치** 드롭다운 상자에서 하위 지역을 선택합니다.
-   * **템플릿 루트 Uri** 또는 **매개 변수 루트 Uri** 텍스트 상자를 편집하지 마세요.
-   * 사용 약관을 검토한 후 **위에 명시된 사용 약관에 동의함** 확인란을 클릭합니다.
-   * **구매** 단추를 클릭합니다.
-3. 배포가 완료될 때가지 기다립니다.
-4. 매개 변수 파일에는 모든 VM에 대한 하드 코딩된 관리자 사용자 이름 및 암호가 포함되어 있는데, 이 둘 모두를 즉시 변경할 것을 권장합니다. 배포의 각 VM을 Azure Portal에서 선택한 후 **지원 + 문제 해결** 블레이드에서 **암호 재설정**을 클릭합니다. **모드** 드롭다운 상자에서 **암호 재설정**을 선택한 후 새 **사용자 이름** 및 **암호**를 선택합니다. **업데이트** 단추를 클릭하여 저장합니다.
+### <a name="prerequisites"></a>필수 조건
+
+[!INCLUDE [ref-arch-prerequisites.md](../../../includes/ref-arch-prerequisites.md)]
+
+### <a name="deploy-resources"></a>리소스 배포
+
+1. 참조 아키텍처 GitHub 리포지토리의 `/dmz/secure-vnet-hybrid` 폴더로 이동합니다.
+
+2. 다음 명령 실행:
+
+    ```bash
+    azbb -s <subscription_id> -g <resource_group_name> -l <region> -p onprem.json --deploy
+    ```
+
+3. 다음 명령 실행:
+
+    ```bash
+    azbb -s <subscription_id> -g <resource_group_name> -l <region> -p secure-vnet-hybrid.json --deploy
+    ```
+
+### <a name="connect-the-on-premises-and-azure-gateways"></a>온-프레미스와 Azure 게이트웨이 연결
+
+이 단계에서는 두 개의 로컬 네트워크 게이트웨이를 연결합니다.
+
+1. Azure Portal에서 만든 리소스 그룹으로 이동합니다. 
+
+2. `ra-vpn-vgw-pip`라는 리소스를 찾고 **개요** 블레이드에 표시된 IP 주소를 복사합니다.
+
+3. `onprem-vpn-lgw`라는 리소스를 찾습니다.
+
+4. **구성** 블레이드를 클릭합니다. **IP 주소** 아래에서 2단계의 IP 주소에 붙여넣습니다.
+
+    ![](./images/local-net-gw.png)
+
+5. **저장**을 클릭하고 작업이 완료되기를 기다립니다. 5분 정도 걸릴 수 있습니다.
+
+6. `onprem-vpn-gateway1-pip`라는 리소스를 찾습니다. **개요** 블레이드에 표시된 IP 주소를 복사합니다.
+
+7. `ra-vpn-lgw`라는 리소스를 찾습니다. 
+
+8. **구성** 블레이드를 클릭합니다. **IP 주소** 아래에서 6단계의 IP 주소에 붙여넣습니다.
+
+9. **저장**을 클릭하고 작업이 완료되기를 기다립니다.
+
+10. 연결을 확인하려면 각 게이트웨이에 대한 **연결** 블레이드로 이동합니다. 상태가 **연결돼** 있어야 합니다.
+
+### <a name="verify-that-network-traffic-reaches-the-web-tier"></a>네트워크 트래픽이 웹 계층에 도달하는지 확인
+
+1. Azure Portal에서 만든 리소스 그룹으로 이동합니다. 
+
+2. 개인 DMZ 앞의 부하 분산 장치인 `int-dmz-lb`라는 리소스를 찾습니다. **개요** 블레이드에서 개인 IP 주소를 복사합니다.
+
+3. `jb-vm1`이라는 VM을 찾습니다. **연결**을 클릭하고 원격 데스크톱을 사용하여 VM에 연결합니다. 사용자 이름 및 암호는 onprem.json 파일에서 지정됩니다.
+
+4. 원격 데스크톱 세션에서 웹 브라우저를 열고 2단계의 IP 주소로 이동합니다. 기본 Apache2 서버 홈 페이지가 표시됩니다.
 
 ## <a name="next-steps"></a>다음 단계
 

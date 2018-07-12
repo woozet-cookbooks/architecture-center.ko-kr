@@ -4,12 +4,12 @@ description: Microsoft Azure에서 실행되는 기본 웹 응용 프로그램�
 author: MikeWasson
 ms.date: 12/12/2017
 cardTitle: Basic web application
-ms.openlocfilehash: efd831b1f54fa0662bdfa9874318e7b314172215
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: bc8cf9b5c66fc451d097cbc992ecb9a249645dce
+ms.sourcegitcommit: e9d9e214529edd0dc78df5bda29615b8fafd0e56
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
-ms.locfileid: "30846406"
+ms.lasthandoff: 06/28/2018
+ms.locfileid: "37091124"
 ---
 # <a name="basic-web-application"></a>기본 웹앱 응용 프로그램
 [!INCLUDE [header](../../_includes/header.md)]
@@ -20,7 +20,7 @@ ms.locfileid: "30846406"
 
 *이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
 
-## <a name="architecture"></a>건축 
+## <a name="architecture"></a>아키텍처 
 
 > [!NOTE]
 > 이 아키텍처는 응용 프로그램 개발에 초점을 두지 않으며 특정 응용 프로그램 프레임워크를 가정하지 않습니다. 다양한 Azure 서비스가 어떻게 연결되는지 이해하는 것이 목표입니다.
@@ -124,7 +124,7 @@ App Service에서는 응용 프로그램 파일에 대한 [백업 및 복원][we
 ### <a name="deployment"></a>배포
 배포는 다음 두 단계로 구성됩니다.
 
-1. Azure 리소스 프로비전. 이 단계에는 [Azure 리소스 관리자 템플릿][arm-template]을 사용하는 것이 좋습니다. 템플릿을 사용하면 PowerShell이나 Azure CLI(명령줄 인터페이스)를 통해 배포를 쉽게 자동화할 수 있습니다.
+1. Azure 리소스 프로비전. 이 단계에는 [Azure Resource Manager 템플릿][arm-template]을 사용하는 것이 좋습니다. 템플릿을 사용하면 PowerShell이나 Azure CLI(명령줄 인터페이스)를 통해 배포를 쉽게 자동화할 수 있습니다.
 2. 응용 프로그램(코드, 이진 파일 및 콘텐츠 파일) 배포. 로컬 Git 리포지토리에서 배포하거나, Visual Studio를 사용하여 배포하거나, 클라우드 기반 소스 제어를 통해 연속 배포하는 등 여러 옵션이 있습니다. [Azure App Service에 앱 배포][deploy]를 참조하세요.  
 
 App Service App에는 라이브 프로덕션 사이트를 나타내는 `production`이라는 배포 슬롯 하나가 항상 있습니다. 업데이트를 배포하기 위한 스테이징 슬롯을 만드는 것이 좋습니다. 스테이징 슬롯을 사용하면 다음과 같은 이점이 있습니다.
@@ -198,7 +198,7 @@ App Service 인증의 몇 가지 제한 사항은 다음과 같습니다.
 * 다중 테넌트 시나리오의 경우 응용 프로그램에서 토큰 발급자의 유효성을 검사하는 논리를 구현해야 합니다.
 
 ## <a name="deploy-the-solution"></a>솔루션 배포
-이 아키텍처에 대한 예제 리소스 관리자 템플릿은 [GitHub에서 제공][paas-basic-arm-template]됩니다.
+이 아키텍처에 대한 예제 Resource Manager 템플릿은 [GitHub에서 사용할 수 있습니다][paas-basic-arm-template].
 
 PowerShell을 사용하여 템플릿을 배포하려면 다음 명령을 실행합니다.
 

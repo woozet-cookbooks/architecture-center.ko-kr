@@ -7,12 +7,12 @@ ms.date: 11/28/2016
 pnp.series.next: adds-extend-domain
 pnp.series.prev: ./index
 cardTitle: Integrate on-premises AD with Azure AD
-ms.openlocfilehash: ade79f8ebffc15b423ef6ebfb9b19611c9500cd8
-ms.sourcegitcommit: 85334ab0ccb072dac80de78aa82bcfa0f0044d3f
+ms.openlocfilehash: 21a6474db94d34e23f79d1ba0e35943c0cb52966
+ms.sourcegitcommit: d5db5b8ed7429f056130096d0ef4b249b564599a
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/11/2018
-ms.locfileid: "35252995"
+ms.lasthandoff: 07/01/2018
+ms.locfileid: "37141387"
 ---
 # <a name="integrate-on-premises-active-directory-domains-with-azure-active-directory"></a>Azure Active Directory와 온-프레미스 Active Directory 도메인 통합
 
