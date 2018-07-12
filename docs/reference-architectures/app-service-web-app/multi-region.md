@@ -5,11 +5,11 @@ author: MikeWasson
 ms.date: 11/23/2016
 cardTitle: Run in multiple regions
 ms.openlocfilehash: 00309e58c163a64f6d9796bedc19d936afcd09ab
-ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
+ms.sourcegitcommit: 5d99b195388b7cabba383c49a81390ac48f86e8a
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/30/2018
-ms.locfileid: "30270291"
+ms.lasthandoff: 07/10/2018
+ms.locfileid: "37958826"
 ---
 # <a name="run-a-web-application-in-multiple-regions"></a>여러 지역에서 웹 응용 프로그램 실행
 [!INCLUDE [header](../../_includes/header.md)]
@@ -20,7 +20,7 @@ ms.locfileid: "30270291"
 
 *이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
 
-## <a name="architecture"></a>건축 
+## <a name="architecture"></a>아키텍처 
 
 이 아키텍처는 [웹 응용 프로그램에서 확장성 향상][guidance-web-apps-scalability]에 표시된 아키텍처를 기반으로 합니다. 주요 차이점은 다음과 같습니다.
 

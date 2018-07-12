@@ -3,18 +3,20 @@ title: Azure의 SAP HANA(대규모 인스턴스) 실행
 description: Azure 대규모 인스턴스의 고가용성 환경에서 SAP HANA를 실행하는 검증된 사례입니다.
 author: lbrader
 ms.date: 05/16/2018
-ms.openlocfilehash: 7605fa8a0012aaef3f7323c6f88614b640152e3b
-ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
+ms.openlocfilehash: 746161ac51335af5c48a559830d6e0345dcfb7b1
+ms.sourcegitcommit: 86d86d71e392550fd65c4f76320d7ecf0b72e1f6
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/21/2018
-ms.locfileid: "34423089"
+ms.lasthandoff: 07/06/2018
+ms.locfileid: "37864524"
 ---
 # <a name="run-sap-hana-on-azure-large-instances"></a>Azure의 SAP HANA(대규모 인스턴스) 실행
 
 이 참조 아키텍처는 고가용성 및 DR(재해 복구)을 통해 Azure의 SAP HANA(대규모 인스턴스)를 실행하는 일단의 검증된 사례를 보여 줍니다. HANA 대규모 인스턴스라고 하는 이 제품은 Azure 지역의 실제 서버에 배포됩니다. 
 
 ![0][0]
+
+*이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
 
 > [!NOTE]
 > 이 참조 아키텍처를 배포하려면 적절한 SAP 제품 라이선스 및 기타 Microsoft 이외의 기술이 필요합니다.
@@ -201,3 +203,5 @@ SAP HANA Studio, SAP HANA Cockpit, SAP Solution Manager 및 기타 네이티브 
 [type]: /azure/virtual-machines/workloads/sap/hana-installation
 [vnet]: /azure/virtual-network/virtual-networks-overview
 [0]: ./images/sap-hana-large-instances.png "Azure 대규모 인스턴스를 사용하는 SAP HANA 아키텍처"
+
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/sap-reference-architectures.vsdx

@@ -3,11 +3,11 @@ title: 웹 큐 작업자 아키텍처 스타일
 description: Azure에서 웹 큐 작업자 아키텍처의 이점, 과제 및 모범 사례를 설명합니다.
 author: MikeWasson
 ms.openlocfilehash: 545472e71ffcd43717ad24af0dc9218a221ca910
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.sourcegitcommit: 5d99b195388b7cabba383c49a81390ac48f86e8a
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
-ms.locfileid: "26582670"
+ms.lasthandoff: 07/10/2018
+ms.locfileid: "37958792"
 ---
 # <a name="web-queue-worker-architecture-style"></a>웹 큐 작업자 아키텍처 스타일
 

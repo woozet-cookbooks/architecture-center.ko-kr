@@ -3,21 +3,23 @@ title: Azure Virtual Machines에서 AnyDB용 SAP NetWeaver(Windows) 배포
 description: Azure의 Linux 환경에서 고가용성을 통해 SAP S/4HANA를 실행하는 검증된 사례입니다.
 author: lbrader
 ms.date: 05/11/2018
-ms.openlocfilehash: 0efe3e78d9e1809fdab52044b75e432742786b79
-ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
+ms.openlocfilehash: 90334e4872bdd15d59aa16286a031d07f3d1bb2f
+ms.sourcegitcommit: 86d86d71e392550fd65c4f76320d7ecf0b72e1f6
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/21/2018
-ms.locfileid: "34423094"
+ms.lasthandoff: 07/06/2018
+ms.locfileid: "37864541"
 ---
 # <a name="deploy-sap-netweaver-windows-for-anydb-on-azure-virtual-machines"></a>Azure Virtual Machines에서 AnyDB용 SAP NetWeaver(Windows) 배포
 
 이 참조 아키텍처는 Azure의 Windows 환경에서 고가용성을 통해 SAP NetWeaver를 실행하는 일단의 검증된 사례를 보여 줍니다. AnyDB는 데이터베이스이며, SAP HANA 이외에 지원되는 모든 DBMS에 대한 SAP 용어입니다. 이 아키텍처는 조직의 요구 사항에 맞게 변경할 수 있는 특정 VM(가상 머신) 크기로 배포됩니다.
 
-![](./images/sap-s4hana.png)
- 
+![](./images/sap-netweaver.png)
+
+*이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
+
 > [!NOTE] 
-> 이 참조 아키텍처에 따라 SAP 제품을 배포하려면 SAP 제품 및 Microsoft 이외의 기타 기술에 대한 적절한 라이선스가 필요합니다.
+> 이 참조 아키텍처를 배포하려면 적절한 SAP 제품 라이선스 및 기타 Microsoft 이외의 기술이 필요합니다.
 
 ## <a name="architecture"></a>아키텍처
 이 아키텍처를 구성하는 인프라 및 주요 소프트웨어 구성 요소는 다음과 같습니다.
@@ -174,3 +176,4 @@ Windows 가상 머신 디스크를 암호화하기 위해 [Azure Disk Encryption
 - [SAP 커뮤니티](https://www.sap.com/community.html)
 - [스택 오버플로](https://stackoverflow.com/tags/sap/)
 
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/sap-reference-architectures.vsdx

@@ -3,25 +3,26 @@ title: Azure의 Linux Virtual Machines용 SAP S/4HANA
 description: Azure의 Linux 환경에서 고가용성을 통해 SAP S/4HANA를 실행하는 검증된 사례입니다.
 author: lbrader
 ms.date: 05/11/2018
-ms.openlocfilehash: d24ef6f9e4eae460d0d0dcfff35568c812d09951
-ms.sourcegitcommit: bb348bd3a8a4e27ef61e8eee74b54b07b65dbf98
+ms.openlocfilehash: 9635de73ec431e0ac678e4008e0c4835796d47ad
+ms.sourcegitcommit: 86d86d71e392550fd65c4f76320d7ecf0b72e1f6
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/21/2018
-ms.locfileid: "34423095"
+ms.lasthandoff: 07/06/2018
+ms.locfileid: "37864507"
 ---
 # <a name="sap-s4hana-for-linux-virtual-machines-on-azure"></a>Azure의 Linux Virtual Machines용 SAP S/4HANA
 
 이 참조 아키텍처는 Azure에서 재해 복구를 지원하는 고가용성 환경에서 S/4HANA를 실행하는 일단의 검증된 사례를 보여 줍니다. 이 아키텍처는 조직의 요구 사항에 맞게 변경할 수 있는 특정 VM(가상 머신) 크기로 배포됩니다. 
 
-
 ![](./images/sap-s4hana.png)
+
+*이 아키텍처의 [Visio 파일][visio-download]을 다운로드합니다.*
+
+> [!NOTE] 
+> 이 참조 아키텍처를 배포하려면 적절한 SAP 제품 라이선스 및 기타 Microsoft 이외의 기술이 필요합니다.
 
 ## <a name="architecture"></a>아키텍처
  
-> [!NOTE] 
-> 이 참조 아키텍처에 따라 SAP 제품을 배포하려면 SAP 제품 및 Microsoft 이외의 기타 기술에 대한 적절한 라이선스가 필요합니다.
-
 이 참조 아키텍처는 엔터프라이즈급 프로덕션 수준 시스템에 대해 설명합니다. 이 구성은 비즈니스 요구 사항에 맞게 단일 가상 머신으로 줄일 수 있습니다. 하지만 필요한 구성 요소는 다음과 같습니다.
 
 **가상 네트워크**. [Azure Virtual Network](/azure/virtual-network/virtual-networks-overview) 서비스는 Azure 리소스를 서로 안전하게 연결합니다. 이 아키텍처에서 가상 네트워크는 [hub-spoke 토폴로지](../hybrid-networking/hub-spoke.md)의 허브에 배포된 게이트웨이를 통해 온-프레미스 환경에 연결합니다. 스포크는 SAP 응용 프로그램 사용되는 가상 네트워크입니다.
@@ -197,3 +198,5 @@ SAP HANA 미사용 데이터 암호화의 경우 SAP HANA 네이티브 암호화
 - [Azure 커뮤니티 지원](https://azure.microsoft.com/support/community/)
 - [SAP 커뮤니티](https://www.sap.com/community.html)
 - [스택 오버플로](https://stackoverflow.com/tags/sap/)
+
+[visio-download]: https://archcenter.blob.core.windows.net/cdn/sap-reference-architectures.vsdx
