@@ -3,12 +3,12 @@ title: Azure 아키텍처 센터
 description: Azure 아키텍처 센터는 Microsoft Azure를 사용하여 솔루션을 구축하기 위한 지침, 청사진, 패턴 및 모범 사례를 위한 공식 센터입니다. Microsoft 패턴 및 작업 방식 팀에 의해 엄선됩니다.
 layout: LandingPage
 ms.topic: landing-page
-ms.openlocfilehash: 0ac5dd79f765fe9b649cc2ca83c0213b4ba28544
-ms.sourcegitcommit: e67b751f230792bba917754d67789a20810dc76b
+ms.openlocfilehash: 544196faa7156c5636b03d3f402bc48dcc63975f
+ms.sourcegitcommit: 776b8c1efc662d42273a33de3b82ec69e3cd80c5
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/06/2018
-ms.locfileid: "30847733"
+ms.lasthandoff: 07/12/2018
+ms.locfileid: "38987593"
 ---
 # <a name="azure-architecture-center"></a>Azure 아키텍처 센터
 
@@ -78,8 +78,8 @@ ms.locfileid: "30847733"
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>Azure에서 마이크로 서비스 구축</h3>
-                            <p>이 다중 파트 시리즈는 Azure에서 마이크로 서비스 아키텍처를 설계하고 구축하는 과정을 안내합니다. 참조 구현이 포함되어 있습니다.</p>
+                            <h3>Azure에서 마이크로 서비스 빌드</h3>
+                            <p>이 디자인 가이드에서는 Azure에서 마이크로 서비스 아키텍처를 설계하고 빌드하는 과정을 설명합니다. 참조 구현이 포함되어 있습니다.</p>
                         </div>
                     </div>
                 </div>
@@ -118,7 +118,7 @@ ms.locfileid: "30847733"
                             </div>
                         </div>
                         <div class="cardText">
-                            <h3>클라우드 응용 프로그램에 대한 모범 사례</h3>
+                            <h3>클라우드 모범 사례</h3>
                             <p>자동 크기 조정, 캐싱, 데이터 분할, API 디자인 등과 같은 측면을 다루는 클라우드 응용 프로그램에 대한 모범 사례입니다.</p>
                         </div>
                     </div>
@@ -246,46 +246,6 @@ ms.locfileid: "30847733"
             </div>
         </a>
     </li>
-    <!-- Sharepoint -->
-    <li>
-        <a href="/azure/architecture/reference-architectures/sharepoint">
-            <div class="cardSize">
-                <div class="cardPadding">
-                    <div class="card">
-                        <div class="cardImageOuter">
-                            <div class="cardImage">
-                                <img src="/azure/architecture/reference-architectures/sharepoint/images/sharepoint.svg" alt="" />
-                            </div>
-                        </div>
-                        <div class="cardText">
-                            <h3>Azure에서 SharePoint Server 2016 실행</h3>
-                            <p>Azure에서 고가용성 SharePoint Server 2016 팜을 배포하고 실행합니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </li>
-    <!-- SAP -->
-    <li>
-        <a href="/azure/architecture/reference-architectures/sap">
-            <div class="cardSize">
-                <div class="cardPadding">
-                    <div class="card">
-                        <div class="cardImageOuter">
-                            <div class="cardImage">
-                                <img src="/azure/architecture/reference-architectures/sap/images/sap.svg" width="100%" alt="" />
-                            </div>
-                        </div>
-                        <div class="cardText">
-                            <h3>Azure에서 SAP HANA 실행</h3>
-                            <p>Azure의 고가용성 환경에서 SAP NetWeaver 및 SAP HANA를 배포하고 실행합니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </li>
     <!-- Multitenant identity -->
     <li>
         <a href="/azure/architecture/multitenant-identity">
@@ -300,46 +260,6 @@ ms.locfileid: "30847733"
                         <div class="cardText">
                             <h3>다중 테넌트 응용 프로그램에 대한 ID 관리</h3>
                             <p>Azure AD를 사용하여 ID를 관리하는 경우 다중 테넌트에 대한 모범 사례를 이해합니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </li>
-    <!-- AzureCAT blog -->
-    <li>
-        <a href="https://blogs.msdn.microsoft.com/azurecat/">
-            <div class="cardSize">
-                <div class="cardPadding">
-                    <div class="card">
-                        <div class="cardImageOuter">
-                            <div class="cardImage">
-                                <img src="_images/azurecat.svg" alt="" />
-                            </div>
-                        </div>
-                        <div class="cardText">
-                            <h3>Azure 고객 자문 팀</h3>
-                            <p>AzureCAT 팀의 블로그</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </li>
-    <!-- SQL CAT blog -->
-    <li>
-        <a href="https://blogs.msdn.microsoft.com/sqlcat/">
-            <div class="cardSize">
-                <div class="cardPadding">
-                    <div class="card">
-                        <div class="cardImageOuter">
-                            <div class="cardImage">
-                                <img src="_images/sqlcat.svg" alt="" />
-                            </div>
-                        </div>
-                        <div class="cardText">
-                            <h3>SQL Server 고객 자문 팀</h3>
-                            <p>SQLCAT 팀의 블로그</p>
                         </div>
                     </div>
                 </div>
