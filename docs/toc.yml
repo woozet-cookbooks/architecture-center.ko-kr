@@ -1,165 +1,531 @@
 - name: Azure 아키텍처 센터
   href: index.md
-- name: Azure 클라우드 도입 가이드
-  href: cloud-adoption-guide/index.md
+- name: 클라우드 기본 사항
   items:
-    - name: 기본 도입 단계
-      href: cloud-adoption-guide/adoption-intro/overview.md
-    - name: 중급 도입 단계
-      href: cloud-adoption-guide/intermediate-stage/overview.md
-- name: 응용 프로그램 아키텍처 가이드
-  href: guide/index.md
-  items:
-    - name: 아키텍처 스타일
-      href: guide/architecture-styles/index.md
-    - name: 계산 서비스 선택
-      href: guide/technology-choices/compute-overview.md
-    - name: 데이터 저장소 선택
-      href: guide/technology-choices/data-store-overview.md
-    - name: 디자인 원칙
-      href: guide/design-principles/index.md
-    - name: 소프트웨어 품질 핵심 요소
-      href: guide/pillars.md
-    - name: 디자인 패턴
-      href: patterns/index.md
-      maintainContext: true
-- name: 데이터 아키텍처 가이드
-  href: data-guide/index.md
-- name: 참조 아키텍처
-  href: reference-architectures/index.md
-  items:
-    - name: App Service 웹 응용 프로그램
-      href: reference-architectures/app-service-web-app/index.md
-    - name: 하이브리드 네트워크
-      href: reference-architectures/hybrid-networking/index.md
-    - name: ID 관리
-      href: reference-architectures/identity/index.md
-    - name: Jenkins 서버
-      href: reference-architectures/jenkins/index.md
-    - name: N 계층 응용 프로그램
-      href: reference-architectures/n-tier/index.md
-    - name: 네트워크 DMZ
-      href: reference-architectures/dmz/index.md
-    - name: Azure의 SAP
-      href: reference-architectures/sap/index.md
-    - name: SharePoint Server 2016
-      href: reference-architectures/sharepoint/index.md
-- name: 클라우드 디자인 패턴
-  href: patterns/index.md
-  items:
-    - name: 가용성 패턴
-      href: patterns/category/availability.md
-    - name: 데이터 관리 패턴
-      href: patterns/category/data-management.md
-    - name: 디자인 및 구현 패턴
-      href: patterns/category/design-implementation.md
-    - name: 관리 및 모니터링 패턴
-      href: patterns/category/management-monitoring.md
-    - name: 메시지 패턴
-      href: patterns/category/messaging.md
-    - name: 성능 및 확장성 패턴
-      href: patterns/category/performance-scalability.md
-    - name: 복원력 패턴
-      href: patterns/category/resiliency.md
-    - name: 보안 패턴
-      href: patterns/category/security.md
-- name: 모범 사례
-  items:
-    - name: API 디자인
-      href: best-practices/api-design.md
-    - name: API 구현
-      href: best-practices/api-implementation.md
-    - name: 자동 확장
-      href: best-practices/auto-scaling.md
-    - name: 백그라운드 작업
-      href: best-practices/background-jobs.md
-    - name: 구성
-      href: best-practices/caching.md
-    - name: Content Delivery Network
-      href: best-practices/cdn.md
-    - name: 데이터 분할
-      href: best-practices/data-partitioning.md
-    - name: 모니터링 및 진단
-      href: best-practices/monitoring.md
-    - name: 명명 규칙
-      href: best-practices/naming-conventions.md
-    - name: 일시적인 오류 처리
-      href: best-practices/transient-faults.md
-    - name: 특정 서비스에 대한 다시 시도 지침
-      href: best-practices/retry-service-specific.md
-- name: 성능 안티패턴
-  href: antipatterns/index.md
-  items:
-    - name: 사용량이 많은 데이터베이스
-      href: antipatterns/busy-database/index.md
-    - name: 사용량이 많은 프런트 엔드
-      href: antipatterns/busy-front-end/index.md
-    - name: 번잡한 I/O
-      href: antipatterns/chatty-io/index.md
-    - name: 불필요한 가져오기
-      href: antipatterns/extraneous-fetching/index.md
-    - name: 부적절한 인스턴스화
-      href: antipatterns/improper-instantiation/index.md
-    - name: 모놀리식 지속성
-      href: antipatterns/monolithic-persistence/index.md
-    - name: 캐싱 없음
-      href: antipatterns/no-caching/index.md
-    - name: 동기 I/O
-      href: antipatterns/synchronous-io/index.md
-- name: 디자인 검토 검사 목록
-  items:
-    - name: 가용성
-      href: checklist/availability.md
-    - name: DevOps
-      href: checklist/dev-ops.md
-    - name: 복원력(일반)
-      href: checklist/resiliency.md
-    - name: 복원력(Azure 서비스)
-      href: checklist/resiliency-per-service.md
-    - name: 확장성
-      href: checklist/scalability.md
-- name: 복원력을 위한 디자인
-  items:
-    - name: 복원력 있는 응용 프로그램 디자인
-      href: resiliency/index.md
-    - name: 복원력 검사 목록
-      href: checklist/resiliency.md
-      maintainContext: true
-    - name: 실패 모드 분석
-      href: resiliency/failure-mode-analysis.md
-- name: 예제 시나리오
-  href: example-scenario/index.md
-- name: 시나리오 가이드
-  items:
-    - name: AWS 전문가를 위한 Azure
-      href: aws-professional/index.md
+    - name: 응용 프로그램 아키텍처 가이드
+      items:
+        - name: 소개
+          href: guide/index.md
+        - name: 아키텍처 스타일
+          items:
+            - name: 개요
+              href: guide/architecture-styles/index.md
+            - name: N 계층 응용 프로그램
+              href: guide/architecture-styles/n-tier.md
+            - name: 웹-큐-작업자
+              href: guide/architecture-styles/web-queue-worker.md
+            - name: 마이크로 서비스
+              href: guide/architecture-styles/microservices.md
+            - name: CQRS
+              href: guide/architecture-styles/cqrs.md
+            - name: 이벤트 기반 아키텍처
+              href: guide/architecture-styles/event-driven.md
+            - name: 빅 데이터
+              href: guide/architecture-styles/big-data.md
+            - name: 빅 컴퓨팅
+              href: guide/architecture-styles/big-compute.md
+        - name: 계산 서비스 선택
+          items:
+            - name: 개요
+              href: guide/technology-choices/compute-overview.md
+            - name: 의사 결정 트리
+              href: guide/technology-choices/compute-decision-tree.md
+            - name: 계산 비교
+              href: guide/technology-choices/compute-comparison.md
+        - name: 데이터 저장소 선택
+          items:
+            - name: 개요
+              href: guide/technology-choices/data-store-overview.md
+            - name: 데이터 저장소 비교
+              href: guide/technology-choices/data-store-comparison.md
+        - name: 디자인 원칙
+          items:
+            - name: 개요
+              href: guide/design-principles/index.md
+            - name: 자체 복구를 위한 디자인
+              href: guide/design-principles/self-healing.md
+            - name: 모두 중복으로 구성
+              href: guide/design-principles/redundancy.md
+            - name: 조정 최소화
+              href: guide/design-principles/minimize-coordination.md
+            - name: 규모 확장을 위한 디자인
+              href: guide/design-principles/scale-out.md
+            - name: 한도에 맞춘 분할
+              href: guide/design-principles/partition.md
+            - name: 운영을 위한 디자인
+              href: guide/design-principles/design-for-operations.md
+            - name: 관리되는 서비스 사용
+              href: guide/design-principles/managed-services.md
+            - name: 작업에 가장 적합한 데이터 저장소 사용
+              href: guide/design-principles/use-the-best-data-store.md
+            - name: 진화를 위한 디자인
+              href: guide/design-principles/design-for-evolution.md
+            - name: 비즈니스 요구 사항에 맞게 구축
+              href: guide/design-principles/build-for-business.md
+        - name: 소프트웨어 품질 핵심 요소
+          href: guide/pillars.md
+        - name: 클라우드 아키텍처에 대한 모범 사례
+          items:
+            - name: API 디자인
+              href: best-practices/api-design.md
+            - name: API 구현
+              href: best-practices/api-implementation.md
+            - name: 자동 확장
+              href: best-practices/auto-scaling.md
+            - name: 백그라운드 작업
+              href: best-practices/background-jobs.md
+            - name: 구성
+              href: best-practices/caching.md
+            - name: Content Delivery Network
+              href: best-practices/cdn.md
+            - name: 데이터 분할
+              href: best-practices/data-partitioning.md
+            - name: 모니터링 및 진단
+              href: best-practices/monitoring.md
+            - name: 명명 규칙
+              href: best-practices/naming-conventions.md
+            - name: 일시적인 오류 처리
+              href: best-practices/transient-faults.md
+            - name: 특정 서비스에 대한 다시 시도 지침
+              href: best-practices/retry-service-specific.md
+    - name: 데이터 아키텍처 가이드
+      items:
+        - name: 소개
+          href: data-guide/index.md
+        - name: 기존 RDBMS 워크로드
+          items:
+            - name: 개요
+              href: data-guide/relational-data/index.md
+            - name: OLTP(온라인 트랜잭션 처리)
+              href: data-guide/relational-data/online-transaction-processing.md
+            - name: 데이터 웨어하우징
+              href: data-guide/relational-data/data-warehousing.md
+            - name: OLAP(온라인 분석 처리)
+              href: data-guide/relational-data/online-analytical-processing.md
+            - name: 'ETL(추출, 변환 및 로드)'
+              href: data-guide/relational-data/etl.md
+        - name: 빅 데이터 아키텍처
+          items:
+            - name: 개요
+              href: data-guide/big-data/index.md
+            - name: 일괄 처리
+              href: data-guide/big-data/batch-processing.md
+            - name: 실시간 처리
+              href: data-guide/big-data/real-time-processing.md
+            - name: 대규모 Machine Learning
+              href: data-guide/big-data/machine-learning-at-scale.md
+            - name: 비관계형 데이터 저장소
+              href: data-guide/big-data/non-relational-data.md
+            - name: 시나리오
+              items:
+                - name: 고급 분석
+                  href: data-guide/scenarios/advanced-analytics.md
+                - name: 데이터 레이크
+                  href: data-guide/scenarios/data-lake.md
+                - name: 자유 형식 텍스트 검색
+                  href: data-guide/scenarios/search.md
+                - name: 대화형 데이터 탐색
+                  href: data-guide/scenarios/interactive-data-exploration.md
+                - name: 자연어 처리
+                  href: data-guide/scenarios/natural-language-processing.md
+                - name: 시계열 솔루션
+                  href: data-guide/scenarios/time-series.md
+                - name: CSV 및 JSON 파일 사용
+                  href: data-guide/scenarios/csv-and-json.md
+            - name: 기술 선택
+              items:
+                - name: 분석 데이터 저장소
+                  href: data-guide/technology-choices/analytical-data-stores.md
+                - name: 분석 및 보고
+                  href: data-guide/technology-choices/analysis-visualizations-reporting.md
+                - name: 일괄 처리
+                  href: data-guide/technology-choices/batch-processing.md
+                - name: Cognitive Services
+                  href: data-guide/technology-choices/cognitive-services.md
+                - name: 데이터 저장소
+                  href: data-guide/technology-choices/data-storage.md
+                - name: Machine Learning
+                  href: data-guide/technology-choices/data-science-and-machine-learning.md
+                - name: 자연어 처리
+                  href: data-guide/technology-choices/natural-language-processing.md
+                - name: 파이프라인 오케스트레이션
+                  href: data-guide/technology-choices/pipeline-orchestration-data-movement.md
+                - name: 실시간 메시지 수집
+                  href: data-guide/technology-choices/real-time-ingestion.md
+                - name: 검색 데이터 저장소
+                  href: data-guide/technology-choices/search-options.md
+                - name: 스트림 처리
+                  href: data-guide/technology-choices/stream-processing.md
+        - name: 복합적인 문제
+          items:
+            - name: 데이터 전송
+              href: data-guide/scenarios/data-transfer.md
+            - name: 클라우드로 온-프레미스 데이터 솔루션 확장
+              href: data-guide/scenarios/hybrid-on-premises-and-cloud.md
+            - name: 데이터 솔루션 보안
+              href: data-guide/scenarios/securing-data-solutions.md
+    - name: 클라우드 디자인 패턴
+      items:
+        - name: 개요
+          href: patterns/index.md
+        - name: 범주
+          items:
+            - name: 가용성
+              href: patterns/category/availability.md
+            - name: 데이터 관리
+              href: patterns/category/data-management.md
+            - name: 디자인 및 구현
+              href: patterns/category/design-implementation.md
+            - name: 메시징
+              href: patterns/category/messaging.md
+            - name: 관리 및 모니터링
+              href: patterns/category/management-monitoring.md
+            - name: 성능 및 확장성
+              href: patterns/category/performance-scalability.md
+            - name: 복원력
+              href: patterns/category/resiliency.md
+            - name: 보안
+              href: patterns/category/security.md
+        - name: 특사
+          href: patterns/ambassador.md
+        - name: 손상 방지 레이어
+          href: patterns/anti-corruption-layer.md
+        - name: 프런트 엔드에 대한 백 엔드
+          href: patterns/backends-for-frontends.md
+        - name: 격벽
+          href: patterns/bulkhead.md
+        - name: Cache-Aside
+          href: patterns/cache-aside.md
+        - name: 회로 차단기
+          href: patterns/circuit-breaker.md
+        - name: CQRS(명령 및 쿼리 책임 분리)
+          href: patterns/cqrs.md
+        - name: 보정 트랜잭션
+          href: patterns/compensating-transaction.md
+        - name: 경쟁 소비자
+          href: patterns/competing-consumers.md
+        - name: 계산 리소스 통합
+          href: patterns/compute-resource-consolidation.md
+        - name: 이벤트 소싱
+          href: patterns/event-sourcing.md
+        - name: 외부 구성 저장소
+          href: patterns/external-configuration-store.md
+        - name: 페더레이션 ID
+          href: patterns/federated-identity.md
+        - name: 게이트 키퍼
+          href: patterns/gatekeeper.md
+        - name: 게이트웨이 집계
+          href: patterns/gateway-aggregation.md
+        - name: 게이트웨이 오프로딩
+          href: patterns/gateway-offloading.md
+        - name: 게이트웨이 라우팅
+          href: patterns/gateway-routing.md
+        - name: 상태 엔드포인트 모니터링
+          href: patterns/health-endpoint-monitoring.md
+        - name: 인덱스 테이블
+          href: patterns/index-table.md
+        - name: 리더 선택
+          href: patterns/leader-election.md
+        - name: 구체화된 뷰
+          href: patterns/materialized-view.md
+        - name: 파이프 및 필터
+          href: patterns/pipes-and-filters.md
+        - name: 우선 순위 큐
+          href: patterns/priority-queue.md
+        - name: 큐 기반 부하 평준화
+          href: patterns/queue-based-load-leveling.md
+        - name: 다시 시도
+          href: patterns/retry.md
+        - name: Scheduler 에이전트 감독자
+          href: patterns/scheduler-agent-supervisor.md
+        - name: 분할
+          href: patterns/sharding.md
+        - name: 사이드카
+          href: patterns/sidecar.md
+        - name: 정적 콘텐츠 호스팅
+          href: patterns/static-content-hosting.md
+        - name: 스트랭글러
+          href: patterns/strangler.md
+        - name: 제한
+          href: patterns/throttling.md
+        - name: 발레 키
+          href: patterns/valet-key.md
+    - name: 성능 안티패턴
+      items:
+        - name: 개요
+          href: antipatterns/index.md
+        - name: 사용량이 많은 데이터베이스
+          href: antipatterns/busy-database/index.md
+        - name: 사용량이 많은 프런트 엔드
+          href: antipatterns/busy-front-end/index.md
+        - name: 번잡한 I/O
+          href: antipatterns/chatty-io/index.md
+        - name: 불필요한 가져오기
+          href: antipatterns/extraneous-fetching/index.md
+        - name: 부적절한 인스턴스화
+          href: antipatterns/improper-instantiation/index.md
+        - name: 모놀리식 지속성
+          href: antipatterns/monolithic-persistence/index.md
+        - name: 캐싱 없음
+          href: antipatterns/no-caching/index.md
+        - name: 동기 I/O
+          href: antipatterns/synchronous-io/index.md
     - name: Azure에서 마이크로 서비스 빌드
-      href: ./microservices/index.md
-    - name: 다중 테넌트 응용 프로그램의 ID 관리
-      href: multitenant-identity/index.md
+      items:
+        - name: 소개
+          href: microservices/index.md
+        - name: 도메인 분석
+          href: microservices/domain-analysis.md
+        - name: 마이크로 서비스 경계 식별
+          href: microservices/microservice-boundaries.md
+        - name: 데이터 고려 사항
+          href: microservices/data-considerations.md
+        - name: 서비스 간 통신
+          href: microservices/interservice-communication.md
+        - name: API 디자인
+          href: microservices/api-design.md
+        - name: 수집 및 워크플로
+          href: microservices/ingestion-workflow.md
+        - name: API 게이트웨이
+          href: microservices/gateway.md
+        - name: 로깅 및 모니터링
+          href: microservices/logging-monitoring.md
+        - name: CI/CD
+          href: microservices/ci-cd.md
+    - name: 다중 테넌트 ID 관리
+      items:
+        - name: 소개
+          href: multitenant-identity/index.md
+        - name: Tailspin 시나리오
+          href: multitenant-identity/tailspin.md
+        - name: 인증
+          href: multitenant-identity/authenticate.md
+        - name: 클레임 기반 ID
+          href: multitenant-identity/claims.md
+        - name: 테넌트 등록
+          href: multitenant-identity/signup.md
+        - name: 응용 프로그램 역할
+          href: multitenant-identity/app-roles.md
+        - name: 권한 부여
+          href: multitenant-identity/authorize.md
+        - name: 웹 API 보안
+          href: multitenant-identity/web-api.md
+        - name: 액세스 토큰 캐시
+          href: multitenant-identity/token-cache.md
+        - name: 클라이언트 어설션
+          href: multitenant-identity/client-assertion.md
+        - name: 응용 프로그램 비밀 보호
+          href: multitenant-identity/key-vault.md
+        - name: 고객의 AD FS로 페더레이션
+          href: multitenant-identity/adfs.md
+        - name: 설문 조사 응용 프로그램 실행
+          href: multitenant-identity/run-the-app.md
     - name: Cloud Services에서 Service Fabric으로 마이그레이션
       items:
         - name: Service Fabric으로 Cloud Services 응용 프로그램 마이그레이션
           href: service-fabric/migrate-from-cloud-services.md
         - name: Service Fabric 응용 프로그램 리팩터링
           href: service-fabric/refactor-migrated-app.md
-    - name: Azure Resource Manager 템플릿 기능 확장
-      href: building-blocks/extending-templates/index.md
-- name: 리소스
+- name: 예제 시나리오
   items:
-    - name: Azure 로드맵
-      href: 'https://azure.microsoft.com/roadmap/'
-    - name: Azure에 대한 Microsoft 보안 센터
-      href: 'https://www.microsoft.com/en-us/trustcenter/cloudservices/azure'
-    - name: 아이콘 및 다이어그램
-      href: resources/diagrams.md
-    - name: Azure 업데이트 일정
-      href: 'https://azure.microsoft.com/updates/'
-    - name: 교육
-      href: 'https://azure.microsoft.com/community/training/'
-    - name: SQLCAT 블로그
-      href: 'https://blogs.msdn.microsoft.com/sqlcat/'
-    - name: AzureCAT 블로그
-      href: 'https://blogs.msdn.microsoft.com/azurecat/'
-    - name: 백서
-      href: 'https://azure.microsoft.com/resources/whitepapers/'
+    - name: 개요
+      href: example-scenario/index.md
+    - name: AI
+      items:
+        - name: 이미지 처리
+          href: example-scenario/ai/intelligent-apps-image-processing.md
+    - name: 앱
+      items:
+        - name: 호텔 예약 챗봇
+          href: example-scenario/apps/commerce-chatbot.md
+        - name: Azure Kubernetes Service에서 DevOps
+          href: example-scenario/apps/devops-with-aks.md
+    - name: 데이터 및 분석
+      items:
+        - name: 실시간 사기 감지
+          href: example-scenario/data/fraud-detection.md
+- name: 참조 아키텍처
+  items:
+    - name: 개요
+      href: reference-architectures/index.md
+    - name: App Service 웹 응용 프로그램
+      items:
+        - name: 기본 웹앱 응용 프로그램
+          href: reference-architectures/app-service-web-app/basic-web-app.md
+        - name: 향상된 확장성
+          href: reference-architectures/app-service-web-app/scalable-web-app.md
+        - name: 다중 지역 배포
+          href: reference-architectures/app-service-web-app/multi-region.md
+    - name: 빅 데이터
+      items:
+        - name: SQL Data Warehouse를 사용하는 Enterprise BI
+          href: reference-architectures/data/enterprise-bi-sqldw.md
+        - name: SQL Data Warehouse 및 Data Factory를 사용하는 자동화된 Enterprise BI
+          href: reference-architectures/data/enterprise-bi-adf.md
+    - name: 하이브리드 네트워크
+      items:
+        - name: 개요
+          href: reference-architectures/hybrid-networking/index.md
+        - name: VPN
+          href: reference-architectures/hybrid-networking/vpn.md
+        - name: ExpressRoute
+          href: reference-architectures/hybrid-networking/expressroute.md
+        - name: VPN 장애 조치(failover)를 사용하는 ExpressRoute
+          href: reference-architectures/hybrid-networking/expressroute-vpn-failover.md
+        - name: 허브-스포크 토폴로지
+          href: reference-architectures/hybrid-networking/hub-spoke.md
+        - name: 공유 서비스를 사용하는 허브-스포크 토폴로지
+          href: reference-architectures/hybrid-networking/shared-services.md
+    - name: ID 관리
+      items:
+        - name: 개요
+          href: reference-architectures/identity/index.md
+        - name: 온-프레미스 AD와 Azure AD 통합
+          href: reference-architectures/identity/azure-ad.md
+        - name: AD DS를 Azure로 확장
+          href: reference-architectures/identity/adds-extend-domain.md
+        - name: Azure에 AD DS 포리스트 만들기
+          href: reference-architectures/identity/adds-forest.md
+        - name: AD FS를 Azure로 확장
+          href: reference-architectures/identity/adfs.md
+    - name: N 계층 응용 프로그램
+      items:
+        - name: SQL Server를 통한 N 계층 응용 프로그램
+          href: reference-architectures/n-tier/n-tier-sql-server.md
+        - name: 다중 지역 N 계층 응용 프로그램
+          href: reference-architectures/n-tier/multi-region-sql-server.md
+        - name: Cassandra를 통한 N 계층 응용 프로그램
+          href: reference-architectures/n-tier/n-tier-cassandra.md
+        - name: Linux VM 배포
+          href: reference-architectures/n-tier/linux-vm.md
+        - name: Windows VM 배포
+          href: reference-architectures/n-tier/windows-vm.md
+    - name: 네트워크 DMZ
+      items:
+        - name: Azure와 온-프레미스 간의 DMZ
+          href: reference-architectures/dmz/secure-vnet-hybrid.md
+        - name: Azure와 인터넷 간의 DMZ
+          href: reference-architectures/dmz/secure-vnet-dmz.md
+        - name: 고가용성 네트워크 가상 어플라이언스
+          href: reference-architectures/dmz/nva-ha.md
+    - name: SAP
+      items:
+        - name: AnyDB용 SAP NetWeaver
+          href: reference-architectures/sap/sap-netweaver.md
+        - name: SAP S/4HANA
+          href: reference-architectures/sap/sap-s4hana.md
+        - name: Azure의 SAP HANA(대규모 인스턴스)
+          href: reference-architectures/sap/hana-large-instances.md
+    - name: Jenkins 서버
+      href: reference-architectures/jenkins/index.md
+    - name: SharePoint Server 2016
+      href: reference-architectures/sharepoint/index.md
+- name: 디자인 검토 프레임워크
+  items:
+    - name: 복원력을 위한 디자인
+      href: resiliency/index.md
+    - name: 실패 모드 분석
+      href: resiliency/failure-mode-analysis.md
+    - name: 가용성 검사 목록
+      href: checklist/availability.md
+    - name: DevOps 검사 목록
+      href: checklist/dev-ops.md
+    - name: 복원력 검사 목록(일반)
+      href: checklist/resiliency.md
+    - name: 복원력 검사 목록(Azure 서비스)
+      href: checklist/resiliency-per-service.md
+    - name: 확장성 검사 목록
+      href: checklist/scalability.md
+- name: 클라우드 도입 가이드
+  items:
+    - name: 소개
+      href: cloud-adoption-guide/index.md
+    - name: 기본 Azure 도입
+      items:
+        - name: 개요
+          href: cloud-adoption-guide/adoption-intro/overview.md
+        - name: Azure 내부 기능 이해
+          items:
+            - name: '설명: Azure의 작동 방식'
+              href: cloud-adoption-guide/adoption-intro/azure-explainer.md
+            - name: '설명: 클라우드 리소스 관리란?'
+              href: cloud-adoption-guide/adoption-intro/governance-explainer.md
+        - name: Azure의 디지털 ID 이해
+          items:
+            - name: '설명: Azure Active Directory 테넌트란?'
+              href: cloud-adoption-guide/adoption-intro/tenant-explainer.md
+            - name: '방법: Azure Active Directory 테넌트 얻기'
+              href: /azure/active-directory/develop/active-directory-howto-tenant
+              maintainContext: true
+            - name: '지침: Azure AD 테넌트 디자인'
+              href: cloud-adoption-guide/adoption-intro/tenant.md
+            - name: '방법: Azure AD 테넌트에 사용자 추가'
+              href: /azure/active-directory/add-users-azure-active-directory
+              maintainContext: true
+        - name: Azure 구독 이해
+          items:
+            - name: '설명: Azure 구독이란?'
+              href: cloud-adoption-guide/adoption-intro/subscription-explainer.md
+            - name: '지침: Azure 구독 디자인'
+              href: cloud-adoption-guide/adoption-intro/subscription.md
+        - name: Azure의 리소스 관리 이해
+          items:
+            - name: '설명: Azure 리소스 관리자란?'
+              href: cloud-adoption-guide/adoption-intro/resource-manager-explainer.md
+            - name: '설명: Azure 리소스 그룹이란?'
+              href: cloud-adoption-guide/adoption-intro/resource-group-explainer.md
+            - name: '설명: Azure의 리소스 액세스 이해'
+              href: /azure/active-directory/active-directory-understanding-resource-access
+              maintainContext: true
+            - name: '방법: 포털에서 리소스 그룹 만들기'
+              href: /azure/azure-resource-manager/resource-group-portal
+              maintainContext: true
+            - name: '지침: 리소스 그룹 디자인'
+              href: cloud-adoption-guide/adoption-intro/resource-group.md
+            - name: '지침: Azure 리소스 명명 규칙'
+              href: /azure/architecture/best-practices/naming-conventions
+              maintainContext: true
+        - name: Azure에 기본 아키텍처 배포
+          items:
+            - name: PaaS(Platform as a Service) 아키텍처
+              items:
+                - name: '방법: Azure에 기본 웹 응용 프로그램 배포'
+                  href: /azure/app-service
+                  maintainContext: true
+                - name: '지침: Azure의 웹 응용 프로그램에 대한 모범 사례'
+                  href: /azure/architecture/reference-architectures/app-service-web-app/basic-web-app
+                  maintainContext: true
+            - name: IaaS(Infrastructure as a Service)
+              items:
+                - name: '설명: Azure 가상 네트워크란?'
+                  href: /azure/virtual-network/virtual-networks-overview
+                  maintainContext: true
+                - name: '방법: Azure에 가상 네트워크 배포'
+                  href: /azure/virtual-network/virtual-networks-create-vnet-arm-pportal
+                  maintainContext: true
+                - name: '방법: Azure에 단일 Windows VM IaaS 워크로드 배포'
+                  href: /azure/virtual-machines/windows/quick-create-portal
+                  maintainContext: true
+                - name: '지침: Azure에 Windows VM을 배포하는 방법에 대한 모범 사례'
+                  href: /azure/architecture/reference-architectures/virtual-machines-windows/single-vm
+                  maintainContext: true
+                - name: '방법: Azure에 단일 Linux VM IaaS 워크로드 배포'
+                  href: /azure/virtual-machines/linux/quick-create-portal
+                  maintainContext: true
+                - name: '지침: Azure에 Linux VM을 배포하는 방법에 대한 모범 사례'
+                  href: /azure/architecture/reference-architectures/virtual-machines-linux/single-vm
+                  maintainContext: true
+    - name: 중급 Azure 도입
+      items:
+        - name: 개요
+          href: cloud-adoption-guide/intermediate-stage/overview.md
+        - name: 거버넌스 디자인 가이드
+          href: cloud-adoption-guide/intermediate-stage/governance-design-guide.md
+- name: Azure Virtual Datacenter
+  href: vdc/index.md
+- name: AWS 전문가를 위한 Azure
+  items:
+    - name: 개요
+      href: aws-professional/index.md
+    - name: 서비스 비교
+      href: aws-professional/services.md

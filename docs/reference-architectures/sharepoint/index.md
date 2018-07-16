@@ -3,12 +3,12 @@ title: Azure에서 고가용성 SharePoint Server 2016 팜 실행
 description: Azure에 고가용성 SharePoint Server 2016 팜을 설정하는 방법에 대한 검증된 사례입니다.
 author: njray
 ms.date: 08/01/2017
-ms.openlocfilehash: d1e3f0b73c94844ac649bf2abb6917809202fdb7
-ms.sourcegitcommit: c441fd165e6bebbbbbc19854ec6f3676be9c3b25
+ms.openlocfilehash: 9fe4fc09cf3babdf3ec8e8f27049f90e0047e9f0
+ms.sourcegitcommit: 776b8c1efc662d42273a33de3b82ec69e3cd80c5
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/30/2018
-ms.locfileid: "30270125"
+ms.lasthandoff: 07/12/2018
+ms.locfileid: "38987712"
 ---
 # <a name="run-a-high-availability-sharepoint-server-2016-farm-in-azure"></a>Azure에서 고가용성 SharePoint Server 2016 팜 실행
 
@@ -38,7 +38,9 @@ ms.locfileid: "30270125"
 
 - **게이트웨이**. 게이트웨이는 온-프레미스 네트워크와 Azure 가상 네트워크를 연결합니다. 연결에 ExpressRoute 또는 사이트 간 VPN을 사용할 수 있습니다. 자세한 내용은 [온-프레미스 네트워크를 Azure에 연결][hybrid-ra]을 참조하세요.
 
-- **Windows Server AD(Active Directory) 도메인 컨트롤러**. SharePoint Server 2016에서는 Azure Active Directory Domain Services 사용을 지원하지 않으므로 Windows Server AD 도메인 컨트롤러를 배포해야 합니다. 이러한 도메인 컨트롤러는 Azure VNet에서 실행되며 온-프레미스 Windows Server AD 포리스트와 트러스트 관계에 있습니다. 게이트웨이 연결의 인증 트래픽을 온-프레미스 네트워크로 전송하는 대신 VNet에서 SharePoint 팜 리소스에 대한 클라이언트 웹 요청이 인증됩니다. DNS에서 인트라넷 A 또는 CNAME 레코드가 생성되므로 인트라넷 사용자는 내부 부하 분산 장치의 개인 IP 주소에 해당하는 SharePoint 팜 이름을 확인할 수 있습니다.
+- **Windows Server AD(Active Directory) 도메인 컨트롤러**. 이 참조 아키텍처는 Windows Server AD 도메인 컨트롤러를 배포합니다. 이러한 도메인 컨트롤러는 Azure VNet에서 실행되며 온-프레미스 Windows Server AD 포리스트와 트러스트 관계에 있습니다. 게이트웨이 연결의 인증 트래픽을 온-프레미스 네트워크로 전송하는 대신 VNet에서 SharePoint 팜 리소스에 대한 클라이언트 웹 요청이 인증됩니다. DNS에서 인트라넷 A 또는 CNAME 레코드가 생성되므로 인트라넷 사용자는 내부 부하 분산 장치의 개인 IP 주소에 해당하는 SharePoint 팜 이름을 확인할 수 있습니다.
+
+  SharePoint Server 2016은 [Azure Active Directory Domain Services](/azure/active-directory-domain-services/)를 사용하도록 지원합니다. Azure AD Domain Services는 관리 도메인 서비스를 제공하므로 Azure에서 도메인 컨트롤러를 배포하고 관리할 필요가 없습니다.
 
 - **SQL Server Always On 가용성 그룹**. SQL Server 데이터 고가용성의 경우 [SQL Server Always On 가용성 그룹][sql-always-on]을 추천합니다. 두 대의 가상 머신이 SQL Server에 사용됩니다. 하나는 주 데이터베이스 복제본을 포함하고 다른 하나는 보조 복제본을 포함합니다. 
 
