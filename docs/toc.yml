@@ -332,18 +332,32 @@
       href: example-scenario/index.md
     - name: AI
       items:
-        - name: 이미지 처리
+        - name: 이미지 분류
           href: example-scenario/ai/intelligent-apps-image-processing.md
     - name: 앱
       items:
         - name: 호텔 예약 챗봇
           href: example-scenario/apps/commerce-chatbot.md
-        - name: Azure Kubernetes Service에서 DevOps
+        - name: 컨테이너를 사용한 DevOps
           href: example-scenario/apps/devops-with-aks.md
+        - name: VSTS를 사용한 DevOps
+          href: example-scenario/apps/devops-dotnet-webapp.md
+        - name: 개발/테스트에 대한 SAP
+          href: example-scenario/apps/sap-dev-test.md
+        - name: 전자 상거래 프런트 엔드
+          href: example-scenario/apps/ecommerce-scenario.md
     - name: 데이터 및 분석
       items:
         - name: 실시간 사기 감지
           href: example-scenario/data/fraud-detection.md
+        - name: 확장성 있는 주문 처리
+          href: example-scenario/data/ecommerce-order-processing.md
+    - name: 인프라
+      items:
+        - name: 다계층 Windows
+          href: example-scenario/infrastructure/regulated-multitier-app.md
+        - name: HPC 비디오 렌더링
+          href: example-scenario/infrastructure/video-rendering.md
 - name: 참조 아키텍처
   items:
     - name: 개요
