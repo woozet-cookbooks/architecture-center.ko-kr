@@ -6,12 +6,12 @@ ms:date: 07/21/2017
 pnp.series.title: Manage Identity in Multitenant Applications
 pnp.series.prev: authorize
 pnp.series.next: token-cache
-ms.openlocfilehash: 65529280c5849e36ed7ff23de08a0b485034d0d8
-ms.sourcegitcommit: b0482d49aab0526be386837702e7724c61232c60
+ms.openlocfilehash: 2d02ff7be04c6ebec888039453fe1ac7e957b301
+ms.sourcegitcommit: f7fa67e3bdbc57d368edb67bac0e1fdec63695d2
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 11/14/2017
-ms.locfileid: "26582747"
+ms.lasthandoff: 07/05/2018
+ms.locfileid: "37843677"
 ---
 # <a name="secure-a-backend-web-api"></a>백 엔드 웹 API의 보안 유지
 
@@ -68,7 +68,7 @@ Tailspin 응용 프로그램은 위임된 사용자 ID를 구현합니다. 주�
 방법 중 하나에서 웹 응용 프로그램은 웹 API를 호출하는 데 필요한 자격 증명인 액세스 토큰을 가져와야 합니다.
 
 * 위임된 사용자 ID의 경우 토큰은 사용자를 대신하여 토큰을 발급할 수 있는 IDP에서 가져와야 합니다.
-* 클라이언트 자격 증명의 경우 응용 프로그램은 해당 자체 토큰 서버인 IDP 또는 호스트에서 토큰을 가져올 수도 있습니다. 하지만 처음부터 토큰 서버를 작성하지 말고 [IdentityServer3]과 같이 테스트가 완료된 프레임워크를 사용합니다. Azure AD로 인증하는 경우 Azure AD의 액세스 토큰을 클라이언트 자격 증명 흐름과 함께 사용하는 것이 좋습니다.
+* 클라이언트 자격 증명의 경우 응용 프로그램은 해당 자체 토큰 서버인 IDP 또는 호스트에서 토큰을 가져올 수도 있습니다. (하지만 처음부터 토큰 서버를 작성하지 말고 [IdentityServer4]와 같이 충분히 테스트된 프레임워크를 사용하세요.) Azure AD로 인증하는 경우 Azure AD의 액세스 토큰을 클라이언트 자격 증명 흐름과 함께 사용하는 것이 좋습니다.
 
 이 문서의 나머지 부분에서는 응용 프로그램이 Azure AD로 인증하는 것을 가정합니다.
 
@@ -271,7 +271,7 @@ public void ConfigureServices(IServiceCollection services)
 [JwtBearer]: https://www.nuget.org/packages/Microsoft.AspNet.Authentication.JwtBearer
 
 [Tailspin 설문 조사]: tailspin.md
-[IdentityServer3]: https://github.com/IdentityServer/IdentityServer3
+[IdentityServer4]: https://github.com/IdentityServer/IdentityServer4
 [응용 프로그램 매니페스트 업데이트]: ./run-the-app.md#update-the-application-manifests
 [토큰 캐싱]: token-cache.md
 [테넌트 등록]: signup.md

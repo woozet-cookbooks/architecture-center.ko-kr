@@ -5,12 +5,12 @@ author: telmosampaio
 ms.date: 04/09/2018
 pnp.series.title: Implement a hub-spoke network topology in Azure
 pnp.series.prev: expressroute
-ms.openlocfilehash: 925e0f47cf6b9aa1ad48ffae2c9561a2393bf601
-ms.sourcegitcommit: 58d93e7ac9a6d44d5668a187a6827d7cd4f5a34d
+ms.openlocfilehash: 9105748f434e5d655b09b1fe0775417f33a912b0
+ms.sourcegitcommit: f7fa67e3bdbc57d368edb67bac0e1fdec63695d2
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/02/2018
-ms.locfileid: "37142253"
+ms.lasthandoff: 07/05/2018
+ms.locfileid: "37843595"
 ---
 # <a name="implement-a-hub-spoke-network-topology-in-azure"></a>Azure에서 허브-스포크 네트워크 토폴로지 구현
 
@@ -163,7 +163,7 @@ VNet 피어링은 두 VNet 사이에 존재하는 비전이적 관계입니다. 
 
 2. (선택 사항) Linux 배포의 경우 `osType`을 `Linux`로 설정합니다.
 
-3. `sharedKey`의 경우 VPN 연결에 대한 공유 키를 입력합니다. 
+3. `sharedKey`의 두 인스턴스를 모두 찾고, VPN 연결에 대한 공유 키를 입력합니다. 값이 일치해야 합니다.
 
     ```bash
     "sharedKey": "",
