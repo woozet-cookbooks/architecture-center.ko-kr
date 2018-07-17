@@ -2,13 +2,13 @@
 title: Azure에서 고가용성 SharePoint Server 2016 팜 실행
 description: Azure에 고가용성 SharePoint Server 2016 팜을 설정하는 방법에 대한 검증된 사례입니다.
 author: njray
-ms.date: 08/01/2017
-ms.openlocfilehash: 9fe4fc09cf3babdf3ec8e8f27049f90e0047e9f0
-ms.sourcegitcommit: 776b8c1efc662d42273a33de3b82ec69e3cd80c5
+ms.date: 07/14/2018
+ms.openlocfilehash: ff690300cb5f4af301bcfac58ac10b9b3c47f96d
+ms.sourcegitcommit: 71cbef121c40ef36e2d6e3a088cb85c4260599b9
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/12/2018
-ms.locfileid: "38987712"
+ms.lasthandoff: 07/14/2018
+ms.locfileid: "39060900"
 ---
 # <a name="run-a-high-availability-sharepoint-server-2016-farm-in-azure"></a>Azure에서 고가용성 SharePoint Server 2016 팜 실행
 
@@ -172,78 +172,104 @@ SharePoint Server 2016을 실행하는 데 사용되는 도메인 수준 서비�
 
 ## <a name="deploy-the-solution"></a>솔루션 배포
 
-이 참조 아키텍처의 배포 스크립트는 [GitHub][github]에서 얻을 수 있습니다. 
+이 참조 아키텍처에 대한 배포는 [GitHub][github]에서 사용할 수 있습니다. 전체 배포를 완료하는 데 몇 시간이 걸릴 수 있습니다.
 
-이 아키텍처를 단계적으로 또는 한 번에 배포할 수 있습니다. 처음에는 각 배포 단계에서 하는 일을 살펴볼 수 있도록 증분 방식 배포를 사용하는 것이 좋습니다. 다음 *mode* 매개 변수 중 하나를 사용하여 증분을 지정합니다.
+배포는 구독에서 다음과 같은 리소스 그룹을 만듭니다.
 
-| Mode           | 기능                                                                                                            |
-|----------------|-------------------------------------------------------------------------------------------------------------------------|
-| onprem         | (선택 사항) 테스트 또는 평가용으로 시뮬레이션된 온-프레미스 네트워크 환경을 배포합니다. 이 단계에서는 실제 온-프레미스 네트워크에 연결하지 않습니다. |
-| infrastructure | SharePoint 2016 네트워크 인프라 및 jumpbox를 Azure에 배포합니다.                                                |
-| createvpn      | SharePoint 및 온-프레미스 네트워크의 가상 네트워크 게이트웨이를 배포하고 연결합니다. `onprem` 단계를 실행한 경우에만 이 단계를 실행하세요.                |
-| workload       | SharePoint 서버를 SharePoint 네트워크에 배포합니다.                                                               |
-| security       | 네트워크 보안 그룹을 SharePoint 네트워크에 배포합니다.                                                           |
-| 모두            | 모든 이전 배포를 배포합니다.                            
+- ra-onprem-sp2016-rg
+- ra-sp2016-network-rg
 
+템플릿 매개 변수 파일은 이러한 이름을 참조하므로 이름을 변경하는 경우 매개 변수 파일을 일치하도록 업데이트합니다. 
 
-시뮬레이션된 온-프레미스 네트워크를 사용하여 증분 방식으로 아키텍처를 배포하려면 다음 단계를 순서대로 실행합니다.
-
-1. onprem
-2. infrastructure
-3. createvpn
-4. workload
-5. security
-
-시뮬레이션된 온-프레미스 네트워크 없이 증분 방식으로 아키텍처를 배포하려면 다음 단계를 순서대로 실행합니다.
-
-1. infrastructure
-2. workload
-3. security
-
-한 번에 모든 항목을 배포하려면 `all`을 사용합니다. 전체 프로세스를 완료하는 데 몇 시간이 걸릴 수 있습니다.
+매개 변수 파일은 다양한 위치에서 하드 코딩된 암호를 포함하고 있습니다. 배포하기 전에 이러한 값을 변경하세요.
 
 ### <a name="prerequisites"></a>필수 조건
 
-* [Azure PowerShell][azure-ps] 최신 버전을 설치합니다.
+[!INCLUDE [ref-arch-prerequisites.md](../../../includes/ref-arch-prerequisites.md)]
 
-* 이 참조 아키텍처를 배포하기 전에 구독의 할당량이 충분한지(최소 38코어) 확인합니다. 충분하지 않으면 Azure Portal을 사용하여 할당량을 늘려 달라는 지원 요청을 제출합니다.
+### <a name="deploy-the-solution"></a>솔루션 배포 
 
-* 이 배포의 비용을 예상하는 방법은 [Azure 가격 계산기][azure-pricing]를 참조하세요.
+1. 시뮬레이션된 온-프레미스 네트워크를 배포하려면 다음 명령을 실행합니다.
 
-### <a name="deploy-the-reference-architecture"></a>참조 아키텍처 배포
+    ```bash
+    azbb -s <subscription_id> -g ra-onprem-sp2016-rg -l <location> -p onprem.json --deploy
+    ```
 
-1.  [GitHub 리포지토리][github]를 로컬 컴퓨터에 다운로드 또는 복제합니다.
+2. Azure VNet 및 VPN Gateway를 배포하려면 다음 명령을 실행합니다.
 
-2.  PowerShell 창을 열고 `/sharepoint/sharepoint-2016` 폴더로 이동합니다.
+    ```bash
+    azbb -s <subscription_id> -g ra-onprem-sp2016-rg -l <location> -p connections.json --deploy
+    ```
 
-3.  다음 PowerShell 명령을 실행합니다. \<subscription id\>에는 Azure 구독 ID를 사용합니다. \<location\>에서는 Azure 지역(`eastus` 또는 `westus`)을 지정합니다. \<mode\>에서는 `onprem`, `infrastructure`, `createvpn`, `workload`, `security` 또는 `all`을 지정합니다.
+3. Jumpbox, AD 도메인 컨트롤러 및 SQL Server VM을 배포하려면 다음 명령을 실행합니다.
+
+    ```bash
+    azbb -s <subscription_id> -g ra-onprem-sp2016-rg -l <location> -p azure1.json --deploy
+    ```
+
+4. 장애 조치 클러스터 및 가용성 그룹을 만들려면 다음 명령을 실행합니다. 
+
+    ```bash
+    azbb -s <subscription_id> -g ra-onprem-sp2016-rg -l <location> -p azure2-cluster.json --deploy
+
+5. Run the following command to deploy the remaining VMs.
+
+    ```bash
+    azbb -s <subscription_id> -g ra-onprem-sp2016-rg -l <location> -p azure3.json --deploy
+    ```
+
+이 경우에 SQL Server Always On 가용성 그룹의 경우 웹 프런트 엔드에서 부하 분산 장치로 TCP를 연결할 수 있는지 확인합니다. 이렇게 하려면 다음 단계를 수행합니다.
+
+1. Azure Portal을 사용하여 `ra-sp2016-network-rg` 리소스 그룹에서 `ra-sp-jb-vm1`이라는 VM을 찾습니다. 이것이 Jumpbox VM입니다.
+
+2. `Connect`를 클릭하여 VM에 대한 원격 데스크톱 세션을 엽니다. `azure1.json` 매개 변수 파일에서 지정한 암호를 사용합니다.
+
+3. 원격 데스크톱 세션에서 10.0.5.4로 로그인합니다. `ra-sp-app-vm1`이라는 VM의 IP 주소입니다.
+
+4. VM에서 PowerShell 콘솔을 열고, `Test-NetConnection` cmdlet을 사용하여 부하 분산 장치에 연결할 수 있는지 확인합니다.
 
     ```powershell
-    .\Deploy-ReferenceArchitecture.ps1 <subscription id> <location> <mode>
-    ```   
-4. 로그온하라는 메시지가 표시되면 Azure 계정에 로그온합니다. 선택한 모드에 따라 배포 스크립트가 완료되는 데 여러 시간이 걸릴 수 있습니다.
+    Test-NetConnection 10.0.3.100 -Port 1433
+    ```
 
-5. 배포가 완료되면 SQL Server Always On 가용성 그룹을 구성하는 스크립트를 실행합니다. 자세한 내용은 [readme][readme] 파일을 참조하세요.
+출력은 다음과 비슷해야 합니다.
 
-> [!WARNING]
-> 매개 변수 파일은 다양한 위치에 하드 코드된 암호(`AweS0me@PW`)를 포함하고 있습니다. 배포하기 전에 이러한 값을 변경하세요.
+```powershell
+ComputerName     : 10.0.3.100
+RemoteAddress    : 10.0.3.100
+RemotePort       : 1433
+InterfaceAlias   : Ethernet 3
+SourceAddress    : 10.0.0.132
+TcpTestSucceeded : True
+```
 
+실패한 경우 Azure Portal을 사용하여 `ra-sp-sql-vm2`라는 VM을 다시 시작합니다. VM을 다시 시작한 후에 `Test-NetConnection` 명령을 다시 실행합니다. 연결이 성공하려면 VM이 다시 시작된 후에 1분 정도 대기해야 합니다. 
 
-## <a name="validate-the-deployment"></a>배포 유효성 검사
+이제 다음과 같은 배포를 완료합니다.
 
-이 참조 아키텍처를 배포하면 사용한 구독 아래에 다음과 같은 리소스 그룹이 나열됩니다.
+1. SharePoint 팜 주 노드를 배포하려면 다음 명령을 실행합니다.
 
-| 리소스 그룹        | 목적                                                                                         |
-|-----------------------|-------------------------------------------------------------------------------------------------|
-| ra-onprem-sp2016-rg   | Active Directory로 시뮬레이션된 온-프레미스 네트워크, SharePoint 2016 네트워크로 페더레이션 |
-| ra-sp2016-network-rg  | SharePoint 배포를 지원하기 위한 인프라                                                 |
-| ra-sp2016-workload-rg | SharePoint 및 지원 리소스                                                             |
+    ```bash
+    azbb -s <subscription_id> -g ra-onprem-sp2016-rg -l <location> -p azure4-sharepoint-server.json --deploy
+    ```
 
-### <a name="validate-access-to-the-sharepoint-site-from-the-on-premises-network"></a>온-프레미스 네트워크에서 SharePoint 사이트로의 액세스 유효성 검사
+2. SharePoint 캐시, 검색 및 웹을 배포하려면 다음 명령을 실행합니다.
 
-1. [Azure Portal][azure-portal]의 **리소스 그룹** 아래에서 `ra-onprem-sp2016-rg` 리소스 그룹을 선택합니다.
+    ```bash
+    azbb -s <subscription_id> -g ra-onprem-sp2016-rg -l <location> -p azure5-sharepoint-farm.json --deploy
+    ```
 
-2. 리소스 목록에서 `ra-adds-user-vm1`이라는 VM 리소스를 선택합니다. 
+3. NSG 규칙을 만들려면 다음 명령을 실행합니다.
+
+    ```bash
+    azbb -s <subscription_id> -g ra-onprem-sp2016-rg -l <location> -p azure6-security.json --deploy
+    ```
+
+### <a name="validate-the-deployment"></a>배포 유효성 검사
+
+1. [Azure Portal][azure-portal]에서 `ra-onprem-sp2016-rg` 리소스 그룹으로 이동합니다.
+
+2. 리소스 목록에서 `ra-onpr-u-vm1`이라는 VM 리소스를 선택합니다. 
 
 3. [가상 머신에 연결][connect-to-vm]의 설명에 따라 VM을 연결합니다. 사용자 이름은 `\onpremuser`입니다.
 
@@ -252,38 +278,6 @@ SharePoint Server 2016을 실행하는 데 사용되는 도메인 수준 서비�
 6.  **Windows 보안** 상자에서 사용자 이름으로 `contoso.local\testuser`를 사용하여 SharePoint 포털에 로그온합니다.
 
 이 로그온은 온-프레미스 네트워크에서 사용하는 Fabrikam.com 도메인에서 SharePoint 포털이 사용하는 contoso.local 도메인으로 터널링합니다. SharePoint 사이트가 열리면 루트 데모 사이트가 보일 것입니다.
-
-### <a name="validate-jumpbox-access-to-vms-and-check-configuration-settings"></a>VM에 대한 jumpbox 액세스의 유효성을 검사하고 구성 설정 확인
-
-1.  [Azure Portal][azure-portal]의 **리소스 그룹** 아래에서 `ra-sp2016-network-rg` 리소스 그룹을 선택합니다.
-
-2.  리소스 목록에서 `ra-sp2016-jb-vm1`이라는 VM 리소스를 선택합니다. 이것이 jumpbox입니다.
-
-3. [가상 머신에 연결][connect-to-vm]의 설명에 따라 VM을 연결합니다. 사용자 이름은 `testuser`입니다.
-
-4.  jumpbox에 로그온한 후 jumpbox에서 RDP 세션을 엽니다. VNet의 다른 VM에 연결합니다. 사용자 이름은 `testuser`입니다. 원격 컴퓨터의 보안 인증서에 대한 경고는 무시해도 됩니다.
-
-5.  VM에 대한 원격 연결이 열리면 서버 관리자 같은 관리 도구를 사용하여 구성을 검토하고 변경 작업을 수행합니다.
-
-다음 표는 배포된 VM을 보여 줍니다. 
-
-| 리소스 이름      | 목적                                   | 리소스 그룹        | VM 이름                       |
-|--------------------|-------------------------------------------|-----------------------|-------------------------------|
-| Ra-sp2016-ad-vm1   | Active Directory + DNS                    | Ra-sp2016-network-rg  | Ad1.contoso.local             |
-| Ra-sp2016-ad-vm2   | Active Directory + DNS                    | Ra-sp2016-network-rg  | Ad2.contoso.local             |
-| Ra-sp2016-fsw-vm1  | SharePoint                                | Ra-sp2016-network-rg  | Fsw1.contoso.local            |
-| Ra-sp2016-jb-vm1   | Jumpbox                                   | Ra-sp2016-network-rg  | Jb(로그온에 공용 IP 사용) |
-| Ra-sp2016-sql-vm1  | SQL Always On - 장애 조치(failover)                  | Ra-sp2016-network-rg  | Sq1.contoso.local             |
-| Ra-sp2016-sql-vm2  | SQL Always On - 기본                   | Ra-sp2016-network-rg  | Sq2.contoso.local             |
-| Ra-sp2016-app-vm1  | SharePoint 2016 Application MinRole       | Ra-sp2016-workload-rg | App1.contoso.local            |
-| Ra-sp2016-app-vm2  | SharePoint 2016 Application MinRole       | Ra-sp2016-workload-rg | App2.contoso.local            |
-| Ra-sp2016-dch-vm1  | SharePoint 2016 Distributed Cache MinRole | Ra-sp2016-workload-rg | Dch1.contoso.local            |
-| Ra-sp2016-dch-vm2  | SharePoint 2016 Distributed Cache MinRole | Ra-sp2016-workload-rg | Dch2.contoso.local            |
-| Ra-sp2016-srch-vm1 | SharePoint 2016 Search MinRole            | Ra-sp2016-workload-rg | Srch1.contoso.local           |
-| Ra-sp2016-srch-vm2 | SharePoint 2016 Search MinRole            | Ra-sp2016-workload-rg | Srch2.contoso.local           |
-| Ra-sp2016-wfe-vm1  | SharePoint 2016 Web Front End MinRole     | Ra-sp2016-workload-rg | Wfe1.contoso.local            |
-| Ra-sp2016-wfe-vm2  | SharePoint 2016 Web Front End MinRole     | Ra-sp2016-workload-rg | Wfe2.contoso.local            |
-
 
 **_이 참조 아키텍처에 기여하신 분들_** &mdash;  Joe Davies, Bob Fox, Neil Hodgkinson, Paul Stork
 
