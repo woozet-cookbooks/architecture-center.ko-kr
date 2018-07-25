@@ -1,16 +1,16 @@
 ---
-title: 지능형 앱 - Azure에서 이미지 처리
-description: Azure 응용 프로그램에 이미지 처리를 구축하는 입증된 솔루션입니다.
+title: Azure에서 보험 청구에 대한 이미지 분류
+description: Azure 응용 프로그램에 이미지 처리를 구축하는 데 입증된 시나리오입니다.
 author: david-stanford
 ms.date: 07/05/2018
-ms.openlocfilehash: c5bfb9a929ddddda4336e1cbc8665a0b4d3bbe2c
-ms.sourcegitcommit: 5d99b195388b7cabba383c49a81390ac48f86e8a
+ms.openlocfilehash: 361a88234fd9ed918ab7664893f86666b4328b8c
+ms.sourcegitcommit: 71cbef121c40ef36e2d6e3a088cb85c4260599b9
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/06/2018
-ms.locfileid: "37891332"
+ms.lasthandoff: 07/14/2018
+ms.locfileid: "39060832"
 ---
-# <a name="insurance-claim-image-classification-on-azure"></a>Azure에서 보험 청구 이미지 분류
+# <a name="image-classification-for-insurance-claims-on-azure"></a>Azure에서 보험 청구에 대한 이미지 분류
 
 이 예제 시나리오는 이미지를 처리해야 하는 비즈니스에 적용할 수 있습니다.
 
@@ -18,19 +18,18 @@ ms.locfileid: "37891332"
 
 Computer Vision API 및 Azure Functions와 같은 Azure 서비스를 사용하면, 개별 서버를 관리할 필요가 없으며, 비용을 줄이고, Microsoft에서 Cognitive Services를 사용하여 이미지를 처리할 때 이미 개발한 전문 지식을 활용할 수 있습니다. 이 시나리오에서는 특히 이미지 처리 시나리오에 대해 다루고 있습니다. 다양한 AI 요구 사항이 있으면 [Cognitive Services][cognitive-docs]의 전체 제품군을 사용하는 것이 좋습니다.
 
-## <a name="potential-use-cases"></a>잠재적인 사용 사례
+## <a name="related-use-cases"></a>관련 사용 사례
 
-이 솔루션을 사용하는 데 적합한 사용 사례는 다음과 같습니다.
+이 시나리오에 적합한 사용 사례는 다음과 같습니다.
 
 * 패션 웹 사이트에 대한 이미지 분류
-* 보험 청구에 대한 이미지 분류
 * 게임의 스크린샷의 원격 분석 데이터 분류
 
 ## <a name="architecture"></a>아키텍처
 
 ![지능형 앱 아키텍처 - Computer Vision][architecture-computer-vision]
 
-이 솔루션에는 웹 또는 모바일 응용 프로그램의 백 엔드 구성 요소가 포함됩니다. 솔루션을 통한 데이터 흐름은 다음과 같습니다.
+이 시나리오에서는 웹 또는 모바일 응용 프로그램의 백 엔드 구성 요소에 대해 설명합니다. 시나리오를 통한 데이터 흐름은 다음과 같습니다.
 
 1. Azure Functions는 API 계층으로 작동합니다. 이러한 API를 통해 응용 프로그램은 Cosmos DB에서 이미지를 업로드하고 데이터를 검색할 수 있습니다.
 
@@ -64,7 +63,7 @@ Computer Vision API 및 Azure Functions와 같은 Azure 서비스를 사용하�
 
 ### <a name="scalability"></a>확장성
 
-대부분의 경우 이 솔루션의 모든 구성 요소는 자동으로 크기 조정되는 관리 서비스입니다. 몇 가지 주목할 만한 예외: Azure Functions에는 최대 200개의 인스턴스 제한이 있습니다. 이 제한을 초과하여 확장해야 하는 경우 여러 지역 또는 앱 계획을 사용하는 것이 좋습니다.
+대부분의 경우 이 시나리오의 모든 구성 요소는 자동으로 크기 조정되는 관리 서비스입니다. 몇 가지 주목할 만한 예외: Azure Functions에는 최대 200개의 인스턴스 제한이 있습니다. 이 제한을 초과하여 확장해야 하는 경우 여러 지역 또는 앱 계획을 사용하는 것이 좋습니다.
 
 Cosmos DB는 프로비전된 RU(요청 단위)를 기준으로 자동으로 크기 조정되지 않습니다.  요구 사항 추정에 대한 지침은 설명서의 [요청 단위][request-units]를 참조하세요. Cosmos DB의 크기 조정을 최대한 활용하려면 [파티션 키][partition-key]도 확인해야 합니다.
 
@@ -80,13 +79,13 @@ NoSQL 데이터베이스는 가용성, 확장성 및 파티션에 대한 일관�
 
 ### <a name="resiliency"></a>복원력
 
-이 솔루션의 모든 구성 요소는 관리되므로 지역 수준에서 자동으로 모두 복원됩니다. 
+이 시나리오의 모든 구성 요소가 관리되므로 모두 지역 수준에서 자동으로 복원됩니다.
 
 복원력 있는 솔루션 설계에 대한 일반적인 지침은 [복원력 있는 Azure 응용 프로그램 디자인][resiliency]을 참조하세요.
 
 ## <a name="pricing"></a>가격
 
-이 솔루션을 실행하는 비용을 알아보기 위해 모든 서비스가 비용 계산기에서 미리 구성됩니다. 특정 사용 사례에 대한 가격이 변경되는 정도를 확인하려면 필요한 트래픽에 맞게 적절한 변수를 변경합니다.
+이 시나리오를 실행하는 데 들어가는 비용을 알아보기 위해 모든 서비스가 비용 계산기에서 미리 구성됩니다. 특정 사용 사례에 대한 가격이 변경되는 정도를 확인하려면 필요한 트래픽에 맞게 적절한 변수를 변경합니다.
 
 트래픽 양을 기준으로 다음 세 가지 샘플 비용 프로필을 제공했습니다(모든 이미지가 100kb 크기라고 가정).
 
@@ -96,7 +95,7 @@ NoSQL 데이터베이스는 가용성, 확장성 및 파티션에 대한 일관�
 
 ## <a name="related-resources"></a>관련 리소스
 
-이 솔루션의 단계별 학습 경로는 [Azure에서 서버를 사용하지 않는 웹앱 빌드][serverless]를 참조하세요.  
+이 시나리오의 단계별 학습 경로는 [Azure에서 서버를 사용하지 않는 웹앱 빌드][serverless]를 참조하세요.  
 
 이 솔루션을 프로덕션 환경에 배치하기 전에 Azure Functions [모범 사례][functions-best-practices]를 검토하세요.
 

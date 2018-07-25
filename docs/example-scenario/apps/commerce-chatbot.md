@@ -1,26 +1,26 @@
 ---
-title: 호텔 예약용 대화형 Azure 챗봇
-description: Azure Bot Service, Cognitive Services 및 LUIS, Azure SQL Database 및 Application Insights를 사용하여 상거래 응용 프로그램용 대화형 챗봇을 구축하는 입증된 솔루션입니다.
+title: Azure에서 호텔 예약을 위한 대화형 챗봇
+description: Azure Bot Service, Cognitive Services 및 LUIS, Azure SQL Database 및 Application Insights를 사용하여 상거래 응용 프로그램용 대화형 챗봇을 구축하는 데 입증된 시나리오입니다.
 author: iainfoulds
 ms.date: 07/05/2018
-ms.openlocfilehash: 85bdc3194961bbbd8d89db34e5c56e4baa8d8599
-ms.sourcegitcommit: 5d99b195388b7cabba383c49a81390ac48f86e8a
+ms.openlocfilehash: b664faf20d806824c2581346aaa592b0d74207da
+ms.sourcegitcommit: 71cbef121c40ef36e2d6e3a088cb85c4260599b9
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/06/2018
-ms.locfileid: "37891331"
+ms.lasthandoff: 07/14/2018
+ms.locfileid: "39060866"
 ---
-# <a name="conversational-azure-chatbot-for-hotel-reservations"></a>호텔 예약용 대화형 Azure 챗봇
+# <a name="conversational-chatbot-for-hotel-reservations-on-azure"></a>Azure에서 호텔 예약을 위한 대화형 챗봇
 
-이 예제 시나리오는 대화형 챗봇을 응용 프로그램에 통합해야 하는 비즈니스에 적용할 수 있습니다. 이 솔루션에서는 고객이 웹 또는 모바일 응용 프로그램을 통해 가용성을 확인하고 숙박을 예약할 수 있는 호텔 체인에 C# 챗봇을 사용합니다.
+이 예제 시나리오는 대화형 챗봇을 응용 프로그램에 통합해야 하는 비즈니스에 적용할 수 있습니다. 이 시나리오에서는 고객이 웹 또는 모바일 응용 프로그램을 통해 가용성을 확인하고 숙박을 예약할 수 있는 호텔 체인에 C# 챗봇을 사용합니다.
 
 예제 시나리오에서는 고객이 호텔의 가용성을 확인하고, 객실을 예약하고, 식당 포장 메뉴를 검토하고, 음식 주문을 하거나 사진 인화를 검색하고 주문할 수 있는 방법이 제공됩니다. 일반적으로 기업은 이러한 고객 요청에 대응하기 위해 고객 서비스 담당자를 고용하고 교육해야 하며, 고객은 담당자로부터 지원이 제공될 때까지 기다려야 합니다.
 
 Bot Service 및 Language Understanding 또는 Speech API 서비스와 같은 Azure 서비스를 사용하면, 회사에서 확장 가능한 자동화 봇을 통해 고객을 지원하고 주문 또는 예약을 처리할 수 있습니다.
 
-## <a name="potential-use-cases"></a>잠재적인 사용 사례
+## <a name="related-use-cases"></a>관련 사용 사례
 
-이 솔루션을 사용하는 데 적합한 사용 사례는 다음과 같습니다.
+이 시나리오에 적합한 사용 사례는 다음과 같습니다.
 
 * 식당 포장 메뉴 보기 및 음식 주문
 * 호텔 가용성 확인 및 객실 예약
@@ -30,7 +30,7 @@ Bot Service 및 Language Understanding 또는 Speech API 서비스와 같은 Azu
 
 ![대화형 챗봇에 포함된 Azure 구성 요소의 아키텍처에 대한 개요][architecture]
 
-이 솔루션에서는 호텔의 안내원 역할을 수행하는 대화형 봇을 다루고 있습니다. 솔루션을 통한 데이터 흐름은 다음과 같습니다.
+이 시나리오에서는 호텔의 안내원 역할을 수행하는 대화형 봇에 대해 설명합니다. 시나리오를 통한 데이터 흐름은 다음과 같습니다.
 
 1. 고객이 모바일 앱 또는 웹앱을 통해 챗봇에 액세스합니다.
 2. Azure Active Directory B2C(Business 2 Customer)를 사용하면 사용자가 인증됩니다.
@@ -58,19 +58,19 @@ Bot Service 및 Language Understanding 또는 Speech API 서비스와 같은 Azu
 
 ### <a name="availability"></a>가용성
 
-이 솔루션에서는 Azure SQL Database를 사용하여 고객 예약을 저장합니다. SQL Database에는 영역 중복 데이터베이스, 장애 조치 그룹 및 지역 복제가 포함됩니다. 자세한 내용은 [Azure SQL Database 가용성 기능][sqlavailability-docs]을 참조하세요.
+이 시나리오에서는 Azure SQL Database를 사용하여 고객 예약을 저장합니다. SQL Database에는 영역 중복 데이터베이스, 장애 조치 그룹 및 지역 복제가 포함됩니다. 자세한 내용은 [Azure SQL Database 가용성 기능][sqlavailability-docs]을 참조하세요.
 
-다른 확장성 항목에 대해서는 Azure 아키텍처 센터의 [가용성 검사 목록][availability]을 참조하세요.
+다른 가용성 항목에 대해서는 Azure 아키텍처 센터의 [가용성 검사 목록][availability]을 참조하세요.
 
 ### <a name="scalability"></a>확장성
 
-이 솔루션에서는 Azure App Service를 사용합니다. App Service를 사용하면 봇을 실행하는 인스턴스의 수를 자동으로 조정할 수 있습니다. 이 기능을 사용하면 웹 응용 프로그램과 챗봇에 대한 고객의 요구 사항을 충족할 수 있습니다. 자동 크기 조정에 대한 자세한 내용은 아키텍처 센터의 [자동 크기 조정 모범 사례][autoscaling]를 참조하세요.
+이 시나리오에서는 Azure App Service를 사용합니다. App Service를 사용하면 봇을 실행하는 인스턴스의 수를 자동으로 조정할 수 있습니다. 이 기능을 사용하면 웹 응용 프로그램과 챗봇에 대한 고객의 요구 사항을 충족할 수 있습니다. 자동 크기 조정에 대한 자세한 내용은 아키텍처 센터의 [자동 크기 조정 모범 사례][autoscaling]를 참조하세요.
 
 다른 확장성 항목에 대해서는 Azure 아키텍처 센터의 [확장성 검사 목록][scalability]을 참조하세요.
 
 ### <a name="security"></a>보안
 
-이 솔루션에서는 Azure Active Directory B2C(Business 2 Consumer)를 사용하여 사용자를 인증합니다. AAD B2C를 사용하면 중요한 고객 계정 정보 또는 자격 증명이 챗봇에 저장되지 않습니다. 자세한 내용은 [Azure Active Directory B2C 개요][aadb2c-docs]를 참조하세요.
+이 시나리오에서는 Azure Active Directory B2C(Business 2 Consumer)를 사용하여 사용자를 인증합니다. AAD B2C를 사용하면 중요한 고객 계정 정보 또는 자격 증명이 챗봇에 저장되지 않습니다. 자세한 내용은 [Azure Active Directory B2C 개요][aadb2c-docs]를 참조하세요.
 
 Azure SQL Database에 저장된 미사용 정보는 TDE(투명한 데이터 암호화)를 사용하여 암호화됩니다. 또한 SQL Database는 쿼리 및 처리 중에도 데이터를 암호화하는 Always Encrypted를 제공합니다. SQL Database 보안에 대한 자세한 내용은 [Azure SQL Database 보안 및 준수][sqlsecurity-docs]를 참조하세요.
 
@@ -78,15 +78,15 @@ Azure SQL Database에 저장된 미사용 정보는 TDE(투명한 데이터 암�
 
 ### <a name="resiliency"></a>복원력
 
-이 솔루션에서는 Azure SQL Database를 사용하여 고객 예약을 저장합니다. SQL Database에는 영역 중복 데이터베이스, 장애 조치 그룹, 지역 복제 및 자동 백업이 포함됩니다. 이러한 기능을 통해 유지 관리 이벤트 또는 중단이 발생하는 경우에도 응용 프로그램을 계속 실행할 수 있습니다. 자세한 내용은 [Azure SQL Database 가용성 기능][sqlavailability-docs]을 참조하세요.
+이 시나리오에서는 Azure SQL Database를 사용하여 고객 예약을 저장합니다. SQL Database에는 영역 중복 데이터베이스, 장애 조치 그룹, 지역 복제 및 자동 백업이 포함됩니다. 이러한 기능을 통해 유지 관리 이벤트 또는 중단이 발생하는 경우에도 응용 프로그램을 계속 실행할 수 있습니다. 자세한 내용은 [Azure SQL Database 가용성 기능][sqlavailability-docs]을 참조하세요.
 
-응용 프로그램 상태를 모니터링하기 위해 이 솔루션에서는 Application Insights를 사용합니다. Application Insights를 사용하면 고객의 경험과 챗봇의 가용성에 영향을 주는 알림을 생성하고 성능 문제에 대응할 수 있습니다. 자세한 내용은 [Application Insights란?][appinsights-docs]을 참조하세요.
+이 시나리오에서는 응용 프로그램 상태를 모니터링하기 위해 Application Insights를 사용합니다. Application Insights를 사용하면 고객의 경험과 챗봇의 가용성에 영향을 주는 알림을 생성하고 성능 문제에 대응할 수 있습니다. 자세한 내용은 [Application Insights란?][appinsights-docs]을 참조하세요.
 
 복원력 있는 솔루션 설계에 대한 일반적인 지침은 [복원력 있는 Azure 응용 프로그램 디자인][resiliency]을 참조하세요.
 
-## <a name="deploy-the-solution"></a>솔루션 배포
+## <a name="deploy-the-scenario"></a>시나리오 배포
 
-이 솔루션은 가장 중점을 두는 영역을 탐색할 수 있는 다음 세 가지 구성 요소로 구분됩니다.
+이 시나리오는 가장 중점을 두는 영역을 탐색할 수 있는 다음 세 가지 구성 요소로 구분됩니다.
 
 * [인프라 구성 요소](#deploy-infrastructure-components). Azure Resource Manager 템플릿을 사용하여 App Service, Web App, Application Insights, Storage 계정, SQL Server 및 데이터베이스의 핵심 인프라 구성 요소를 배포합니다.
 * [Web App 챗봇](#deploy-web-app-chatbot). Azure CLI를 사용하여 Bot Service 및 LUIS(Language Understanding and Intelligent Service) 앱을 통해 봇을 배포합니다.
@@ -135,11 +135,11 @@ az bot create \
 
 * [상거래 봇 C# 샘플](https://github.com/Microsoft/AzureBotServices-scenarios/tree/master/CSharp/Commerce/src)
 
-샘플 응용 프로그램에는 Azure Active Directory 인증 구성 요소 및 통합된 Cognitive Services의 LUIS(Language Understanding and Intelligent Services) 구성 요소가 포함되어 있습니다. 응용 프로그램을 사용하려면 Visual Studio에서 솔루션을 빌드하고 배포해야 합니다. AAD B2C 및 LUIS 앱 구성에 대한 추가 정보는 GitHub 리포지토리 설명서에 있습니다.
+샘플 응용 프로그램에는 Azure Active Directory 인증 구성 요소 및 통합된 Cognitive Services의 LUIS(Language Understanding and Intelligent Services) 구성 요소가 포함되어 있습니다. 응용 프로그램을 사용하려면 Visual Studio에서 시나리오를 빌드하고 배포해야 합니다. AAD B2C 및 LUIS 앱 구성에 대한 추가 정보는 GitHub 리포지토리 설명서에 있습니다.
 
 ## <a name="pricing"></a>가격
 
-이 솔루션을 실행하는 비용을 알아보기 위해 모든 서비스가 비용 계산기에서 미리 구성됩니다. 특정 사용 사례에 대한 가격이 변경되는 정도를 확인하려면 필요한 트래픽에 맞게 적절한 변수를 변경합니다.
+이 시나리오를 실행하는 데 들어가는 비용을 알아보기 위해 모든 서비스가 비용 계산기에서 미리 구성됩니다. 특정 사용 사례에 대한 가격이 변경되는 정도를 확인하려면 필요한 트래픽에 맞게 적절한 변수를 변경합니다.
 
 챗봇에서 처리하는 데 필요한 메시지 양을 기준으로 다음 세 가지 샘플 비용 프로필을 제공했습니다.
 
