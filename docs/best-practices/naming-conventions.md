@@ -4,12 +4,12 @@ description: Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: b9833654f63dc81ff6d05b9c49897e0c58de2683
-ms.sourcegitcommit: 86d86d71e392550fd65c4f76320d7ecf0b72e1f6
+ms.openlocfilehash: 09bcfa3c0a0c46605f0025adad06f8049f109f1b
+ms.sourcegitcommit: 776b8c1efc662d42273a33de3b82ec69e3cd80c5
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/06/2018
-ms.locfileid: "37864558"
+ms.lasthandoff: 07/12/2018
+ms.locfileid: "38987736"
 ---
 # <a name="naming-conventions"></a>명명 규칙
 
@@ -78,7 +78,7 @@ Azure의 각 리소스 또는 서비스 유형은 명명 제한 및 범위 집�
 
 | 엔터티 | 범위 | 길이 | 대/소문자 구분 | 사용할 수 있는 문자 | 제안된 패턴 | 예 |
 | --- | --- | --- | --- | --- | --- | --- |
-|리소스 그룹 |구독 |1-90 |대/소문자 구분하지 않음 |영숫자, 밑줄, 괄호, 하이픈 및 마침표(맨 끝 제외) |`<service short name>-<environment>-rg` |`profx-prod-rg` |
+|리소스 그룹 |구독 |1-90 |대/소문자 구분하지 않음 |영숫자, 밑줄, 괄호, 하이픈, 마침표(맨 끝 제외) 및 유니코드 문자 |`<service short name>-<environment>-rg` |`profx-prod-rg` |
 |가용성 집합 |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 밑줄 및 하이픈 |`<service-short-name>-<context>-as` |`profx-sql-as` |
 |태그 |연결된 엔터티 |512(이름), 256(값) |대/소문자 구분하지 않음 |영숫자 |`"key" : "value"` |`"department" : "Central IT"` |
 
