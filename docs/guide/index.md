@@ -1,20 +1,16 @@
 ---
 layout: LandingPage
 ms.topic: landing-page
-ms.openlocfilehash: 80cb7fde0694257a5c413b702505e27f18aed8d3
-ms.sourcegitcommit: d702b4d27e96e7a5a248dc4f2f0e25cf6e82c134
+ms.openlocfilehash: 3a667334be682e7e96c6dd30bd401a7e4c608108
+ms.sourcegitcommit: 8b5fc0d0d735793b87677610b747f54301dcb014
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 04/23/2018
-ms.locfileid: "31771689"
+ms.lasthandoff: 07/29/2018
+ms.locfileid: "39334269"
 ---
 # <a name="azure-application-architecture-guide"></a>Azure 응용 프로그램 아키텍처 가이드
 
 이 가이드는 확장성과 복원력이 있고 가용성이 뛰어난 Azure에서 응용 프로그램을 디자인하기 위한 체계적인 방식을 제시합니다. 고객의 참여를 통해 확보한 검증된 사례를 기반으로 합니다.
-
-<br/>
-
-<img src="./images/guide-steps.svg" style="max-width:800px;"/>
 
 ## <a name="introduction"></a>소개
 
@@ -62,8 +58,7 @@ Azure 응용 프로그램 아키텍처 가이드는 아키텍처와 디자인에
 
 자세한 정보:
 
-- [아키텍처 스타일][arch-styles]
-- [Azure 참조 아키텍처][ref-archs]
+- [아키텍처 스타일](./architecture-styles/index.md)
 
 ### <a name="technology-choices"></a>기술 선택
 
@@ -80,36 +75,14 @@ Azure 응용 프로그램 아키텍처 가이드는 아키텍처와 디자인에
 
 자세한 정보:
 
-- [Azure 응용 프로그램 설계 원칙][design-principles]
-- [클라우드를 빌드하는 경우의 모범 사례][best-practices]
+- [디자인 원칙](./design-principles/index.md)
+
 
 ### <a name="quality-pillars"></a>품질 핵심 요소
 
 성공적인 클라우드 응용 프로그램은 확장성, 가용성, 복원력, 관리 및 보안이라는 5가지 소프트웨어 품질 핵심 요소에 중점을 둡니다. 디자인 검토 검사 목록을 사용하여 이러한 품질 핵심 요소에 따라 아키텍처를 검토하십시오.
 
-자세한 정보:
-
-- [소프트웨어 품질 핵심 요소][pillars]
-- [디자인 검토 검사 목록][checklists] 
-
-### <a name="cloud-design-patterns"></a>클라우드 디자인 패턴
-
-디자인 패턴은 일반적인 소프트웨어 디자인 문제에 대한 일반 솔루션입니다. 클라우드에 대해 분산된 응용 프로그램을 디자인할 경우 특히 유용한 디자인 패턴의 집합을 확인했습니다.
-
-자세한 정보:
-
-- [클라우드 디자인 패턴 카탈로그](../patterns/index.md)
+- [품질 핵심 요소](./pillars.md)
 
 
-[arch-styles]: ./architecture-styles/index.md
-[best-practices]: ../best-practices/index.md
-[checklists]: ../checklist/index.md
-[compute-options]: ./technology-choices/compute-comparison.md
-[design-principles]: ./design-principles/index.md
 [ebook]: https://azure.microsoft.com/campaigns/cloud-application-architecture-guide/
-[patterns]: ../patterns/index.md?toc=/azure/architecture/guide/toc.json
-[pillars]: ./pillars.md
-[ref-archs]: ../reference-architectures/index.md
-[storage-options]: ./technology-choices/data-store-comparison.md
-[technology-choices]: ./technology-choices/index.md
-
