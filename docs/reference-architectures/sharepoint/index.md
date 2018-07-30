@@ -3,12 +3,12 @@ title: Azure에서 고가용성 SharePoint Server 2016 팜 실행
 description: Azure에 고가용성 SharePoint Server 2016 팜을 설정하는 방법에 대한 검증된 사례입니다.
 author: njray
 ms.date: 07/14/2018
-ms.openlocfilehash: ff690300cb5f4af301bcfac58ac10b9b3c47f96d
-ms.sourcegitcommit: 71cbef121c40ef36e2d6e3a088cb85c4260599b9
+ms.openlocfilehash: 04c69309e9f96e3bf7cd7faabeedd9b6d9da1ebd
+ms.sourcegitcommit: 8b5fc0d0d735793b87677610b747f54301dcb014
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/14/2018
-ms.locfileid: "39060900"
+ms.lasthandoff: 07/29/2018
+ms.locfileid: "39334133"
 ---
 # <a name="run-a-high-availability-sharepoint-server-2016-farm-in-azure"></a>Azure에서 고가용성 SharePoint Server 2016 팜 실행
 
@@ -66,17 +66,19 @@ SharePoint 역할마다 서브넷을 하나씩 사용하고, 게이트웨이와 
 
 ### <a name="vm-recommendations"></a>VM 권장 사항
 
-표준 DSv2 가상 머신 크기에 따라 이 아키텍처를 사용하려면 최소 38코어가 필요합니다.
+이 아키텍처에는 최소 44코어가 필요합니다.
 
 - Standard_DS3_v2(각각 4코어)에 SharePoint 서버 8개 = 32코어
 - Standard_DS1_v2(각각 1코어)에 Active Directory 도메인 컨트롤러 2개 = 2코어
-- Standard_DS1_v2에 SQL Server VM 2개 = 2코어
+- Standard_DS3_v2에 SQL Server VM 2대 = 8코어
 - Standard_DS1_v2에 주 노드 1개 = 1코어
 - Standard_DS1_v2에 관리 서버 1개 = 1코어
 
-총 코어 수는 선택하는 VM 크기에 따라 달라집니다. 자세한 내용은 아래의 [SharePoint Server 권장 사항](#sharepoint-server-recommendations)을 참조하세요.
-
 배포에 사용할 Azure 구독의 VM 코어 할당량이 충분해야 하며, 그렇지 않으면 배포가 실패합니다. [Azure 구독 및 서비스 제한, 할당량 및 제약 조건][quotas]을 참조하세요. 
+
+Search Indexer를 제외한 모든 SharePoint 역할에는 [Standard_DS3_v2][vm-sizes-general] VM 크기를 사용하는 것이 좋습니다. Search Indexer에는 최소한 [Standard_DS13_v2][vm-sizes-memory] 이상을 사용해야 합니다. 테스트하기 위해 이 참조 아키텍처의 매개 변수 파일은 검색 인덱서 역할에 대해 더 작은 DS3_v2 크기를 지정합니다. 프로덕션 배포의 경우 DS13 이상 크기를 사용하도록 매개 변수 파일을 업데이트합니다. 자세한 정보는 [SharePoint Server 2016의 하드웨어 및 소프트웨어 요구 사항][sharepoint-reqs]을 참조하세요. 
+
+SQL Server VM의 경우 최소 4코어 8GB RAM을 사용하는 것이 좋습니다. 이 참조 아키텍처의 매개 변수 파일은 DS3_v2 크기를 지정합니다. 프로덕션 배포의 경우 더 큰 VM 크기를 지정해야 합니다. 자세한 내용은 [저장소 및 SQL Server 용량 계획 및 구성(SharePoint Server)](/sharepoint/administration/storage-and-sql-server-capacity-planning-and-configuration#estimate-memory-requirements)을 참조하세요. 
  
 ### <a name="nsg-recommendations"></a>NSG 권장 사항
 
@@ -109,18 +111,12 @@ SharePoint 팜을 구성하기 전에 서비스마다 Windows Server Active Dire
 - 캐시 슈퍼 사용자 계정
 - 캐시 슈퍼 읽기 권한자 계정
 
-Search Indexer를 제외한 모든 역할에는 [Standard_DS3_v2][vm-sizes-general] VM 크기를 사용하는 것이 좋습니다. Search Indexer에는 최소한 [Standard_DS13_v2][vm-sizes-memory] 이상을 사용해야 합니다. 
-
-> [!NOTE]
-> 이 참조 아키텍처에 대한 Resource Manager 템플릿은 배포를 테스트할 목적으로 Search Indexer에 좀 더 작은 DS3 크기를 사용합니다. 프로덕션 배포의 경우 DS13 이상 크기를 사용합니다. 
-
-프로덕션 워크로드의 경우 [SharePoint Server 2016의 하드웨어 및 소프트웨어 요구 사항][sharepoint-reqs]을 참조하세요. 
-
 초당 최소 200MB라는 디스크 처리량 지원 요구를 충족하도록 검색 아키텍처를 계획해야 합니다. [SharePoint Server 2013에서 엔터프라이즈 검색 아키텍처 계획][sharepoint-search]을 참조하세요. 그리고 [SharePoint Server 2016에서 크롤링하는 방법에 대한 모범 사례][sharepoint-crawling]의 지침을 따르세요.
 
 또한 검색 구성 요소 데이터를 별도의 고성능 저장소 볼륨 또는 파티션에 저장합니다. 부하를 줄이고 처리량을 높일 수 있도록 이 아키텍처에 필요한 개체 캐시 사용자 계정을 구성합니다. Windows Server 운영 체제 파일, SharePoint Server 2016 프로그램 파일 및 진단 로그를 별도의 중간 성능 저장소 볼륨 또는 파티션 3개에 분할합니다. 
 
 이러한 권장 사항에 대한 자세한 내용은 [SharePoint Server 2016의 초기 배포 관리 및 서비스 계정][sharepoint-accounts]을 참조하세요.
+
 
 ### <a name="hybrid-workloads"></a>하이브리드 워크로드
 
