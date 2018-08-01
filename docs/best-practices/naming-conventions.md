@@ -4,12 +4,12 @@ description: Azure 리소스에 대한 명명 규칙 가상 머신, 저장소 �
 author: telmosampaio
 ms.date: 05/18/2017
 pnp.series.title: Best Practices
-ms.openlocfilehash: 09bcfa3c0a0c46605f0025adad06f8049f109f1b
-ms.sourcegitcommit: 776b8c1efc662d42273a33de3b82ec69e3cd80c5
+ms.openlocfilehash: 6ad71a5ee39b8f1863c51dae0120dbdc7baf1f76
+ms.sourcegitcommit: c704d5d51c8f9bbab26465941ddcf267040a8459
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/12/2018
-ms.locfileid: "38987736"
+ms.lasthandoff: 07/24/2018
+ms.locfileid: "39229153"
 ---
 # <a name="naming-conventions"></a>명명 규칙
 
@@ -119,6 +119,13 @@ Azure의 각 리소스 또는 서비스 유형은 명명 제한 및 범위 집�
 |부하 분산된 규칙 구성 |Load Balancer |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<descriptive context>` |`http` |
 |Azure Application Gateway |리소스 그룹 |1-80 |대/소문자 구분하지 않음 |영숫자, 하이픈, 밑줄 및 마침표 |`<service or role>-agw` |`profx-agw` |
 |Traffic Manager 프로필 |리소스 그룹 |1-63 |대/소문자 구분하지 않음 |영숫자, 하이픈 및 마침표 |`<descriptive context>` |`app1` |
+
+### <a name="containers"></a>컨테이너
+
+| 엔터티 | 범위 | 길이 | 대/소문자 구분 | 사용할 수 있는 문자 | 제안된 패턴 | 예 |
+| --- | --- | --- | --- | --- | --- | --- |
+|Container Registry | 전역 |5-50 |대/소문자 구분하지 않음 | 영숫자 |`<service short name>registry` |`app1registry` |
+
 
 ## <a name="organize-resources-with-tags"></a>태그로 리소스 정리
 
