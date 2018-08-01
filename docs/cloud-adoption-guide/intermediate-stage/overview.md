@@ -2,12 +2,12 @@
 title: 'Azure 도입: 중간'
 description: 엔터프라이즈가 Azure를 채택하기 위해 필요한 중간 지식 수준 설명
 author: petertay
-ms.openlocfilehash: 227d9558647ed8076b2832d95e192f2f0c43b9db
-ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
+ms.openlocfilehash: a1f93616f5f1ecf4f395ce39bbb037ef6ab5991b
+ms.sourcegitcommit: c704d5d51c8f9bbab26465941ddcf267040a8459
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/19/2018
-ms.locfileid: "36206364"
+ms.lasthandoff: 07/24/2018
+ms.locfileid: "39229238"
 ---
 # <a name="azure-cloud-adoption-guide-intermediate-overview"></a>Azure 클라우드 도입 가이드: 중간 개요
 
@@ -27,7 +27,7 @@ Azure 도입의 중간 단계의 중점은 새로운 여러 Azure 개발 워크�
 
 기본 도입 단계에서는 Azure 내부 구조에 대한 몇 가지 기본 사항 및 리소스를 생성하고 읽고 업데이트하고 삭제하는 방법을 알아봤습니다. 또한 Azure는 해당 리소스에 액세스해야 하는 사용자를 인증하고 권한을 부여하려면 Azure AD(Active Directory)만 신뢰한다는 것과 ID에 대해 알아봤습니다.
 
-또한 조직의 Azure 리소스 사용을 관리하기 위한 Azure 거버넌스 도구 구성 방법에 대한 학습을 시작했습니다. 기본 단계에서는 단순한 워크로드를 배포하는 데 필요한, 단일 팀의 리소스 액세스를 관리하는 방법을 살펴봤습니다. 실제로 조직은 동시에 여러 워크로드에서 작업하는 여러 팀으로 구성될 예정입니다. 
+또한 조직의 Azure 리소스 사용을 관리하기 위한 Azure 거버넌스 도구 구성 방법에 대한 학습을 시작했습니다. 단순한 워크로드를 배포하는 데 필요한 단일 팀의 리소스 액세스를 관리하는 방법을 살펴봤습니다. 실제로 조직은 동시에 여러 워크로드에서 작업하는 여러 팀으로 구성될 예정입니다. 
 
 시작하기 전에 **워크로드** 용어가 실제로 무엇을 의미하는지를 알아봅시다. 응용 프로그램이나 서비스 같은 임의 단위의 기능을 정의하기 위해 일반적으로 이해되는 용어입니다. 필요한 데이터베이스 등의 서버 및 다른 모든 서비스에 배포되는 코드 아티팩트를 기준으로 한 워크로드에 대해 생각합니다. 이는 온-프레미스 응용 프로그램 또는 서비스에 대한 유용한 정의이지만 클라우드에서는 이를 확장해야 합니다. 
 

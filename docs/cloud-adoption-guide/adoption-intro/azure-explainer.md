@@ -1,15 +1,15 @@
 ---
-title: '설명: Azure의 작동 방식'
-description: Azure의 내부 작동 설명
+title: Azure의 작동 방식
+description: Azure의 내부 작동 방식 설명
 author: petertay
-ms.openlocfilehash: 88514ba01efabe38a1b92d135321c2e44cef004e
-ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
+ms.openlocfilehash: bf301a05d69ed66aa03727dde3968477c2337790
+ms.sourcegitcommit: c704d5d51c8f9bbab26465941ddcf267040a8459
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/19/2018
-ms.locfileid: "36206466"
+ms.lasthandoff: 07/24/2018
+ms.locfileid: "39228969"
 ---
-# <a name="explainer-how-does-azure-work"></a>설명: Azure의 작동 방식
+# <a name="how-does-azure-work"></a>Azure의 작동 방식
 
 Azure는 Microsoft의 공용 클라우드 플랫폼입니다. Azure는 PaaS(Platform as a Service), IaaS(Infrastructure as a Service), DBaaS(Database as a Service) 등을 비롯한 다양한 서비스 컬렉션을 제공합니다. 하지만 Azure란 정확히 무엇이며 어떤 방식으로 작동할까요?
 
@@ -31,7 +31,7 @@ Azure는 Microsoft의 공용 클라우드 플랫폼입니다. Azure는 PaaS(Plat
 
 ## <a name="next-steps"></a>다음 단계
 
-* Azure의 내부 기능에 대해 이해했으므로 [리소스 액세스 거버넌스](governance-explainer.md)에 대해 알아봅니다. 그런 다음, Azure를 채택하는 첫 번째 단계로 이동하여 [Azure에서 디지털 ID를 이해](tenant-explainer.md)합니다. 해당 단계를 완료되면 [Azure AD에서 첫 번째 사용자 만들기][docs-add-users-to-aad]가 준비된 것입니다.
+* Azure의 내부 기능에 대해 이해했으므로 [리소스 액세스 거버넌스](governance-explainer.md)에 대해 알아봅니다. 
 
 <!-- Links -->
 

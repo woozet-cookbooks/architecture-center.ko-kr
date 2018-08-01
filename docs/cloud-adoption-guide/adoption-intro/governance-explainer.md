@@ -1,17 +1,17 @@
 ---
-title: '설명: 클라우드 관리란?'
-description: Azure 및 클라우드에 대한 리소스 관리 개념 설명
+title: 클라우드 거버넌스란?
+description: Azure에서 리소스 액세스 거버넌스의 개념 설명
 author: petertay
-ms.openlocfilehash: 3404beaa719177ee7638feed8a8442b5c3b455c6
-ms.sourcegitcommit: 26b04f138a860979aea5d253ba7fecffc654841e
+ms.openlocfilehash: 3338ed5652296c5cd01277a51be1cb5893320b65
+ms.sourcegitcommit: c704d5d51c8f9bbab26465941ddcf267040a8459
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 06/19/2018
-ms.locfileid: "36206483"
+ms.lasthandoff: 07/24/2018
+ms.locfileid: "39229204"
 ---
-# <a name="explainer-what-is-cloud-resource-governance"></a>설명: 클라우드 리소스 관리란?
+# <a name="what-is-cloud-resource-governance"></a>클라우드 리소스 거버넌스란?
 
-[Azure 작동 방식](azure-explainer.md) 설명서에서는 Azure가 사용자를 대신해서 가상화된 하드웨어 및 소프트웨어를 실행하는 서버 및 네트워킹 하드웨어의 컬렉션이라는 사실을 배웠습니다. Azure를 사용하면 필요에 따라 쉽게 리소스를 만들고 읽고 업데이트하고 삭제하게 하여 조직의 개발 및 IT 부서가 기민하게 될 수 있습니다.
+[Azure 작동 방식](azure-explainer.md)에서는 Azure가 사용자를 대신해서 가상화된 하드웨어 및 소프트웨어를 실행하는 서버 및 네트워킹 하드웨어의 컬렉션임을 알아보았습니다. Azure를 사용하면 필요에 따라 쉽게 리소스를 만들고 읽고 업데이트하고 삭제하게 하여 조직의 개발 및 IT 부서가 기민하게 될 수 있습니다.
 
 그러나 무제한으로 개발자에게 리소스 액세스 권한을 부여하면 개발자들이 매우 기민해질 수 있는 반면 의도하지 않은 비용이 소요되는 결과가 발생할 수도 있습니다. 예를 들어 개발 팀은 테스트를 위한 리소스 집합을 배포하도록 승인받지만 테스트를 완료하는 경우 리소스 집합을 삭제하는 것을 잊어버릴 수 있습니다. 이러한 리소스는 그 사용이 더 이상 승인되지 않거나 필요하지 않다고 해도 비용을 계속 발생시킵니다. 
 
@@ -29,8 +29,4 @@ RBAC는 역할을 정의하고 역할은 역할이 할당된 사용자의 능력
 
 ## <a name="next-steps"></a>다음 단계
 
-Azure를 채택하는 다음 단계는 [Azure에서 디지털 ID 이해](tenant-explainer.md) 및 [Azure AD에서 첫 번째 사용자 만들기][docs-add-users-to-aad]입니다.
-
-<!-- Links -->
-
-[docs-add-users-to-aad]: /azure/active-directory/add-users-azure-active-directory?toc=/azure/architecture/cloud-adoption-guide/toc.json
+이제 클라우드 리소스 거버넌스의 개념을 이해했으므로 [거버넌스 모델을 디자인하는 방법](governance-how-to.md)을 알아보기 위한 준비 과정에서 [리소스 액세스를 관리하는 방법](azure-resource-access.md)에 대해 자세히 알아보세요.

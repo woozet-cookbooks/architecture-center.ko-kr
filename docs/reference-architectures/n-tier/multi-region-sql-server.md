@@ -2,15 +2,15 @@
 title: 고가용성을 위한 다중 지역 N 계층 응용 프로그램
 description: 고가용성과 복원력을 위해 Azure의 여러 지역에 VM을 배포하는 방법
 author: MikeWasson
-ms.date: 05/03/2018
+ms.date: 07/19/2018
 pnp.series.title: Windows VM workloads
 pnp.series.prev: n-tier
-ms.openlocfilehash: 48943094e7847e39b9fdc4c3f71e27f2e6e41293
-ms.sourcegitcommit: a5e549c15a948f6fb5cec786dbddc8578af3be66
+ms.openlocfilehash: a8dafab9ce8312004e99f0f19d06d6b47b6b19d8
+ms.sourcegitcommit: c704d5d51c8f9bbab26465941ddcf267040a8459
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 05/06/2018
-ms.locfileid: "33673575"
+ms.lasthandoff: 07/24/2018
+ms.locfileid: "39229255"
 ---
 # <a name="multi-region-n-tier-application-for-high-availability"></a>고가용성을 위한 다중 지역 N 계층 응용 프로그램
 
@@ -80,18 +80,18 @@ Traffic Manager가 장애 조치(failover)를 수행하는 경우 자동 장애 
 
 Traffic Manager는 기본적으로 자동으로 장애를 복구(failback)합니다. 이를 방지하려면 장애 조치(failover) 이벤트 후 수동으로 주 지역의 우선 순위를 낮춥니다. 예를 들어 주 지역의 우선 순위가 1이고 보조 지역의 우선 순위를 2로 가정합니다. 장애 조치(failover) 후 자동 장애 복구(failback)를 방지하기 위해 주 지역의 우선 순위를 3으로 설정합니다. 다시 전환할 준비가 되면 우선 순위를 1로 업데이트합니다.
 
-다음 [Azure CLI][install-azure-cli] 명령은 우선 순위를 업데이트합니다.
+다음 [Azure CLI][azure-cli] 명령은 우선 순위를 업데이트합니다.
 
 ```bat
-azure network traffic-manager  endpoint set --resource-group <resource-group> --profile-name <profile>
-    --name <traffic-manager-name> --type AzureEndpoints --priority 3
+az network traffic-manager endpoint update --resource-group <resource-group> --profile-name <profile>
+    --name <endpoint-name> --type azureEndpoints --priority 3
 ```    
 
 또 다른 방법은 장애 복구(failback)할 준비가 될 때까지 끝점을 일시적으로 사용하지 않도록 설정하는 것입니다.
 
 ```bat
-azure network traffic-manager  endpoint set --resource-group <resource-group> --profile-name <profile>
-    --name <traffic-manager-name> --type AzureEndpoints --status Disabled
+az network traffic-manager endpoint update --resource-group <resource-group> --profile-name <profile>
+    --name <endpoint-name> --type azureEndpoints --endpoint-status Disabled
 ```
 
 장애 조치(failover)의 원인에 따라 한 지역 내에서 리소스를 다시 배포해야 할 수 있습니다. 장애 복구(failback) 전에 운영 준비 상태 테스트를 수행합니다. 이 테스트는 다음과 같은 사항을 확인해야 합니다.
@@ -109,10 +109,10 @@ Windows Server 2016 이전 버전에서는 SQL Server Always On 가용성 그룹
 * 최소한 두 개의 도메인 컨트롤러를 각 지역에 배치합니다.
 * 각 도메인 컨트롤러에 고정 IP 주소를 지정합니다.
 * VNet 간 연결을 만들어 VNet 간의 통신을 사용하도록 설정합니다.
-* 각 VNet에 대해 두 지역 모두에서 도메인 컨트롤러의 IP 주소를 DNS 서버 목록에 추가합니다. 다음 CLI 명령을 사용할 수 있습니다. 자세한 내용은 [VNet(가상 네트워크)에서 사용하는 DNS 서버 관리][vnet-dns]를 참조하세요.
+* 각 VNet에 대해 두 지역 모두에서 도메인 컨트롤러의 IP 주소를 DNS 서버 목록에 추가합니다. 다음 CLI 명령을 사용할 수 있습니다. 자세한 내용은 [DNS 서버 변경][vnet-dns]을 참조하세요.
 
     ```bat
-    azure network vnet set --resource-group dc01-rg --name dc01-vnet --dns-servers "10.0.0.4,10.0.0.6,172.16.0.4,172.16.0.6"
+    az network vnet update --resource-group <resource-group> --name <vnet-name> --dns-servers "10.0.0.4,10.0.0.6,172.16.0.4,172.16.0.6"
     ```
 
 * 두 지역의 SQL Server 인스턴스를 포함하는 WSFC([Windows Server 장애 조치(failover) 클러스터링)][wsfc] 클러스터를 만듭니다. 
@@ -171,7 +171,7 @@ SQL Server 클러스터의 경우 다음과 같은 두 가지 장애 조치(fail
 [azure-sla]: https://azure.microsoft.com/support/legal/sla/
 [azure-sql-db]: https://azure.microsoft.com/documentation/services/sql-database/
 [health-endpoint-monitoring-pattern]: https://msdn.microsoft.com/library/dn589789.aspx
-[install-azure-cli]: /azure/xplat-cli-install
+[azure-cli]: /cli/azure/
 [regional-pairs]: /azure/best-practices-availability-paired-regions
 [resource groups]: /azure/azure-resource-manager/resource-group-overview
 [resource-group-links]: /azure/resource-group-link-resources
@@ -185,7 +185,7 @@ SQL Server 클러스터의 경우 다음과 같은 두 가지 장애 조치(fail
 [tm-sla]: https://azure.microsoft.com/support/legal/sla/traffic-manager/v1_0/
 [traffic-manager]: https://azure.microsoft.com/services/traffic-manager/
 [visio-download]: https://archcenter.blob.core.windows.net/cdn/vm-reference-architectures.vsdx
-[vnet-dns]: /azure/virtual-network/virtual-networks-manage-dns-in-vnet
+[vnet-dns]: /azure/virtual-network/manage-virtual-network#change-dns-servers
 [vnet-to-vnet]: /azure/vpn-gateway/vpn-gateway-vnet-vnet-rm-ps
 [vpn-gateway]: /azure/vpn-gateway/vpn-gateway-about-vpngateways
 [wsfc]: https://msdn.microsoft.com/library/hh270278.aspx

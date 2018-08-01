@@ -2,13 +2,13 @@
 title: SQL Server를 통한 N 계층 응용 프로그램
 description: 가용성, 보안, 확장성 및 관리 효율성을 위해 Azure에서 다중 계층 아키텍처를 구현하는 방법을 설명합니다.
 author: MikeWasson
-ms.date: 06/23/2018
-ms.openlocfilehash: 7c8184d25cf6b3bd358adc2728329fd3bd08503a
-ms.sourcegitcommit: 58d93e7ac9a6d44d5668a187a6827d7cd4f5a34d
+ms.date: 07/19/2018
+ms.openlocfilehash: 42ba18e9ffef32c6990fbb888cc41e980fb4abea
+ms.sourcegitcommit: c704d5d51c8f9bbab26465941ddcf267040a8459
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/02/2018
-ms.locfileid: "37142304"
+ms.lasthandoff: 07/24/2018
+ms.locfileid: "39229136"
 ---
 # <a name="n-tier-application-with-sql-server"></a>SQL Server를 통한 N 계층 응용 프로그램
 
@@ -26,6 +26,8 @@ ms.locfileid: "37142304"
 
 * **VNet(가상 네트워크) 및 서브넷.** 모든 Azure VM은 VNet에 배포되어 여러 서브넷으로 분할될 수 있습니다. 각 계층에 대해 별도의 서브넷을 만듭니다. 
 
+* **Application Gateway** [Azure Application Gateway](/azure/application-gateway/)는 계층 7 부하 분산 장치입니다. 이 아키텍처에서 HTTP 요청을 웹 프런트 엔드로 라우팅합니다. 또한 application Gateway는 일반적인 악용 및 취약점으로부터 응용 프로그램을 보호하는 WAF([웹 응용 프로그램 방화벽](/azure/application-gateway/waf-overview))을 제공합니다. 
+
 * **NSG.** [NSG(네트워크 보안 그룹)][nsg]을 사용하여 VNet 내 네트워크 트래픽을 제한합니다. 예를 들어 여기에 표시된 3계층 아키텍처에서 데이터베이스 계층은 비즈니스 계층 및 관리 서브넷뿐 아니라 웹 프론트 엔드의 트래픽을 허용하지 않습니다.
 
 * **가상 머신**. VM 구성 권장 사항은 [Azure에서 Windows VM 실행](./windows-vm.md) 및 [Azure에서 Linux VM 실행](./linux-vm.md)을 참조하세요.
@@ -34,9 +36,9 @@ ms.locfileid: "37142304"
 
 * **VM 확장 집합**(표시되지 않음). 가용성 집합을 사용하는 대신 [VM 확장 집합][vmss]을 사용할 수 있습니다. 확장 집합을 사용하면 미리 정의된 규칙에 따라 계층에서 VM을 수동 또는 자동으로 쉽게 확장할 수 있습니다.
 
-* **Azure 부하 분산 장치.** [부하 분산 장치][load-balancer]는 들어오는 인터넷 요청을 VM 인스턴스로 분산합니다. [공용 부하 분산 장치][load-balancer-external]를 사용하여 들어오는 인터넷 트래픽을 웹 계층에 분산하고, [내부 부하 분산 장치][load-balancer-internal]를 사용하여 네트워크 트래픽을 웹 계층에서 비즈니스 계층으로 분산합니다.
+* **부하 분산 장치.** [Azure Load Balancer][load-balancer]를 사용하여 웹 계층에서 비즈니스 계층으로, 비즈니스 계층에서 SQL Server로 네트워크 트래픽을 분산합니다.
 
-* **공용 IP 주소**. 공용 IP 주소는 공용 부하 분산 장치에서 인터넷 트래픽을 받는 데 필요합니다.
+* **공용 IP 주소**. 응용 프로그램이 인터넷 트래픽을 수신하려면 공용 IP 주소가 필요합니다.
 
 * **Jumpbox.** [요새 호스트]라고도 합니다. 관리자가 다른 VM에 연결할 때 사용하는 네트워크의 보안 VM입니다. Jumpbox는 안전 목록에 있는 공용 IP 주소의 원격 트래픽만 허용하는 NSG를 사용합니다. NSG는 RDP(원격 데스크톱) 트래픽을 허용해야 합니다.
 
@@ -62,7 +64,7 @@ VNet을 만들 때는 각 서브넷에 포함된 리소스에 몇 개의 IP 주�
 
 ### <a name="load-balancers"></a>부하 분산 장치
 
-VM을 인터넷에 직접 노출시키는 대신 각 VM에 사설 IP 주소를 부여합니다. 클라이언트에서 공용 부하 분산 장치의 IP 주소를 사용하여 연결합니다.
+VM을 인터넷에 직접 노출시키는 대신 각 VM에 사설 IP 주소를 부여합니다. 클라이언트는 Application Gateway와 연결된 공용 IP 주소를 사용하여 연결합니다.
 
 네트워크 트래픽이 VM으로 전달되도록 부하 분산 장치 규칙을 정의합니다. 예를 들어 HTTP 트래픽을 허용하려면 프론트 엔드 구성의 포트 80을 백엔드 주소 풀의 포트 80으로 매핑하는 규칙을 만듭니다. 클라이언트가 포트 80으로 HTTP 요청을 전송하면 부하 분산 장치가 소스 IP 주소를 포함하는 [해싱 알고리즘][load-balancer-hashing]을 사용하여 백엔드 IP 주소를 선택합니다. 클라이언트 요청은 이런 식으로 모든 VM에 걸쳐 분산됩니다.
 
@@ -147,8 +149,6 @@ VM 확장 집합을 사용하지 않는 경우 동일한 계층의 VM을 가용�
 ## <a name="security-considerations"></a>보안 고려 사항
 
 가상 네트워크는 Azure의 트래픽 격리 경계입니다. 하나의 VNet에 속한 VM은 다른 VNet에 속한 VM과 직접 통신할 수 없습니다. 하나의 VNet에 속한 여러 VM은 사용자가 트래픽을 제한하기 위해 NSG([네트워크 보안 그룹][nsg])를 만들지 않은 이상 서로 통신할 수 있습니다. 자세한 내용은 [Microsoft 클라우드 서비스 및 네트워크 보안][network-security]을 참조하세요.
-
-수신되는 인터넷 트래픽의 경우 부하 분산 장치의 규칙이 어느 트래픽이 백엔드에 도달할 수 있는지 정의합니다. 단, 부하 분산 장치의 규칙은 IP 안전 목록을 지원하지 않으므로 안전 목록에 특정 공용 IP 주소를 추가하려면 서브넷에 NSG를 추가해야 합니다.
 
 NVA(네트워크 가상 어플라이언스)를 추가하여 인터넷과 Azure 가상 네트워크 사이에 DMZ를 만드는 것도 좋은 방법입니다. NVA는 방화벽, 패킷 조사, 감사, 사용자 지정 라우팅과 같은 네트워크 관련 작업을 수행하는 가상 어플라이언스를 통칭하는 용어입니다. 자세한 내용은 [Azure와 인터넷 사이에 DMZ 구현][dmz]을 참조하세요.
 
@@ -248,10 +248,6 @@ Azure 구성 요소를 사용하여 이 샘플 참조 아키텍처를 배포하�
 [chef]: https://www.chef.io/solutions/azure/
 [git]: https://github.com/mspnp/template-building-blocks
 [github-folder]: https://github.com/mspnp/reference-architectures/tree/master/virtual-machines/n-tier-windows
-[lb-external-create]: /azure/load-balancer/load-balancer-get-started-internet-portal
-[lb-internal-create]: /azure/load-balancer/load-balancer-get-started-ilb-arm-portal
-[load-balancer-external]: /azure/load-balancer/load-balancer-internet-overview
-[load-balancer-internal]: /azure/load-balancer/load-balancer-internal-overview
 [nsg]: /azure/virtual-network/virtual-networks-nsg
 [operations-management-suite]: https://www.microsoft.com/server-cloud/operations-management-suite/overview.aspx
 [plan-network]: /azure/virtual-network/virtual-network-vnet-plan-design-arm
@@ -275,7 +271,7 @@ Azure 구성 요소를 사용하여 이 샘플 참조 아키텍처를 배포하�
 [0]: ./images/n-tier-sql-server.png "Microsoft Azure를 사용하는 N 계층 아키텍처"
 [resource-manager-overview]: /azure/azure-resource-manager/resource-group-overview 
 [vmss]: /azure/virtual-machine-scale-sets/virtual-machine-scale-sets-overview
-[load-balancer]: /azure/load-balancer/load-balancer-get-started-internet-arm-cli
+[load-balancer]: /azure/load-balancer/
 [load-balancer-hashing]: /azure/load-balancer/load-balancer-overview#load-balancer-features
 [vmss-design]: /azure/virtual-machine-scale-sets/virtual-machine-scale-sets-design-overview
 [subscription-limits]: /azure/azure-subscription-service-limits
