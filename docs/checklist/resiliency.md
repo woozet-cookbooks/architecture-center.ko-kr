@@ -4,12 +4,12 @@ description: 설계하는 동안 복원력 문제에 대한 지침을 제공하�
 author: petertaylor9999
 ms.date: 01/10/2018
 ms.custom: resiliency, checklist
-ms.openlocfilehash: ca4bf77c9348f6c656348d9cd61d3a1241d69ba8
-ms.sourcegitcommit: 2123c25b1a0b5501ff1887f98030787191cf6994
+ms.openlocfilehash: 883424d5d3535f822cdba61ecb9520ce05f75ec7
+ms.sourcegitcommit: 2154e93a0a075e1f7425a6eb11fc3f03c1300c23
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 03/08/2018
-ms.locfileid: "29782617"
+ms.lasthandoff: 07/30/2018
+ms.locfileid: "39352647"
 ---
 # <a name="resiliency-checklist"></a>복원력 검사 목록
 
@@ -17,7 +17,7 @@ ms.locfileid: "29782617"
 
 ## <a name="requirements"></a>요구 사항
 
-**고객의 가용성 요구 사항을 정의합니다.** 고객은 응용 프로그램의 구성 요소에 대한 가용성 요구 사항을 가지고 있으며 이는 응용 프로그램의 설계에 영향을 줍니다. 응용 프로그램 각 부분의 가용성 목표에 대해 고객의 동의를 받으십시오. 그렇지 않으면 귀하의 설계가 고객의 기대를 충족하지 못할 수 있습니다. 자세한 내용은 [복원력 요구 사항 정의](../resiliency/index.md#defining-your-resiliency-requirements)를 참조하세요.
+**고객의 가용성 요구 사항을 정의합니다.** 고객은 응용 프로그램의 구성 요소에 대한 가용성 요구 사항을 가지고 있으며 이는 응용 프로그램의 설계에 영향을 줍니다. 응용 프로그램 각 부분의 가용성 목표에 대해 고객의 동의를 받으십시오. 그렇지 않으면 귀하의 설계가 고객의 기대를 충족하지 못할 수 있습니다. 자세한 내용은 [Azure용 복원력 있는 응용 프로그램 디자인](../resiliency/index.md)을 참조하세요.
 
 ## <a name="application-design"></a>응용 프로그램 설계
 
@@ -28,7 +28,8 @@ ms.locfileid: "29782617"
 * 복구 전략을 식별합니다.
   
 
-**서비스의 여러 인스턴스를 배포합니다.** 응용 프로그램이 서비스의 단일 인스턴스에 종속된 경우 단일 실패 지점이 생깁니다. 여러 인스턴스를 프로비전하면 복원력 및 확장성이 모두 개선됩니다. [Azure App Service](/azure/app-service/app-service-value-prop-what-is/)의 경우 여러 인스턴스를 제공하는 [App Service 계획](/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview/)을 선택합니다. Azure Cloud Services의 경우 각각의 역할을 [여러 인스턴스](/azure/cloud-services/cloud-services-choose-me/#scaling-and-management)를 사용하도록 구성합니다. [Azure Virtual Machines(VM)](/azure/virtual-machines/virtual-machines-windows-about/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)의 경우, VM 아키텍처가 둘 이상의 VM을 포함하는지 그리고 각각의 VM이 [가용성 집합][availability-sets]에 포함되는지 확인합니다.   
+**서비스의 여러 인스턴스를 배포합니다.** 응용 프로그램이 서비스의 단일 인스턴스에 종속된 경우 단일 실패 지점이 생깁니다. 여러 인스턴스를 프로비전하면 복원력 및 확장성이 모두 개선됩니다. 
+  [Azure App Service](/azure/app-service/app-service-value-prop-what-is/)의 경우 여러 인스턴스를 제공하는 [App Service 계획](/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview/)을 선택합니다. Azure Cloud Services의 경우 각각의 역할을 [여러 인스턴스](/azure/cloud-services/cloud-services-choose-me/#scaling-and-management)를 사용하도록 구성합니다. [Azure Virtual Machines(VM)](/azure/virtual-machines/virtual-machines-windows-about/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)의 경우, VM 아키텍처가 둘 이상의 VM을 포함하는지 그리고 각각의 VM이 [가용성 집합][availability-sets]에 포함되는지 확인합니다.   
 
 **자동 크기 조정을 사용하여 부하의 증가에 대응합니다.** 응용 프로그램이 부하가 증가할 때 자동으로 규모 확장되도록 구성되지 않은 경우 사용자 요청으로 포화되면 응용 프로그램의 서비스가 실패할 가능성이 있습니다. 자세한 내용은 다음을 참조하세요.
 
@@ -58,7 +59,7 @@ ms.locfileid: "29782617"
 
 **사용하는 타사 서비스가 SLA를 제공하는지 확인합니다.** 응용 프로그램이 타사 서비스에 의존하지만 해당 타사가 SLA 형태로 가용성에 대한 보증을 제공하지 않는 경우 응용 프로그램의 가용성도 보증할 수 없습니다. SLA는 응용 프로그램의 가장 가용성이 낮은 구성 요소만큼만 품질이 보장될 뿐입니다.
 
-**적절한 경우 원격 작업에 대한 복원력 패턴을 구현합니다.** 응용 프로그램이 원격 서비스 간의 통신에 의존하는 경우 [재시도 패턴][retry-pattern] 및 [회로 차단기 패턴][circuit-breaker] 등 일시적 고장을 처리하기 위한 설계 패턴을 따릅니다. 자세한 내용은 [복원력 전략](../resiliency/index.md#resiliency-strategies)을 참조하세요.
+**적절한 경우 원격 작업에 대한 복원력 패턴을 구현합니다.** 응용 프로그램이 원격 서비스 간의 통신에 의존하는 경우 [재시도 패턴][retry-pattern] 및 [회로 차단기 패턴][circuit-breaker]과 같은 일시적 고장을 처리하기 위한 [디자인 패턴](../patterns/category/resiliency.md)을 따릅니다. 
 
 **가능하면 언제나 비동기 작업을 구현합니다.** 동기 작업은 프로세스가 완료될 때까지 호출자가 대기하는 동안 리소스를 독점하고 다른 작업을 차단할 수 있습니다. 가능하면 언제나 응용 프로그램의 각 부분을 비동기 작업이 가능하도록 설계합니다. C#에서 비동기 프로그래밍을 구현하는 자세한 방법은 [async 및 await를 사용한 비동기 프로그래밍][asynchronous-c-sharp]을 참조하세요.
 
