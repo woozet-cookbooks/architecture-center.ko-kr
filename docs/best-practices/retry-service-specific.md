@@ -4,12 +4,12 @@ description: 재시도 메커니즘 설정에 대한 서비스 관련 지침입�
 author: dragon119
 ms.date: 07/13/2016
 pnp.series.title: Best Practices
-ms.openlocfilehash: 39d342dc96e3d0d923ce159c392d9427359a4639
-ms.sourcegitcommit: f7fa67e3bdbc57d368edb67bac0e1fdec63695d2
+ms.openlocfilehash: 72dfb59c3357c5f14806a33ef5f6cdd3e7937915
+ms.sourcegitcommit: 8b5fc0d0d735793b87677610b747f54301dcb014
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 07/05/2018
-ms.locfileid: "37843629"
+ms.lasthandoff: 07/29/2018
+ms.locfileid: "39334167"
 ---
 # <a name="retry-guidance-for-specific-services"></a>특정 서비스에 대한 다시 시도 지침
 
@@ -23,7 +23,7 @@ ms.locfileid: "37843629"
 | --- | --- | --- | --- | --- |
 | **[Azure Active Directory](#azure-active-directory)** |ADAL 라이브러리에서 기본 |ADAL 라이브러리에 포함 |내부 |없음 |
 | **[Cosmos DB](#cosmos-db)** |서비스의 네이티브 |구성할 수 없음 |전역 |TraceSource |
-| **[Event Hubs](#azure-event-hubs)** |클라이언트의 네이티브 |프로그래밍 방식 |클라이언트 |없음 |
+| **[Event Hubs](#event-hubs)** |클라이언트의 네이티브 |프로그래밍 방식 |클라이언트 |없음 |
 | **[Redis Cache](#azure-redis-cache)** |클라이언트의 네이티브 |프로그래밍 방식 |클라이언트 |TextWriter |
 | **[Search](#azure-search)** |클라이언트의 네이티브 |프로그래밍 방식 |클라이언트 |ETW 또는 사용자 지정 |
 | **[Service Bus](#service-bus)** |클라이언트의 네이티브 |프로그래밍 방식 |네임스페이스 관리자, 메시징 팩터리 및 클라이언트 |ETW |

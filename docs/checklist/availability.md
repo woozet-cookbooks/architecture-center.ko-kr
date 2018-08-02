@@ -4,12 +4,12 @@ description: 설계하는 동안 가용성 문제에 대한 지침을 제공하�
 author: dragon119
 ms.date: 01/10/2018
 ms.custom: checklist
-ms.openlocfilehash: 324d8200d822eb1a7dce95ba4b2a7f29b00fb291
-ms.sourcegitcommit: 441185360db49cfb3cf39527b68f318d17d4cb3d
+ms.openlocfilehash: cea5baf8c37bf793c5de60f6c2be809629df072b
+ms.sourcegitcommit: 2154e93a0a075e1f7425a6eb11fc3f03c1300c23
 ms.translationtype: HT
 ms.contentlocale: ko-KR
-ms.lasthandoff: 01/19/2018
-ms.locfileid: "27973113"
+ms.lasthandoff: 07/30/2018
+ms.locfileid: "39352630"
 ---
 # <a name="availability-checklist"></a>가용성 검사 목록
 
@@ -21,7 +21,7 @@ ms.locfileid: "27973113"
 
 **서비스 수준 목적별로 워크로드를 분해합니다.** 서비스가 중요하고 덜 중요한 워크로드로 구성되면 다르게 관리하도록 하고 해당 가용성 요구 사항에 맞게 서비스 기능 및 인스턴스 수를 지정합니다.
 
-**서비스 종속성을 최소화하고 이해합니다.** 사용 가능한 경우 다른 서비스의 수를 최소화하고 모든 시스템에 존재하는 기능 및 서비스 종속성을 이해합니다. 이는 이러한 종속성의 특성 및 전체 응용 프로그램에서 각각의 실패 또는 성능 저하의 영향을 포함합니다. [복원력 요구 사항 정의](../resiliency/index.md#defining-your-resiliency-requirements)를 참조하세요.
+**서비스 종속성을 최소화하고 이해합니다.** 사용 가능한 경우 다른 서비스의 수를 최소화하고 모든 시스템에 존재하는 기능 및 서비스 종속성을 이해합니다. 이는 이러한 종속성의 특성 및 전체 응용 프로그램에서 각각의 실패 또는 성능 저하의 영향을 포함합니다.
 
 **사용 가능한 경우 작업 및 메시지가 idempotent가 되게 설계합니다**. 작업을 수차례 반복해도 동일한 결과를 내놓는다면 idempotent 작업입니다. Idempotency는 중복된 요청이 반복돼도 문제를 일으키지 않게 합니다. 소비자와 소비자가 수행하는 작업은 idempotent하므로 이전에 실행된 작업을 반복하는 것이 잘못된 결과를 렌더링하지 않습니다. 이는 충돌 처리에 대해 낙관적 접근법을 사용하여 중복된 메시지를 감지 또는 일관성 보장을 의미합니다.
 
@@ -33,7 +33,8 @@ ms.locfileid: "27973113"
 
 ## <a name="deployment-and-maintenance"></a>배포 및 유지 관리
 
-**서비스의 여러 인스턴스를 배포합니다.** 응용 프로그램이 서비스의 단일 인스턴스에 종속된 경우 단일 실패 지점이 생깁니다. 여러 인스턴스를 프로비전하면 복원력 및 확장성이 모두 개선됩니다. [Azure App Service](/azure/app-service/app-service-value-prop-what-is/)의 경우 여러 인스턴스를 제공하는 [App Service 계획](/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview/)을 선택합니다. Azure Cloud Services의 경우 각각의 역할을 [여러 인스턴스](/azure/cloud-services/cloud-services-choose-me/#scaling-and-management)를 사용하도록 구성합니다. [Azure Virtual Machines(VM)](/azure/virtual-machines/virtual-machines-windows-about/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)의 경우, VM 아키텍처가 둘 이상의 VM을 포함하는지 그리고 각각의 VM이 [가용성 집합][availability-sets]에 포함되는지 확인합니다.
+**서비스의 여러 인스턴스를 배포합니다.** 응용 프로그램이 서비스의 단일 인스턴스에 종속된 경우 단일 실패 지점이 생깁니다. 여러 인스턴스를 프로비전하면 복원력 및 확장성이 모두 개선됩니다. 
+  [Azure App Service](/azure/app-service/app-service-value-prop-what-is/)의 경우 여러 인스턴스를 제공하는 [App Service 계획](/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview/)을 선택합니다. Azure Cloud Services의 경우 각각의 역할을 [여러 인스턴스](/azure/cloud-services/cloud-services-choose-me/#scaling-and-management)를 사용하도록 구성합니다. [Azure Virtual Machines(VM)](/azure/virtual-machines/virtual-machines-windows-about/?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)의 경우, VM 아키텍처가 둘 이상의 VM을 포함하는지 그리고 각각의 VM이 [가용성 집합][availability-sets]에 포함되는지 확인합니다.
 
 **여러 지역에 걸쳐 응용 프로그램을 배포하는 것을 고려합니다.** 응용 프로그램이 단일 지역에 배포되면 전체 지역이 사용할 수 없게 되는 드문 경우에 응용 프로그램도 사용할 수 없습니다. 이러한 상황이 응용 프로그램의 SLA의 조항에 따라 허용되지 않을 수 있습니다. 그러한 경우 응용 프로그램 및 해당 서비스를 여러 지역에 걸쳐 배포하는 것을 고려합니다.
 
